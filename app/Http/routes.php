@@ -12,7 +12,7 @@
 */
 
 Route::controllers([
-	'auth' => 'Auth\AuthController',
+	'auth'     => 'Auth\AuthController',
 	'password' => 'Auth\PasswordController',
 ]);
 
@@ -29,6 +29,14 @@ Route::group(['middleware' => 'auth'], function () {
         Route::post('/', ['as' => 'projects.store', 'uses' => 'ProjectController@store']);
         Route::get('{id}', ['as' => 'projects.show', 'uses' => 'ProjectController@show']);
         Route::put('{id}', ['as' => 'projects.update', 'uses' => 'ProjectController@update']);
+    });
+
+    Route::group(['prefix' => 'clients'], function () {
+        Route::get('/', ['as' => 'clients', 'uses' => 'ClientController@index']);
+        Route::get('create', ['as' => 'clients.create', 'uses' => 'ClientController@create']);
+        Route::post('/', ['as' => 'clients.store', 'uses' => 'ClientController@store']);
+        Route::get('{id}', ['as' => 'clients.show', 'uses' => 'ClientController@show']);
+        Route::put('{id}', ['as' => 'clients.update', 'uses' => 'ClientController@update']);
     });
 
     Route::group(['prefix' => 'messages'], function () {
