@@ -31,7 +31,7 @@
     @section('style')
     @show
   </head>
-  <body class="skin-blue sidebar-mini">
+  <body class="skin-yellow sidebar-mini">
     <!-- Site wrapper -->
     <div class="wrapper">
       
@@ -221,6 +221,11 @@
                 <i class="fa fa-archive"></i> <span>Projetos</span></i>
               </a>
             </li>
+            <li {!! ((Request::is('clients/*') || Request::is('clients')) ? 'class="active"' : '') !!}>
+              <a href="../clients">
+                <i class="fa fa-group"></i> <span>Clientes</span></i>
+              </a>
+            </li>
           </ul>
         </section>
         <!-- /.sidebar -->
@@ -238,7 +243,7 @@
 
       <footer class="main-footer">
         <div class="pull-right hidden-xs">
-          <b>Version</b> 0.01 - Beta
+          <b>Versão</b> {!! Config::get('app.app_version') !!}
         </div>
         <strong>Copyright &copy; 2015 <a href="http://www.svlabs.com.br">SVLabs</a>.</strong> Todos os direitos reservados.
       </footer>
@@ -423,16 +428,9 @@
     {!! Html::script("library/adminLTE/dist/js/app.min.js") !!}
     <!-- iCheck -->
     {!! Html::script("library/adminLTE/plugins/iCheck/icheck.min.js") !!}
-    <script>
-      $(function () {
-        $(':checkbox').iCheck({
-          checkboxClass: 'icheckbox_square-yellow',
-          radioClass: 'iradio_square-yellow',
-          increaseArea: '20%' // optional
-        });
-      });
-    </script>
     @section('scripts')
-    @show 
+    @show
+    <!-- iCheck -->
+    {!! Html::script("library/adminLTE/custom/custom.js") !!}
   </body>
 </html>

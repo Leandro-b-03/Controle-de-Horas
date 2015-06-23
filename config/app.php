@@ -53,7 +53,7 @@ return [
     |
     */
 
-    'locale' => array(LC_ALL, 'pt_BR', 'pt_BR.utf-8', 'pt_BR.utf-8', 'portuguese'),
+    'locale' => 'pt_BR',
 
     /*
     |--------------------------------------------------------------------------
@@ -97,6 +97,21 @@ return [
     */
 
     'log' => 'single',
+
+    /*
+    |--------------------------------------------------------------------------
+    | Version Number of the App
+    |--------------------------------------------------------------------------
+    |
+    | Here come the version of the app for loging and features of the project.
+    | Get tue concept from github changelog of all commit and push to the
+    | server and bring some kind of documentation in there.
+    |
+    | Available Settings: "single", "daily", "syslog", "errorlog"
+    |
+    */
+
+    'app_version' => '0.01 - Beta',
 
     /*
     |--------------------------------------------------------------------------

@@ -29,7 +29,7 @@
       <div class="login-box-body">
         <p class="login-box-msg">Entre para iniciar sua sessão</p>
         <form method="POST" action="/auth/login">
-		  {!! csrf_field() !!}
+		      {!! csrf_field() !!}
           <div class="form-group has-feedback">
             <input name="email" type="email" class="form-control" placeholder="Email"/>
             <span class="glyphicon glyphicon-envelope form-control-feedback"></span>

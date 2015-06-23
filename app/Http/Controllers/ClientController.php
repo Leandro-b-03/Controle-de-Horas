@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Client;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Validator;
 
 class ClientController extends Controller
 {
@@ -22,7 +23,7 @@ class ClientController extends Controller
         $clients = Client::All();
         $data['clients'] = $clients;
 
-        // Return the dashboard view.
+        // Return the clients view.
         return view('client.index')->with('data', $data);
     }
 
@@ -33,7 +34,8 @@ class ClientController extends Controller
      */
     public function create()
     {
-        //
+        // Return the dashboard view.
+        return view('client.create');
     }
 
     /**
@@ -41,9 +43,28 @@ class ClientController extends Controller
      *
      * @return Response
      */
-    public function store()
+    public function store(Request $request)
     {
-        //
+        $input = $request->all();
+        
+        // Validation of the fields
+        $validator = Validator::make(
+            [
+                $input
+            ],
+            [
+                'name' => 'required',
+                'password' => 'required|min:8',
+                'email' => 'required|email|unique:users'
+            ]
+        );
+
+        if($validator) {
+            Client::create( $input );
+            return redirect('clients');
+        } else {
+            return view('clients.create')->withInput();
+        }
     }
 
     /**
@@ -88,5 +109,6 @@ class ClientController extends Controller
     public function destroy($id)
     {
         //
+        return response()->json(['status' => 'Ok', 'message' => 'Return correct']);
     }
 }
