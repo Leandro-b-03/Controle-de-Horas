@@ -39,12 +39,16 @@
             @endif
               <div class="box-body">
                 <div class="form-group col-xs-12">
-                  <label for="name">Nome</label>
+                  <label for="name">Nome de usuário</label>
                   <input type="text" class="form-control" name="name" id="name"  value="{!! (isset($data['client']) ? $data['client']->name : "") !!}" placeholder="Nome do cliente" required>
                 </div>
-                <div class="form-group col-xs-12">
-                  <label for="responsible">Responsável</label>
-                  <input type="text" class="form-control" name="responsible" id="responsible"  value="{!! (isset($data['client']) ? $data['client']->responsible : "") !!}" placeholder="Responsável pelo cliente" required>
+                <div class="form-group col-xs-6">
+                  <label for="first_name">Primeiro Nome</label>
+                  <input type="first_name" class="form-control" name="first_name" id="first_name"  value="{!! (isset($data['client']) ? $data['client']->first_name : "") !!}" placeholder="Primeiro nome do colaborador" required>
+                </div>
+                <div class="form-group col-xs-6">
+                  <label for="last_name">Ultimo Nome</label>
+                  <input type="text" class="form-control" name="last_name" id="last_name"  value="{!! (isset($data['client']) ? $data['client']->last_name : "") !!}" placeholder="Ultimo nome do colaborador" required>
                 </div>
                 <div class="form-group col-xs-8">
                   <label for="email">E-mail</label>
@@ -53,6 +57,18 @@
                 <div class="form-group col-xs-4">
                   <label for="phone">Telefone</label>
                   <input type="text" class="form-control" name="phone" id="phone"  value="{!! (isset($data['client']) ? $data['client']->phone : "") !!}" placeholder="Telefone do responsável" required>
+                </div>
+                <div class="form-group col-xs-6">
+                  <label for="first_name">Primeiro Nome</label>
+                  <input type="first_name" class="form-control" name="first_name" id="first_name"  value="{!! (isset($data['client']) ? $data['client']->first_name : "") !!}" placeholder="Primeiro nome do colaborador" required>
+                </div>
+                <div class="form-group col-xs-6">
+                  <label for="last_name">Ultimo Nome</label>
+                  <input type="text" class="form-control" name="last_name" id="last_name"  value="{!! (isset($data['client']) ? $data['client']->last_name : "") !!}" placeholder="Ultimo nome do colaborador" required>
+                </div>
+                <div class="form-group col-xs-12">
+                  <label for="name">Nome de usuário</label>
+                  <input type="text" class="form-control" name="name" id="name"  value="{!! (isset($data['client']) ? $data['client']->name : "") !!}" placeholder="Nome do cliente" required>
                 </div>
               </div><!-- /.box-body -->
               <div class="box-footer">

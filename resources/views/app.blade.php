@@ -2,6 +2,7 @@
 <html>
   <head>
     <meta charset="UTF-8">
+    <meta name="csrf-token" content="{{ csrf_token() }}" />
     <title>
     	@section('title')
         @show
@@ -212,18 +213,23 @@
           <ul class="sidebar-menu">
             <li class="header">Principal</li>
             <li {!! ((Request::is('dashboard/*') || Request::is('dashboard')) ? 'class="active"' : '') !!}>
-              <a href="../dashboard">
+              <a href="{!! URL::to('dashboard') !!}">
                 <i class="fa fa-dashboard"></i> <span>Dashboard</span></i>
               </a>
             </li>
             <li {!! ((Request::is('projects/*') || Request::is('projects')) ? 'class="active"' : '') !!}>
-              <a href="../projects">
+              <a href="{!! URL::to('projects') !!}">
                 <i class="fa fa-archive"></i> <span>Projetos</span></i>
               </a>
             </li>
             <li {!! ((Request::is('clients/*') || Request::is('clients')) ? 'class="active"' : '') !!}>
-              <a href="../clients">
+              <a href="{!! URL::to('clients') !!}">
                 <i class="fa fa-group"></i> <span>Clientes</span></i>
+              </a>
+            </li>
+            <li {!! ((Request::is('users/*') || Request::is('users')) ? 'class="active"' : '') !!}>
+              <a href="{!! URL::to('users') !!}">
+                <i class="fa fa-user"></i> <span>Colaboradores</span></i>
               </a>
             </li>
           </ul>

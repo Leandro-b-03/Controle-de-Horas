@@ -10,4 +10,12 @@ class Project extends Model
 	 * @var string
 	 */
 	protected $table = 'projects';
+
+	/**
+	 * The attributes that are mass assignable.
+	 *
+	 * @var array
+	 */
+	protected $fillable = ['user_id', 'client_id', 'name', 'short_description', 'description', 'schedule_time', 'time_spend'];
+
 }

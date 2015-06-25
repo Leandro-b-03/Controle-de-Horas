@@ -19,6 +19,8 @@ class CreateProjectsTable extends Migration
             $table->string('name');
             $table->string('short_description');
             $table->text('description');
+            $table->integer('schedule_time');
+            $table->integer('time_spend');
             $table->timestamps();
         });
     }

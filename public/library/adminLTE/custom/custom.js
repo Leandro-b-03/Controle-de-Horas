@@ -1,4 +1,10 @@
 $(function () {
+    $.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        }
+    });
+
     $(':checkbox').iCheck({
         checkboxClass: 'icheckbox_square-yellow',
         radioClass: 'iradio_square-yellow',
@@ -6,23 +12,36 @@ $(function () {
     });
 
     $('#delete').click(function() {
-        var url = $('#delete').attr('data-url');
-
-        //add it to your data
-        var data = {
-            _token:$(this).data('token'),
-            id:$('#delete-id').val()
-        }
-
-        $.ajax({
-            url: url,
-            data: data,
-            method: "POST",
-            success: function(data) {
-                alert(data);
+        if ($('#delete-id').val() != '') {
+            $('#delete-form').submit();
+        } else {
+            var data = {
+                type:'failed',
+                name:$(this).attr('data-name'),
+                kind:'no-data',
+                message:'Não foram selecionados registros'
             }
-        });
+
+            $.ajax({
+                url: '/general/createMessageJSON',
+                data: data,
+                type: "GET",
+                success: function(data) {
+                    $('#messages').html(throwMessage(data));
+                }
+            });
+        }
     });
+
+    function throwMessage(data) {
+        html = '<div class="alert alert-' + data.class + ' alert-dismissable">';
+        html += '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>';
+        html += '<h4>    <i class="icon fa fa-' + data.faicon + '"></i> ' + data.status + '</h4>';
+        html += data.message;
+        html += '</div>';
+
+        return html;
+    }
 
     var table = $(".table").DataTable({
         language: {

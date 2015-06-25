@@ -23,10 +23,15 @@ Route::group(['middleware' => 'auth'], function () {
 
     Route::get('dashboard', 'DashboardController@index');
 
+    Route::get('general/createMessageJSON', 'GeneralController@createMessageJSON');
+
     Route::group(['prefix' => 'projects'], function () {
         Route::get('/', ['as' => 'projects', 'uses' => 'ProjectController@index']);
         Route::get('create', ['as' => 'projects.create', 'uses' => 'ProjectController@create']);
+        Route::get('{id}/edit', ['as' => 'projects.edit', 'uses' => 'ProjectController@edit']);
         Route::post('/', ['as' => 'projects.store', 'uses' => 'ProjectController@store']);
+        Route::delete('/', ['as' => 'projects.delete', 'uses' => 'ProjectController@delete']);
+        // Route::delete('/', ['as' => 'projects.destroy', 'uses' => 'ProjectController@destroy']);
         Route::get('{id}', ['as' => 'projects.show', 'uses' => 'ProjectController@show']);
         Route::put('{id}', ['as' => 'projects.update', 'uses' => 'ProjectController@update']);
     });
@@ -34,10 +39,23 @@ Route::group(['middleware' => 'auth'], function () {
     Route::group(['prefix' => 'clients'], function () {
         Route::get('/', ['as' => 'clients', 'uses' => 'ClientController@index']);
         Route::get('create', ['as' => 'clients.create', 'uses' => 'ClientController@create']);
+        Route::get('{id}/edit', ['as' => 'clients.edit', 'uses' => 'ClientController@edit']);
         Route::post('/', ['as' => 'clients.store', 'uses' => 'ClientController@store']);
-        Route::post('destroy', ['as' => 'clients.destroy', 'uses' => 'ClientController@destroy']);
+        Route::delete('/', ['as' => 'clients.delete', 'uses' => 'ClientController@delete']);
+        // Route::delete('/', ['as' => 'clients.destroy', 'uses' => 'ClientController@destroy']);
         Route::get('{id}', ['as' => 'clients.show', 'uses' => 'ClientController@show']);
         Route::put('{id}', ['as' => 'clients.update', 'uses' => 'ClientController@update']);
+    });
+
+    Route::group(['prefix' => 'users'], function () {
+        Route::get('/', ['as' => 'users', 'uses' => 'UserController@index']);
+        Route::get('create', ['as' => 'users.create', 'uses' => 'UserController@create']);
+        Route::get('{id}/edit', ['as' => 'users.edit', 'uses' => 'UserController@edit']);
+        Route::post('/', ['as' => 'users.store', 'uses' => 'UserController@store']);
+        Route::delete('/', ['as' => 'users.delete', 'uses' => 'UserController@delete']);
+        // Route::delete('/', ['as' => 'users.destroy', 'uses' => 'UserController@destroy']);
+        Route::get('{id}', ['as' => 'users.show', 'uses' => 'UserController@show']);
+        Route::put('{id}', ['as' => 'users.update', 'uses' => 'UserController@update']);
     });
 
     Route::group(['prefix' => 'messages'], function () {

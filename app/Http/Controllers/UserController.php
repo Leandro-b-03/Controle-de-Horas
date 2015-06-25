@@ -4,13 +4,13 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 
-use App\Client;
+use App\User;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Controllers\GeneralController;
 
-class ClientController extends Controller
+class UserController extends Controller
 {
 
     /**
@@ -20,12 +20,12 @@ class ClientController extends Controller
      */
     public function index()
     {
-        // Get all the clients
-        $clients = Client::All();
-        $data['clients'] = $clients;
+        // Get all the users
+        $users = User::All();
+        $data['users'] = $users;
 
-        // Return the clients view.
-        return view('client.index')->with('data', $data);
+        // Return the users view.
+        return view('user.index')->with('data', $data);
     }
 
     /**
@@ -35,8 +35,8 @@ class ClientController extends Controller
      */
     public function create()
     {
-        // Return the client view.
-        return view('client.create');
+        // Return the user view.
+        return view('user.create');
     }
 
     /**
@@ -61,13 +61,13 @@ class ClientController extends Controller
         );
 
         if($validator) {
-            if (Client::create( $input )) {
-                return redirect('clients')->with('return', GeneralController::createMessage('success', 'Cliente', 'create'));
+            if (User::create( $input )) {
+                return redirect('users')->with('return', GeneralController::createMessage('success', 'Colaborador', 'create'));
             } else {
-                return view('clients.create')->withInput()->with('return', GeneralController::createMessage('failed', 'Cliente', 'create'));
+                return view('users.create')->withInput()->with('return', GeneralController::createMessage('failed', 'Colaborador', 'create'));
             }
         } else {
-            return view('clients.create')->withInput()->with('return', GeneralController::createMessage('failed', 'Cliente', 'create-failed'));
+            return view('users.create')->withInput()->with('return', GeneralController::createMessage('failed', 'Colaborador', 'create-failed'));
         }
     }
 
@@ -90,12 +90,12 @@ class ClientController extends Controller
      */
     public function edit($id)
     {
-        // Retrive the client with param $id
-        $client = Client::find($id);
-        $data['client'] = $client;
+        // Retrive the user with param $id
+        $user = User::find($id);
+        $data['user'] = $user;
 
         // Return the dashboard view.
-        return view('client.create')->with('data', $data);
+        return view('user.create')->with('data', $data);
     }
 
     /**
@@ -106,21 +106,21 @@ class ClientController extends Controller
      */
     public function update($id, Request $request)
     {
-        // Get client with param $id
-        $client = Client::find($id);
+        // Get user with param $id
+        $user = User::find($id);
 
         // Get all the input from update.
         $inputs = $request->all();
 
         foreach($inputs as $input => $value) {
-            if($client->{$input})
-                $client->{$input} = $value;
+            if($user->{$input})
+                $user->{$input} = $value;
         }
 
-        if ($client->save()) {
-            return redirect('clients')->with('return', GeneralController::createMessage('success', 'Cliente', 'update'));
+        if ($user->save()) {
+            return redirect('users')->with('return', GeneralController::createMessage('success', 'Colaborador', 'update'));
         } else {
-            return view('clients.create')->withInput()->with('return', GeneralController::createMessage('failed', 'Cliente', 'update'));
+            return view('users.create')->withInput()->with('return', GeneralController::createMessage('failed', 'Colaborador', 'update'));
         }
     }
 
@@ -148,10 +148,10 @@ class ClientController extends Controller
 
         $ids = explode(',', $input['id']);
 
-        if (Client::destroy($ids)) {
-            return redirect('clients')->with('return', GeneralController::createMessage('success', 'Cliente', 'delete'));
+        if (User::destroy($ids)) {
+            return redirect('users')->with('return', GeneralController::createMessage('success', 'Colaborador', 'delete'));
         } else {
-            return redirect('clients')->with('return', GeneralController::createMessage('failed', 'Cliente', 'delete'));
+            return redirect('users')->with('return', GeneralController::createMessage('failed', 'Colaborador', 'delete'));
         }
     }
 }

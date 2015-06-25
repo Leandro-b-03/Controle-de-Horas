@@ -1,7 +1,7 @@
 @extends('app')
 
 @section('title')
-    SVLabs | Clientes
+    SVLabs | Colaboradores
 @stop
 
 @section('style')
@@ -11,8 +11,8 @@
 
 @section('content')
         <h1>
-            Clientes
-            <small>lista de clientes</small>
+            Colaboradores
+            <small>lista de colaboradores</small>
         </h1>
         <!-- <ol class="breadcrumb">
             <li><a href="#"><i class="fa fa-dashboard"></i> Dashboard</a></li>
@@ -35,7 +35,7 @@
       <!-- Default box -->
       <div class="box">
         <div class="box-header with-border">
-          <h3 class="box-title">Clientes</h3>
+          <h3 class="box-title">Colaboradores</h3>
           <div class="box-tools pull-right">
             <button class="btn btn-box-tool" data-widget="collapse" data-toggle="tooltip" title="Collapse"><i class="fa fa-minus"></i></button>
             <button class="btn btn-box-tool" data-widget="remove" data-toggle="tooltip" title="Remove"><i class="fa fa-times"></i></button>
@@ -43,39 +43,39 @@
     </div>
     <div class="box-body">
         <div class="pull-right">
-            <a href="{!! URL::to('clients/create') !!}" class="btn btn-primary">Novo cliente</a>
-            <a id="delete" data-name="Cliente" class="btn btn-danger">Deletar cliente(s)</a>
+            <a href="{!! URL::to('users/create') !!}" class="btn btn-primary">Novo colaborador</a>
+            <a id="delete" data-name="Cliente" class="btn btn-danger">Deletar colaborador(es)</a>
         </div>
         <hr class="clearfix" />
-        <table id="client-list" class="table table-bordered table-striped">
+        <table id="user-list" class="table table-bordered table-striped">
             <thead>
                 <tr>
                     <th><input type="checkbox" class="select-all" /></th>
-                    <th>Cliente</th>
-                    <th>Responsável</th>
+                    <th>Nome de usuário</th>
+                    <th>Nome</th>
                     <th>E-mail</th>
                     <th>Telefone</th>
-                    <th>Cliente desde</th>
+                    <th>Colaborador desde</th>
                     <th>Ação</th>
                 </tr>
             </thead>
-            @if($data['clients']->count())
+            @if($data['users']->count())
             <tbody>
-                @foreach($data['clients'] as $client)
+                @foreach($data['users'] as $user)
                 <tr>
-                    <td><input type="checkbox" class="delete" data-value="{!! $client->id !!}" /></td>
-                    <td>{!! $client->name !!}</td>
-                    <td>{!! $client->responsible !!}</td>
-                    <td>{!! $client->email !!}</td>
-                    <td>{!! $client->telefone !!}</td>
-                    <td>{!! date('d/m/Y', strtotime($client->created_at)) !!}</td>
-                    <td><a href="{!! URL::to('clients/' . $client->id . '/edit') !!}" class="btn btn-primary">Editar</a></td>
+                    <td><input type="checkbox" class="delete" data-value="{!! $user->id !!}" /></td>
+                    <td>{!! $user->username !!}</td>
+                    <td>{!! $user->first_name . ' ' . $user->last_name !!}</td>
+                    <td>{!! $user->email !!}</td>
+                    <td>{!! $user->phone !!}</td>
+                    <td>{!! date('d/m/Y', strtotime($user->created_at)) !!}</td>
+                    <td><a href="{!! URL::to('users/' . $user->id . '/edit') !!}" class="btn btn-primary">Editar</a></td>
                 </tr>
                 @endforeach
             </tbody>
             @endif
         </table>
-        {!! Form::open(array('route' => 'clients.delete', 'method' => 'DELETE', 'id' => 'delete-form')) !!}
+        {!! Form::open(array('route' => 'users.delete', 'method' => 'DELETE', 'id' => 'delete-form')) !!}
             <input type="hidden" name="id" id="delete-id" name="delete_id" value="">
         {!! Form::close() !!}
     </div><!-- /.box-body -->

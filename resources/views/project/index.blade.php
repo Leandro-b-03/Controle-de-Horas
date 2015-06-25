@@ -23,6 +23,15 @@
 
     <!-- Main content -->
     <section class="content">
+      <div id="messages">
+        @if (Session::get('return'))
+        <div class="alert alert-{!! Session::get('return')['class'] !!} alert-dismissable">
+          <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+          <h4>    <i class="icon fa fa-{!! Session::get('return')['faicon'] !!}"></i> {!! Session::get('return')['status'] !!}!</h4>
+          {!! Session::get('return')['message'] !!}
+        </div>
+        @endif
+      </div>
       <!-- Default box -->
       <div class="box">
         <div class="box-header with-border">
@@ -33,6 +42,11 @@
         </div>
     </div>
     <div class="box-body">
+        <div class="pull-right">
+            <a href="{!! URL::to('projects/create') !!}" class="btn btn-primary">Novo projeto</a>
+            <a id="delete" data-name="Projeto" class="btn btn-danger">Deletar projeto(s)</a>
+        </div>
+        <hr class="clearfix" />
         <table id="client-list" class="table table-bordered table-striped">
             <thead>
                 <tr>
@@ -40,20 +54,28 @@
                     <th>Nome</th>
                     <th>Descrição</th>
                     <th>Cliente</th>
+                    <th>Gerente do projeto</th>
                     <th>Projeto criado em</th>
                     <th>Horas programadas</th>
+                    <th>Horas restantes</th>
                     <th>Ação</th>
                 </tr>
             </thead>
             @if($data['projects']->count())
             <tbody>
+                @foreach($data['projects'] as $project)
                 <tr>
-                    <td><input type="checkbox" id="" /></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
+                    <td><input type="checkbox" class="delete" data-value="{!! $project->id !!}" /></td>
+                    <td>{!! $project->name !!}</td>
+                    <td>{!! $project->short_description !!}</td>
+                    <td>{!! $project->client_id()->name !!}</td>
+                    <td>{!! $project->user_id()->name !!}</td>
+                    <td>{!! date('d/m/Y', strtotime($project->created_at)) !!}</td>
+                    <td>{!! $project->schedule_time !!}</td>
+                    <td>{!! $project->time_spend !!}</td>
+                    <td><a href="{!! URL::to('projects/' . $project->id . '/edit') !!}" class="btn btn-primary">Editar</a></td>
                 </tr>
+                @endforeach
             </tbody>
             @endif
         </table>
