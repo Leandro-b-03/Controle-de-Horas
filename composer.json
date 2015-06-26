@@ -12,7 +12,9 @@
         "raveren/kint": "^1.0@dev",
         "davejamesmiller/laravel-breadcrumbs": "dev-master",
         "cmgmyr/messenger": "dev-master",
-        "laravelcollective/html": "dev-master"
+        "laravelcollective/html": "dev-master",
+        "cartalyst/sentry": "^2.2@dev",
+        "zizaco/entrust": "dev-master"
     },
     "require-dev": {
         "fzaninotto/faker": "~1.4",

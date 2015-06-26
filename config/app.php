@@ -156,6 +156,7 @@ return [
         Collective\Html\HtmlServiceProvider::class,
         DaveJamesMiller\Breadcrumbs\ServiceProvider::class,
         Cmgmyr\Messenger\MessengerServiceProvider::class,
+        Zizaco\Entrust\EntrustServiceProvider::class,
 
         /*
          * Application Service Providers...
@@ -216,6 +217,7 @@ return [
         'Form1'         => Illuminate\Html\FormFacade::class,
         'HTML1'         => Illuminate\Html\HtmlFacade::class,
         'Breadcrumbs'   => DaveJamesMiller\Breadcrumbs\Facade::class,
+        'Entrust'       => Zizaco\Entrust\EntrustFacade::class,
 
     ],
 
