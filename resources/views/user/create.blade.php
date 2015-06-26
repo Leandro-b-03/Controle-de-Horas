@@ -7,6 +7,8 @@
 @section('style')
     <!-- DATA TABLES -->
     {!! Html::style('library/adminLTE/plugins/datatables/dataTables.bootstrap.css') !!}
+    <!-- Datepicker -->
+    {!! Html::style("library/adminLTE/plugins/datepicker/datepicker3.css") !!}
 @stop
 
 @section('content')
@@ -33,14 +35,14 @@
             </div><!-- /.box-header -->
             <!-- form start -->
             @if (Request::is('users/create'))
-            {!! Form::open(array('route' => 'users.store')) !!}
+            {!! Form::open(array('route' => 'users.store', 'id' => 'user-form')) !!}
             @else
-            {!! Form::open(array('route' => [ 'users.update', $data['user']->id ], 'method' => 'PUT')) !!}
+            {!! Form::open(array('route' => [ 'users.update', $data['user']->id ], 'method' => 'PUT', 'id' => 'user-form')) !!}
             @endif
               <div class="box-body">
                 <div class="form-group col-xs-12">
-                  <label for="name">Nome de usuário</label>
-                  <input type="text" class="form-control" name="name" id="name"  value="{!! (isset($data['user']) ? $data['user']->name : "") !!}" placeholder="Nome do Colaborador" required>
+                  <label for="username">Nome de usuário</label>
+                  <input type="text" class="form-control" name="username" id="username"  value="{!! (isset($data['user']) ? $data['user']->username : "") !!}" placeholder="Nome do Colaborador" required>
                 </div>
                 <div class="form-group col-xs-6">
                   <label for="first_name">Primeiro Nome</label>
@@ -60,11 +62,11 @@
                 </div>
                 <div class="form-group col-xs-6">
                   <label for="rg">RG</label>
-                  <input type="rg" class="form-control" name="rg" id="rg"  value="{!! (isset($data['user']) ? $data['user']->rg : "") !!}" placeholder="RG do colaborador" required>
+                  <input type="rg" class="form-control input-mask" data-mask="99.999.999-*" name="rg" id="rg"  value="{!! (isset($data['user']) ? $data['user']->rg : "") !!}" placeholder="RG do colaborador" required>
                 </div>
                 <div class="form-group col-xs-6">
-                  <label for="last_name">CPF</label>
-                  <input type="text" class="form-control" name="last_name" id="last_name"  value="{!! (isset($data['user']) ? $data['user']->last_name : "") !!}" placeholder="CPF do colaborador" required>
+                  <label for="cpf">CPF</label>
+                  <input type="text" class="form-control input-mask" data-mask="999.999.999-99" name="cpf" id="cpf"  value="{!! (isset($data['user']) ? $data['user']->cpf : "") !!}" placeholder="CPF do colaborador" required>
                 </div>
                 <div class="form-group col-xs-6">
                   <label for="name">Foto</label>
@@ -85,12 +87,24 @@
                   <input type='hidden' class="form-control" id='photo' name='photo' value='{!! (isset($data['user']) ? $data['user']->photo : "source/img-not-found.jpg") !!}' />
                 </div>
                 <div class="form-group col-xs-6">
+                  <label for="birthday">Data de nascimento</label>
+                  <div class="input-group">
+                    <div class="input-group-addon">
+                      <i class="fa fa-calendar"></i>
+                    </div>
+                    <input type="text" class="form-control date input-mask" data-mask="99/99/9999" name="birthday" id="birthday"  value="{!! (isset($data['user']) ? date('d/m/Y', strtotime($data['user']->birthday)) : "") !!}" placeholder="Data de nascimento do colaborador" required>
+                  </div>
+                </div>
+                <div class="form-group col-xs-6">
+                  <hr />
+                </div>
+                <div class="form-group col-xs-6">
                   <label for="password">Senha</label>
-                  <input type="text" class="form-control" name="password" id="password"  value="{!! (isset($data['user']) ? $data['user']->password : "") !!}" placeholder="Senha" required>
+                  <input type="password" class="form-control" name="password" id="password"  value="" placeholder="Senha" required>
                 </div>
                 <div class="form-group col-xs-6">
                   <label for="confirm_password">Confirmar Senha</label>
-                  <input type="text" class="form-control" name="confirm_password" id="confirm_password"  value="{!! (isset($data['user']) ? $data['user']->confirm_password : "") !!}" placeholder="Confirmar Senha" required>
+                  <input type="password" class="form-control" name="confirm_password" id="confirm_password"  value="" placeholder="Confirmar Senha" required>
                 </div>
               </div><!-- /.box-body -->
               <div class="box-footer">
@@ -105,4 +119,22 @@
 @endsection
 
 @section('scripts')
+    <!-- Jasny-bootstrap -->
+    {!! Html::script("library/adminLTE/plugins/jasny-bootstrap/js/jasny-bootstrap.min.js") !!}
+    <!-- Datepicker -->
+    {!! Html::script("library/adminLTE/plugins/datepicker/bootstrap-datepicker.js") !!}
+
+    <script>
+    $('.user-form').validate({
+      rules : {
+          password : {
+              minlength : 5
+          },
+          password_confirm : {
+              minlength : 5,
+              equalTo : "#password"
+          }
+      }
+    });
+    </script>
 @endsection

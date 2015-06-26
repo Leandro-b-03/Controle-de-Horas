@@ -43,26 +43,28 @@ $(function () {
         return html;
     }
 
-    var table = $(".table").DataTable({
-        language: {
-            processing:     "Carregando...",
-            search:         "Pesquisar&nbsp;:",
-            lengthMenu:     "Exibir _MENU_ registros",
-            info:           "Exibindo de _START_ a _END_ de _TOTAL_ registros",
-            infoEmpty:      "Exibindo de 0 a 0 de 0 registros",
-            infoFiltered:   "(filtrado de _MAX_ registros no total)",
-            infoPostFix:    "",
-            loadingRecords: "Carregando...",
-            zeroRecords:    "Não foram encontrados resultados",
-            emptyTable:     "Não há dados disponíveis na tabela",
-            paginate: {
-                first:      "«« Primeiro",
-                previous:   "« Anterior",
-                next:       "Seguinte »",
-                last:       "Último »»"
+    if ($(".table").length > 0) {
+        var table = $(".table").DataTable({
+            language: {
+                processing:     "Carregando...",
+                search:         "Pesquisar&nbsp;:",
+                lengthMenu:     "Exibir _MENU_ registros",
+                info:           "Exibindo de _START_ a _END_ de _TOTAL_ registros",
+                infoEmpty:      "Exibindo de 0 a 0 de 0 registros",
+                infoFiltered:   "(filtrado de _MAX_ registros no total)",
+                infoPostFix:    "",
+                loadingRecords: "Carregando...",
+                zeroRecords:    "Não foram encontrados resultados",
+                emptyTable:     "Não há dados disponíveis na tabela",
+                paginate: {
+                    first:      "«« Primeiro",
+                    previous:   "« Anterior",
+                    next:       "Seguinte »",
+                    last:       "Último »»"
+                }
             }
-        }
-    });
+        });
+    }
 
     var deselect = true;
     var delete_id = [];
@@ -100,6 +102,18 @@ $(function () {
 
         $('#delete-id').val(delete_id.join(','))
     });
+
+    if (typeof inputmask !== 'undefined' && $.isFunction(inputmask)) {
+        $('.input-mask').inputmask();
+    }
+
+    // console.log($.isFunction(datepicker));
+
+    // if ($.isFunction(datepicker)) {
+        $('.date').datepicker({
+            format: 'dd/mm/yyyy'
+        });
+    // }
 });
 
 function responsive_filemanager_callback(field_id){

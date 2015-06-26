@@ -61,6 +61,9 @@ class UserController extends Controller
         );
 
         if($validator) {
+            $input['birthday'] = date('Y-m-d', strtotime(str_replace('/', '-', $inputs['birthday'])));
+            $input['password'] = bcrypt($input['password']);
+
             if (User::create( $input )) {
                 return redirect('users')->with('return', GeneralController::createMessage('success', 'Colaborador', 'create'));
             } else {
@@ -111,6 +114,9 @@ class UserController extends Controller
 
         // Get all the input from update.
         $inputs = $request->all();
+
+        $inputs['birthday'] = date('Y-m-d', strtotime(str_replace('/', '-', $inputs['birthday'])));
+        $inputs['password'] = bcrypt($inputs['password']);
 
         foreach($inputs as $input => $value) {
             if($user->{$input})
