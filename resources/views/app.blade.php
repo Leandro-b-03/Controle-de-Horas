@@ -22,6 +22,8 @@
     {!! Html::style("library/adminLTE/dist/css/skins/skin-yellow-light.min.css") !!}
     <!-- iCheck -->
     {!! Html::style("library/adminLTE/plugins/iCheck/square/yellow.css") !!}
+    <!-- Custom style -->
+    {!! Html::style("library/adminLTE/custom/custom.css") !!}
 
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -40,7 +42,7 @@
         <!-- Logo -->
         <a href="../../index2.html" class="logo">
           <!-- mini logo for sidebar mini 50x50 pixels -->
-          <span class="logo-mini"><b>SV</b>L</span>
+          <span class="logo-mini"><b>SV</b></span>
           <!-- logo for regular state and mobile devices -->
           <span class="logo-lg"><b>SVL</b>abs</span>
         </a>
@@ -243,7 +245,20 @@
       <div class="content-wrapper">
         <!-- Content Header (Page header) -->
         <section class="content-header">
-              @yield('content')
+          @yield('content')
+          <div id="filemanager" class="modal">
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                  <h4 class="modal-title">Gerenciador de arquivos</h4>
+                </div>
+                <div class="modal-body">
+                  <iframe src="{{ URL::to('/') }}/filemanager/dialog.php?type=1&field_id=photo"></iframe>
+                </div>
+              </div><!-- /.modal-content -->
+            </div><!-- /.modal-dialog -->
+          </div><!-- /.modal -->
         </section><!-- /.content -->
       </div><!-- /.content-wrapper -->
 
@@ -436,7 +451,7 @@
     {!! Html::script("library/adminLTE/plugins/iCheck/icheck.min.js") !!}
     @section('scripts')
     @show
-    <!-- iCheck -->
+    <!-- Custom script -->
     {!! Html::script("library/adminLTE/custom/custom.js") !!}
   </body>
 </html>
