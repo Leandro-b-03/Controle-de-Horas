@@ -35,9 +35,9 @@
             </div><!-- /.box-header -->
             <!-- form start -->
             @if (Request::is('users/create'))
-            {!! Form::open(array('route' => 'users.store', 'id' => 'user-form')) !!}
+            {!! Form::open(array('route' => 'users.store', 'name' => 'user-form')) !!}
             @else
-            {!! Form::open(array('route' => [ 'users.update', $data['user']->id ], 'method' => 'PUT', 'id' => 'user-form')) !!}
+            {!! Form::open(array('route' => [ 'users.update', $data['user']->id ], 'method' => 'PUT', 'name' => 'user-form')) !!}
             @endif
               <div class="box-body">
                 <div class="form-group col-xs-12">
@@ -123,18 +123,38 @@
     {!! Html::script("library/adminLTE/plugins/jasny-bootstrap/js/jasny-bootstrap.min.js") !!}
     <!-- Datepicker -->
     {!! Html::script("library/adminLTE/plugins/datepicker/bootstrap-datepicker.js") !!}
+    <!-- Validete.js -->
+    {!! Html::script("library/adminLTE/plugins/validate/validate.min.js") !!}
 
     <script>
-    $('.user-form').validate({
-      rules : {
-          password : {
-              minlength : 5
-          },
-          password_confirm : {
-              minlength : 5,
-              equalTo : "#password"
+      var validator = new FormValidator('user-form', [{
+          name: 'req',
+          display: 'required',
+          rules: 'required'
+      }, {
+          name: 'alphanumeric',
+          rules: 'alpha_numeric'
+      }, {
+          name: 'password',
+          rules: 'required'
+      }, {
+          name: 'confirm_password',
+          display: 'password confirmation',
+          rules: 'required|matches[password]'
+      }, {
+          name: 'email',
+          rules: 'valid_email',
+          depends: function() {
+              return Math.random() > .5;
           }
-      }
-    });
+      }, {
+          name: 'minlength',
+          display: 'min length',
+          rules: 'min_length[8]'
+      }], function(errors, event) {
+          if (errors.length > 0) {
+              // Show the errors
+          }
+      });
     </script>
 @endsection
