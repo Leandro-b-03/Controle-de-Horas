@@ -226,13 +226,22 @@
             </li>
             <li {!! ((Request::is('clients/*') || Request::is('clients')) ? 'class="active"' : '') !!}>
               <a href="{!! URL::to('clients') !!}">
-                <i class="fa fa-group"></i> <span>Clientes</span></i>
+                <i class="fa fa-user-secret"></i> <span>Clientes</span></i>
               </a>
             </li>
-            <li {!! ((Request::is('users/*') || Request::is('users')) ? 'class="active"' : '') !!}>
-              <a href="{!! URL::to('users') !!}">
-                <i class="fa fa-user"></i> <span>Colaboradores</span></i>
+            <li class="treeview {!! ((Request::is('users/*') || Request::is('users')) || (Request::is('group-permissions/*') || Request::is('group-permissions')) ? 'active' : '') !!}">
+              <a href="#">
+                <i class="fa fa-user"></i> <span>Colaboradores</span>
+                <i class="fa fa-angle-left pull-right"></i>
               </a>
+              <ul class="treeview-menu">
+                <li {!! ((Request::is('users/*') || Request::is('users')) ? 'class="active"' : '') !!}>
+                  <a href="{!! URL::to('users') !!}"><i class="fa fa-user"></i> Lista de colaboradores</a>
+                </li>
+                <li {!! ((Request::is('group-permissions/*') || Request::is('group-permissions')) ? 'class="active"' : '') !!}>
+                  <a href="{!! URL::to('group-permissions') !!}"><i class="fa fa-group"></i> Permissões de grupo</a>
+                </li>
+              </ul>
             </li>
           </ul>
         </section>
@@ -273,14 +282,14 @@
       <aside class="control-sidebar control-sidebar-dark">                
         <!-- Create the tabs -->
         <ul class="nav nav-tabs nav-justified control-sidebar-tabs">
-          <li><a href="#control-sidebar-home-tab" data-toggle="tab"><i class="fa fa-home"></i></a></li>
+          <li class="active"><a href="#control-sidebar-home-tab" data-toggle="tab"><i class="fa fa-home"></i></a></li>
           
           <li><a href="#control-sidebar-settings-tab" data-toggle="tab"><i class="fa fa-gears"></i></a></li>
         </ul>
         <!-- Tab panes -->
         <div class="tab-content">
           <!-- Home tab content -->
-          <div class="tab-pane" id="control-sidebar-home-tab">
+          <div class="tab-pane active" id="control-sidebar-home-tab">
             <h3 class="control-sidebar-heading">Recent Activity</h3>
             <ul class='control-sidebar-menu'>
               <li>

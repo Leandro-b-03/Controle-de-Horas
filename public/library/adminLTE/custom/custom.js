@@ -109,11 +109,11 @@ $(function () {
 
     // console.log($.isFunction(datepicker));
 
-    // if ($.isFunction(datepicker)) {
+    if ($('.date').length > 0) {
         $('.date').datepicker({
             format: 'dd/mm/yyyy'
         });
-    // }
+    }
 });
 
 function responsive_filemanager_callback(field_id){

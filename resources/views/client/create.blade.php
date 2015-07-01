@@ -52,7 +52,7 @@
                 </div>
                 <div class="form-group col-xs-4">
                   <label for="phone">Telefone</label>
-                  <input type="text" class="form-control" name="phone" id="phone"  value="{!! (isset($data['client']) ? $data['client']->phone : "") !!}" placeholder="Telefone do responsável" required>
+                  <input type="text" class="form-control input-mask" data-mask="(99) 9999-9999" name="phone" id="phone"  value="{!! (isset($data['client']) ? $data['client']->phone : "") !!}" placeholder="Telefone do responsável" required>
                 </div>
               </div><!-- /.box-body -->
               <div class="box-footer">
@@ -67,4 +67,6 @@
 @endsection
 
 @section('scripts')
+    <!-- Jasny-bootstrap -->
+    {!! Html::script("library/adminLTE/plugins/jasny-bootstrap/js/jasny-bootstrap.min.js") !!}
 @endsection

@@ -58,6 +58,17 @@ Route::group(['middleware' => 'auth'], function () {
         Route::put('{id}', ['as' => 'users.update', 'uses' => 'UserController@update']);
     });
 
+    Route::group(['prefix' => 'group-permissions'], function () {
+        Route::get('/', ['as' => 'group-permissions', 'uses' => 'GroupPermissionController@index']);
+        Route::get('create', ['as' => 'group-permissions.create', 'uses' => 'GroupPermissionController@create']);
+        Route::get('{id}/edit', ['as' => 'group-permissions.edit', 'uses' => 'GroupPermissionController@edit']);
+        Route::post('/', ['as' => 'group-permissions.store', 'uses' => 'GroupPermissionController@store']);
+        Route::delete('/', ['as' => 'group-permissions.delete', 'uses' => 'GroupPermissionController@delete']);
+        // Route::delete('/', ['as' => 'group-permissions.destroy', 'uses' => 'GroupPermissionController@destroy']);
+        Route::get('{id}', ['as' => 'group-permissions.show', 'uses' => 'GroupPermissionController@show']);
+        Route::put('{id}', ['as' => 'group-permissions.update', 'uses' => 'GroupPermissionController@update']);
+    });
+
     Route::group(['prefix' => 'messages'], function () {
         Route::get('/', ['as' => 'messages', 'uses' => 'MessagesController@index']);
         Route::get('create', ['as' => 'messages.create', 'uses' => 'MessagesController@create']);
