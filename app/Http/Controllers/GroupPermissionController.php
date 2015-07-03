@@ -4,8 +4,11 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 
+use DB;
+use Lang;
 use Route;
-use App\GroupPermission;
+use App\Role;
+use App\Permission;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
@@ -22,7 +25,7 @@ class GroupPermissionController extends Controller
     public function index()
     {
         // Get all the groups
-        $groups = GroupPermission::All();
+        $groups = Role::All();
         $data['groups'] = $groups;
 
         // Return the groups view.
@@ -70,28 +73,72 @@ class GroupPermissionController extends Controller
      */
     public function store(Request $request)
     {
-        $input = $request->all();
-        
-        // Validation of the fields
-        $validator = Validator::make(
-            [
-                $input
-            ],
-            [
-                'name' => 'required',
-                'password' => 'required|min:8',
-                'email' => 'required|email|unique:users'
-            ]
-        );
+        DB::beginTransaction();
 
-        if($validator) {
-            if (GroupPermission::create( $input )) {
-                return redirect('groups')->with('return', GeneralController::createMessage('success', 'GroupPermissione', 'create'));
+        $input = $request->all();
+
+        $role = new Role();
+        $role->name         = $input['name'];
+        $role->display_name = $input['display_name']; // optional
+        $role->description  = $input['description']; // optional
+        
+        if ($role->save()) {
+            $permissions = array();
+            foreach ($input['permission'] as $controller => $permission_controller) {
+                foreach ($permission_controller as $permission => $on) {
+                    $permission_exists = Permission::findName($controller . '@' . $permission)->get()->all();
+
+                    if (count($permission_exists) == 0) {
+                        $new_permission = new Permission();
+                        $new_permission->name = $controller . '@' . $permission;
+
+                        switch ($permission) {
+                            case 'create':
+                                $new_permission->display_name = Lang::get('general.criar') . $controller; // optional
+                                // Allow a user to...
+                                $new_permission->description  = Lang::get('general.criar') . ' novo ' . $controller; // optional
+                                break;
+                            case 'edit':
+                                $new_permission->display_name = 'Editar ' . $controller; // optional
+                                // Allow a user to...
+                                $new_permission->description  = 'Editar novo ' . $controller; // optional
+                                break;
+                            case 'index':
+                                $new_permission->display_name = 'Visualizar ' . $controller; // optional
+                                // Allow a user to...
+                                $new_permission->description  = 'Visualizar novo ' . $controller; // optional
+                                break;
+                            case 'delete':
+                                $new_permission->display_name = 'Deletar ' . $controller; // optional
+                                // Allow a user to...
+                                $new_permission->description  = 'Deletar novo ' . $controller; // optional
+                                break;
+                            
+                            default:
+                                # code...
+                                break;
+                        }
+
+                        $new_permission->save();
+                    } else {
+                        $new_permission = $permission_exists[0];
+                    }
+
+                    $permissions[] = $new_permission;
+                }
+            }
+
+            // equivalent to $owner->perms()->sync(array($createPost->id, $editUser->id));
+            if ($role->attachPermissions($permissions)) {
+                DB::commit();
+                return redirect('group-permissions')->with('return', GeneralController::createMessage('success', 'Grupo de Permiss&otilde;es', 'create'));
             } else {
-                return view('groups.create')->withInput()->with('return', GeneralController::createMessage('failed', 'GroupPermissione', 'create'));
+                DB::rollback();
+                return redirect('group-permissions/create')->withInput()->with('return', GeneralController::createMessage('failed', 'Grupo de Permiss&otilde;es', 'create'));
             }
         } else {
-            return view('groups.create')->withInput()->with('return', GeneralController::createMessage('failed', 'GroupPermissione', 'create-failed'));
+            DB::rollback();
+            return redirect('group-permissions/create')->withInput()->with('return', GeneralController::createMessage('failed', 'Grupo de Permiss&otilde;es', 'create-failed'));
         }
     }
 
@@ -115,7 +162,7 @@ class GroupPermissionController extends Controller
     public function edit($id)
     {
         // Retrive the group with param $id
-        $group = GroupPermission::find($id);
+        $group = Role::find($id);
         $data['group'] = $group;
 
         // Return the dashboard view.
@@ -131,21 +178,23 @@ class GroupPermissionController extends Controller
     public function update($id, Request $request)
     {
         // Get group with param $id
-        $group = GroupPermission::find($id);
+        $group = Role::find($id);
 
         // Get all the input from update.
         $inputs = $request->all();
 
-        foreach($inputs as $input => $value) {
+        d($inputs);
+
+        /*foreach($inputs as $input => $value) {
             if($group->{$input})
                 $group->{$input} = $value;
         }
 
         if ($group->save()) {
-            return redirect('groups')->with('return', GeneralController::createMessage('success', 'GroupPermissione', 'update'));
+            return redirect('group-permissions')->with('return', GeneralController::createMessage('success', 'Grupo de Permiss&otilde;es', 'update'));
         } else {
-            return view('groups.create')->withInput()->with('return', GeneralController::createMessage('failed', 'GroupPermissione', 'update'));
-        }
+            return view('group-permission.create')->withInput()->with('return', GeneralController::createMessage('failed', 'Grupo de Permiss&otilde;es', 'update'));
+        }*/
     }
 
     /**
@@ -172,10 +221,10 @@ class GroupPermissionController extends Controller
 
         $ids = explode(',', $input['id']);
 
-        if (GroupPermission::destroy($ids)) {
-            return redirect('groups')->with('return', GeneralController::createMessage('success', 'GroupPermissione', 'delete'));
+        if (Role::destroy($ids)) {
+            return redirect('group-permissions')->with('return', GeneralController::createMessage('success', 'Grupo de Permiss&otilde;es', 'delete'));
         } else {
-            return redirect('groups')->with('return', GeneralController::createMessage('failed', 'GroupPermissione', 'delete'));
+            return redirect('group-permissions')->with('return', GeneralController::createMessage('failed', 'Grupo de Permiss&otilde;es', 'delete'));
         }
     }
 }

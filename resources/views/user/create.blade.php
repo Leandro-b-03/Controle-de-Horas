@@ -31,7 +31,7 @@
           <!-- general form elements -->
           <div class="box box-primary">
             <div class="box-header">
-              <h3 class="box-title">Criar</h3>
+              <h3 class="box-title">{!! Lang::get('general.criar'); !!}</h3>
             </div><!-- /.box-header -->
             <!-- form start -->
             @if (Request::is('users/create'))

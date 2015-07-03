@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 
+use DB;
 use App\User;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
@@ -65,6 +66,7 @@ class UserController extends Controller
             $input['password'] = bcrypt($input['password']);
 
             if (User::create( $input )) {
+                DB::commit();
                 return redirect('users')->with('return', GeneralController::createMessage('success', 'Colaborador', 'create'));
             } else {
                 return view('users.create')->withInput()->with('return', GeneralController::createMessage('failed', 'Colaborador', 'create'));
@@ -109,6 +111,8 @@ class UserController extends Controller
      */
     public function update($id, Request $request)
     {
+        DB::beginTransaction();
+        
         // Get user with param $id
         $user = User::find($id);
 
@@ -126,6 +130,7 @@ class UserController extends Controller
         if ($user->save()) {
             return redirect('users')->with('return', GeneralController::createMessage('success', 'Colaborador', 'update'));
         } else {
+            DB::rollback();
             return view('users.create')->withInput()->with('return', GeneralController::createMessage('failed', 'Colaborador', 'update'));
         }
     }
@@ -149,14 +154,18 @@ class UserController extends Controller
      */
     public function delete(Request $request)
     {
+        DB::beginTransaction();
+
         // Get all the input data received.
         $input = $request->all();
 
         $ids = explode(',', $input['id']);
 
         if (User::destroy($ids)) {
+            DB::commit();
             return redirect('users')->with('return', GeneralController::createMessage('success', 'Colaborador', 'delete'));
         } else {
+            DB::rollback();
             return redirect('users')->with('return', GeneralController::createMessage('failed', 'Colaborador', 'delete'));
         }
     }

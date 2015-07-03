@@ -1,7 +1,7 @@
 <!DOCTYPE html>
-<html>
+<html lang="pt_BR">
   <head>
-    <meta charset="UTF-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <meta name="csrf-token" content="{{ csrf_token() }}" />
     <title>
     	@section('title')
@@ -149,7 +149,7 @@
                     <img src="{!! Auth::user()->photo !!}" class="img-circle" alt="User Image" />
                     <p>
                       {!! Auth::user()->first_name !!} {!! Auth::user()->last_name !!} - Web Developer
-                      <small>Membro desde {!! date('F \d\e Y', strtotime(Auth::user()->created_at)) !!}</small>
+                      <small>{!! Lang::get('general.member-since', ['month-year' => date('F \d\e Y', strtotime(Auth::user()->created_at))]) !!}</small>
                     </p>
                   </li>
                   <!-- Menu Body -->
@@ -216,30 +216,30 @@
             <li class="header">Principal</li>
             <li {!! ((Request::is('dashboard/*') || Request::is('dashboard')) ? 'class="active"' : '') !!}>
               <a href="{!! URL::to('dashboard') !!}">
-                <i class="fa fa-dashboard"></i> <span>Dashboard</span></i>
+                <i class="fa fa-dashboard"></i> <span>{!! Lang::get('general.dashboard') !!}</span></i>
               </a>
             </li>
             <li {!! ((Request::is('projects/*') || Request::is('projects')) ? 'class="active"' : '') !!}>
               <a href="{!! URL::to('projects') !!}">
-                <i class="fa fa-archive"></i> <span>Projetos</span></i>
+                <i class="fa fa-archive"></i> <span>{!! Lang::get('general.projects') !!}</span></i>
               </a>
             </li>
             <li {!! ((Request::is('clients/*') || Request::is('clients')) ? 'class="active"' : '') !!}>
               <a href="{!! URL::to('clients') !!}">
-                <i class="fa fa-user-secret"></i> <span>Clientes</span></i>
+                <i class="fa fa-user-secret"></i> <span>{!! Lang::get('general.clients') !!}</span></i>
               </a>
             </li>
             <li class="treeview {!! ((Request::is('users/*') || Request::is('users')) || (Request::is('group-permissions/*') || Request::is('group-permissions')) ? 'active' : '') !!}">
               <a href="#">
-                <i class="fa fa-user"></i> <span>Colaboradores</span>
+                <i class="fa fa-user"></i> <span>{!! Lang::get('general.users') !!}</span>
                 <i class="fa fa-angle-left pull-right"></i>
               </a>
               <ul class="treeview-menu">
                 <li {!! ((Request::is('users/*') || Request::is('users')) ? 'class="active"' : '') !!}>
-                  <a href="{!! URL::to('users') !!}"><i class="fa fa-user"></i> Lista de colaboradores</a>
+                  <a href="{!! URL::to('users') !!}"><i class="fa fa-user"></i> {!! Lang::get('general.users-list') !!}</a>
                 </li>
                 <li {!! ((Request::is('group-permissions/*') || Request::is('group-permissions')) ? 'class="active"' : '') !!}>
-                  <a href="{!! URL::to('group-permissions') !!}"><i class="fa fa-group"></i> Permissões de grupo</a>
+                  <a href="{!! URL::to('group-permissions') !!}"><i class="fa fa-group"></i> {!! Lang::get('general.group-permissions') !!}</a>
                 </li>
               </ul>
             </li>

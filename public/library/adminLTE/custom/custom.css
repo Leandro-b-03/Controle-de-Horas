@@ -165,29 +165,7 @@ form .img-polaroid {
 	transform: translateX(0px) rotate(0deg);
 }
 
-.text-angle {
-	/* Safari */
-	-webkit-transform: rotate(-45deg);
-
-	/* Firefox */
-	-moz-transform: rotate(-45deg);
-
-	/* IE */
-	-ms-transform: rotate(-45deg);
-
-	/* Opera */
-	-o-transform: rotate(-45deg);
-
-	/* Internet Explorer */
-	filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=3);
-}
-
-.roles {
-	width: auto;
-	height: auto;
-	overflow-y: scroll;
-}
-
-.roles .controllers-role {
-	width: 5%;
+.bootstrap-switch .bootstrap-switch-handle-on.bootstrap-switch-primary,
+.bootstrap-switch .bootstrap-switch-handle-off.bootstrap-switch-primary {
+    background: #00E347 !important;
 }

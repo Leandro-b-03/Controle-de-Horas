@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 
+use DB;
 use App\Client;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
@@ -64,9 +65,11 @@ class ClientController extends Controller
             if (Client::create( $input )) {
                 return redirect('clients')->with('return', GeneralController::createMessage('success', 'Cliente', 'create'));
             } else {
+                DB::rollback();
                 return view('clients.create')->withInput()->with('return', GeneralController::createMessage('failed', 'Cliente', 'create'));
             }
         } else {
+            DB::rollback();
             return view('clients.create')->withInput()->with('return', GeneralController::createMessage('failed', 'Cliente', 'create-failed'));
         }
     }
@@ -106,6 +109,8 @@ class ClientController extends Controller
      */
     public function update($id, Request $request)
     {
+        DB::beginTransaction();
+
         // Get client with param $id
         $client = Client::find($id);
 
@@ -118,8 +123,10 @@ class ClientController extends Controller
         }
 
         if ($client->save()) {
+            DB::commit();
             return redirect('clients')->with('return', GeneralController::createMessage('success', 'Cliente', 'update'));
         } else {
+            DB::rollback();
             return view('clients.create')->withInput()->with('return', GeneralController::createMessage('failed', 'Cliente', 'update'));
         }
     }
@@ -143,14 +150,18 @@ class ClientController extends Controller
      */
     public function delete(Request $request)
     {
+        DB::beginTransaction();
+        
         // Get all the input data received.
         $input = $request->all();
 
         $ids = explode(',', $input['id']);
 
         if (Client::destroy($ids)) {
+            DB::commit();
             return redirect('clients')->with('return', GeneralController::createMessage('success', 'Cliente', 'delete'));
         } else {
+            DB::rollback();
             return redirect('clients')->with('return', GeneralController::createMessage('failed', 'Cliente', 'delete'));
         }
     }

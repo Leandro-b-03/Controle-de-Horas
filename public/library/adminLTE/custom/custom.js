@@ -43,27 +43,29 @@ $(function () {
         return html;
     }
 
-    if ($(".table").length > 0) {
-        var table = $(".table").DataTable({
-            language: {
-                processing:     "Carregando...",
-                search:         "Pesquisar&nbsp;:",
-                lengthMenu:     "Exibir _MENU_ registros",
-                info:           "Exibindo de _START_ a _END_ de _TOTAL_ registros",
-                infoEmpty:      "Exibindo de 0 a 0 de 0 registros",
-                infoFiltered:   "(filtrado de _MAX_ registros no total)",
-                infoPostFix:    "",
-                loadingRecords: "Carregando...",
-                zeroRecords:    "Não foram encontrados resultados",
-                emptyTable:     "Não há dados disponíveis na tabela",
-                paginate: {
-                    first:      "«« Primeiro",
-                    previous:   "« Anterior",
-                    next:       "Seguinte »",
-                    last:       "Último »»"
+    if ($.fn.DataTable) {
+        if ($(".table").length > 0) {
+            var table = $(".table").not('.permission').DataTable({
+                language: {
+                    processing:     "Carregando...",
+                    search:         "Pesquisar&nbsp;:",
+                    lengthMenu:     "Exibir _MENU_ registros",
+                    info:           "Exibindo de _START_ a _END_ de _TOTAL_ registros",
+                    infoEmpty:      "Exibindo de 0 a 0 de 0 registros",
+                    infoFiltered:   "(filtrado de _MAX_ registros no total)",
+                    infoPostFix:    "",
+                    loadingRecords: "Carregando...",
+                    zeroRecords:    "Não foram encontrados resultados",
+                    emptyTable:     "Não há dados disponíveis na tabela",
+                    paginate: {
+                        first:      "«« Primeiro",
+                        previous:   "« Anterior",
+                        next:       "Seguinte »",
+                        last:       "Último »»"
+                    }
                 }
-            }
-        });
+            });
+        }
     }
 
     var deselect = true;
@@ -113,6 +115,11 @@ $(function () {
         $('.date').datepicker({
             format: 'dd/mm/yyyy'
         });
+    }
+
+    if ($(".permission-check").length > 0) {
+        $(".permission-check").iCheck('destroy');
+        $(".permission-check").bootstrapSwitch();
     }
 });
 

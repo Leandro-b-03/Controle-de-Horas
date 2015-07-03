@@ -1,5 +1,6 @@
 <?php namespace App\Http\Controllers;
 
+use Lang;
 use App\Http\Requests;
 use Illuminate\Http\Request;
 
@@ -45,26 +46,26 @@ class GeneralController extends Controller {
 			switch ($kind) {
 				case 'create':
 					$message = array(
-						'status' => 'Sucesso',
+						'status' => Lang::get('general.success'),
 						'class' => 'success',
 						'faicon' => 'check',
-						'message' =>  $name .' criado com sucesso!'
+						'message' =>  Lang::get('general.success-create', ['name' => $name])
 					);
 					break;
 				case 'update':
 					$message = array(
-						'status' => 'Sucesso',
+						'status' => Lang::get('general.success'),
 						'class' => 'success',
 						'faicon' => 'check',
-						'message' =>  $name .' alterado com sucesso!'
+						'message' => Lang::get('general.success-update', ['name' => $name])
 					);
 					break;
 				case 'delete':
 					$message = array(
-						'status' => 'Sucesso',
+						'status' => Lang::get('general.success'),
 						'class' => 'success',
 						'faicon' => 'check',
-						'message' =>  $name .'(s) deletado(s) com sucesso!'
+						'message' => Lang::get('general.success-delete', ['name' => $name])
 					);
 				default:
 					# code...
@@ -75,39 +76,39 @@ class GeneralController extends Controller {
 			switch ($kind) {
 			 	case 'create':
 			 		$message = array(
-						'status' => 'Falhou',
+						'status' => Lang::get('general.failed'),
 						'class' => 'danger',
 						'faicon' => 'ban',
-						'message' => 'Ocorreu um ploblema ao criar o ' . strtolower($name) . '.'
+						'message' => Lang::get('general.failed-create', ['name' => strtolower($name)])
 					);
 			 		break;
 		 		case 'update':
 					$message = array(
-						'status' => 'Falhou',
+						'status' => Lang::get('general.failed'),
 						'class' => 'danger',
 						'faicon' => 'ban',
-						'message' => 'Ocorreu um ploblema ao alterar o ' . strtolower($name) . '.'
+						'message' => Lang::get('general.failed-update', ['name' => strtolower($name)])
 					);
 			 		break;
 			 	case 'create-failed':
 			 		$message = array(
-						'status' => 'Falhou',
+						'status' => Lang::get('general.failed'),
 						'class' => 'danger',
 						'faicon' => 'ban',
-						'message' => 'Campos com valores errados.'
+						'message' => Lang::get('general.failed-create-failed', ['name' => strtolower($name)])
 					);
 			 		break;
 			 	case 'delete':
 			 		$message = array(
-						'status' => 'Falhou',
+						'status' => Lang::get('general.failed'),
 						'class' => 'danger',
 						'faicon' => 'ban',
-						'message' => 'Houve erro ao deletar o(s) ' .  strtolower($name) . '(s).'
+						'message' => Lang::get('general.failed-delete', ['name' => strtolower($name)])
 					);
 			 		break;
 			 	default:
 			 		$message = array(
-						'status' => 'Falhou',
+						'status' => Lang::get('general.failed'),
 						'class' => 'danger',
 						'faicon' => 'ban',
 						'message' => $custonMessage
