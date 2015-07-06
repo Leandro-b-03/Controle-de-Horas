@@ -21,4 +21,18 @@ return [
     'ph-description'                => 'Descrição do grupo',
     ''                              => '',
 
+    // Controller
+    'create-new'                    => 'Criar novo ',
+    'edit-new'                      => 'Editar novo ',
+    'view-new'                      => 'Visualizar os ',
+    'delete-new'                    => 'Deletar o(s) ',
+    ''                              => '',
+
+    // View sentences
+    'create'                        => 'criar grupo',
+    'edit'                          => 'editar grupo',
+    '' => '',
+    '' => '',
+    '' => '',
+
 ];

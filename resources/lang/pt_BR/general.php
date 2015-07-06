@@ -13,6 +13,13 @@ return [
     |
     */
 
+    // App
+    'app-name'                      => 'SVLabs',
+    'app-tittle'                    => 'SVLabs | :controller',
+    '' => '',
+    '' => '',
+    '' => '',
+
     // Basics
     'name'                          => 'Nome',
     'description'                   => 'Descri&ccedil;&atilde;o',
@@ -26,10 +33,15 @@ return [
     'offline'                       => 'Offiline',
     'away'                          => 'Ausente',
     'busy'                          => 'Ocupado',
-    'page'                          => 'P&aaculte;gina',
+    'page'                          => 'P&aacute;gina',
+    'save'                          => 'Salvar',
+    'back'                          => 'Voltar',
+    'select-all'                    => 'Selecionar Todos',
+    'deselect-all'                  => 'Deselecionar Todos',
     ''                              => '',
 
     // Menu & Controller
+    'principal'                     => 'Principal',
     'dashboard'                     => 'Dashboard',
     'projects'                      => 'Projetos',
     'clients'                       => 'Clientes',
@@ -55,10 +67,10 @@ return [
     'success-create'                => ':name criado com sucesso!',
     'success-update'                => ':name alterado com sucesso!',
     'success-delete'                => ':name(s) deletado(s) com sucesso!',
-    'failed-create'                 => 'Ocorreu um ploblema ao criar o :name',
-    'failed-update'                 => 'Ocorreu um ploblema ao alterar o :name',
+    'failed-create'                 => 'Ocorreu um ploblema ao criar o/a :name',
+    'failed-update'                 => 'Ocorreu um ploblema ao alterar o/a :name',
     'failed-create-failed'          => 'Campos com valores errados.',
-    'failed-delete'                 => 'Houve erro ao deletar o(s) :name(s)',
+    'failed-delete'                 => 'Houve erro ao deletar o(s)/a(s) :name(s)',
     ''                              => '',
 
     // Sentences with variable :string
