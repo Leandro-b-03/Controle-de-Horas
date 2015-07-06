@@ -28,6 +28,9 @@ return [
     'busy'                          => 'Ocupado',
     'page'                          => 'P&aaculte;gina',
     ''                              => '',
+    ''                              => '',
+    ''                              => '',
+    ''                              => '',
 
     // Menu & Controller
     'dashboard'                     => 'Dashboard',
