@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 
 use DB;
 use App\User;
+use App\Role;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
@@ -36,8 +37,16 @@ class UserController extends Controller
      */
     public function create()
     {
+        // Create a data variable for view can consulting
+        $data = [];
+
+        // Get all Roles
+        $roles = Role::all();
+
+        $data['roles'] = $roles;
+
         // Return the user view.
-        return view('user.create');
+        return view('user.create')->with('data', $data);
     }
 
     /**
@@ -47,31 +56,40 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
+        DB::beginTransaction();
+
         $input = $request->all();
         
-        // Validation of the fields
-        $validator = Validator::make(
-            [
-                $input
-            ],
-            [
-                'name' => 'required',
-                'password' => 'required|min:8',
-                'email' => 'required|email|unique:users'
-            ]
-        );
+        try {
+            // Validation of the fields
+            $validator = Validator::make(
+                [
+                    $input
+                ],
+                [
+                    'name' => 'required',
+                    'password' => 'required|min:8',
+                    'email' => 'required|email|unique:users'
+                ]
+            );
 
-        if($validator) {
-            $input['birthday'] = date('Y-m-d', strtotime(str_replace('/', '-', $inputs['birthday'])));
-            $input['password'] = bcrypt($input['password']);
+            if($validator) {
+                $input['birthday'] = date('Y-m-d', strtotime(str_replace('/', '-', $inputs['birthday'])));
+                $input['password'] = bcrypt($input['password']);
 
-            if (User::create( $input )) {
-                DB::commit();
-                return redirect('users')->with('return', GeneralController::createMessage('success', 'Colaborador', 'create'));
+                if (User::create( $input )) {
+                    DB::commit();
+                    return redirect('users')->with('return', GeneralController::createMessage('success', 'Colaborador', 'create'));
+                } else {
+                DB::rollback();
+                    return view('users.create')->withInput()->with('return', GeneralController::createMessage('failed', 'Colaborador', 'create'));
+                }
             } else {
-                return view('users.create')->withInput()->with('return', GeneralController::createMessage('failed', 'Colaborador', 'create'));
+                DB::rollback();
+                return view('users.create')->withInput()->with('return', GeneralController::createMessage('failed', 'Colaborador', 'create-failed'));
             }
-        } else {
+        } catch (Exeption $e) {
+            DB::rollback();
             return view('users.create')->withInput()->with('return', GeneralController::createMessage('failed', 'Colaborador', 'create-failed'));
         }
     }
@@ -95,6 +113,14 @@ class UserController extends Controller
      */
     public function edit($id)
     {
+        // Create a data variable for view can consulting
+        $data = [];
+
+        // Get all Roles
+        $roles = Role::all();
+
+        $data['roles'] = $roles;
+
         // Retrive the user with param $id
         $user = User::find($id);
         $data['user'] = $user;
@@ -119,17 +145,37 @@ class UserController extends Controller
         // Get all the input from update.
         $inputs = $request->all();
 
-        $inputs['birthday'] = date('Y-m-d', strtotime(str_replace('/', '-', $inputs['birthday'])));
-        $inputs['password'] = bcrypt($inputs['password']);
+        try {
+            // Attach role to the user
+            $role = Role::find($inputs['role']);
+            
+            $user->detachRole($user->roles()->first());
+            
+            $user->attachRole($role);
 
-        foreach($inputs as $input => $value) {
-            if($user->{$input})
-                $user->{$input} = $value;
-        }
+            $inputs['birthday'] = date('Y-m-d', strtotime(str_replace('/', '-', $inputs['birthday'])));
+            
+            if ($inputs['password'] != '')
+                $inputs['password'] = bcrypt($inputs['password']);
+            else
+                $inputs['password'] = 'n';
 
-        if ($user->save()) {
-            return redirect('users')->with('return', GeneralController::createMessage('success', 'Colaborador', 'update'));
-        } else {
+            $fillable = $user->getFillable([]);
+
+            foreach($inputs as $input => $value) {
+                if ($user->{$input} || in_array($input, $fillable))
+                    if ($input != 'password' && $value != 'n')
+                        $user->{$input} = $value;
+            }
+
+            if ($user->save()) {
+                DB::commit();
+                return redirect('users')->with('return', GeneralController::createMessage('success', 'Colaborador', 'update'));
+            } else {
+                DB::rollback();
+                return view('users.create')->withInput()->with('return', GeneralController::createMessage('failed', 'Colaborador', 'update'));
+            }
+        } catch (Exception $e) {
             DB::rollback();
             return view('users.create')->withInput()->with('return', GeneralController::createMessage('failed', 'Colaborador', 'update'));
         }

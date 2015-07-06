@@ -89,25 +89,25 @@
                       <tr>
                         <td> {!! Lang::get('general.' . $controller) !!}</td>
                         <td><div class="btn-group btn-toggle">
-                            <input type="checkbox" class="permission-check" name="permission[{!! $controller !!}][index]" {!! (isset($data['role']) ? ($data['role']->perms()->findName($controller . '@index') ? 'checked' : '') : (isset($permissions[$controller]['index']) ? 'checked' : '')) !!}>
+                            <input type="checkbox" class="permission-check" name="permission[{!! $controller !!}][index]" {!! (isset($data['role']) ? ($data['role']->perms()->findName($controller . '@index')->get()->count() != 0 ? 'checked' : '') : (isset($permissions[$controller]['index']) ? 'checked' : '')) !!}>
                           </div></td>
                         <td><div class="btn-group btn-toggle">
-                            <input type="checkbox" class="permission-check" name="permission[{!! $controller !!}][create]" {!! (isset($data['role']) ? ($data['role']->perms()->findName($controller . '@create') ? 'checked' : '') : (isset($permissions[$controller]['create']) ? 'checked' : '')) !!}>
+                            <input type="checkbox" class="permission-check" name="permission[{!! $controller !!}][create]" {!! (isset($data['role']) ? ($data['role']->perms()->findName($controller . '@create')->get()->count() != 0 ? 'checked' : '') : (isset($permissions[$controller]['create']) ? 'checked' : '')) !!}>
                           </div></td>
                         <td><div class="btn-group btn-toggle">
-                            <input type="checkbox" class="permission-check" name="permission[{!! $controller !!}][edit]" {!! (isset($data['role']) ? ($data['role']->perms()->findName($controller . '@edit') ? 'checked' : '') : (isset($permissions[$controller]['edit']) ? 'checked' : ''))!!}>
+                            <input type="checkbox" class="permission-check" name="permission[{!! $controller !!}][edit]" {!! (isset($data['role']) ? ($data['role']->perms()->findName($controller . '@edit')->get()->count() != 0 ? 'checked' : '') : (isset($permissions[$controller]['edit']) ? 'checked' : ''))!!}>
                           </div></td>
                         <td><div class="btn-group btn-toggle">
-                            <input type="checkbox" class="permission-check" name="permission[{!! $controller !!}][delete]" {!! (isset($data['role']) ? ($data['role']->perms()->findName($controller . '@delete') ? 'checked' : '') : (isset($permissions[$controller]['delete']) ? 'checked' : '')) !!}>
+                            <input type="checkbox" class="permission-check" name="permission[{!! $controller !!}][delete]" {!! (isset($data['role']) ? ($data['role']->perms()->findName($controller . '@delete')->get()->count() != 0 ? 'checked' : '') : (isset($permissions[$controller]['delete']) ? 'checked' : '')) !!}>
                           </div></td>
                       </tr>
                       @endforeach
                     </tbody>
-                    <tfooter>
+                    {{-- <tfooter>
                       <tr>
                       <td colspan="5"><a id="select-all" class="btn btn-primary">{!! Lang::get('general.select-all') !!}</a> <a class="btn btn-primary">{!! Lang::get('general.deselect-all') !!}</a></td>
                       </tr>
-                    </tfooter>
+                    </tfooter> --}}
                   </table>
                 </div>
               </div><!-- /.box-body -->
@@ -127,9 +127,9 @@
     {!! Html::script("library/adminLTE/plugins/jasny-bootstrap/js/jasny-bootstrap.min.js") !!}
     <!-- bootstrap-switch -->
     {!! Html::script("library/adminLTE/plugins/bootstrap-switch/dist/js/bootstrap-switch.min.js") !!}
-    <script type="text/javascript">
+    {{-- <script type="text/javascript">
       $('#select-all').click(function() {
         $('.permission-check').bootstrapSwitch('setState' , true).addClass('switch-on');
       });
-    </script>
+    </script> --}}
 @endsection

@@ -1,7 +1,7 @@
 @extends('app')
 
 @section('title')
-    SVLabs | Grupo de permissões
+    {!! Lang::get('general.app-tittle', ['controller' => Lang::get('general.group-permissions')]) !!}
 @stop
 
 @section('style')
@@ -11,8 +11,8 @@
 
 @section('content')
         <h1>
-            Grupo de permissões
-            <small>lista dos grupos</small>
+            {!! Lang::get('general.group-permissions') !!}
+            <small>{!! Lang::get('group-permissions.list') !!}</small>
         </h1>
         <!-- <ol class="breadcrumb">
             <li><a href="#"><i class="fa fa-dashboard"></i> Dashboard</a></li>
@@ -35,7 +35,7 @@
       <!-- Default box -->
       <div class="box">
         <div class="box-header with-border">
-          <h3 class="box-title">Grupo de permissões</h3>
+          <h3 class="box-title">{!! Lang::get('general.group-permissions') !!}</h3>
           <div class="box-tools pull-right">
             <button class="btn btn-box-tool" data-widget="collapse" data-toggle="tooltip" title="Collapse"><i class="fa fa-minus"></i></button>
             <button class="btn btn-box-tool" data-widget="remove" data-toggle="tooltip" title="Remove"><i class="fa fa-times"></i></button>
@@ -43,17 +43,18 @@
     </div>
     <div class="box-body">
         <div class="pull-right">
-            <a href="{!! URL::to('group-permissions/create') !!}" class="btn btn-primary">Novo grupo</a>
-            <a id="delete" data-name="Cliente" class="btn btn-danger">Deletar grupo(s)</a>
+            <a href="{!! URL::to('group-permissions/create') !!}" class="btn btn-primary">{!! Lang::get('group-permissions.new') !!}</a>
+            <a id="delete" data-name="Cliente" class="btn btn-danger">{!! Lang::get('group-permissions.delete') !!}</a>
         </div>
         <hr class="clearfix" />
         <table id="group-list" class="table table-bordered table-striped">
             <thead>
                 <tr>
                     <th><input type="checkbox" class="select-all" /></th>
-                    <th>Grupo</th>
-                    <th>Grupo desde</th>
-                    <th>Ação</th>
+                    <th>{!! Lang::get('group-permissions.title-name') !!}</th>
+                    <th>{!! Lang::get('group-permissions.title-display_name') !!}</th>
+                    <th>{!! Lang::get('group-permissions.title-created_at') !!}</th>
+                    <th>{!! Lang::get('general.action') !!}</th>
                 </tr>
             </thead>
             @if($data['groups']->count())
@@ -62,8 +63,9 @@
                 <tr>
                     <td><input type="checkbox" class="delete" data-value="{!! $group->id !!}" /></td>
                     <td>{!! $group->name !!}</td>
+                    <td>{!! $group->display_name !!}</td>
                     <td>{!! date('d/m/Y', strtotime($group->created_at)) !!}</td>
-                    <td><a href="{!! URL::to('group-permissions/' . $group->id . '/edit') !!}" class="btn btn-primary">Editar</a></td>
+                    <td><a href="{!! URL::to('group-permissions/' . $group->id . '/edit') !!}" class="btn btn-primary">{!! Lang::get('general.edit') !!}</a></td>
                 </tr>
                 @endforeach
             </tbody>

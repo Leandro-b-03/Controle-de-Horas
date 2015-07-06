@@ -212,20 +212,88 @@ class GroupPermissionController extends Controller
         $group = Role::find($id);
 
         // Get all the input from update.
-        $inputs = $request->all();
+        $input = $request->all();
 
-        d($inputs);
+        DB::beginTransaction();
 
-        /*foreach($inputs as $input => $value) {
-            if($group->{$input})
-                $group->{$input} = $value;
+        try {
+            $role = Role::find($id);
+            $role->name         = $input['name'];
+            $role->display_name = $input['display_name']; // optional
+            $role->description  = $input['description']; // optional
+
+            $all_permissions = Permission::all();
+
+            $role->detachPermissions($all_permissions);
+            
+            if ($role->save()) {
+                $permissions = array();
+                foreach ($input['permission'] as $controller => $permission_controller) {
+                    foreach ($permission_controller as $permission => $on) {
+                        $permission_exists = Permission::findName($controller . '@' . $permission)->get()->all();
+
+                        if (count($permission_exists) == 0) {
+                            $new_permission = new Permission();
+                            $new_permission->name = $controller . '@' . $permission;
+
+                            switch ($permission) {
+                                case 'create':
+                                    $new_permission->display_name = Lang::get('general.create') . ' ' . $controller; // optional
+                                    // Allow a user to...
+                                    $new_permission->description  = Lang::get('group-permissions.create-new') . $controller; // optional
+                                    break;
+                                case 'edit':
+                                    $new_permission->display_name = Lang::get('general.edit') . ' ' . $controller; // optional
+                                    // Allow a user to...
+                                    $new_permission->description  = Lang::get('group-permissions.edit-new') . $controller; // optional
+                                    break;
+                                case 'index':
+                                    $new_permission->display_name = Lang::get('general.view') . ' ' . $controller; // optional
+                                    // Allow a user to...
+                                    $new_permission->description  = Lang::get('group-permissions.view-new') . $controller; // optional
+                                    break;
+                                case 'delete':
+                                    $new_permission->display_name = Lang::get('general.delete') . ' ' . $controller; // optional
+                                    // Allow a user to...
+                                    $new_permission->description  = Lang::get('group-permissions.delete-new') . $controller; // optional
+                                    break;
+                                
+                                default:
+                                    # code...
+                                    break;
+                            }
+
+                            $new_permission->save();
+                        } else {
+                            $new_permission = $permission_exists[0];
+                        }
+
+                        $permissions[] = $new_permission;
+                    }
+                }
+
+                try {
+                    // equivalent to $owner->perms()->sync(array($createPost->id, $editUser->id));
+                    if ($role->attachPermissions($permissions) == null) {
+                        DB::commit();
+                        return redirect('group-permissions')->with('return', GeneralController::createMessage('success', Lang::get('general.' . $this->controller_name), 'update'));
+                    } else {
+                        DB::rollback();
+                        return redirect('group-permissions/' . $id .'/edit')->withInput()->with('return', GeneralController::createMessage('failed', Lang::get('general.' . $this->controller_name), 'update'));
+                    }
+                } catch (\Exception $e) {
+                    DB::rollback();
+                    return redirect('group-permissions/' . $id .'/edit')->withInput()->with('return', GeneralController::createMessage('failed', Lang::get('general.' . $this->controller_name), 'update-failed'));
+                }
+            } else {
+                DB::rollback();
+                return redirect('group-permissions/' . $id .'/edit')->withInput()->with('return', GeneralController::createMessage('failed', Lang::get('general.' . $this->controller_name), 'update-failed'));
+            }
+        } catch (\Exception $e) {
+            die(d($e));
+            DB::rollback();
+            return redirect('group-permissions/create')->withInput()->with('return', GeneralController::createMessage('failed', Lang::get('general.' . $this->controller_name), 'create-failed'));
         }
-
-        if ($group->save()) {
-            return redirect('group-permissions')->with('return', GeneralController::createMessage('success', Lang::get('general.' . $this->controller_name), 'update'));
-        } else {
-            return view('group-permission.create')->withInput()->with('return', GeneralController::createMessage('failed', Lang::get('general.' . $this->controller_name), 'update'));
-        }*/
     }
 
     /**

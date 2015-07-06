@@ -1,7 +1,7 @@
 @extends('app')
 
 @section('title')
-    SVLabs | Clientes
+    {!! Lang::get('general.app-tittle', ['controller' => Lang::get('general.users')]) !!}
 @stop
 
 @section('style')
@@ -13,8 +13,12 @@
 
 @section('content')
         <h1>
-            Clientes
-            <small>criar clientes</small>
+            {!! Lang::get('general.users') !!}
+            @if (Request::is('users/create'))
+            <small>{!! Lang::get('users.create') !!}</small>
+            @else
+            <small>{!! Lang::get('users.edit') !!}</small>
+            @endif
         </h1>
         <!-- <ol class="breadcrumb">
             <li><a href="#"><i class="fa fa-dashboard"></i> Dashboard</a></li>
@@ -31,7 +35,11 @@
           <!-- general form elements -->
           <div class="box box-primary">
             <div class="box-header">
-              <h3 class="box-title">{!! Lang::get('general.criar'); !!}</h3>
+              @if (Request::is('group-permissions/create'))
+              <h3 class="box-title">{!! Lang::get('general.create'); !!}</h3>
+              @else
+              <h3 class="box-title">{!! Lang::get('general.edit'); !!}</h3>
+              @endif
             </div><!-- /.box-header -->
             <!-- form start -->
             @if (Request::is('users/create'))
@@ -58,15 +66,26 @@
                 </div>
                 <div class="form-group col-xs-4">
                   <label for="phone">Telefone</label>
-                  <input type="text" class="form-control" name="phone" id="phone"  value="{!! (isset($data['user']) ? $data['user']->phone : "") !!}" placeholder="Telefone do responsável" required>
+                  <input type="text" class="form-control input-mask" data-mask="(99) 99999-9999" name="phone" id="phone"  value="{!! (isset($data['user']) ? $data['user']->phone : "") !!}" placeholder="Telefone do responsável" required>
                 </div>
-                <div class="form-group col-xs-6">
+                <div class="form-group col-xs-4">
                   <label for="rg">RG</label>
                   <input type="rg" class="form-control input-mask" data-mask="99.999.999-*" name="rg" id="rg"  value="{!! (isset($data['user']) ? $data['user']->rg : "") !!}" placeholder="RG do colaborador" required>
                 </div>
-                <div class="form-group col-xs-6">
+                <div class="form-group col-xs-4">
                   <label for="cpf">CPF</label>
                   <input type="text" class="form-control input-mask" data-mask="999.999.999-99" name="cpf" id="cpf"  value="{!! (isset($data['user']) ? $data['user']->cpf : "") !!}" placeholder="CPF do colaborador" required>
+                </div>
+                <div class="form-group col-xs-4">
+                  <label for="cpf">Grupo de permissões</label>
+                  <select name="role" class="form-control" required>
+                    <option>-- Selecione --</option>
+                    @foreach ($data['roles'] as $role)
+                    <?php ($data['user']->roles()->first()->id == $role->id) ?>
+                    <option value="{!! $role->id !!}" {!! (isset($data['user']) && $data['user']->roles()->first()->id == $role->id ? 'selected="selected"' : "") !!}">{!! $role->display_name !!}</option>
+                    @endforeach
+                  </select>
+                  {{-- <input type="text" class="form-control" name="role" id="role"  value="{!! (isset($data['user']) ? $data['user']->role : "") !!}" placeholder="CPF do colaborador" required> --}}
                 </div>
                 <div class="form-group col-xs-6">
                   <label for="name">Foto</label>
@@ -100,11 +119,11 @@
                 </div>
                 <div class="form-group col-xs-6">
                   <label for="password">Senha</label>
-                  <input type="password" class="form-control" name="password" id="password"  value="" placeholder="Senha" required>
+                  <input type="password" class="form-control" name="password" id="password"  value="" placeholder="Senha" {!! (Request::is('users/create') ? 'required' : '') !!}>
                 </div>
                 <div class="form-group col-xs-6">
                   <label for="confirm_password">Confirmar Senha</label>
-                  <input type="password" class="form-control" name="confirm_password" id="confirm_password"  value="" placeholder="Confirmar Senha" required>
+                  <input type="password" class="form-control" name="confirm_password" id="confirm_password"  value="" placeholder="Confirmar Senha" {!! (Request::is('users/create') ? 'required' : '') !!}>
                 </div>
               </div><!-- /.box-body -->
               <div class="box-footer">

@@ -38,7 +38,7 @@ return [
     'back'                          => 'Voltar',
     'select-all'                    => 'Selecionar Todos',
     'deselect-all'                  => 'Deselecionar Todos',
-    ''                              => '',
+    'action'                        => 'A&ccedil;&atilde;o',
     ''                              => '',
     ''                              => '',
     ''                              => '',
