@@ -29,6 +29,15 @@
 
     <!-- Main content -->
     <section class="content">
+      <div id="messages">
+        @if (Session::get('return'))
+        <div class="alert alert-{!! Session::get('return')['class'] !!} alert-dismissable">
+          <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+          <h4>    <i class="icon fa fa-{!! Session::get('return')['faicon'] !!}"></i> {!! Session::get('return')['status'] !!}!</h4>
+          {!! Session::get('return')['message'] !!}
+        </div>
+        @endif
+      </div>
       <div class="row">
         <!-- left column -->
         <div class="col-md-8">
@@ -45,57 +54,58 @@
             @if (Request::is('users/create'))
             {!! Form::open(array('route' => 'users.store', 'name' => 'user-form')) !!}
             @else
-            {!! Form::open(array('route' => [ 'users.update', $data['user']->id ], 'method' => 'PUT', 'name' => 'user-form')) !!}
+            {!! Form::open(array('route' => [ 'users.update', $data['user']->id ], 'method' => 'PUT', 'name' => 'user-form', 'id' => 'edit')) !!}
             @endif
               <div class="box-body">
                 <div class="form-group col-xs-12">
-                  <label for="username">Nome de usuário</label>
-                  <input type="text" class="form-control" name="username" id="username"  value="{!! (isset($data['user']) ? $data['user']->username : "") !!}" placeholder="Nome do Colaborador" required>
+                  <label for="username">{!! Lang::get('users.label-username') !!}</label>
+                  <input type="text" class="form-control" name="username" id="username"  value="{!! (isset($data['user']) ? $data['user']->username : "") !!}" placeholder="{!! Lang::get('users.ph-username') !!}" data-validation="length alphanumeric" data-validation-length="3-12" data-validation-error-msg="{!! Lang::get('users.error-username') !!}" required>
                 </div>
                 <div class="form-group col-xs-6">
-                  <label for="first_name">Primeiro Nome</label>
-                  <input type="first_name" class="form-control" name="first_name" id="first_name"  value="{!! (isset($data['user']) ? $data['user']->first_name : "") !!}" placeholder="Primeiro nome do colaborador" required>
+                  <label for="first_name">{!! Lang::get('users.label-first_name') !!}</label>
+                  <input type="first_name" class="form-control" name="first_name" id="first_name"  value="{!! (isset($data['user']) ? $data['user']->first_name : "") !!}" placeholder="{!! Lang::get('users.ph-first_name') !!}"  data-validation="length alphanumeric" data-validation-length="3-40" data-validation-error-msg="{!! Lang::get('users.error-first_name') !!}" required>
                 </div>
                 <div class="form-group col-xs-6">
-                  <label for="last_name">Ultimo Nome</label>
-                  <input type="text" class="form-control" name="last_name" id="last_name"  value="{!! (isset($data['user']) ? $data['user']->last_name : "") !!}" placeholder="Ultimo nome do colaborador" required>
+                  <label for="last_name">{!! Lang::get('users.label-last_name') !!}</label>
+                  <input type="text" class="form-control" name="last_name" id="last_name"  value="{!! (isset($data['user']) ? $data['user']->last_name : "") !!}" placeholder="{!! Lang::get('users.ph-last_name') !!}"  data-validation="length alphanumeric" data-validation-length="3-40" data-validation-error-msg="{!! Lang::get('users.error-last_name') !!}" required>
                 </div>
                 <div class="form-group col-xs-8">
-                  <label for="email">E-mail</label>
-                  <input type="email" class="form-control" name="email" id="email"  value="{!! (isset($data['user']) ? $data['user']->email : "") !!}" placeholder="E-mail do responsável" required>
+                  <label for="email">{!! Lang::get('users.label-email') !!}</label>
+                  <input type="email" class="form-control" name="email" id="email"  value="{!! (isset($data['user']) ? $data['user']->email : "") !!}" placeholder="{!! Lang::get('users.ph-email') !!}" data-validation="email" data-validation-error-msg="{!! Lang::get('users.error-email') !!}" required>
                 </div>
                 <div class="form-group col-xs-4">
-                  <label for="phone">Telefone</label>
-                  <input type="text" class="form-control input-mask" data-mask="(99) 99999-9999" name="phone" id="phone"  value="{!! (isset($data['user']) ? $data['user']->phone : "") !!}" placeholder="Telefone do responsável" required>
+                  <label for="phone">{!! Lang::get('users.label-phone') !!}</label>
+                  <input type="text" class="form-control input-mask" data-mask="(99) *****-****" name="phone" id="phone"  value="{!! (isset($data['user']) ? $data['user']->phone : "") !!}" placeholder="{!! Lang::get('users.ph-phone') !!}"  data-validation="custom" data-validation-regexp="^\([1-9]{2}\)\ [2-9][0-9]{3,4}\-[0-9_]{3,4}$" data-validation-error-msg="{!! Lang::get('users.error-phone') !!}" required>
                 </div>
                 <div class="form-group col-xs-4">
-                  <label for="rg">RG</label>
-                  <input type="rg" class="form-control input-mask" data-mask="99.999.999-*" name="rg" id="rg"  value="{!! (isset($data['user']) ? $data['user']->rg : "") !!}" placeholder="RG do colaborador" required>
+                  <label for="rg">{!! Lang::get('users.label-rg') !!}</label>
+                  <input type="rg" class="form-control input-mask" data-mask="99.999.999-*" name="rg" id="rg"  value="{!! (isset($data['user']) ? $data['user']->rg : "") !!}" placeholder="{!! Lang::get('users.ph-rg') !!}"  data-validation="custom" data-validation-regexp="^[0-9]{2}\.[0-9]{3}\.[0-9]{3}-[X0-9]$" data-validation-error-msg="{!! Lang::get('users.error-rg') !!}" required>
                 </div>
                 <div class="form-group col-xs-4">
-                  <label for="cpf">CPF</label>
-                  <input type="text" class="form-control input-mask" data-mask="999.999.999-99" name="cpf" id="cpf"  value="{!! (isset($data['user']) ? $data['user']->cpf : "") !!}" placeholder="CPF do colaborador" required>
+                  <label for="cpf">{!! Lang::get('users.label-cpf') !!}</label>
+                  <input type="text" class="form-control input-mask" data-mask="999.999.999-99" name="cpf" id="cpf"  value="{!! (isset($data['user']) ? $data['user']->cpf : "") !!}" placeholder="{!! Lang::get('users.ph-cpf') !!}"  data-validation="custom" data-validation-regexp="^[0-9]{3}\.?[0-9]{3}\.?[0-9]{3}\-?[0-9]{2}$" data-validation-error-msg="{!! Lang::get('users.error-cpf') !!}" required>
                 </div>
                 <div class="form-group col-xs-4">
-                  <label for="cpf">Grupo de permissões</label>
+                  <label for="role">{!! Lang::get('general.group-permissions') !!}</label>
                   <select name="role" class="form-control" required>
-                    <option>-- Selecione --</option>
+                    <option>{!! Lang::get('general.select') !!}</option>
                     @foreach ($data['roles'] as $role)
-                    <?php ($data['user']->roles()->first()->id == $role->id) ?>
-                    <option value="{!! $role->id !!}" {!! (isset($data['user']) && $data['user']->roles()->first()->id == $role->id ? 'selected="selected"' : "") !!}">{!! $role->display_name !!}</option>
+                    <option value="{!! $role->id !!}" {!! (isset($data['user']) && ($data['user']->roles() != null) ? (($data['user']->roles()->first()->id == $role->id) == 1 ? 'selected="selected"' : "") : "") !!}>{!! $role->display_name !!}</option>
                     @endforeach
                   </select>
-                  {{-- <input type="text" class="form-control" name="role" id="role"  value="{!! (isset($data['user']) ? $data['user']->role : "") !!}" placeholder="CPF do colaborador" required> --}}
+                </div>
+                <div class="form-group col-xs-12">
+                  <hr />
                 </div>
                 <div class="form-group col-xs-6">
-                  <label for="name">Foto</label>
+                  <label>{!! Lang::get('users.label-photo') !!}</label>
                   <br />
                   <ul class="ch-grid">
                     <li>
                       <div class="ch-item"> 
                         <div class="ch-info">
-                          <h3>Trocar foto</h3>
-                          <p><a href="#filemanager" role="button" class="" data-toggle="modal">Abrir gerenciador</a></p>
+                          <h3>{!! Lang::get('users.h3-change_photo') !!}</h3>
+                          <p><a href="#filemanager" role="button" class="" data-toggle="modal">{!! Lang::get('users.a-open_filemanager') !!}</a></p>
                         </div>
                         <div class="ch-thumb ch-img-1">
                           <img id="image" src="{{ URL::to('/') }}/{{ (isset($data['user']) ? $data['user']->photo : "uploads/img-not-found.jpg") }}">
@@ -106,29 +116,29 @@
                   <input type='hidden' class="form-control" id='photo' name='photo' value='{!! (isset($data['user']) ? $data['user']->photo : "source/img-not-found.jpg") !!}' />
                 </div>
                 <div class="form-group col-xs-6">
-                  <label for="birthday">Data de nascimento</label>
+                  <label for="birthday">{!! Lang::get('users.label-birthday') !!}</label>
                   <div class="input-group">
                     <div class="input-group-addon">
                       <i class="fa fa-calendar"></i>
                     </div>
-                    <input type="text" class="form-control date input-mask" data-mask="99/99/9999" name="birthday" id="birthday"  value="{!! (isset($data['user']) ? date('d/m/Y', strtotime($data['user']->birthday)) : "") !!}" placeholder="Data de nascimento do colaborador" required>
+                    <input type="text" class="form-control date input-mask" data-mask="99/99/9999" name="birthday" id="birthday"  value="{!! (isset($data['user']) ? date('d/m/Y', strtotime($data['user']->birthday)) : "") !!}" placeholder="{!! Lang::get('users.ph-birthday') !!}"  data-validation="date" data-validation-format="dd/mm/yyyy" data-validation-error-msg="{!! Lang::get('users.error-birthday') !!}" required>
                   </div>
                 </div>
                 <div class="form-group col-xs-6">
                   <hr />
                 </div>
                 <div class="form-group col-xs-6">
-                  <label for="password">Senha</label>
-                  <input type="password" class="form-control" name="password" id="password"  value="" placeholder="Senha" {!! (Request::is('users/create') ? 'required' : '') !!}>
+                  <label for="password_confirmation">{!! Lang::get('users.label-password') !!}</label>
+                  <input type="password" class="form-control" name="password_confirmation" id="password_confirmation"  value="" placeholder="{!! Lang::get('users.ph-password') !!}" {!! (Request::is('users/create') ? 'required' : '') !!} data-validation="length" data-validation-length="min8" data-validation-error-msg="{!! Lang::get('users.error-password') !!}">
                 </div>
                 <div class="form-group col-xs-6">
-                  <label for="confirm_password">Confirmar Senha</label>
-                  <input type="password" class="form-control" name="confirm_password" id="confirm_password"  value="" placeholder="Confirmar Senha" {!! (Request::is('users/create') ? 'required' : '') !!}>
+                  <label for="confirm_password">{!! Lang::get('users.label-confirm_password') !!}</label>
+                  <input type="password" class="form-control" name="password" id="password"  value="" placeholder="{!! Lang::get('users.ph-confirm_password') !!}" {!! (Request::is('users/create') ? 'required' : '') !!} data-validation="confirmation" data-validation-error-msg="{!! Lang::get('users.error-confirm_password') !!}">
                 </div>
               </div><!-- /.box-body -->
               <div class="box-footer">
-                <button type="submit" class="btn btn-primary">Salvar</button>
-                <a href="{!! URL::to('users') !!}" class="btn btn-danger">Voltar</a>
+                <button type="submit" class="btn btn-primary">{!! Lang::get('general.save') !!}</button>
+                <a href="{!! URL::to('users') !!}" class="btn btn-danger">{!! Lang::get('general.back') !!}</a>
               </div>
             {!! Form::close() !!}
           </div><!-- /.box -->
@@ -143,37 +153,34 @@
     <!-- Datepicker -->
     {!! Html::script("library/adminLTE/plugins/datepicker/bootstrap-datepicker.js") !!}
     <!-- Validete.js -->
-    {!! Html::script("library/adminLTE/plugins/validate/validate.min.js") !!}
+    {!! Html::script("library/adminLTE/plugins/jQuery-Form-Validator/form-validator/jquery.form-validator.min.js") !!}
 
+    @if (!Request::is('users/create'))
     <script>
-      var validator = new FormValidator('user-form', [{
-          name: 'req',
-          display: 'required',
-          rules: 'required'
-      }, {
-          name: 'alphanumeric',
-          rules: 'alpha_numeric'
-      }, {
-          name: 'password',
-          rules: 'required'
-      }, {
-          name: 'confirm_password',
-          display: 'password confirmation',
-          rules: 'required|matches[password]'
-      }, {
-          name: 'email',
-          rules: 'valid_email',
-          depends: function() {
-              return Math.random() > .5;
+      $.validate();
+      $('#edit').submit(function(e) {
+        if ($('#password').val() != ""){
+          if ($('#password').val() != $('#confirm_password').val()) {
+            var data = {class:'danger', faicon:'ban', status:"{!! Lang::get('general.failed') !!}", message:"{!! Lang::get('general.failed-password') !!}"};
+            $('#messages').html(throwMessage(data));
+
+            scrollToAnchor('messages');
+            e.preventDefault();
+          } else {
+            return;
           }
-      }, {
-          name: 'minlength',
-          display: 'min length',
-          rules: 'min_length[8]'
-      }], function(errors, event) {
-          if (errors.length > 0) {
-              // Show the errors
-          }
+        }
       });
+
+      function throwMessage(data) {
+          html = '<div class="alert alert-' + data.class + ' alert-dismissable">';
+          html += '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>';
+          html += '<h4>    <i class="icon fa fa-' + data.faicon + '"></i> ' + data.status + '</h4>';
+          html += data.message;
+          html += '</div>';
+
+          return html;
+      }
     </script>
+    @endif
 @endsection

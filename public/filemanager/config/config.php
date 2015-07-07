@@ -127,7 +127,7 @@ $config = array(
 	| default language file name
 	|--------------------------------------------------------------------------
 	*/
-	'default_language' => "en_EN",
+	'default_language' => "pt_BR",
 
 	/*
 	|--------------------------------------------------------------------------
@@ -258,8 +258,8 @@ $config = array(
 	 * AVIARY config
 	 *******************/
 	'aviary_active'                           => true,
-	'aviary_apiKey'                           => "dvh8qudbp6yx2bnp",
-	'aviary_secret'                           => "m6xaym5q42rpw433",
+	'aviary_apiKey'                           => "f109e8bea3306aac",
+	'aviary_secret'                           => "ed96dc8705b250a6",
 	// Add or modify the Aviary options below as needed - they will be json encoded when added to the configuration so arrays can be utilized as needed
 
 	//The filter and sorter are managed through both javascript and php scripts because if you have a lot of

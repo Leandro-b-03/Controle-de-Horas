@@ -39,7 +39,7 @@ return [
     'select-all'                    => 'Selecionar Todos',
     'deselect-all'                  => 'Deselecionar Todos',
     'action'                        => 'A&ccedil;&atilde;o',
-    ''                              => '',
+    'select'                        => '-- Selecione --',
     ''                              => '',
     ''                              => '',
 
@@ -74,7 +74,7 @@ return [
     'failed-update'                 => 'Ocorreu um ploblema ao alterar o/a :name',
     'failed-create-failed'          => 'Campos com valores errados.',
     'failed-delete'                 => 'Houve erro ao deletar o(s)/a(s) :name(s)',
-    ''                              => '',
+    'failed-password'               => 'Senhas não coecidem',
 
     // Sentences with variable :string
     'member-since'                  => 'Membro desde :month-year',

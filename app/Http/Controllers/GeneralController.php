@@ -106,6 +106,14 @@ class GeneralController extends Controller {
 						'message' => Lang::get('general.failed-delete', ['name' => strtolower($name)])
 					);
 			 		break;
+			 	case 'password':
+			 		$message = array(
+						'status' => Lang::get('general.failed'),
+						'class' => 'danger',
+						'faicon' => 'ban',
+						'message' => Lang::get('general.failed-password')
+					);
+			 		break;
 			 	default:
 			 		$message = array(
 						'status' => Lang::get('general.failed'),
