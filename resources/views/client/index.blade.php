@@ -1,7 +1,7 @@
 @extends('app')
 
 @section('title')
-    SVLabs | Clientes
+    {!! Lang::get('general.app-tittle', ['controller' => Lang::get('general.clients')]) !!}
 @stop
 
 @section('style')
@@ -11,8 +11,8 @@
 
 @section('content')
         <h1>
-            Clientes
-            <small>lista de clientes</small>
+            {!! Lang::get('general.clients') !!}
+            <small>{!! Lang::get('clients.list') !!}</small>
         </h1>
         <!-- <ol class="breadcrumb">
             <li><a href="#"><i class="fa fa-dashboard"></i> Dashboard</a></li>
@@ -35,7 +35,7 @@
       <!-- Default box -->
       <div class="box">
         <div class="box-header with-border">
-          <h3 class="box-title">Clientes</h3>
+          <h3 class="box-title">{!! Lang::get('general.clients') !!}</h3>
           <div class="box-tools pull-right">
             <button class="btn btn-box-tool" data-widget="collapse" data-toggle="tooltip" title="Collapse"><i class="fa fa-minus"></i></button>
             <button class="btn btn-box-tool" data-widget="remove" data-toggle="tooltip" title="Remove"><i class="fa fa-times"></i></button>
@@ -43,20 +43,20 @@
     </div>
     <div class="box-body">
         <div class="pull-right">
-            <a href="{!! URL::to('clients/create') !!}" class="btn btn-primary">Novo cliente</a>
-            <a id="delete" data-name="Cliente" class="btn btn-danger">Deletar cliente(s)</a>
+            <a href="{!! URL::to('clients/create') !!}" class="btn btn-primary">{!! Lang::get('clients.new') !!}</a>
+            <a id="delete" data-name="Cliente" class="btn btn-danger">{!! Lang::get('clients.delete') !!}</a>
         </div>
         <hr class="clearfix" />
         <table id="client-list" class="table table-bordered table-striped">
             <thead>
                 <tr>
                     <th><input type="checkbox" class="select-all" /></th>
-                    <th>Cliente</th>
-                    <th>Responsável</th>
-                    <th>E-mail</th>
-                    <th>Telefone</th>
-                    <th>Cliente desde</th>
-                    <th>Ação</th>
+                    <th>{!! Lang::get('clients.title-name') !!}</th>
+                    <th>{!! Lang::get('clients.title-responsible') !!}</th>
+                    <th>{!! Lang::get('clients.title-email') !!}</th>
+                    <th>{!! Lang::get('clients.title-phone') !!}</th>
+                    <th>{!! Lang::get('clients.title-created_at') !!}</th>
+                    <th>{!! Lang::get('general.action') !!}</th>
                 </tr>
             </thead>
             @if($data['clients']->count())
@@ -67,7 +67,7 @@
                     <td>{!! $client->name !!}</td>
                     <td>{!! $client->responsible !!}</td>
                     <td>{!! $client->email !!}</td>
-                    <td>{!! $client->telefone !!}</td>
+                    <td>{!! $client->phone !!}</td>
                     <td>{!! date('d/m/Y', strtotime($client->created_at)) !!}</td>
                     <td><a href="{!! URL::to('clients/' . $client->id . '/edit') !!}" class="btn btn-primary">Editar</a></td>
                 </tr>

@@ -22,8 +22,6 @@
     {!! Html::style("library/adminLTE/dist/css/skins/skin-yellow-light.min.css") !!}
     <!-- iCheck -->
     {!! Html::style("library/adminLTE/plugins/iCheck/square/yellow.css") !!}
-    <!-- Custom style -->
-    {!! Html::style("library/adminLTE/custom/custom.css") !!}
 
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -33,6 +31,8 @@
     <![endif]-->
     @section('style')
     @show
+    <!-- Custom style -->
+    {!! Html::style("library/adminLTE/custom/custom.css") !!}
   </head>
   <body class="skin-yellow sidebar-mini">
     <!-- Site wrapper -->
@@ -290,7 +290,7 @@
         <div class="tab-content">
           <!-- Home tab content -->
           <div class="tab-pane active" id="control-sidebar-home-tab">
-            <h3 class="control-sidebar-heading">Recent Activity</h3>
+            <h3 class="control-sidebar-heading">{!! Lang::get('general.recent-activity') !!}</h3>
             <ul class='control-sidebar-menu'>
               <li>
                 <a href='javascript::;'>

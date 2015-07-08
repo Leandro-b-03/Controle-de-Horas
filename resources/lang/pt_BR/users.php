@@ -4,7 +4,7 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Group Permissions Language Lines
+    | Group Users Language Lines
     |--------------------------------------------------------------------------
     |
     | The following language lines are used all library to build
@@ -25,8 +25,6 @@ return [
     'label-password'                => 'Senha',
     'label-confirm_password'        => 'Confirmar Senha',
     'label-photo'                   => 'Foto',
-    'label-'                        => '',
-    'label-'                        => '',
     'ph-username'                   => 'Nome do Colaborador',
     'ph-first_name'                 => 'Primeiro nome do colaborador',
     'ph-last_name'                  => '&Uacute;ltimo nome do colaborador',
@@ -37,9 +35,6 @@ return [
     'ph-birthday'                   => 'Data de nascimento do colaborador',
     'ph-password'                   => 'Senha',
     'ph-confirm_password'           => 'Confirmar Senha',
-    'ph-'                           => '',
-    'ph-'                           => '',
-    'ph-'                           => '',
     'h3-change_photo'               => 'Trocar foto',
     'a-open_filemanager'            => 'Abrir gerenciador',
     'error-username'                => 'O nome de usu&aacute;rio precisa ser alfanum&eacute;rico e deve conter de 3 a 12 caract&eacute;res)',
@@ -50,15 +45,18 @@ return [
     'error-cpf'                     => 'CPF inv&aacute;lido',
     'error-email'                   => 'E-mail inv&aacute;lido',
     'error-birthday'                => 'Data de nascimento inv&aacute;do',
-    'error-password'                => '',
-    'error-confirm_password'        => '',
+    'error-password'                => 'Senha inv&aacute;lida',
+    'error-confirm_password'        => 'Senha de confirma&ccedil;&atilde;o inv&aacute;lida',
+    'password-bad'                  => 'Senha muito fraca',
+    'password-weak'                 => 'Senha fraca',
+    'password-good'                 => 'Senha aceit&aacute;vel',
+    'password-strong'               => 'Senha forte',
 
     // Controller
     'create-new'                    => 'Criar novo ',
     'edit-new'                      => 'Editar novo ',
     'view-new'                      => 'Visualizar os ',
     'delete-new'                    => 'Deletar o(s) ',
-    ''                              => '',
 
     // View sentences
     'list'                          => 'lista de colaboradores',
@@ -66,7 +64,6 @@ return [
     'edit'                          => 'editar colaborador',
     'new'                           => 'Novo colaborador',
     'delete'                        => 'Deletar colaborador(es)',
-    '' => '',
 
     // Table
     'title-username'                => 'Nome de usuário',
@@ -74,7 +71,4 @@ return [
     'title-email'                   => 'E-mail',
     'title-phone'                   => 'Telefone',
     'title-created_at'              => 'Colaborador criado em',
-    '' => '',
-    '' => '',
-    '' => '',
 ];

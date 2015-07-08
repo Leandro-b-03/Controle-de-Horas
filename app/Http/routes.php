@@ -24,6 +24,8 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('dashboard', 'DashboardController@index');
 
     Route::get('general/createMessageJSON', 'GeneralController@createMessageJSON');
+    Route::post('general/verifyEmailJSON', 'GeneralController@verifyEmailJSON');
+    Route::post('general/verifyCPFJSON', 'GeneralController@verifyCPFJSON');
 
     Route::group(['prefix' => 'projects'], function () {
         Route::get('/', ['as' => 'projects', 'uses' => 'ProjectController@index']);

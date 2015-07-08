@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 
 use DB;
+use Lang;
 use App\Client;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
@@ -13,6 +14,7 @@ use App\Http\Controllers\GeneralController;
 
 class ClientController extends Controller
 {
+    private $controller_name = 'ClientController';
 
     /**
      * Display a listing of the resource.
@@ -61,16 +63,23 @@ class ClientController extends Controller
             ]
         );
 
-        if($validator) {
-            if (Client::create( $input )) {
-                return redirect('clients')->with('return', GeneralController::createMessage('success', 'Cliente', 'create'));
+        try {
+            $inputs['phone'] = str_replace('_', '', $inputs['phone']);
+
+            if($validator) {
+                if (Client::create( $input )) {
+                    return redirect('clients')->with('return', GeneralController::createMessage('success', Lang::get('general.' . $this->controller_name), 'create'));
+                } else {
+                    DB::rollback();
+                    return redirect('clients/create')->withInput()->with('return', GeneralController::createMessage('failed', Lang::get('general.' . $this->controller_name), 'create'));
+                }
             } else {
                 DB::rollback();
-                return view('clients.create')->withInput()->with('return', GeneralController::createMessage('failed', 'Cliente', 'create'));
+                return redirect('clients/create')->withInput()->with('return', GeneralController::createMessage('failed', Lang::get('general.' . $this->controller_name), 'create-failed'));
             }
-        } else {
+        } catch (Exception $e){
             DB::rollback();
-            return view('clients.create')->withInput()->with('return', GeneralController::createMessage('failed', 'Cliente', 'create-failed'));
+            return redirect('clients/create')->withInput()->with('return', GeneralController::createMessage('failed', Lang::get('general.' . $this->controller_name), 'create-failed'));
         }
     }
 
@@ -117,17 +126,24 @@ class ClientController extends Controller
         // Get all the input from update.
         $inputs = $request->all();
 
-        foreach($inputs as $input => $value) {
-            if($client->{$input})
-                $client->{$input} = $value;
-        }
+        try {
+            $inputs['phone'] = str_replace('_', '', $inputs['phone']);
 
-        if ($client->save()) {
-            DB::commit();
-            return redirect('clients')->with('return', GeneralController::createMessage('success', 'Cliente', 'update'));
-        } else {
+            foreach($inputs as $input => $value) {
+                if($client->{$input})
+                    $client->{$input} = $value;
+            }
+
+            if ($client->save()) {
+                DB::commit();
+                return redirect('clients')->with('return', GeneralController::createMessage('success', Lang::get('general.' . $this->controller_name), 'update'));
+            } else {
+                DB::rollback();
+                return redirect('clients/create')->withInput()->with('return', GeneralController::createMessage('failed', Lang::get('general.' . $this->controller_name), 'update'));
+            }
+        } catch (Exception $e) {
             DB::rollback();
-            return view('clients.create')->withInput()->with('return', GeneralController::createMessage('failed', 'Cliente', 'update'));
+            return redirect('clients/create')->withInput()->with('return', GeneralController::createMessage('failed', Lang::get('general.' . $this->controller_name), 'update'));
         }
     }
 
@@ -159,10 +175,10 @@ class ClientController extends Controller
 
         if (Client::destroy($ids)) {
             DB::commit();
-            return redirect('clients')->with('return', GeneralController::createMessage('success', 'Cliente', 'delete'));
+            return redirect('clients')->with('return', GeneralController::createMessage('success', Lang::get('general.' . $this->controller_name), 'delete'));
         } else {
             DB::rollback();
-            return redirect('clients')->with('return', GeneralController::createMessage('failed', 'Cliente', 'delete'));
+            return redirect('clients')->with('return', GeneralController::createMessage('failed', Lang::get('general.' . $this->controller_name), 'delete'));
         }
     }
 }

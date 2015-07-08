@@ -26,6 +26,8 @@ return [
     'date'                          => 'Data',
     'password'                      => 'Senha',
     'email'                         => 'E-mail',
+    'email-used'                    => 'E-mail j&aacute; utilizado',
+    'cpf-used'                      => 'CPF j&aacute; utilizado',
     'success'                       => 'Sucesso',
     'fail'                          => 'Falha',
     'failed'                        => 'Falhou',
@@ -59,6 +61,14 @@ return [
     'MessagesController'            => 'Mensagens',
     ''                              => '',
 
+    // Hide Panel
+    'recent-activity'               => 'Atividades Recentes',
+    ''                              => '',
+    ''                              => '',
+    ''                              => '',
+    ''                              => '',
+    ''                              => '',
+
     // CRUD
     'view'                          => 'Visualizar',
     'create'                        => 'Criar',
@@ -75,6 +85,7 @@ return [
     'failed-create-failed'          => 'Campos com valores errados.',
     'failed-delete'                 => 'Houve erro ao deletar o(s)/a(s) :name(s)',
     'failed-password'               => 'Senhas não coecidem',
+    'failed-fields'                 => 'Campos com valores errados e/ou inv&aacute;lidos',
 
     // Sentences with variable :string
     'member-since'                  => 'Membro desde :month-year',

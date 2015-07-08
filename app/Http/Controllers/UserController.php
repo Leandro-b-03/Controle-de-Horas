@@ -75,7 +75,7 @@ class UserController extends Controller
                 ]
             );
 
-            if ($input['password'] == $input['confirm_password']) {
+            if ($input['password'] == $input['password_confirmation']) {
                 if($validator) {
                     $input['birthday'] = date('Y-m-d', strtotime(str_replace('/', '-', $input['birthday'])));
                     $input['password'] = bcrypt($input['password']);
@@ -166,7 +166,7 @@ class UserController extends Controller
             $inputs['birthday'] = date('Y-m-d', strtotime(str_replace('/', '-', $inputs['birthday'])));
             
             if ($inputs['password'] != ''){
-                if ($inputs['password'] == $inputs['confirm_password']) {
+                if ($inputs['password'] == $inputs['password_confirmation']) {
                     $inputs['password'] = bcrypt($inputs['password']);
                 } else {
                     DB::rollback();

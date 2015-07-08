@@ -3,7 +3,6 @@
 @section('title')
     {!! Lang::get('general.app-tittle', ['controller' => Lang::get('general.users')]) !!}
 @stop
-@stop
 
 @section('style')
     <!-- DATA TABLES -->
