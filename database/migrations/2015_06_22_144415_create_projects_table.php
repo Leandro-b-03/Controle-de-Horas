@@ -17,10 +17,9 @@ class CreateProjectsTable extends Migration
             $table->integer('user_id')->references('id')->on('users');
             $table->integer('client_id')->references('id')->on('clients');
             $table->string('name');
-            $table->string('short_description');
-            $table->text('description');
-            $table->integer('schedule_time');
-            $table->integer('time_spend');
+            $table->decimal('budget', 9, 2);
+            $table->string('description');
+            $table->text('long_description');
             $table->timestamps();
         });
     }

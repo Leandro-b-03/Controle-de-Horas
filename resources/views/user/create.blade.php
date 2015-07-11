@@ -61,41 +61,50 @@
               <div class="box-body">
                 <div class="form-group col-xs-12">
                   <label for="username">{!! Lang::get('users.label-username') !!}</label>
-                  <input type="text" class="form-control" name="username" id="username"  value="{!! (isset($data['user']) ? $data['user']->username : "") !!}" placeholder="{!! Lang::get('users.ph-username') !!}" data-validation="length alphanumeric" data-validation-length="3-12" data-validation-allowing="-_ " data-validation-error-msg="{!! Lang::get('users.error-username') !!}" required>
+                  <input type="text" class="form-control" name="username" id="username"  value="{!! (isset($data['user']) ? $data['user']->username : (Request::old('username') ? Request::old('username') : '')) !!}" placeholder="{!! Lang::get('users.ph-username') !!}" data-validation="length alphanumeric" data-validation-length="3-12" data-validation-allowing="-_ " data-validation-error-msg="{!! Lang::get('users.error-username') !!}" required>
                 </div>
-                <div class="form-group col-xs-6">
+                <div class="form-group col-xs-5">
                   <label for="first_name">{!! Lang::get('users.label-first_name') !!}</label>
-                  <input type="first_name" class="form-control" name="first_name" id="first_name"  value="{!! (isset($data['user']) ? $data['user']->first_name : "") !!}" placeholder="{!! Lang::get('users.ph-first_name') !!}" data-validation="length alphanumeric" data-validation-length="3-40" data-validation-allowing="-_ " data-validation-error-msg="{!! Lang::get('users.error-first_name') !!}" required>
+                  <input type="first_name" class="form-control" name="first_name" id="first_name"  value="{!! (isset($data['user']) ? $data['user']->first_name : (Request::old('first_name') ? Request::old('first_name') : '')) !!}" placeholder="{!! Lang::get('users.ph-first_name') !!}" data-validation="length alphanumeric" data-validation-length="3-40" data-validation-allowing="-_ " data-validation-error-msg="{!! Lang::get('users.error-first_name') !!}" required>
                 </div>
-                <div class="form-group col-xs-6">
+                <div class="form-group col-xs-5">
                   <label for="last_name">{!! Lang::get('users.label-last_name') !!}</label>
-                  <input type="text" class="form-control" name="last_name" id="last_name"  value="{!! (isset($data['user']) ? $data['user']->last_name : "") !!}" placeholder="{!! Lang::get('users.ph-last_name') !!}" data-validation="length alphanumeric" data-validation-length="3-40" data-validation-allowing="-_ " data-validation-error-msg="{!! Lang::get('users.error-last_name') !!}" required>
+                  <input type="text" class="form-control" name="last_name" id="last_name"  value="{!! (isset($data['user']) ? $data['user']->last_name : (Request::old('last_name') ? Request::old('last_name') : '')) !!}" placeholder="{!! Lang::get('users.ph-last_name') !!}" data-validation="length alphanumeric" data-validation-length="3-40" data-validation-allowing="-_ " data-validation-error-msg="{!! Lang::get('users.error-last_name') !!}" required>
+                </div>
+                <div class="form-group col-xs-2">
+                  <label for="gender">{!! Lang::get('users.label-gender') !!}</label>
+                  <div class="radio">
+                    <label><input name="gender" id="gender" value="F" type="radio" data-validation-qty="min1" data-validation-error-msg="{!! Lang::get('users.error-gender_female') !!}" {!! (isset($data['user']) ? $data['user']->gender : (Request::old('gender') ? Request::old('gender') : '')) !!} required>{!! Lang::get('users.ph-gender_female') !!}</label>
+                  <div class="radio">
+                  </div>
+                    <label><input name="gender" id="gender" value="M" type="radio" {!! (isset($data['user']) ? $data['user']->gender : (Request::old('gender') ? Request::old('gender') : '')) !!}>{!! Lang::get('users.ph-gender_male') !!}</label>
+                  </div>
                 </div>
                 <div class="form-group col-xs-8{!! Request::is('users/create') ? '' : ' has-success' !!}">
                   <label for="email">{!! Lang::get('users.label-email') !!}</label>
-                  <input type="email" class="form-control{!! Request::is('users/create') ? '' : ' valid' !!}" name="email" id="email"  value="{!! (isset($data['user']) ? $data['user']->email : "") !!}" placeholder="{!! Lang::get('users.ph-email') !!}" data-validation="email server" data-validation-url="/general/verifyEmailJSON" data-validation-error-msg="{!! Lang::get('users.error-email') !!}" {!! (Request::is('users/create') ? 'required' : 'disabled') !!}>
+                  <input type="email" class="form-control{!! Request::is('users/create') ? '' : ' valid' !!}" name="email" id="email"  value="{!! (isset($data['user']) ? $data['user']->email : (Request::old('email') ? Request::old('email') : '')) !!}" placeholder="{!! Lang::get('users.ph-email') !!}" data-validation="email server" data-validation-url="/general/verifyEmailJSON" data-validation-error-msg="{!! Lang::get('users.error-email') !!}" {!! (Request::is('users/create') ? 'required' : 'disabled') !!}>
                 </div>
                 <div class="form-group col-xs-4">
                   <label for="phone">{!! Lang::get('users.label-phone') !!}</label>
-                  <input type="text" class="form-control input-mask" data-mask="(99) *****-****" name="phone" id="phone"  value="{!! (isset($data['user']) ? $data['user']->phone : "") !!}" placeholder="{!! Lang::get('users.ph-phone') !!}" data-validation="custom" data-validation-regexp="^\([1-9]{2}\)\ [2-9][0-9]{3,4}\-[0-9_]{3,4}$" data-validation-error-msg="{!! Lang::get('users.error-phone') !!}" required>
+                  <input type="text" class="form-control input-mask" data-mask="(99) *****-****" name="phone" id="phone"  value="{!! (isset($data['user']) ? $data['user']->phone : (Request::old('phone') ? Request::old('phone') : '')) !!}" placeholder="{!! Lang::get('users.ph-phone') !!}" data-validation="custom" data-validation-regexp="^\([1-9]{2}\)\ [2-9][0-9]{3,4}\-[0-9_]{3,4}$" data-validation-error-msg="{!! Lang::get('users.error-phone') !!}" required>
                 </div>
                 <div class="form-group col-xs-12">
                   <hr />
                 </div>
                 <div class="form-group col-xs-4">
                   <label for="rg">{!! Lang::get('users.label-rg') !!}</label>
-                  <input type="rg" class="form-control input-mask" data-mask="99.999.999-*" name="rg" id="rg"  value="{!! (isset($data['user']) ? $data['user']->rg : "") !!}" placeholder="{!! Lang::get('users.ph-rg') !!}" data-validation="custom" data-validation-regexp="^[0-9]{2}\.[0-9]{3}\.[0-9]{3}-[X0-9]$" data-validation-error-msg="{!! Lang::get('users.error-rg') !!}" required>
+                  <input type="rg" class="form-control input-mask" data-mask="99.999.999-*" name="rg" id="rg"  value="{!! (isset($data['user']) ? $data['user']->rg : (Request::old('rg') ? Request::old('rg') : '')) !!}" placeholder="{!! Lang::get('users.ph-rg') !!}" data-validation="custom" data-validation-regexp="^[0-9]{2}\.[0-9]{3}\.[0-9]{3}-[X0-9]$" data-validation-error-msg="{!! Lang::get('users.error-rg') !!}" required>
                 </div>
                 <div class="form-group col-xs-4{!! Request::is('users/create') ? '' : ' has-success' !!}">
                   <label for="cpf">{!! Lang::get('users.label-cpf') !!}</label>
-                  <input type="text" class="form-control input-mask{!! Request::is('users/create') ? '' : ' valid' !!}" data-mask="999.999.999-99" name="cpf" id="cpf"  value="{!! (isset($data['user']) ? $data['user']->cpf : "") !!}" placeholder="{!! Lang::get('users.ph-cpf') !!}" data-validation="custom server" data-validation-url="/general/verifyCPFJSON" data-validation-regexp="^[0-9]{3}\.?[0-9]{3}\.?[0-9]{3}\-?[0-9]{2}$" data-validation-error-msg="{!! Lang::get('users.error-cpf') !!}" {!! (Request::is('users/create') ? 'required' : 'disabled') !!}>
+                  <input type="text" class="form-control input-mask{!! Request::is('users/create') ? '' : ' valid' !!}" data-mask="999.999.999-99" name="cpf" id="cpf"  value="{!! (isset($data['user']) ? $data['user']->cpf : (Request::old('cpf') ? Request::old('cpf') : '')) !!}" placeholder="{!! Lang::get('users.ph-cpf') !!}" data-validation="custom server" data-validation-url="/general/verifyCPFJSON" data-validation-regexp="^[0-9]{3}\.?[0-9]{3}\.?[0-9]{3}\-?[0-9]{2}$" data-validation-error-msg="{!! Lang::get('users.error-cpf') !!}" {!! (Request::is('users/create') ? 'required' : 'disabled') !!}>
                 </div>
                 <div class="form-group col-xs-4">
                   <label for="role">{!! Lang::get('general.group-permissions') !!}</label>
-                  <select name="role" class="form-control" required>
-                    <option>{!! Lang::get('general.select') !!}</option>
+                  <select name="role" class="form-control" data-validation="required" required>
+                    <option value="">{!! Lang::get('general.select') !!}</option>
                     @foreach ($data['roles'] as $role)
-                    <option value="{!! $role->id !!}" {!! (isset($data['user']) && ($data['user']->roles() != null) ? (($data['user']->roles()->first()->id == $role->id) == 1 ? 'selected="selected"' : "") : "") !!}>{!! $role->display_name !!}</option>
+                    <option value="{!! $role->id !!}" {!! (isset($data['user']) && ($data['user']->roles()->get()->count()) ? (($data['user']->roles()->first()->id == $role->id) == 1 ? 'selected="selected"' : "") : "") !!}>{!! $role->display_name !!}</option>
                     @endforeach
                   </select>
                 </div>
@@ -126,7 +135,7 @@
                     <div class="input-group-addon">
                       <i class="fa fa-calendar"></i>
                     </div>
-                    <input type="text" class="form-control date input-mask" data-mask="99/99/9999" name="birthday" id="birthday"  value="{!! (isset($data['user']) ? date('d/m/Y', strtotime($data['user']->birthday)) : "") !!}" placeholder="{!! Lang::get('users.ph-birthday') !!}" data-validation="date" data-validation-format="dd/mm/yyyy" data-validation-error-msg="{!! Lang::get('users.error-birthday') !!}" required>
+                    <input type="text" class="form-control date input-mask" data-mask="99/99/9999" name="birthday" id="birthday"  value="{!! (isset($data['user']) ? date('d/m/Y', strtotime($data['user']->birthday)) : (Request::old('birthday') ? Request::old('birthday') : '')) !!}" placeholder="{!! Lang::get('users.ph-birthday') !!}" data-validation="date" data-validation-format="dd/mm/yyyy" data-validation-error-msg="{!! Lang::get('users.error-birthday') !!}" required>
                   </div>
                 </div>
                 <div class="form-group col-xs-6">

@@ -128,6 +128,11 @@ return [
     'providers' => [
 
         /*
+         * Development Service Providers...
+         */
+        Barryvdh\Debugbar\ServiceProvider::class,
+
+        /*
          * Laravel Framework Service Providers...
          */
         Illuminate\Foundation\Providers\ArtisanServiceProvider::class,
@@ -154,10 +159,6 @@ return [
         Illuminate\Validation\ValidationServiceProvider::class,
         Illuminate\View\ViewServiceProvider::class,
         Illuminate\Html\HtmlServiceProvider::class,
-        Collective\Html\HtmlServiceProvider::class,
-        DaveJamesMiller\Breadcrumbs\ServiceProvider::class,
-        Cmgmyr\Messenger\MessengerServiceProvider::class,
-        Zizaco\Entrust\EntrustServiceProvider::class,
 
         /*
          * Application Service Providers...
@@ -165,6 +166,14 @@ return [
         App\Providers\AppServiceProvider::class,
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
+
+        /*
+         * Custom Services Providers...
+         */
+        Collective\Html\HtmlServiceProvider::class,
+        Cviebrock\EloquentSluggable\SluggableServiceProvider::class,
+        // Vinkla\Pusher\PusherServiceProvider::class,
+        Zizaco\Entrust\EntrustServiceProvider::class,
 
     ],
 
@@ -217,7 +226,6 @@ return [
         'Html'          => Collective\Html\HtmlFacade::class,
         'Form1'         => Illuminate\Html\FormFacade::class,
         'HTML1'         => Illuminate\Html\HtmlFacade::class,
-        'Breadcrumbs'   => DaveJamesMiller\Breadcrumbs\Facade::class,
         'Entrust'       => Zizaco\Entrust\EntrustFacade::class,
 
     ],

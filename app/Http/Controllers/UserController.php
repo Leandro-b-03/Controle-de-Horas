@@ -203,18 +203,7 @@ class UserController extends Controller
      * @param  int  $id
      * @return Response
      */
-    public function destroy($id)
-    {
-        //
-        return response()->json(['status' => 'Ok', 'message' => 'Return correct']);
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @return Response
-     */
-    public function delete(Request $request)
+    public function destroy($id, Request $request)
     {
         DB::beginTransaction();
 
@@ -223,10 +212,15 @@ class UserController extends Controller
 
         $ids = explode(',', $input['id']);
 
-        if (User::destroy($ids)) {
-            DB::commit();
-            return redirect('users')->with('return', GeneralController::createMessage('success', Lang::get('general.' . $this->controller_name), 'delete'));
-        } else {
+        try {
+            if (User::destroy($ids)) {
+                DB::commit();
+                return redirect('users')->with('return', GeneralController::createMessage('success', Lang::get('general.' . $this->controller_name), 'delete'));
+            } else {
+                DB::rollback();
+                return redirect('users')->with('return', GeneralController::createMessage('failed', Lang::get('general.' . $this->controller_name), 'delete'));
+            }
+        } catch (Exception $e) {
             DB::rollback();
             return redirect('users')->with('return', GeneralController::createMessage('failed', Lang::get('general.' . $this->controller_name), 'delete'));
         }

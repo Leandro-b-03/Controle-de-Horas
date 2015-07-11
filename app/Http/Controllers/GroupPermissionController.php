@@ -137,7 +137,7 @@ class GroupPermissionController extends Controller
                         DB::rollback();
                         return redirect('group-permissions/create')->withInput()->with('return', GeneralController::createMessage('failed', Lang::get('general.' . $this->controller_name), 'create'));
                     }
-                } catch (\Exception $e) {
+                } catch (Exception $e) {
                     DB::rollback();
                     return redirect('group-permissions/create')->withInput()->with('return', GeneralController::createMessage('failed', Lang::get('general.' . $this->controller_name), 'create-failed'));
                 }
@@ -145,7 +145,7 @@ class GroupPermissionController extends Controller
                 DB::rollback();
                 return redirect('group-permissions/create')->withInput()->with('return', GeneralController::createMessage('failed', Lang::get('general.' . $this->controller_name), 'create-failed'));
             }
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             DB::rollback();
             return redirect('group-permissions/create')->withInput()->with('return', GeneralController::createMessage('failed', Lang::get('general.' . $this->controller_name), 'create-failed'));
         }
@@ -281,7 +281,7 @@ class GroupPermissionController extends Controller
                         DB::rollback();
                         return redirect('group-permissions/' . $id .'/edit')->withInput()->with('return', GeneralController::createMessage('failed', Lang::get('general.' . $this->controller_name), 'update'));
                     }
-                } catch (\Exception $e) {
+                } catch (Exception $e) {
                     DB::rollback();
                     return redirect('group-permissions/' . $id .'/edit')->withInput()->with('return', GeneralController::createMessage('failed', Lang::get('general.' . $this->controller_name), 'update-failed'));
                 }
@@ -289,8 +289,7 @@ class GroupPermissionController extends Controller
                 DB::rollback();
                 return redirect('group-permissions/' . $id .'/edit')->withInput()->with('return', GeneralController::createMessage('failed', Lang::get('general.' . $this->controller_name), 'update-failed'));
             }
-        } catch (\Exception $e) {
-            die(d($e));
+        } catch (Exception $e) {
             DB::rollback();
             return redirect('group-permissions/create')->withInput()->with('return', GeneralController::createMessage('failed', Lang::get('general.' . $this->controller_name), 'create-failed'));
         }
@@ -302,27 +301,25 @@ class GroupPermissionController extends Controller
      * @param  int  $id
      * @return Response
      */
-    public function destroy($id)
+    public function destroy($id, Request $request)
     {
-        //
-        return response()->json(['status' => 'Ok', 'message' => 'Return correct']);
-    }
+        DB::beginTransaction();
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @return Response
-     */
-    public function delete(Request $request)
-    {
         // Get all the input data received.
         $input = $request->all();
 
         $ids = explode(',', $input['id']);
 
-        if (Role::destroy($ids)) {
-            return redirect('group-permissions')->with('return', GeneralController::createMessage('success', Lang::get('general.' . $this->controller_name), 'delete'));
-        } else {
+        try {
+            if (Role::destroy($ids)) {
+                DB::commit();
+                return redirect('group-permissions')->with('return', GeneralController::createMessage('success', Lang::get('general.' . $this->controller_name), 'delete'));
+            } else {
+                DB::rollback();
+                return redirect('group-permissions')->with('return', GeneralController::createMessage('failed', Lang::get('general.' . $this->controller_name), 'delete'));
+            }
+        } catch (Exception $e) {
+            DB::rollback();
             return redirect('group-permissions')->with('return', GeneralController::createMessage('failed', Lang::get('general.' . $this->controller_name), 'delete'));
         }
     }

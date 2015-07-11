@@ -61,6 +61,22 @@ return [
     'MessagesController'            => 'Mensagens',
     ''                              => '',
 
+    // Data Tables
+    'dataTable-processing'          => 'Carregando...',
+    'dataTable-search'              => 'Pesquisar&nbsp;:',
+    'dataTable-lengthMenu'          => 'Exibir _MENU_ registros',
+    'dataTable-info'                => 'Exibindo de _START_ a _END_ de _TOTAL_ registros',
+    'dataTable-infoEmpty'           => 'Exibindo de 0 a 0 de 0 registros',
+    'dataTable-infoFiltered'        => '(filtrado de _MAX_ registros no total)',
+    'dataTable-infoPostFix'         => '',
+    'dataTable-loadingRecords'      => 'Carregando...',
+    'dataTable-zeroRecords'         => 'Não foram encontrados resultados',
+    'dataTable-emptyTable'          => 'Não há dados disponíveis na tabela',
+    'dataTable-paginate_first'      => '«« Primeiro',
+    'dataTable-paginate_previous'   => '« Anterior',
+    'dataTable-paginate_next'       => 'Seguinte »',
+    'dataTable-paginate_last'       => 'Último »»',
+
     // Hide Panel
     'recent-activity'               => 'Atividades Recentes',
     ''                              => '',

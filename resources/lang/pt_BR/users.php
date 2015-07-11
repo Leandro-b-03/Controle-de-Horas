@@ -25,6 +25,7 @@ return [
     'label-password'                => 'Senha',
     'label-confirm_password'        => 'Confirmar Senha',
     'label-photo'                   => 'Foto',
+    'label-gender'                  => 'Sexo',
     'ph-username'                   => 'Nome do Colaborador',
     'ph-first_name'                 => 'Primeiro nome do colaborador',
     'ph-last_name'                  => '&Uacute;ltimo nome do colaborador',
@@ -35,6 +36,8 @@ return [
     'ph-birthday'                   => 'Data de nascimento do colaborador',
     'ph-password'                   => 'Senha',
     'ph-confirm_password'           => 'Confirmar Senha',
+    'ph-gender_female'              => 'Feminino',
+    'ph-gender_male'                => 'Masculino',
     'h3-change_photo'               => 'Trocar foto',
     'a-open_filemanager'            => 'Abrir gerenciador',
     'error-username'                => 'O nome de usu&aacute;rio precisa ser alfanum&eacute;rico e deve conter de 3 a 12 caract&eacute;res)',
@@ -66,9 +69,12 @@ return [
     'delete'                        => 'Deletar colaborador(es)',
 
     // Table
-    'title-username'                => 'Nome de usuário',
-    'title-name'                    => 'Nome',
-    'title-email'                   => 'E-mail',
-    'title-phone'                   => 'Telefone',
-    'title-created_at'              => 'Colaborador criado em',
+    'title-user-info'               => 'Informa&ccedil;&otilde;es b&aacute;sicas',
+    'title-teams'                   => 'Equipes',
+    'table-username'                => 'Nome de usuário',
+    'table-name'                    => 'Nome',
+    'table-email'                   => 'E-mail',
+    'table-phone'                   => 'Telefone',
+    'table-created_at'              => 'Colaborador desde',
+    'table-group-permission'        => 'Pertence ao grupo de'
 ];

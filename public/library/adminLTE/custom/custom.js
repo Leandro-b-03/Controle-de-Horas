@@ -47,21 +47,21 @@ $(function () {
         if ($(".table").length > 0) {
             var table = $(".table").not('.permission').DataTable({
                 language: {
-                    processing:     "Carregando...",
-                    search:         "Pesquisar&nbsp;:",
-                    lengthMenu:     "Exibir _MENU_ registros",
-                    info:           "Exibindo de _START_ a _END_ de _TOTAL_ registros",
-                    infoEmpty:      "Exibindo de 0 a 0 de 0 registros",
-                    infoFiltered:   "(filtrado de _MAX_ registros no total)",
-                    infoPostFix:    "",
-                    loadingRecords: "Carregando...",
-                    zeroRecords:    "Não foram encontrados resultados",
-                    emptyTable:     "Não há dados disponíveis na tabela",
+                    processing:     dataTableLang.processing,
+                    search:         dataTableLang.search,
+                    lengthMenu:     dataTableLang.lengthMenu,
+                    info:           dataTableLang.info,
+                    infoEmpty:      dataTableLang.infoEmpty,
+                    infoFiltered:   dataTableLang.infoFiltered,
+                    infoPostFix:    dataTableLang.infoPostFix,
+                    loadingRecords: dataTableLang.loadingRecords,
+                    zeroRecords:    dataTableLang.zeroRecords,
+                    emptyTable:     dataTableLang.emptyTable,
                     paginate: {
-                        first:      "«« Primeiro",
-                        previous:   "« Anterior",
-                        next:       "Seguinte »",
-                        last:       "Último »»"
+                        first:      dataTableLang.paginate_first,
+                        previous:   dataTableLang.paginate_previous,
+                        next:       dataTableLang.paginate_next,
+                        last:       dataTableLang.paginate_last,
                     }
                 }
             });
