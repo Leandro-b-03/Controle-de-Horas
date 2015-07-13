@@ -58,7 +58,7 @@
                     <th>Projeto criado em</th>
                     <th>Horas programadas</th>
                     <th>Horas restantes</th>
-                    <th>Ação</th>
+                    <th>{!! Lang::get('general.action') !!}</th>
                 </tr>
             </thead>
             @if($data['projects']->count())
@@ -68,8 +68,8 @@
                     <td><input type="checkbox" class="delete" data-value="{!! $project->id !!}" /></td>
                     <td>{!! $project->name !!}</td>
                     <td>{!! $project->short_description !!}</td>
-                    <td>{!! $project->client_id()->name !!}</td>
-                    <td>{!! $project->user_id()->name !!}</td>
+                    <td>{!! $project->client()->get()->first()->name !!}</td>
+                    <td>{!! $project->user()->get()->first()->username !!}</td>
                     <td>{!! date('d/m/Y', strtotime($project->created_at)) !!}</td>
                     <td>{!! $project->schedule_time !!}</td>
                     <td>{!! $project->time_spend !!}</td>

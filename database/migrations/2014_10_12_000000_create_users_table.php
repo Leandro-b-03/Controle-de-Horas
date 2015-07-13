@@ -24,7 +24,7 @@ class CreateUsersTable extends Migration
             $table->string('cpf')->unique();
             $table->date('birthday');
             $table->string('password', 60);
-            $table->enum('notify', ['y', 'n'])->default('y');
+            $table->enum('gender', ['F', 'M'])->default('M');
             $table->rememberToken();
             $table->timestamps();
         });

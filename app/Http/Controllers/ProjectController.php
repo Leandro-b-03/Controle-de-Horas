@@ -4,12 +4,19 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 
+use DB;
+use Lang;
+use App\Role;
+use App\Client;
 use App\Project;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Validator;
+use App\Http\Controllers\GeneralController;
 
 class ProjectController extends Controller
 {
+    private $controller_name = 'ProjectController';
 
     /**
      * Display a listing of the resource.
@@ -22,7 +29,7 @@ class ProjectController extends Controller
         $projects = Project::All();
         $data['projects'] = $projects;
 
-        // Return the dashboard view.
+        // Return the projects view.
         return view('project.index')->with('data', $data);
     }
 
@@ -33,7 +40,18 @@ class ProjectController extends Controller
      */
     public function create()
     {
-        //
+        $data = [];
+
+        // Get all the managers users
+        $users = Role::find(2)->users()->get();
+        $data['users'] = $users;
+
+        // Get all clients
+        $clients = Client::all();
+        $data['clients'] = $clients;
+
+        // Return the project view.
+        return view('project.create')->with('data', $data);
     }
 
     /**
@@ -41,9 +59,38 @@ class ProjectController extends Controller
      *
      * @return Response
      */
-    public function store()
+    public function store(Request $request)
     {
-        //
+        $inputs = $request->all();
+        
+        // Validation of the fields
+        $validator = Validator::make(
+            [
+                $inputs
+            ],
+            [
+                'name' => 'required',
+                'password' => 'required|min:8',
+                'email' => 'required|email|unique:users'
+            ]
+        );
+
+        try {
+            if($validator) {
+                if (Project::create( $inputs )) {
+                    return redirect('projects')->with('return', GeneralController::createMessage('success', Lang::get('general.' . $this->controller_name), 'create'));
+                } else {
+                    DB::rollback();
+                    return redirect('projects/create')->withInput()->with('return', GeneralController::createMessage('failed', Lang::get('general.' . $this->controller_name), 'create'));
+                }
+            } else {
+                DB::rollback();
+                return redirect('projects/create')->withInput()->with('return', GeneralController::createMessage('failed', Lang::get('general.' . $this->controller_name), 'create-failed'));
+            }
+        } catch (Exception $e){
+            DB::rollback();
+            return redirect('projects/create')->withInput()->with('return', GeneralController::createMessage('failed', Lang::get('general.' . $this->controller_name), 'create-failed'));
+        }
     }
 
     /**
@@ -65,7 +112,12 @@ class ProjectController extends Controller
      */
     public function edit($id)
     {
-        //
+        // Retrive the project with param $id
+        $project = Project::find($id);
+        $data['project'] = $project;
+
+        // Return the dashboard view.
+        return view('project.create')->with('data', $data);
     }
 
     /**
@@ -74,9 +126,33 @@ class ProjectController extends Controller
      * @param  int  $id
      * @return Response
      */
-    public function update($id)
+    public function update($id, Request $request)
     {
-        //
+        DB::beginTransaction();
+
+        // Get project with param $id
+        $project = Project::find($id);
+
+        // Get all the input from update.
+        $inputs = $request->all();
+
+        try {
+            foreach($inputs as $input => $value) {
+                if($project->{$input})
+                    $project->{$input} = $value;
+            }
+
+            if ($project->save()) {
+                DB::commit();
+                return redirect('projects')->with('return', GeneralController::createMessage('success', Lang::get('general.' . $this->controller_name), 'update'));
+            } else {
+                DB::rollback();
+                return redirect('projects/create')->withInput()->with('return', GeneralController::createMessage('failed', Lang::get('general.' . $this->controller_name), 'update'));
+            }
+        } catch (Exception $e) {
+            DB::rollback();
+            return redirect('projects/create')->withInput()->with('return', GeneralController::createMessage('failed', Lang::get('general.' . $this->controller_name), 'update'));
+        }
     }
 
     /**
@@ -85,8 +161,26 @@ class ProjectController extends Controller
      * @param  int  $id
      * @return Response
      */
-    public function destroy($id)
+    public function destroy($id, Request $request)
     {
-        //
+        DB::beginTransaction();
+        
+        // Get all the input data received.
+        $input = $request->all();
+
+        $ids = explode(',', $input['id']);
+
+        try {
+            if (Project::destroy($ids)) {
+                DB::commit();
+                return redirect('projects')->with('return', GeneralController::createMessage('success', Lang::get('general.' . $this->controller_name), 'delete'));
+            } else {
+                DB::rollback();
+                return redirect('projects')->with('return', GeneralController::createMessage('failed', Lang::get('general.' . $this->controller_name), 'delete'));
+            }
+        } catch (Exception $e) {
+            DB::rollback();
+            return redirect('projects')->with('return', GeneralController::createMessage('failed', Lang::get('general.' . $this->controller_name), 'delete'));
+        }
     }
 }
