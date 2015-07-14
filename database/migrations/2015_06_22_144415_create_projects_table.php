@@ -20,6 +20,7 @@ class CreateProjectsTable extends Migration
             $table->decimal('budget', 9, 2);
             $table->string('description');
             $table->text('long_description');
+            $table->enum('status', ['A', 'D', 'F'])->default('A');
             $table->timestamps();
         });
     }

@@ -9,6 +9,7 @@ use Lang;
 use App\Role;
 use App\Client;
 use App\Project;
+use App\ProjectTime;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
@@ -75,10 +76,25 @@ class ProjectController extends Controller
             ]
         );
 
+        $projects_time = $inputs['project_time'];
+
         try {
             if($validator) {
-                if (Project::create( $inputs )) {
-                    return redirect('projects')->with('return', GeneralController::createMessage('success', Lang::get('general.' . $this->controller_name), 'create'));
+                $project = Project::create( $inputs );
+                if ($project) {
+                    foreach ($projects_time as $project_time) {
+                        // $project_time['cycle'] = $project_time['cycle'];
+                        $project_time['schedule_time'] = $project_time['schedule_time'][0];
+                        $project_time['budget'] = $project_time['budget'][0];
+                        $project_time['project_id'] = $project->id;
+
+                        if (ProjectTime::create( $project_time )) {
+                            return redirect('projects')->with('return', GeneralController::createMessage('success', Lang::get('general.' . $this->controller_name), 'create'));
+                        } else {
+                            DB::rollback();
+                            return redirect('projects/create')->withInput()->with('return', GeneralController::createMessage('failed', Lang::get('general.' . $this->controller_name), 'create'));
+                        }
+                    }
                 } else {
                     DB::rollback();
                     return redirect('projects/create')->withInput()->with('return', GeneralController::createMessage('failed', Lang::get('general.' . $this->controller_name), 'create'));

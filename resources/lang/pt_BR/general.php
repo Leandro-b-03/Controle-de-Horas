@@ -42,7 +42,7 @@ return [
     'deselect-all'                  => 'Deselecionar Todos',
     'action'                        => 'A&ccedil;&atilde;o',
     'select'                        => '-- Selecione --',
-    ''                              => '',
+    'remove'                        => 'Remover',
     ''                              => '',
 
     // Menu & Controller

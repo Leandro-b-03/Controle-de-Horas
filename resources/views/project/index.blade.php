@@ -61,6 +61,7 @@
                     <th>{!! Lang::get('general.action') !!}</th>
                 </tr>
             </thead>
+            {!! die(d($data['projects']->first()->client()->getResults()->name)) !!}
             @if($data['projects']->count())
             <tbody>
                 @foreach($data['projects'] as $project)
@@ -68,8 +69,8 @@
                     <td><input type="checkbox" class="delete" data-value="{!! $project->id !!}" /></td>
                     <td>{!! $project->name !!}</td>
                     <td>{!! $project->short_description !!}</td>
-                    <td>{!! $project->client()->get()->first()->name !!}</td>
-                    <td>{!! $project->user()->get()->first()->username !!}</td>
+                    <td>{!! $project->client()->getResults()->name !!}</td>
+                    <td>{!! $project->user()->getResults()->username !!}</td>
                     <td>{!! date('d/m/Y', strtotime($project->created_at)) !!}</td>
                     <td>{!! $project->schedule_time !!}</td>
                     <td>{!! $project->time_spend !!}</td>
