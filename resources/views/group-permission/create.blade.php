@@ -9,6 +9,8 @@
     {!! Html::style('library/adminLTE/plugins/datatables/dataTables.bootstrap.css') !!}
     <!-- bootstrap-switch -->
     {!! Html::style("library/adminLTE/plugins/bootstrap-switch/dist/css/bootstrap3/bootstrap-switch.min.css") !!}
+    <!-- jQuery-Form-Validator -->
+    {!! Html::style("library/adminLTE/plugins/jQuery-Form-Validator/form-validator/theme-default.min.css") !!}
 @stop
 
 @section('content')
@@ -59,15 +61,15 @@
               <div class="box-body">
                 <div class="form-group col-xs-8">
                   <label for="name">{!! Lang::get('general.name'); !!}</label>
-                  <input type="text" class="form-control" name="name" id="name"  value="{!! (isset($data['role']) ? $data['role']->name : (Request::old('name') ? Request::old('name') : '')) !!}" placeholder="{!! Lang::get('group-permissions.ph-name') !!}" required>
+                  <input type="text" class="form-control" name="name" id="name"  value="{!! (isset($data['role']) ? $data['role']->name : (Request::old('name') ? Request::old('name') : '')) !!}" placeholder="{!! Lang::get('group-permissions.ph-name') !!}" data-validation="alphanumeric length" data-validation-length="3-80" data-validation-allowing="-_" data-validation-error-msg="{!! Lang::get('group-permissions.error-name') !!}">
                 </div>
                 <div class="form-group col-xs-8">
                   <label for="display_name">{!! Lang::get('group-permissions.label-display_name') !!}</label>
-                  <input type="text" class="form-control" name="display_name" id="display_name"  value="{!! (isset($data['role']) ? $data['role']->display_name : (Request::old('display_name') ? Request::old('display_name') : '')) !!}" placeholder="{!! Lang::get('group-permissions.ph-display_name') !!}" required>
+                  <input type="text" class="form-control" name="display_name" id="display_name"  value="{!! (isset($data['role']) ? $data['role']->display_name : (Request::old('display_name') ? Request::old('display_name') : '')) !!}" placeholder="{!! Lang::get('group-permissions.ph-display_name') !!}" data-validation="length" data-validation-length="3-80" data-validation-error-msg="{!! Lang::get('group-permissions.error-display_name') !!}">
                 </div>
                 <div class="form-group col-xs-12">
-                  <label for="description">{!! Lang::get('group-permissions.label-description') !!}</label>
-                  <textarea class="form-control" name="description" id="description" placeholder="{!! Lang::get('group-permissions.ph-description') !!}" required>{!! (isset($data['role']) ? $data['role']->description : (Request::old('description') ? Request::old('description') : '')) !!}</textarea>
+                  <label for="description">{!! Lang::get('group-permissions.label-description') . ' (<span id="maxlength">255</span>) ' . Lang::get('group-permissions.char_left') !!}</label>
+                  <textarea class="form-control" name="description" id="description" placeholder="{!! Lang::get('group-permissions.ph-description') !!}" data-validation="length" data-validation-length="10-255" data-validation-error-msg="{!! Lang::get('group-permissions.error-description') !!}">{!! (isset($data['role']) ? $data['role']->description : (Request::old('description') ? Request::old('description') : '')) !!}</textarea>
                 </div>
                 <div class="form-group col-xs-12">
                   <hr />
@@ -127,9 +129,32 @@
     {!! Html::script("library/adminLTE/plugins/jasny-bootstrap/js/jasny-bootstrap.min.js") !!}
     <!-- bootstrap-switch -->
     {!! Html::script("library/adminLTE/plugins/bootstrap-switch/dist/js/bootstrap-switch.min.js") !!}
-    {{-- <script type="text/javascript">
-      $('#select-all').click(function() {
-        $('.permission-check').bootstrapSwitch('setState' , true).addClass('switch-on');
+    <!-- jQuery-Form-Validator -->
+    {!! Html::script("library/adminLTE/plugins/jQuery-Form-Validator/form-validator/jquery.form-validator.min.js") !!}
+
+    <script>
+      $.validate();
+      
+      $('#description').restrictLength($('#maxlength'));
+      
+      $('form').submit(function(e) {
+        if ($(this).find('.has-error').length > 0) {
+          e.preventDefault();
+          var data = {class:'danger', faicon:'ban', status:"{!! Lang::get('general.failed') !!}", message:"{!! html_entity_decode(Lang::get('general.failed-fields')) !!}"};
+            $('#messages').html(throwMessage(data));
+        } else {
+          return;
+        }
       });
-    </script> --}}
+
+      function throwMessage(data) {
+          html = '<div class="alert alert-' + data.class + ' alert-dismissable">';
+          html += '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>';
+          html += '<h4>    <i class="icon fa fa-' + data.faicon + '"></i> ' + data.status + '</h4>';
+          html += data.message;
+          html += '</div>';
+
+          return html;
+      }
+    </script>
 @endsection

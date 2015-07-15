@@ -1,7 +1,7 @@
 @extends('app')
 
 @section('title')
-    SVLabs | Projetos
+    {!! Lang::get('general.app-tittle', ['controller' => Lang::get('general.projects')]) !!}
 @stop
 
 @section('style')
@@ -11,8 +11,8 @@
 
 @section('content')
         <h1>
-            Projetos
-            <small>lista de projetos</small>
+            {!! Lang::get('general.projects') !!}
+            <small>{!! Lang::get('projects.list') !!}</small>
         </h1>
         <!-- <ol class="breadcrumb">
             <li><a href="#"><i class="fa fa-dashboard"></i> Dashboard</a></li>
@@ -35,7 +35,7 @@
       <!-- Default box -->
       <div class="box">
         <div class="box-header with-border">
-          <h3 class="box-title">Projetos</h3>
+          <h3 class="box-title">{!! Lang::get('general.projects') !!}</h3>
           <div class="box-tools pull-right">
             <button class="btn btn-box-tool" data-widget="collapse" data-toggle="tooltip" title="Collapse"><i class="fa fa-minus"></i></button>
             <button class="btn btn-box-tool" data-widget="remove" data-toggle="tooltip" title="Remove"><i class="fa fa-times"></i></button>
@@ -43,8 +43,8 @@
     </div>
     <div class="box-body">
         <div class="pull-right">
-            <a href="{!! URL::to('projects/create') !!}" class="btn btn-primary">Novo projeto</a>
-            <a id="delete" data-name="Projeto" class="btn btn-danger">Deletar projeto(s)</a>
+            <a href="{!! URL::to('projects/create') !!}" class="btn btn-primary">{!! Lang::get('projects.new') !!}</a>
+            <a id="delete" data-name="Cliente" class="btn btn-danger">{!! Lang::get('projects.delete') !!}</a>
         </div>
         <hr class="clearfix" />
         <table id="client-list" class="table table-bordered table-striped">
@@ -58,9 +58,10 @@
                     <th>Projeto criado em</th>
                     <th>Horas programadas</th>
                     <th>Horas restantes</th>
-                    <th>Ação</th>
+                    <th>{!! Lang::get('general.action') !!}</th>
                 </tr>
             </thead>
+            @{!! die(d($data['projects']->first()->client()->getResults()->name)) !!}
             @if($data['projects']->count())
             <tbody>
                 @foreach($data['projects'] as $project)
@@ -68,8 +69,8 @@
                     <td><input type="checkbox" class="delete" data-value="{!! $project->id !!}" /></td>
                     <td>{!! $project->name !!}</td>
                     <td>{!! $project->short_description !!}</td>
-                    <td>{!! $project->client_id()->name !!}</td>
-                    <td>{!! $project->user_id()->name !!}</td>
+                    <td>{!! $project->client()->getResults()->name !!}</td>
+                    <td>{!! $project->user()->getResults()->username !!}</td>
                     <td>{!! date('d/m/Y', strtotime($project->created_at)) !!}</td>
                     <td>{!! $project->schedule_time !!}</td>
                     <td>{!! $project->time_spend !!}</td>

@@ -71,7 +71,7 @@
             </tbody>
             @endif
         </table>
-        {!! Form::open(array('route' => 'group-permissions.delete', 'method' => 'DELETE', 'id' => 'delete-form')) !!}
+        {!! Form::open(array('route' => 'group-permissions.destroy', 'method' => 'DELETE', 'id' => 'delete-form')) !!}
             <input type="hidden" name="id" id="delete-id" name="delete_id" value="">
         {!! Form::close() !!}
     </div><!-- /.box-body -->

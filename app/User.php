@@ -10,7 +10,6 @@ use Illuminate\Contracts\Auth\CanResetPassword as CanResetPasswordContract;
 
 class User extends Model implements AuthenticatableContract, CanResetPasswordContract {
 
-	use Messagable;
 	use EntrustUserTrait;
 	use Authenticatable, CanResetPassword;
 

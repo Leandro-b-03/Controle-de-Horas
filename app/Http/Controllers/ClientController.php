@@ -49,12 +49,12 @@ class ClientController extends Controller
      */
     public function store(Request $request)
     {
-        $input = $request->all();
+        $inputs = $request->all();
         
         // Validation of the fields
         $validator = Validator::make(
             [
-                $input
+                $inputs
             ],
             [
                 'name' => 'required',
@@ -67,7 +67,7 @@ class ClientController extends Controller
             $inputs['phone'] = str_replace('_', '', $inputs['phone']);
 
             if($validator) {
-                if (Client::create( $input )) {
+                if (Client::create( $inputs )) {
                     return redirect('clients')->with('return', GeneralController::createMessage('success', Lang::get('general.' . $this->controller_name), 'create'));
                 } else {
                     DB::rollback();
@@ -153,18 +153,7 @@ class ClientController extends Controller
      * @param  int  $id
      * @return Response
      */
-    public function destroy($id)
-    {
-        //
-        return response()->json(['status' => 'Ok', 'message' => 'Return correct']);
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @return Response
-     */
-    public function delete(Request $request)
+    public function destroy($id, Request $request)
     {
         DB::beginTransaction();
         
@@ -173,10 +162,15 @@ class ClientController extends Controller
 
         $ids = explode(',', $input['id']);
 
-        if (Client::destroy($ids)) {
-            DB::commit();
-            return redirect('clients')->with('return', GeneralController::createMessage('success', Lang::get('general.' . $this->controller_name), 'delete'));
-        } else {
+        try {
+            if (Client::destroy($ids)) {
+                DB::commit();
+                return redirect('clients')->with('return', GeneralController::createMessage('success', Lang::get('general.' . $this->controller_name), 'delete'));
+            } else {
+                DB::rollback();
+                return redirect('clients')->with('return', GeneralController::createMessage('failed', Lang::get('general.' . $this->controller_name), 'delete'));
+            }
+        } catch (Exception $e) {
             DB::rollback();
             return redirect('clients')->with('return', GeneralController::createMessage('failed', Lang::get('general.' . $this->controller_name), 'delete'));
         }

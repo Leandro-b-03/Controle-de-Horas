@@ -10,17 +10,19 @@
         "laravel/elixir": "^1.0@dev",
         "illuminate/html": "^5.0@dev",
         "raveren/kint": "^1.0@dev",
-        "davejamesmiller/laravel-breadcrumbs": "dev-master",
-        "cmgmyr/messenger": "dev-master",
         "laravelcollective/html": "dev-master",
-        "cartalyst/sentry": "^2.2@dev",
-        "zizaco/entrust": "dev-master"
+        "zizaco/entrust": "dev-master",
+        "vinkla/pusher": "~1.0",
+        "guzzle/guzzle": "^3.9@dev",
+        "barryvdh/laravel-debugbar": "^2.0@dev",
+        "cviebrock/eloquent-sluggable": "dev-master"
     },
     "require-dev": {
         "fzaninotto/faker": "~1.4",
         "mockery/mockery": "0.9.*",
         "phpunit/phpunit": "~4.0",
-        "phpspec/phpspec": "~2.1"
+        "phpspec/phpspec": "~2.1",
+        "laracasts/generators": "dev-master"
     },
     "autoload": {
         "classmap": [

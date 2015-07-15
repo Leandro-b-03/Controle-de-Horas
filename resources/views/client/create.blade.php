@@ -59,19 +59,19 @@
               <div class="box-body">
                 <div class="form-group col-xs-12">
                   <label for="name">{!! Lang::get('clients.label-name') !!}</label>
-                  <input type="text" class="form-control" name="name" id="name"  value="{!! (isset($data['client']) ? $data['client']->name : "") !!}" placeholder="{!! Lang::get('clients.ph-name') !!}" data-validation="length" data-validation-length="3-12" data-validation-error-msg="{!! Lang::get('clients.error-name') !!}" required>
+                  <input type="text" class="form-control" name="name" id="name"  value="{!! (isset($data['client']) ? $data['client']->name : (Request::old('name') ? Request::old('name') : '')) !!}" placeholder="{!! Lang::get('clients.ph-name') !!}" data-validation="length" data-validation-length="3-12" data-validation-error-msg="{!! Lang::get('clients.error-name') !!}" required>
                 </div>
                 <div class="form-group col-xs-12">
                   <label for="responsible">{!! Lang::get('clients.label-responsible') !!}</label>
-                  <input type="text" class="form-control" name="responsible" id="responsible"  value="{!! (isset($data['client']) ? $data['client']->responsible : "") !!}" placeholder="{!! Lang::get('clients.ph-responsible') !!}" data-validation="length" data-validation-length="3-80" data-validation-error-msg="{!! Lang::get('clients.error-responsible') !!}" required>
+                  <input type="text" class="form-control" name="responsible" id="responsible"  value="{!! (isset($data['client']) ? $data['client']->responsible : (Request::old('responsible') ? Request::old('responsible') : '')) !!}" placeholder="{!! Lang::get('clients.ph-responsible') !!}" data-validation="length" data-validation-length="3-80" data-validation-error-msg="{!! Lang::get('clients.error-responsible') !!}" required>
                 </div>
                 <div class="form-group col-xs-8">
                   <label for="email">{!! Lang::get('clients.label-email') !!}</label>
-                  <input type="email" class="form-control" name="email" id="email"  value="{!! (isset($data['client']) ? $data['client']->email : "") !!}" placeholder="{!! Lang::get('clients.ph-email') !!}" data-validation="email" data-validation-error-msg="{!! Lang::get('clients.error-email') !!}" required>
+                  <input type="email" class="form-control" name="email" id="email"  value="{!! (isset($data['client']) ? $data['client']->email : (Request::old('email') ? Request::old('email') : '')) !!}" placeholder="{!! Lang::get('clients.ph-email') !!}" data-validation="email" data-validation-error-msg="{!! Lang::get('clients.error-email') !!}" required>
                 </div>
                 <div class="form-group col-xs-4">
                   <label for="phone">{!! Lang::get('clients.label-phone') !!}</label>
-                  <input type="text" class="form-control input-mask" data-mask="(99) *****-****" name="phone" id="phone"  value="{!! (isset($data['client']) ? $data['client']->phone : "") !!}" placeholder="{!! Lang::get('clients.ph-phone') !!}" data-validation="custom" data-validation-regexp="^\([1-9]{2}\)\ [2-9][0-9]{3,4}\-[0-9_]{3,4}$" data-validation-error-msg="{!! Lang::get('clients.error-phone') !!}" required>
+                  <input type="text" class="form-control input-mask" data-mask="(99) *****-****" name="phone" id="phone"  value="{!! (isset($data['client']) ? $data['client']->phone : (Request::old('phone') ? Request::old('phone') : '')) !!}" placeholder="{!! Lang::get('clients.ph-phone') !!}" data-validation="custom" data-validation-regexp="^\([1-9]{2}\)\ [2-9][0-9]{3,4}\-[0-9_]{3,4}$" data-validation-error-msg="{!! Lang::get('clients.error-phone') !!}" required>
                 </div>
               </div><!-- /.box-body -->
               <div class="box-footer">
@@ -93,6 +93,7 @@
 
     <script>
       $.validate();
+
       $('form').submit(function(e) {
         if ($(this).find('.has-error').length > 0) {
           e.preventDefault();
