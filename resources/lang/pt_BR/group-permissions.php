@@ -34,8 +34,8 @@ return [
     'list'                          => 'lista de grupos',
     'create'                        => 'criar grupo',
     'edit'                          => 'editar grupo',
-    'new'                           => 'Novo grupo',
-    'delete'                        => 'Deletar grupo(s)',
+    'new'                           => '<i class="fa fa-plus"></i> Novo grupo',
+    'delete'                        => '<i class="fa fa-remove"></i> Deletar grupo(s)',
 
     // Table
     'title-name'                    => 'Grupo',

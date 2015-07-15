@@ -65,8 +65,8 @@ return [
     'list'                          => 'lista de colaboradores',
     'create'                        => 'criar colaborador',
     'edit'                          => 'editar colaborador',
-    'new'                           => 'Novo colaborador',
-    'delete'                        => 'Deletar colaborador(es)',
+    'new'                           => '<i class="fa fa-plus"></i> Novo colaborador',
+    'delete'                        => '<i class="fa fa-remove"></i> Deletar colaborador(es)',
 
     // Table
     'title-user-info'               => 'Informa&ccedil;&otilde;es b&aacute;sicas',

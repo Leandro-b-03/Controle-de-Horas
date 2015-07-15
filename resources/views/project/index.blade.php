@@ -61,7 +61,6 @@
                     <th>{!! Lang::get('general.action') !!}</th>
                 </tr>
             </thead>
-            {!! die(d($data['projects']->first()->client()->getResults()->name)) !!}
             @if($data['projects']->count())
             <tbody>
                 @foreach($data['projects'] as $project)

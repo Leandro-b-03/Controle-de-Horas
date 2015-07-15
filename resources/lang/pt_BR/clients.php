@@ -37,8 +37,8 @@ return [
     'list'                          => 'lista de clientes',
     'create'                        => 'criar cliente',
     'edit'                          => 'editar cliente',
-    'new'                           => 'Novo cliente',
-    'delete'                        => 'Deletar cliente(s)',
+    'new'                           => '<i class="fa fa-plus"></i> Novo cliente',
+    'delete'                        => '<i class="fa fa-remove"></i> Deletar cliente(s)',
 
     // Table
     'title-name'                    => 'Nome do cliente',
