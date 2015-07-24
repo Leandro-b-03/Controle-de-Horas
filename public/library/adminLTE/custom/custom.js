@@ -1,4 +1,8 @@
 $(function () {
+    $(window).on('beforeunload', function(){
+        socket.close();
+    });
+
     $.ajaxSetup({
         headers: {
             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -129,4 +133,51 @@ function responsive_filemanager_callback(field_id){
     $('#'+field_id).val(url.replace(url_web, ''));
     
     $('#image').attr('src', url.replace('../', '/'));
+}
+
+//subscribe to our private channel
+var PresenceChannel = pusher.subscribe("presence-user-" + user_id);
+
+//do something with our new information
+PresenceChannel.bind('new_notification', function(notification){
+    // assign the notification's message to a <div></div>notification
+    $('li.notifications-menu .dropdown-menu .menu').prepend(createNotification(notification));
+});
+
+//subscribe to our notifications channel
+var notificationsChannel = pusher.subscribe('notifications');
+
+//do something with our new information
+notificationsChannel.bind('new_notification', function(notification){
+    // assign the notification's message to a <div></div>notification
+    $('li.notifications-menu .dropdown-menu .menu').prepend(createNotification(notification));
+
+    titleCounter();
+});
+
+function createNotification(notification) {
+    var count = $('.notification-count').html();
+    if (count == '') {
+        $('.notification-count').html(1);
+    } else {
+        $('.notification-count').html(parseInt($('.notification-count').html()) + 1);
+    }
+
+    var new_message = '';
+
+    new_message += '<li>';
+    new_message += '    <a href="' + notification.href + '">';
+    new_message += '        <i class="fa fa-' + notification.faicon + ' text-aqua"></i> ' + notification.message;
+    new_message += '    </a>';
+    new_message += '</li>';
+
+    return new_message;
+}
+
+function titleCounter() {
+    original_title = document.title;
+
+    update_count = parseInt($('.message-count').html()) + parseInt($('.notification-count').html()) + parseInt($('.tasks-count').html());
+
+    document.title = "(" + update_count + ") " + original_title;
 }

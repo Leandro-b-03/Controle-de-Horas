@@ -108,7 +108,7 @@ return [
 
     // Sentences with variable :string
     'member-since'                  => 'Membro desde :month-year',
-    ''                              => '',
+    'bavbar-notification'           => '{0}Você não possui notificações|{1}Você tem :count notificação|{2,Inf}Você tem :count notificações',
     ''                              => '',
     ''                              => '',
     ''                              => '',

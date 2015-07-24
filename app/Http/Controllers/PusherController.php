@@ -4,21 +4,25 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 
+use Auth;
 use PusherManager;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 
-class DashboardController extends Controller
+class PusherController extends Controller
 {
     /**
      * Display a listing of the resource.
      *
      * @return Response
      */
-    public function index()
+    public function auth(Request $request)
     {
-        // Return the dashboard view.
-        return view('dashboard.index');
+        $post = $request->all();
+
+        $json = json_decode(PusherManager::presence_auth($post["channel_name"], $post["socket_id"], Auth::user()->id, array('name' => Auth::user()->first_name)));
+
+        return response()->json($json);
     }
 
     /**
@@ -34,9 +38,10 @@ class DashboardController extends Controller
     /**
      * Store a newly created resource in storage.
      *
+     * @param  Request  $request
      * @return Response
      */
-    public function store()
+    public function store(Request $request)
     {
         //
     }
@@ -66,10 +71,11 @@ class DashboardController extends Controller
     /**
      * Update the specified resource in storage.
      *
+     * @param  Request  $request
      * @param  int  $id
      * @return Response
      */
-    public function update($id)
+    public function update(Request $request, $id)
     {
         //
     }

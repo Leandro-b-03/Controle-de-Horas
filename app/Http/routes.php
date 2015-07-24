@@ -25,6 +25,9 @@ Route::group(['middleware' => 'auth'], function () {
 
     Route::get('dashboard', 'DashboardController@index');
 
+    Route::post('pusher/auth', 'PusherController@auth');
+
+    Route::get('general/createNotificationJSON', 'GeneralController@createNotificationJSON');
     Route::get('general/createMessageJSON', 'GeneralController@createMessageJSON');
     Route::post('general/verifyEmailJSON', 'GeneralController@verifyEmailJSON');
     Route::post('general/verifyCPFJSON', 'GeneralController@verifyCPFJSON');

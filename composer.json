@@ -15,7 +15,8 @@
         "vinkla/pusher": "~1.0",
         "guzzle/guzzle": "^3.9@dev",
         "barryvdh/laravel-debugbar": "^2.0@dev",
-        "cviebrock/eloquent-sluggable": "dev-master"
+        "cviebrock/eloquent-sluggable": "dev-master",
+        "pusher/pusher-php-server": "dev-master"
     },
     "require-dev": {
         "fzaninotto/faker": "~1.4",

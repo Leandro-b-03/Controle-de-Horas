@@ -172,7 +172,7 @@ return [
          */
         Collective\Html\HtmlServiceProvider::class,
         Cviebrock\EloquentSluggable\SluggableServiceProvider::class,
-        // Vinkla\Pusher\PusherServiceProvider::class,
+        Vinkla\Pusher\PusherServiceProvider::class,
         Zizaco\Entrust\EntrustServiceProvider::class,
 
     ],
@@ -227,6 +227,7 @@ return [
         'Form1'         => Illuminate\Html\FormFacade::class,
         'HTML1'         => Illuminate\Html\HtmlFacade::class,
         'Entrust'       => Zizaco\Entrust\EntrustFacade::class,
+        'PusherManager' => Vinkla\Pusher\Facades\Pusher::class,
 
     ],
 

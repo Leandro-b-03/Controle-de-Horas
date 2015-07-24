@@ -34,4 +34,12 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 	 */
 	protected $hidden = ['password', 'remember_token'];
 
+    /**
+     * Get the getNotifications record associated with the project.
+     */
+    public function getNotifications()
+    {
+        return $this->hasMany('App\UserNotification', 'user_id');
+    }
+
 }

@@ -28,6 +28,19 @@ class GeneralController extends Controller {
         // Get the data receive from ajax.
         $inputs = $request->all();
 
+        return response()->json($this->createMessage($inputs['type'], $inputs['icon'], $inputs['message']));
+    }
+
+    /**
+     * Generates an array with parameters to messages
+     *
+     * @return Array with message
+     */
+    public function createNotificationJSON(Request $request)
+    {
+        // Get the data receive from ajax.
+        $inputs = $request->all();
+
         return response()->json($this->createMessage($inputs['type'], $inputs['name'], $inputs['kind'], (isset($inputs['message']) ? $inputs['message'] : '')));
     }
 
@@ -175,6 +188,16 @@ class GeneralController extends Controller {
         }
 
         return $message;
+    }
+
+    /**
+     * Generates an array with parameters to messages
+     *
+     * @return Array with message
+     */
+    public static function createNotification($type, $icon, $message)
+    {
+        
     }
 
 }

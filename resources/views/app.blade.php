@@ -5,7 +5,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}" />
     <title>
     	@section('title')
-        @show
+      @show
     </title>
     <meta content='width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no' name='viewport'>
     <!-- Bootstrap 3.3.4 -->
@@ -37,7 +37,7 @@
   <body class="skin-yellow sidebar-mini">
     <!-- Site wrapper -->
     <div class="wrapper">
-      
+      <div class="notification"></div>
       <header class="main-header">
         <!-- Logo -->
         <a href="{!! URL::to('/') !!}" class="logo">
@@ -89,18 +89,20 @@
               <li class="dropdown notifications-menu">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                   <i class="fa fa-bell-o"></i>
-                  <span class="label label-warning">10</span>
+                  <span class="label label-warning notification-count">{!! Auth::user()->getNotifications()->unseen()->get()->count() !!}</span>
                 </a>
                 <ul class="dropdown-menu">
-                  <li class="header">You have 10 notifications</li>
+                  <li class="header">{!! Lang::choice('general.bavbar-notification', Auth::user()->getNotifications()->unseen()->get()->count(), ['count' => Auth::user()->getNotifications()->unseen()->get()->count() ]) !!}</li>
                   <li>
                     <!-- inner menu: contains the actual data -->
                     <ul class="menu">
+                      @foreach (Auth::user()->getNotifications()->get() as $notification)
                       <li>
-                        <a href="#">
-                          <i class="fa fa-users text-aqua"></i> 5 new members joined today
+                        <a href="{!! $notification->href !!}">
+                          <i class="fa fa-{!! $notification->faicon !!} text-aqua"></i> {!! $notification->message !!}
                         </a>
                       </li>
+                      @endforeach
                     </ul>
                   </li>
                   <li class="footer"><a href="#">View all</a></li>
@@ -170,7 +172,7 @@
                       <a href="#" class="btn btn-default btn-flat">Profile</a>
                     </div>
                     <div class="pull-right">
-                      <a href="#" class="btn btn-danger btn-flat">Sair da Sessão</a>
+                      <a href="{!! URL::to('auth/logout') !!}" class="btn btn-danger btn-flat">Sair da Sessão</a>
                     </div>
                   </li>
                 </ul>
@@ -446,6 +448,9 @@
       <div class='control-sidebar-bg'></div>
     </div><!-- ./wrapper -->
 
+    <!-- Pusher -->
+    <script src="//js.pusher.com/2.2/pusher.min.js"></script>
+
     <!-- jQuery 2.1.4 -->
     {!! Html::script("library/adminLTE/plugins/jQuery/jQuery-2.1.4.min.js") !!}
     <!-- Bootstrap 3.3.2 JS -->
@@ -461,6 +466,16 @@
     @section('scripts')
     @show
     <script>
+      $.ajaxSetup({
+          headers: {
+              'X-CSRF-TOKEN':'{!! csrf_token() !!}'
+          }
+      });
+
+      var user_id = '{!! Auth::user()->id !!}';
+
+      var pusher = new Pusher('2a865cce883db16362c7');
+
       var dataTableLang = [];
 
       dataTableLang.processing = "{!! Lang::get('general.dataTable-processing') !!}"
