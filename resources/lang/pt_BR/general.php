@@ -38,12 +38,15 @@ return [
     'page'                          => 'P&aacute;gina',
     'save'                          => 'Salvar',
     'back'                          => 'Voltar',
+    'back-icon'                     => '<i class="fa fa-remove"></i> Voltar',
     'select-all'                    => 'Selecionar Todos',
     'deselect-all'                  => 'Deselecionar Todos',
     'action'                        => 'A&ccedil;&atilde;o',
     'select'                        => '-- Selecione --',
     'remove'                        => 'Remover',
-    ''                              => '',
+    'remove-icon'                   => '<i class="fa fa-remove"></i> Remover',
+    'add'                           => 'Adicionar',
+    'add-icon'                      => '<i class="fa fa-plus"></i> Adicionar',
 
     // Menu & Controller
     'principal'                     => 'Principal',

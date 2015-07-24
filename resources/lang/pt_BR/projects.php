@@ -18,7 +18,7 @@ return [
     'label-description'             => 'Descri&ccedil;&atilde;o curta',
     'label-long_description'        => 'Descri&ccedil;&atilde;o longa',
     'label-manager'                 => 'Gerente do projeto',
-    'label-photo'                   => 'Foto',
+    'label-schedule_time'           => 'Horas programadas',
     'label-budget'                  => 'Budget',
     'ph-name'                       => 'Nome do projeto',
     'ph-description'                => 'Primeiro nome do colaborador',
@@ -41,8 +41,8 @@ return [
     'list'                          => 'lista de projetos',
     'create'                        => 'criar projeto',
     'edit'                          => 'editar projeto',
-    'new'                           => 'Novo projeto',
-    'delete'                        => 'Deletar projeto(s)',
+    'new'                           => '<i class="fa fa-plus"></i> Novo projeto',
+    'delete'                        => '<i class="fa fa-remove"></i> Deletar projeto(s)',
 
     // Table
     'title-name'                    => 'Nome do projeto',
@@ -56,4 +56,6 @@ return [
     'time'                          => 'Tempo',
     'budget'                        => 'Budget',
     'add-row'                       => 'Adicionar linha',
+    'tasks'                         => 'Tarefas',
+    'new-task'                      => 'Nova tarefa',
 ];
