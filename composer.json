@@ -16,7 +16,8 @@
         "guzzle/guzzle": "^3.9@dev",
         "barryvdh/laravel-debugbar": "^2.0@dev",
         "cviebrock/eloquent-sluggable": "dev-master",
-        "pusher/pusher-php-server": "dev-master"
+        "pusher/pusher-php-server": "^2.0@dev",
+        "aws/aws-sdk-php-laravel": "dev-master"
     },
     "require-dev": {
         "fzaninotto/faker": "~1.4",

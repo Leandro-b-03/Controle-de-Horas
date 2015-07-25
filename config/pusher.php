@@ -48,9 +48,9 @@ return [
         ],
 
         'alternative' => [
-            'auth_key' => 'your-auth-key',
-            'secret' => 'your-secret',
-            'app_id' => 'your-app-id',
+            'auth_key' => 'f95817f904bf1495854d',
+            'secret' => '186ee1a201f36b0773f5',
+            'app_id' => '129131',
             'options' => [],
             'host' => null,
             'port' => null,

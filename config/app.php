@@ -130,7 +130,7 @@ return [
         /*
          * Development Service Providers...
          */
-        Barryvdh\Debugbar\ServiceProvider::class,
+        // Barryvdh\Debugbar\ServiceProvider::class,
 
         /*
          * Laravel Framework Service Providers...
@@ -174,6 +174,12 @@ return [
         Cviebrock\EloquentSluggable\SluggableServiceProvider::class,
         Vinkla\Pusher\PusherServiceProvider::class,
         Zizaco\Entrust\EntrustServiceProvider::class,
+        // Intervention\Image\ImageServiceProvider::class,
+
+        /*
+         * Personalization Services Providers...
+         */
+        Aws\Laravel\AwsServiceProvider::class,
 
     ],
 
@@ -228,6 +234,8 @@ return [
         'HTML1'         => Illuminate\Html\HtmlFacade::class,
         'Entrust'       => Zizaco\Entrust\EntrustFacade::class,
         'PusherManager' => Vinkla\Pusher\Facades\Pusher::class,
+        //'Image'         => Intervention\Image\Facades\Image::class,
+        'AWS'           => Aws\Laravel\AwsFacade::class
 
     ],
 

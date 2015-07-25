@@ -1,8 +1,4 @@
 $(function () {
-    $(window).on('beforeunload', function(){
-        socket.close();
-    });
-
     $.ajaxSetup({
         headers: {
             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -136,7 +132,7 @@ function responsive_filemanager_callback(field_id){
 }
 
 //subscribe to our private channel
-var PresenceChannel = pusher.subscribe("presence-user-" + user_id);
+var PresenceChannel = pusher.subscribe("presence-user-" + user.id);
 
 //do something with our new information
 PresenceChannel.bind('new_notification', function(notification){
@@ -181,3 +177,31 @@ function titleCounter() {
 
     document.title = "(" + update_count + ") " + original_title;
 }
+
+/*$(function() {
+    var chatWidget = new PusherChatWidget(pusher, {
+    channelName: 'presence-chat-1-2',
+    appendTo: '#chat-line',
+    debug: false
+  });
+    var chatWidget1 = new PusherChatWidget(pusher, {
+    channelName: 'presence-chat-1-3',
+    appendTo: '#chat-line',
+    debug: false
+  });
+    var chatWidget2 = new PusherChatWidget(pusher, {
+    channelName: 'presence-chat-1-4',
+    appendTo: '#chat-line',
+    debug: false
+  });
+    var chatWidget3 = new PusherChatWidget(pusher, {
+    channelName: 'presence-chat-1-5',
+    appendTo: '#chat-line',
+    debug: false
+  });
+    var chatWidget4 = new PusherChatWidget(pusher, {
+    channelName: 'presence-chat-1-6',
+    appendTo: '#chat-line',
+    debug: false
+  });
+});*/

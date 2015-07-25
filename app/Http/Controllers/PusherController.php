@@ -8,6 +8,7 @@ use Auth;
 use PusherManager;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\ActivityController;
 
 class PusherController extends Controller
 {
@@ -30,9 +31,44 @@ class PusherController extends Controller
      *
      * @return Response
      */
-    public function create()
+    public function chat(Request $request)
     {
-        //
+        $post = $request->all();
+
+        $chat_info = $post['chat_info'];
+        $options = $this->sanitise_input($chat_info);
+
+        $activity = new ActivityController('chat-message', $options['text'], $options);
+
+        $data = $activity->getMessage();
+        $response = PusherManager::trigger($chat_info['channel_name'], 'chat_message', $data, null, true);
+
+        $result = array('activity' => $data, 'pusherResponse' => $response);
+        return response()->json($result);
+    }
+
+    /**
+     *
+     */
+    public function get_channel_name($http_referer) {
+        // not allowed :, / % #
+        $pattern = "/(\W)+/";
+        $channel_name = preg_replace($pattern, '-', $http_referer);
+        return $channel_name;
+    }
+
+    /**
+     *
+     */
+    public function sanitise_input($chat_info) {
+        $email = isset($chat_info['email']) ? $chat_info['email'] : '';
+        
+        $options = array();
+        $options['displayName'] = substr(htmlspecialchars($chat_info['nickname']), 0, 30);
+        $options['text'] = substr(htmlspecialchars($chat_info['text']), 0, 300);
+        $options['email'] = substr(htmlspecialchars($email), 0, 100);
+
+        return $options;
     }
 
     /**

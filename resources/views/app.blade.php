@@ -89,7 +89,7 @@
               <li class="dropdown notifications-menu">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                   <i class="fa fa-bell-o"></i>
-                  <span class="label label-warning notification-count">{!! Auth::user()->getNotifications()->unseen()->get()->count() !!}</span>
+                  <span class="label label-warning notification-count">{!! Auth::user()->getNotifications()->unseen()->get()->count() != 0 ? Auth::user()->getNotifications()->unseen()->get()->count() : '' !!}</span>
                 </a>
                 <ul class="dropdown-menu">
                   <li class="header">{!! Lang::choice('general.bavbar-notification', Auth::user()->getNotifications()->unseen()->get()->count(), ['count' => Auth::user()->getNotifications()->unseen()->get()->count() ]) !!}</li>
@@ -272,7 +272,8 @@
           </div><!-- /.modal -->
         </section><!-- /.content -->
       </div><!-- /.content-wrapper -->
-
+      <div id="chat-line" class="row">
+      </div>
       <footer class="main-footer">
         <div class="pull-right hidden-xs">
           <b>Versão</b> {!! Config::get('app.app_version') !!}
@@ -446,21 +447,21 @@
       <!-- Add the sidebar's background. This div must be placed
            immediately after the control sidebar -->
       <div class='control-sidebar-bg'></div>
+      @extends('general.chat')
+      @show
     </div><!-- ./wrapper -->
-
-    <!-- Pusher -->
-    <script src="//js.pusher.com/2.2/pusher.min.js"></script>
 
     <!-- jQuery 2.1.4 -->
     {!! Html::script("library/adminLTE/plugins/jQuery/jQuery-2.1.4.min.js") !!}
+    <!-- Pusher -->
+    <script src="//js.pusher.com/3.0/pusher.min.js"></script>
+
     <!-- Bootstrap 3.3.2 JS -->
     {!! Html::script("library/adminLTE/bootstrap/js/bootstrap.min.js") !!}
     <!-- SlimScroll -->
     {!! Html::script("library/adminLTE/plugins/slimScroll/jquery.slimscroll.min.js") !!}
     <!-- FastClick -->
     {!! Html::script("library/adminLTE/plugins/fastclick/fastclick.min.js") !!}
-    <!-- AdminLTE App -->
-    {!! Html::script("library/adminLTE/dist/js/app.min.js") !!}
     <!-- iCheck -->
     {!! Html::script("library/adminLTE/plugins/iCheck/icheck.min.js") !!}
     @section('scripts')
@@ -472,7 +473,7 @@
           }
       });
 
-      var user_id = '{!! Auth::user()->id !!}';
+      var user = $.parseJSON('{!! json_encode(Auth::user()); !!}');
 
       var pusher = new Pusher('2a865cce883db16362c7');
 
@@ -493,7 +494,11 @@
       dataTableLang.paginate_next = "{!! Lang::get('general.dataTable-paginate_next') !!}"
       dataTableLang.paginate_last = "{!! Lang::get('general.dataTable-paginate_last') !!}"
     </script>
+    <!-- Custom PusherChatWidget.js -->
+    {!! Html::script("library/adminLTE/custom/CustomPusherChatWidget.js") !!}
     <!-- Custom script -->
     {!! Html::script("library/adminLTE/custom/custom.js") !!}
+    <!-- AdminLTE App -->
+    {!! Html::script("library/adminLTE/dist/js/app.min.js") !!}
   </body>
 </html>
