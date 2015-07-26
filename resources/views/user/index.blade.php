@@ -50,11 +50,11 @@
         <table id="user-list" class="table table-bordered table-striped">
             <thead>
                 <tr>
-                    {{-- <th><input type="checkbox" class="select-all" /></th> --}}
+                    {{-- <th class="select-tr"><input type="checkbox" class="select-all" /></th> --}}
                     <th>{!! Lang::get('users.title-user-info') !!}</th>
                     <th>{!! Lang::get('users.title-projects') !!}</th>
                     <th>{!! Lang::get('users.title-teams') !!}</th>
-                    <th>{!! Lang::get('general.action') !!}</th>
+                    <th class="action-tr">{!! Lang::get('general.action') !!}</th>
                 </tr>
             </thead>
             @if($data['users']->count())

@@ -50,11 +50,11 @@
         <table id="group-list" class="table table-bordered table-striped">
             <thead>
                 <tr>
-                    <th><input type="checkbox" class="select-all" /></th>
+                    <th class="select-tr"><input type="checkbox" class="select-all" /></th>
                     <th>{!! Lang::get('group-permissions.title-name') !!}</th>
                     <th>{!! Lang::get('group-permissions.title-display_name') !!}</th>
                     <th>{!! Lang::get('group-permissions.title-created_at') !!}</th>
-                    <th>{!! Lang::get('general.action') !!}</th>
+                    <th class="action-tr">{!! Lang::get('general.action') !!}</th>
                 </tr>
             </thead>
             @if($data['groups']->count())

@@ -74,10 +74,10 @@
                 <div class="form-group col-xs-2">
                   <label for="gender">{!! Lang::get('users.label-gender') !!}</label>
                   <div class="radio">
-                    <label><input name="gender" id="gender" value="F" type="radio" data-validation-qty="min1" data-validation-error-msg="{!! Lang::get('users.error-gender_female') !!}" {!! (isset($data['user']) ? $data['user']->gender : (Request::old('gender') ? Request::old('gender') : '')) !!} required>{!! Lang::get('users.ph-gender_female') !!}</label>
+                    <label><input name="gender" id="gender" value="F" type="radio" data-validation-qty="min1" data-validation-error-msg="{!! Lang::get('users.error-gender_female') !!}" {!! (isset($data['user']) ? ($data['user']->gender == 'F') ? 'checked="checked"' : ((Request::old('gender')) ? ((Request::old('gender') == 'F') ? 'checked="checked"' : '') : '') : '' ) !!} required> {!! Lang::get('users.ph-gender_female') !!}</label>
                   <div class="radio">
                   </div>
-                    <label><input name="gender" id="gender" value="M" type="radio" {!! (isset($data['user']) ? $data['user']->gender : (Request::old('gender') ? Request::old('gender') : '')) !!}>{!! Lang::get('users.ph-gender_male') !!}</label>
+                    <label><input name="gender" id="gender" value="M" type="radio" {!! (isset($data['user']) ? ($data['user']->gender == 'M') ? 'checked="checked"' : ((Request::old('gender')) ? ((Request::old('gender') == 'M') ? 'checked="checked"' : '') : '') : '' ) !!}> {!! Lang::get('users.ph-gender_male') !!}</label>
                   </div>
                 </div>
                 <div class="form-group col-xs-8{!! Request::is('users/create') ? '' : ' has-success' !!}">

@@ -63,10 +63,15 @@ class ProposalController extends Controller
             ],
             [
                 'name' => 'required',
-                'password' => 'required|min:8',
-                'email' => 'required|email|unique:users'
+                'proposal' => 'required|min:8',
+                'client' => 'required'
             ]
         );
+
+        if ($inputs['proposal'] == "" || $inputs['proposal'] == null || !$inputs['proposal']) {
+            DB::rollback();
+            return redirect('proposals/create')->withInput()->with('return', GeneralController::createMessage('failed', Lang::get('general.' . $this->controller_name), 'custom', Lang::get('proposals.error-proposal')));
+        }
 
         try {
             if($validator) {
@@ -105,6 +110,10 @@ class ProposalController extends Controller
      */
     public function edit($id)
     {
+        // Get all clients
+        $clients = Client::all();
+        $data['clients'] = $clients;
+
         // Retrive the proposal with param $id
         $proposal = Proposal::find($id);
         $data['proposal'] = $proposal;
@@ -129,9 +138,14 @@ class ProposalController extends Controller
         // Get all the input from update.
         $inputs = $request->all();
 
+        if ($inputs['proposal'] == "" || $inputs['proposal'] == null || !$inputs['proposal']) {
+            DB::rollback();
+            return redirect('proposals/' . $id . '/edit')->withInput()->with('return', GeneralController::createMessage('failed', Lang::get('general.' . $this->controller_name), 'custom', Lang::get('proposals.error-proposal')));
+        }
+
         try {
             foreach($inputs as $input => $value) {
-                if($proposal->{$input})
+                if ($proposal->{$input} || $input == 'proposal')
                     $proposal->{$input} = $value;
             }
 
@@ -140,11 +154,11 @@ class ProposalController extends Controller
                 return redirect('proposals')->with('return', GeneralController::createMessage('success', Lang::get('general.' . $this->controller_name), 'update'));
             } else {
                 DB::rollback();
-                return redirect('proposals/create')->withInput()->with('return', GeneralController::createMessage('failed', Lang::get('general.' . $this->controller_name), 'update'));
+                return redirect('proposals/' . $id . '/edit')->withInput()->with('return', GeneralController::createMessage('failed', Lang::get('general.' . $this->controller_name), 'update'));
             }
         } catch (Exception $e) {
             DB::rollback();
-            return redirect('proposals/create')->withInput()->with('return', GeneralController::createMessage('failed', Lang::get('general.' . $this->controller_name), 'update'));
+            return redirect('proposals/' . $id . '/edit')->withInput()->with('return', GeneralController::createMessage('failed', Lang::get('general.' . $this->controller_name), 'update'));
         }
     }
 

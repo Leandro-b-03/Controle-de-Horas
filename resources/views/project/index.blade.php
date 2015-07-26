@@ -50,15 +50,15 @@
         <table id="client-list" class="table table-bordered table-striped">
             <thead>
                 <tr>
-                    <th><input type="checkbox" id="select_all" /></th>
+                    <th class="select-tr"><input type="checkbox" id="select_all" /></th>
                     <th>Nome</th>
                     <th>Descrição</th>
                     <th>Cliente</th>
-                    <th>Gerente do projeto</th>
+                    <th>Proposta do projeto</th>
                     <th>Projeto criado em</th>
                     <th>Horas programadas</th>
                     <th>Horas restantes</th>
-                    <th>{!! Lang::get('general.action') !!}</th>
+                    <th class="action-tr">{!! Lang::get('general.action') !!}</th>
                 </tr>
             </thead>
             @if($data['projects']->count())
@@ -68,12 +68,12 @@
                     <td><input type="checkbox" class="delete" data-value="{!! $project->id !!}" /></td>
                     <td>{!! $project->name !!}</td>
                     <td>{!! $project->short_description !!}</td>
-                    <td>{!! $project->client()->getResults()->name !!}</td>
-                    <td>{!! $project->user()->getResults()->username !!}</td>
+                    <td>{!! $project->proposal()->client()->getResults()->name !!}</td>
+                    <td>{!! $project->proposal()->getResults()->name !!}</td>
                     <td>{!! date('d/m/Y', strtotime($project->created_at)) !!}</td>
                     <td>{!! $project->schedule_time !!}</td>
                     <td>{!! $project->time_spend !!}</td>
-                    <td><a href="{!! URL::to('projects/' . $project->id . '/edit') !!}" class="btn btn-primary">Editar</a></td>
+                    <td><a href="{!! URL::to('projects/' . $project->id . '/edit') !!}" class="btn btn-primary">{!! Lang::get('general.edit') !!}</a></td>
                 </tr>
                 @endforeach
             </tbody>

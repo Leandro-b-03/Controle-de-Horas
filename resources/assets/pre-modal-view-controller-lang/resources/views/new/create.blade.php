@@ -1,25 +1,23 @@
 @extends('app')
 
 @section('title')
-    {!! Lang::get('general.app-tittle', ['controller' => Lang::get('general.proposals')]) !!}
+    {!! Lang::get('general.app-tittle', ['controller' => Lang::get('general.clients')]) !!}
 @stop
 
 @section('style')
     <!-- DATA TABLES -->
     {!! Html::style('library/adminLTE/plugins/datatables/dataTables.bootstrap.css') !!}
-    <!-- CKEditor -->
-    {!! Html::style("library/adminLTE/plugins/ckeditor/ckeditor.css") !!}
     <!-- jQuery-Form-Validator -->
     {!! Html::style("library/adminLTE/plugins/jQuery-Form-Validator/form-validator/theme-default.min.css") !!}
 @stop
 
 @section('content')
         <h1>
-            {!! Lang::get('general.proposals') !!}
-            @if (Request::is('proposals/create'))
-            <small>{!! Lang::get('proposals.create') !!}</small>
+            {!! Lang::get('general.clients') !!}
+            @if (Request::is('clients/create'))
+            <small>{!! Lang::get('clients.create') !!}</small>
             @else
-            <small>{!! Lang::get('proposals.edit') !!}</small>
+            <small>{!! Lang::get('clients.edit') !!}</small>
             @endif
         </h1>
         <!-- <ol class="breadcrumb">
@@ -53,37 +51,32 @@
               @endif
             </div><!-- /.box-header -->
             <!-- form start -->
-            @if (Request::is('proposals/create'))
-            {!! Form::open(array('route' => 'proposals.store')) !!}
+            @if (Request::is('clients/create'))
+            {!! Form::open(array('route' => 'clients.store')) !!}
             @else
-            {!! Form::open(array('route' => [ 'proposals.update', $data['proposal']->id ], 'method' => 'PUT')) !!}
+            {!! Form::open(array('route' => [ 'clients.update', $data['client']->id ], 'method' => 'PUT')) !!}
             @endif
               <div class="box-body">
+                <div class="form-group col-xs-12">
+                  <label for="name">{!! Lang::get('clients.label-name') !!}</label>
+                  <input type="text" class="form-control" name="name" id="name"  value="{!! (isset($data['client']) ? $data['client']->name : (Request::old('name') ? Request::old('name') : '')) !!}" placeholder="{!! Lang::get('clients.ph-name') !!}" data-validation="length" data-validation-length="3-12" data-validation-error-msg="{!! Lang::get('clients.error-name') !!}" required>
+                </div>
+                <div class="form-group col-xs-12">
+                  <label for="responsible">{!! Lang::get('clients.label-responsible') !!}</label>
+                  <input type="text" class="form-control" name="responsible" id="responsible"  value="{!! (isset($data['client']) ? $data['client']->responsible : (Request::old('responsible') ? Request::old('responsible') : '')) !!}" placeholder="{!! Lang::get('clients.ph-responsible') !!}" data-validation="length" data-validation-length="3-80" data-validation-error-msg="{!! Lang::get('clients.error-responsible') !!}" required>
+                </div>
                 <div class="form-group col-xs-8">
-                  <label for="name">{!! Lang::get('proposals.label-name') !!}</label>
-                  <input type="text" class="form-control" name="name" id="name"  value="{!! (isset($data['proposal']) ? $data['proposal']->name : (Request::old('name') ? Request::old('name') : '')) !!}" placeholder="{!! Lang::get('proposals.ph-name') !!}" data-validation="length" data-validation-length="3-40" data-validation-error-msg="{!! Lang::get('proposals.error-name') !!}" required>
+                  <label for="email">{!! Lang::get('clients.label-email') !!}</label>
+                  <input type="email" class="form-control" name="email" id="email"  value="{!! (isset($data['client']) ? $data['client']->email : (Request::old('email') ? Request::old('email') : '')) !!}" placeholder="{!! Lang::get('clients.ph-email') !!}" data-validation="email" data-validation-error-msg="{!! Lang::get('clients.error-email') !!}" required>
                 </div>
                 <div class="form-group col-xs-4">
-                  <label for="client_id">{!! Lang::get('general.clients') !!}</label>
-                  <select name="client_id" class="form-control" data-validation="required" data-validation-error-msg="{!! Lang::get('proposals.error-clients') !!}" required>
-                    <option value="">{!! Lang::get('general.select') !!}</option>
-                    @foreach ($data['clients'] as $client)
-                    <option value="{!! $client->id !!}" {!! (isset($data['proposal']) ? ($data['proposal']->client()->getResults()->id == $client->id ? 'selected="selected"' : "") : "") !!}>{!! $client->name !!}</option>
-                    @endforeach
-                  </select>
+                  <label for="phone">{!! Lang::get('clients.label-phone') !!}</label>
+                  <input type="text" class="form-control input-mask" data-mask="(99) *****-****" name="phone" id="phone"  value="{!! (isset($data['client']) ? $data['client']->phone : (Request::old('phone') ? Request::old('phone') : '')) !!}" placeholder="{!! Lang::get('clients.ph-phone') !!}" data-validation="custom" data-validation-regexp="^\([1-9]{2}\)\ [2-9][0-9]{3,4}\-[0-9_]{3,4}$" data-validation-error-msg="{!! Lang::get('clients.error-phone') !!}" required>
                 </div>
-                <div class="form-group col-xs-12">
-                  <hr />
-                </div>
-                <div class="form-group col-xs-12">
-                  <label for="proposal">{!! Lang::get('proposals.label-proposal') !!}</label>
-                  <textarea name="proposal" id="proposal" rows="10" placeholder="{!! Lang::get('proposals.ph-proposal') !!}" data-validation-error-msg="{!! Lang::get('proposals.error-proposal') !!}" required>{!! (isset($data['proposal']) ? $data['proposal']->proposal : (Request::old('proposal') ? Request::old('proposal') : '')) !!}</textarea>
-                </div>
-                <input type="hidden" name="user_id" id="user_id" value="{!! (isset($data['proposal']) ? $data['proposal']->user_id : (Request::old('user_id') ? Request::old('user_id') : Auth::user()->id)) !!}">
               </div><!-- /.box-body -->
               <div class="box-footer">
                 <button type="submit" class="btn btn-primary">{!! Lang::get('general.save') !!}</button>
-                <a href="{!! URL::to('proposals') !!}" class="btn btn-danger">{!! Lang::get('general.back') !!}</a>
+                <a href="{!! URL::to('clients') !!}" class="btn btn-danger">{!! Lang::get('general.back') !!}</a>
               </div>
             {!! Form::close() !!}
           </div><!-- /.box -->
@@ -95,20 +88,14 @@
 @section('scripts')
     <!-- Jasny-bootstrap -->
     {!! Html::script("library/adminLTE/plugins/jasny-bootstrap/js/jasny-bootstrap.min.js") !!}
-    <!-- CKEditor -->
-    {!! Html::script("library/adminLTE/plugins/ckeditor/ckeditor.js") !!}
     <!-- jQuery-Form-Validator -->
     {!! Html::script("library/adminLTE/plugins/jQuery-Form-Validator/form-validator/jquery.form-validator.min.js") !!}
 
     <script>
-      var ckeditor = CKEDITOR.replace('proposal');
-      // ckeditor.resize('100%', '450px');
-
       $.validate();
 
       $('form').submit(function(e) {
-        var messageLength = CKEDITOR.instances['noticeMessage'].getData().replace(/<[^>]*>/gi, '').length;
-        if ($(this).find('.has-error').length > 0 || !messageLength) {
+        if ($(this).find('.has-error').length > 0) {
           e.preventDefault();
           var data = {class:'danger', faicon:'ban', status:"{!! Lang::get('general.failed') !!}", message:"{!! html_entity_decode(Lang::get('general.failed-fields')) !!}"};
             $('#messages').html(throwMessage(data));

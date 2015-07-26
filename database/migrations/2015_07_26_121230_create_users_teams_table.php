@@ -3,7 +3,7 @@
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateProposalsTable extends Migration
+class CreateUsersTeamsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -12,17 +12,13 @@ class CreateProposalsTable extends Migration
      */
     public function up()
     {
-        Schema::create('proposals', function (Blueprint $table) {
-            $table->increments('id');
+        Schema::create('users_teams', function (Blueprint $table) {
             $table->integer('user_id')->unsigned();
-            $table->integer('client_id')->unsigned();
-            $table->string('name');
-            $table->text('proposal');
-            $table->boolean('status');
+            $table->integer('team_id')->unsigned();
             $table->timestamps();
 
             $table->foreign('user_id')->references('id')->on('users')->onUpdate('cascade')->onDelete('cascade');
-            $table->foreign('client_id')->references('id')->on('clients')->onUpdate('cascade')->onDelete('cascade');
+            $table->foreign('team_id')->references('id')->on('teams')->onUpdate('cascade')->onDelete('cascade');
         });
     }
 
@@ -33,6 +29,6 @@ class CreateProposalsTable extends Migration
      */
     public function down()
     {
-        Schema::drop('proposal');
+        Schema::drop('users_teams');
     }
 }

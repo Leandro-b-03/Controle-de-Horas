@@ -50,13 +50,13 @@
         <table id="proposal-list" class="table table-bordered table-striped">
             <thead>
                 <tr>
-                    <th><input type="checkbox" class="select-all" /></th>
+                    <th class="select-tr"><input type="checkbox" class="select-all" /></th>
                     <th>{!! Lang::get('proposals.title-name') !!}</th>
                     <th>{!! Lang::get('proposals.title-client') !!}</th>
                     <th>{!! Lang::get('proposals.title-resume') !!}</th>
                     <th>{!! Lang::get('proposals.title-user') !!}</th>
                     <th>{!! Lang::get('proposals.title-created_at') !!}</th>
-                    <th>{!! Lang::get('general.action') !!}</th>
+                    <th class="action-tr">{!! Lang::get('general.action') !!}</th>
                 </tr>
             </thead>
             @if($data['proposals']->count())
@@ -65,9 +65,9 @@
                 <tr>
                     <td><input type="checkbox" class="delete" data-value="{!! $proposal->id !!}" /></td>
                     <td>{!! $proposal->name !!}</td>
-                    <td>{!! $proposal->responsible !!}</td>
-                    <td>{!! $proposal->email !!}</td>
-                    <td>{!! $proposal->phone !!}</td>
+                    <td>{!! $proposal->client()->getResults()->name !!}</td>
+                    <td>{!! str_limit($proposal->proposal, $limit = 100, $end = '...') !!}</td>
+                    <td>{!! $proposal->user()->getResults()->username !!}</td>
                     <td>{!! date('d/m/Y', strtotime($proposal->created_at)) !!}</td>
                     <td><a href="{!! URL::to('proposals/' . $proposal->id . '/edit') !!}" class="btn btn-primary">Editar</a></td>
                 </tr>

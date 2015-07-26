@@ -42,5 +42,7 @@ Route::group(['middleware' => 'auth'], function () {
 
     Route::resource('users', 'UserController');
 
+    Route::resource('teams', 'TeamController');
+
     Route::resource('group-permissions', 'GroupPermissionController');
 });

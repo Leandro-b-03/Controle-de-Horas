@@ -22,6 +22,7 @@
     {!! Html::style("library/adminLTE/dist/css/skins/skin-yellow-light.min.css") !!}
     <!-- iCheck -->
     {!! Html::style("library/adminLTE/plugins/iCheck/square/yellow.css") !!}
+    {!! Html::style("library/adminLTE/plugins/iCheck/flat/yellow.css") !!}
 
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -221,6 +222,11 @@
                 <i class="fa fa-dashboard"></i> <span>{!! Lang::get('general.dashboard') !!}</span></i>
               </a>
             </li>
+            <li {!! ((Request::is('proposals/*') || Request::is('proposals')) ? 'class="active"' : '') !!}>
+              <a href="{!! URL::to('proposals') !!}">
+                <i class="fa fa-file"></i> <span>{!! Lang::get('general.proposals') !!}</span></i>
+              </a>
+            </li>
             <li {!! ((Request::is('projects/*') || Request::is('projects')) ? 'class="active"' : '') !!}>
               <a href="{!! URL::to('projects') !!}">
                 <i class="fa fa-archive"></i> <span>{!! Lang::get('general.projects') !!}</span></i>
@@ -231,7 +237,7 @@
                 <i class="fa fa-user-secret"></i> <span>{!! Lang::get('general.clients') !!}</span></i>
               </a>
             </li>
-            <li class="treeview {!! ((Request::is('users/*') || Request::is('users')) || (Request::is('group-permissions/*') || Request::is('group-permissions')) ? 'active' : '') !!}">
+            <li class="treeview {!! ((Request::is('users/*') || Request::is('users')) || (Request::is('group-permissions/*') || Request::is('group-permissions')) || (Request::is('teams/*') || Request::is('teams')) ? 'active' : '') !!}">
               <a href="#">
                 <i class="fa fa-user"></i> <span>{!! Lang::get('general.users') !!}</span>
                 <i class="fa fa-angle-left pull-right"></i>
@@ -241,7 +247,10 @@
                   <a href="{!! URL::to('users') !!}"><i class="fa fa-user"></i> {!! Lang::get('general.users-list') !!}</a>
                 </li>
                 <li {!! ((Request::is('group-permissions/*') || Request::is('group-permissions')) ? 'class="active"' : '') !!}>
-                  <a href="{!! URL::to('group-permissions') !!}"><i class="fa fa-group"></i> {!! Lang::get('general.group-permissions') !!}</a>
+                  <a href="{!! URL::to('group-permissions') !!}"><i class="fa fa-shield"></i> {!! Lang::get('general.group-permissions') !!}</a>
+                </li>
+                <li {!! ((Request::is('teams/*') || Request::is('teams')) ? 'class="active"' : '') !!}>
+                  <a href="{!! URL::to('teams') !!}"><i class="fa fa-group"></i> {!! Lang::get('general.teams') !!}</a>
                 </li>
               </ul>
             </li>

@@ -1,25 +1,25 @@
 @extends('app')
 
 @section('title')
-    {!! Lang::get('general.app-tittle', ['controller' => Lang::get('general.proposals')]) !!}
+    {!! Lang::get('general.app-tittle', ['controller' => Lang::get('general.teams')]) !!}
 @stop
 
 @section('style')
     <!-- DATA TABLES -->
     {!! Html::style('library/adminLTE/plugins/datatables/dataTables.bootstrap.css') !!}
-    <!-- CKEditor -->
-    {!! Html::style("library/adminLTE/plugins/ckeditor/ckeditor.css") !!}
     <!-- jQuery-Form-Validator -->
     {!! Html::style("library/adminLTE/plugins/jQuery-Form-Validator/form-validator/theme-default.min.css") !!}
+    <!-- Color Picker -->
+    {!! Html::style("library/adminLTE/plugins/colorpicker/bootstrap-colorpicker.min.css") !!}
 @stop
 
 @section('content')
         <h1>
-            {!! Lang::get('general.proposals') !!}
-            @if (Request::is('proposals/create'))
-            <small>{!! Lang::get('proposals.create') !!}</small>
+            {!! Lang::get('general.teams') !!}
+            @if (Request::is('teams/create'))
+            <small>{!! Lang::get('teams.create') !!}</small>
             @else
-            <small>{!! Lang::get('proposals.edit') !!}</small>
+            <small>{!! Lang::get('teams.edit') !!}</small>
             @endif
         </h1>
         <!-- <ol class="breadcrumb">
@@ -53,37 +53,44 @@
               @endif
             </div><!-- /.box-header -->
             <!-- form start -->
-            @if (Request::is('proposals/create'))
-            {!! Form::open(array('route' => 'proposals.store')) !!}
+            @if (Request::is('teams/create'))
+            {!! Form::open(array('route' => 'teams.store')) !!}
             @else
-            {!! Form::open(array('route' => [ 'proposals.update', $data['proposal']->id ], 'method' => 'PUT')) !!}
+            {!! Form::open(array('route' => [ 'teams.update', $data['team']->id ], 'method' => 'PUT')) !!}
             @endif
               <div class="box-body">
-                <div class="form-group col-xs-8">
-                  <label for="name">{!! Lang::get('proposals.label-name') !!}</label>
-                  <input type="text" class="form-control" name="name" id="name"  value="{!! (isset($data['proposal']) ? $data['proposal']->name : (Request::old('name') ? Request::old('name') : '')) !!}" placeholder="{!! Lang::get('proposals.ph-name') !!}" data-validation="length" data-validation-length="3-40" data-validation-error-msg="{!! Lang::get('proposals.error-name') !!}" required>
+                <div class="form-group col-xs-3">
+                  <label for="name">{!! Lang::get('teams.label-name') !!}</label>
+                  <input type="text" class="form-control" name="name" id="name"  value="{!! (isset($data['team']) ? $data['team']->name : (Request::old('name') ? Request::old('name') : '')) !!}" placeholder="{!! Lang::get('teams.ph-name') !!}" data-validation="length" data-validation-length="3-12" data-validation-error-msg="{!! Lang::get('teams.error-name') !!}" required>
                 </div>
                 <div class="form-group col-xs-4">
-                  <label for="client_id">{!! Lang::get('general.clients') !!}</label>
-                  <select name="client_id" class="form-control" data-validation="required" data-validation-error-msg="{!! Lang::get('proposals.error-clients') !!}" required>
+                  <label for="user_id">{!! Lang::get('teams.label-responsible') !!}</label>
+                  <select name="user_id" class="form-control" data-validation="required" data-validation-error-msg="{!! Lang::get('teams.error-responsible') !!}" required>
                     <option value="">{!! Lang::get('general.select') !!}</option>
-                    @foreach ($data['clients'] as $client)
-                    <option value="{!! $client->id !!}" {!! (isset($data['proposal']) ? ($data['proposal']->client()->getResults()->id == $client->id ? 'selected="selected"' : "") : "") !!}>{!! $client->name !!}</option>
+                    @foreach ($data['users'] as $user)
+                    <option value="{!! $user->id !!}" {!! (isset($data['team']) ? ($data['team']->user()->getResults()->id == $user->id ? 'selected="selected"' : "") : "") !!}>{!! $user->username !!}</option>
                     @endforeach
                   </select>
+                </div>
+                <div class="form-group col-xs-2">
+                  <label for="color">{!! Lang::get('teams.label-color') !!}</label>
+                  <div class="input-group my-colorpicker2 colorpicker-element">
+                    <input type="text" class="form-control" name="color" id="color"  value="{!! (isset($data['team']) ? $data['team']->color : (Request::old('color') ? Request::old('color') : '')) !!}" placeholder="{!! Lang::get('teams.ph-color') !!}" data-validation="lengh" data-validation-length="7" data-validation-error-msg="{!! Lang::get('teams.error-color') !!}" required>
+                    <div class="input-group-addon">
+                      <i style="background-color: rgb(0, 0, 0);"></i>
+                    </div>
+                  </div><!-- /.input group -->
                 </div>
                 <div class="form-group col-xs-12">
                   <hr />
                 </div>
-                <div class="form-group col-xs-12">
-                  <label for="proposal">{!! Lang::get('proposals.label-proposal') !!}</label>
-                  <textarea name="proposal" id="proposal" rows="10" placeholder="{!! Lang::get('proposals.ph-proposal') !!}" data-validation-error-msg="{!! Lang::get('proposals.error-proposal') !!}" required>{!! (isset($data['proposal']) ? $data['proposal']->proposal : (Request::old('proposal') ? Request::old('proposal') : '')) !!}</textarea>
+                <div class="form-group col-xs-2">
+                  <label for="users">{!! Lang::get('general.users') !!}</label>
                 </div>
-                <input type="hidden" name="user_id" id="user_id" value="{!! (isset($data['proposal']) ? $data['proposal']->user_id : (Request::old('user_id') ? Request::old('user_id') : Auth::user()->id)) !!}">
               </div><!-- /.box-body -->
               <div class="box-footer">
                 <button type="submit" class="btn btn-primary">{!! Lang::get('general.save') !!}</button>
-                <a href="{!! URL::to('proposals') !!}" class="btn btn-danger">{!! Lang::get('general.back') !!}</a>
+                <a href="{!! URL::to('teams') !!}" class="btn btn-danger">{!! Lang::get('general.back') !!}</a>
               </div>
             {!! Form::close() !!}
           </div><!-- /.box -->
@@ -95,20 +102,18 @@
 @section('scripts')
     <!-- Jasny-bootstrap -->
     {!! Html::script("library/adminLTE/plugins/jasny-bootstrap/js/jasny-bootstrap.min.js") !!}
-    <!-- CKEditor -->
-    {!! Html::script("library/adminLTE/plugins/ckeditor/ckeditor.js") !!}
     <!-- jQuery-Form-Validator -->
     {!! Html::script("library/adminLTE/plugins/jQuery-Form-Validator/form-validator/jquery.form-validator.min.js") !!}
+    <!-- Color Picker -->
+    {!! Html::script("library/adminLTE/plugins/colorpicker/bootstrap-colorpicker.min.js") !!}
 
     <script>
-      var ckeditor = CKEDITOR.replace('proposal');
-      // ckeditor.resize('100%', '450px');
+      $(".my-colorpicker2").colorpicker();
 
       $.validate();
 
       $('form').submit(function(e) {
-        var messageLength = CKEDITOR.instances['noticeMessage'].getData().replace(/<[^>]*>/gi, '').length;
-        if ($(this).find('.has-error').length > 0 || !messageLength) {
+        if ($(this).find('.has-error').length > 0) {
           e.preventDefault();
           var data = {class:'danger', faicon:'ban', status:"{!! Lang::get('general.failed') !!}", message:"{!! html_entity_decode(Lang::get('general.failed-fields')) !!}"};
             $('#messages').html(throwMessage(data));

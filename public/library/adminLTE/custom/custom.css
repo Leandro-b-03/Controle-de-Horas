@@ -192,6 +192,14 @@ select.error, input.error {
 	transform: translateX(10px) translateX(-10px);
 }
 
+table .select-tr {
+	width: 0px;
+}
+
+table .action-tr {
+	width: 39px;
+}
+
 table.project-time .action {
 	width: 141px;
 }

@@ -2,21 +2,21 @@
 
 use Illuminate\Database\Eloquent\Model;
 
-class Proposal extends Model
+class Team extends Model
 {
     /**
 	 * The database table used by the model.
 	 *
 	 * @var string
 	 */
-	protected $table = 'proposals';
+	protected $table = 'teams';
 
 	/**
 	 * The attributes that are mass assignable.
 	 *
 	 * @var array
 	 */
-	protected $fillable = ['user_id', 'client_id', 'name', 'proposal'];
+	protected $fillable = ['name', 'user_id', 'color'];
 
     /**
      * Get the user record associated with the project.
@@ -24,13 +24,5 @@ class Proposal extends Model
     public function user()
     {
         return $this->belongsTo('App\User', 'user_id');
-    }
-
-    /**
-     * Get the client record associated with the project.
-     */
-    public function client()
-    {
-        return $this->belongsTo('App\Client', 'client_id');
     }
 }
