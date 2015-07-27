@@ -2772,12 +2772,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/Zizaco/entrust.git",
-                "reference": "f1bf9fdf216b60213a41883a934c11508f44a03a"
+                "reference": "7b6eec15ce85b5577d2a554186a3e1e05f88ea43"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Zizaco/entrust/zipball/f1bf9fdf216b60213a41883a934c11508f44a03a",
-                "reference": "f1bf9fdf216b60213a41883a934c11508f44a03a",
+                "url": "https://api.github.com/repos/Zizaco/entrust/zipball/7b6eec15ce85b5577d2a554186a3e1e05f88ea43",
+                "reference": "7b6eec15ce85b5577d2a554186a3e1e05f88ea43",
                 "shasum": ""
             },
             "require": {
@@ -2831,7 +2831,7 @@
                 "permission",
                 "roles"
             ],
-            "time": "2015-07-09 16:38:15"
+            "time": "2015-07-27 15:50:39"
         }
     ],
     "packages-dev": [
@@ -3686,16 +3686,16 @@
         },
         {
             "name": "sebastian/comparator",
-            "version": "1.1.2",
+            "version": "1.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/comparator.git",
-                "reference": "dee3fd1828677b2182c076ad2caecbb5c7bdbf1c"
+                "reference": "937efb279bd37a375bcadf584dec0726f84dbf22"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/comparator/zipball/dee3fd1828677b2182c076ad2caecbb5c7bdbf1c",
-                "reference": "dee3fd1828677b2182c076ad2caecbb5c7bdbf1c",
+                "url": "https://api.github.com/repos/sebastianbergmann/comparator/zipball/937efb279bd37a375bcadf584dec0726f84dbf22",
+                "reference": "937efb279bd37a375bcadf584dec0726f84dbf22",
                 "shasum": ""
             },
             "require": {
@@ -3709,7 +3709,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "1.1.x-dev"
+                    "dev-master": "1.2.x-dev"
                 }
             },
             "autoload": {
@@ -3746,7 +3746,7 @@
                 "compare",
                 "equality"
             ],
-            "time": "2015-07-19 12:54:49"
+            "time": "2015-07-26 15:48:44"
         },
         {
             "name": "sebastian/diff",

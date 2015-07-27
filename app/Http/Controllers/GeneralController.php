@@ -221,11 +221,11 @@ class GeneralController extends Controller {
             $find['data']['email'] = $user->email;
             $find['data']['photo'] = $user->photo;
             $find['data']['name'] = $user->first_name . ' ' . $user->last_name;
+            $find['data']['role'] = $user->roles()->first()->display_name;
+            $find['data']['created_at'] = $user->created_at;
 
-            $result[] = $find;
+            $result['suggestions'][] = $find;
         }
-
-        d($result);
 
         return response()->json($result);
     }
