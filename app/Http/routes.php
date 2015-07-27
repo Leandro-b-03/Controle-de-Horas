@@ -29,9 +29,14 @@ Route::group(['middleware' => 'auth'], function () {
 
     Route::post('pusher/chat', 'PusherController@chat');
 
+    Route::get('autocomplete/users', 'GeneralController@getUserAutocomplete');
+
     Route::get('general/createNotificationJSON', 'GeneralController@createNotificationJSON');
+
     Route::get('general/createMessageJSON', 'GeneralController@createMessageJSON');
+
     Route::post('general/verifyEmailJSON', 'GeneralController@verifyEmailJSON');
+
     Route::post('general/verifyCPFJSON', 'GeneralController@verifyCPFJSON');
 
     Route::resource('projects', 'ProjectController');

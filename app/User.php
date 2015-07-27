@@ -42,4 +42,12 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         return $this->hasMany('App\UserNotification', 'user_id');
     }
 
+    /**
+     * Get the all users with the string...
+     */
+	public function scopefindUserAC($query, $string)
+    {
+        return $query->whereRaw('username LIKE "%' . $string . '%" OR first_name LIKE "%' . $string . '%" OR last_name LIKE "%' . $string . '%" OR email LIKE "%' . $string . '%"');
+    }
+
 }

@@ -200,4 +200,33 @@ class GeneralController extends Controller {
         
     }
 
+    /**
+     * Generates an array with parameters to users
+     *
+     * @return Json with users
+     */
+    public function getUserAutocomplete(Request $request)
+    {
+        // Get all inputs
+        $string = $request->all();
+
+        // Search users with the string
+        $users = User::findUserAC($string['query'])->get();
+
+        $result = array();
+
+        foreach ($users as $user) {
+            $find['value'] = $user->first_name . ' ' . $user->last_name;
+            $find['data']['username'] = $user->username;
+            $find['data']['email'] = $user->email;
+            $find['data']['photo'] = $user->photo;
+            $find['data']['name'] = $user->first_name . ' ' . $user->last_name;
+
+            $result[] = $find;
+        }
+
+        d($result);
+
+        return response()->json($result);
+    }
 }

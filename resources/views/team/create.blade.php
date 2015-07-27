@@ -7,10 +7,12 @@
 @section('style')
     <!-- DATA TABLES -->
     {!! Html::style('library/adminLTE/plugins/datatables/dataTables.bootstrap.css') !!}
-    <!-- jQuery-Form-Validator -->
-    {!! Html::style("library/adminLTE/plugins/jQuery-Form-Validator/form-validator/theme-default.min.css") !!}
     <!-- Color Picker -->
     {!! Html::style("library/adminLTE/plugins/colorpicker/bootstrap-colorpicker.min.css") !!}
+    <!-- Color Picker -->
+    {!! Html::style("library/adminLTE/plugins/jQuery-Autocomplete/content/styles-custom.css") !!}
+    <!-- jQuery-Form-Validator -->
+    {!! Html::style("library/adminLTE/plugins/jQuery-Form-Validator/form-validator/theme-default.min.css") !!}
 @stop
 
 @section('content')
@@ -84,8 +86,16 @@
                 <div class="form-group col-xs-12">
                   <hr />
                 </div>
-                <div class="form-group col-xs-2">
+                <div class="form-group col-xs-5">
                   <label for="users">{!! Lang::get('general.users') !!}</label>
+                  <div class="input-group">
+                    <input type="text" class="form-control" id="users-autocomplete" placeholder="{!! Lang::get('team.search-user-name') !!}" />
+                    <span class="input-group-btn">
+                      <a id="search-user" class="btn btn-default"><i class="fa fa-search-plus"></i> {!! Lang::get('team.search-user') !!}</a>
+                    </span>
+                  </div>
+                </div>
+                <div id="users" class="form-group col-xs-12">
                 </div>
               </div><!-- /.box-body -->
               <div class="box-footer">
@@ -102,13 +112,22 @@
 @section('scripts')
     <!-- Jasny-bootstrap -->
     {!! Html::script("library/adminLTE/plugins/jasny-bootstrap/js/jasny-bootstrap.min.js") !!}
-    <!-- jQuery-Form-Validator -->
-    {!! Html::script("library/adminLTE/plugins/jQuery-Form-Validator/form-validator/jquery.form-validator.min.js") !!}
     <!-- Color Picker -->
     {!! Html::script("library/adminLTE/plugins/colorpicker/bootstrap-colorpicker.min.js") !!}
+    <!-- jQuery-Autocomplete -->
+    {!! Html::script("library/adminLTE/plugins/jQuery-Autocomplete/dist/jquery.autocomplete.js") !!}
+    <!-- jQuery-Form-Validator -->
+    {!! Html::script("library/adminLTE/plugins/jQuery-Form-Validator/form-validator/jquery.form-validator.min.js") !!}
 
     <script>
       $(".my-colorpicker2").colorpicker();
+
+      $('#users-autocomplete').autocomplete({
+          serviceUrl: '/autocomplete/users',
+          onSelect: function (suggestion) {
+              alert('You selected: ' + suggestion.value + ', ' + suggestion.data);
+          }
+      });
 
       $.validate();
 
