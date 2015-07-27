@@ -17,4 +17,21 @@ class UserTeam extends Model
 	 * @var array
 	 */
 	protected $fillable = ['user_id', 'team_id'];
+
+    /**
+     * Get the user record associated with the project.
+     */
+    public function user()
+    {
+        return $this->belongsTo('App\User', 'user_id');
+    }
+
+    /**
+     * Get the all users in team with the string...
+     */
+	public function scopegetUsersTeam($query, $id)
+    {
+        return $query->where('team_id', $id);
+    }
+
 }

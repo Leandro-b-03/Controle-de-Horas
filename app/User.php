@@ -47,7 +47,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
      */
 	public function scopefindUserAC($query, $string)
     {
-        return $query->whereRaw('username LIKE "%' . $string . '%" OR first_name LIKE "%' . $string . '%" OR last_name LIKE "%' . $string . '%" OR email LIKE "%' . $string . '%"');
+        return $query->whereRaw('CONCAT_WS(" ", username, first_name, last_name, email) LIKE "%' . $string . '%"');
     }
 
 }

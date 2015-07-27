@@ -109,6 +109,10 @@ class TeamController extends Controller
         // Get all users
         $users = User::all();
         $data['users'] = $users;
+
+        // Get all users
+        $users_team = UserTeam::getUsersTeam($id)->get();
+        $data['users_team'] = $users_team;
         
         // Retrive the team with param $id
         $team = Team::find($id);
@@ -134,14 +138,32 @@ class TeamController extends Controller
         // Get all the input from update.
         $inputs = $request->all();
 
+        // die(d($inputs));
+
         try {
-            foreach($inputs as $input => $value) {
+            foreach ($inputs as $input => $value) {
                 if($team->{$input})
                     $team->{$input} = $value;
             }
 
             if ($team->save()) {
                 DB::commit();
+
+                $user_team = UserTeam::where('team_id', $id)->get();
+
+                if ($user_team->count() > 0) {
+                    UserTeam::where('team_id', $id)->delete();
+                }
+
+                foreach ($inputs['users_id'] as $user_id) {
+                    $data = array('team_id' => $id, 'user_id' => $user_id);
+
+                    if (!UserTeam::create( $data )) {
+                        DB::rollback();
+                        return redirect('teams/' . $id . '/edit')->withInput()->with('return', GeneralController::createMessage('failed', Lang::get('general.' . $this->controller_name), 'update'));
+                    }
+                }
+
                 return redirect('teams')->with('return', GeneralController::createMessage('success', Lang::get('general.' . $this->controller_name), 'update'));
             } else {
                 DB::rollback();

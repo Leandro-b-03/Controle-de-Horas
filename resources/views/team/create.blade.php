@@ -96,20 +96,19 @@
                   </div>
                 </div>
                 <div id="users" class="form-group col-xs-12">
-                  @if(1 == 2)
-                  <img class="img-circle img-div" src="{!! $user->photo !!}" />
+                  @if (!Request::is('teams/create'))
+                  @foreach ($data['users_team'] as $team)
+                  <img class="img-circle img-div" src="../{!! $team->user()->getResults()->photo !!}" />
                   <div class="div-user-info">
-                    <h4 title="{!! Lang::get('users.table-username') !!}"><i class="fa fa-user"></i> {!! $user->username !!}</h4>
+                    <h4 title="{!! Lang::get('users.table-username') !!}"><i class="fa {!! ($team->user()->getResults()->id == $data['team']->user_id ? 'fa-star' : 'fa-user') !!}"></i> {!! $team->user()->getResults()->username !!}</h4>
                     <div class="block">
-                        <p title="{!! Lang::get('users.table-name') !!}"><i class="fa fa-user"></i> <span>{!! $user->first_name . ' ' . $user->last_name !!}</span></p>
-                        <p title="{!! Lang::get('users.table-email') !!}" class="email"><i class="fa fa-envelope"></i><span>{!! $user->email !!}</span></p>
-                        <p title="{!! Lang::get('users.table-phone') !!}"><i class="fa fa-phone"></i> <span>{!! $user->phone !!}</span></p>
+                        <p title="{!! Lang::get('users.table-name') !!}"><i class="fa fa-user"></i> <span>{!! $team->user()->getResults()->first_name . ' ' . $team->user()->getResults()->last_name !!}</span></p>
+                        <p title="{!! Lang::get('users.table-email') !!}" class="email"><i class="fa fa-envelope"></i><span>{!! $team->user()->getResults()->email !!}</span></p>
+                        <p title="{!! Lang::get('users.table-phone') !!}"><i class="fa fa-phone"></i> <span>{!! $team->user()->getResults()->phone !!}</span></p>
                     </div>
-                    <div class="block">
-                        <p title="{!! Lang::get('users.table-user_since') !!}"><i class="fa fa-calendar"></i> <span>{!! date('d/m/Y', strtotime($user->created_at)) !!}</span></p>
-                        <p title="{!! Lang::get('users.table-group-permission') !!}"><i class="fa fa-group"></i><span>{!! $user->roles()->first()->display_name !!}</span></p>
-                    </div>
+                    <input type="hidden" name="users_id[]" value="{!! $team->user()->getResults()->id !!}" />
                   </div>
+                  @endforeach
                   @endif
                 </div>
               </div><!-- /.box-body -->
@@ -140,23 +139,21 @@
       $('#users-autocomplete').autocomplete({
           serviceUrl: '/autocomplete/users',
           onSelect: function (suggestion) {
-              // alert('You selected: ' + suggestion.value + ', ' + suggestion.data);
+            if($('#users :input[value="' + suggestion.data.id + '"]').length === 0) {
               var html = '';
-              html += '<img class="img-circle img-table" src="../' + suggestion.data.photo + '" />';
-              html += '<div class="table-user-info">';
+              html += '<img class="img-circle img-div" src="../' + suggestion.data.photo + '" />';
+              html += '<div class="div-user-info">';
               html += '    <h4 title="{!! Lang::get('users.table-username') !!}"><i class="fa fa-user"></i> ' + suggestion.data.username + '</h4>';
               html += '    <div class="block">';
               html += '        <p title="{!! Lang::get('users.table-name') !!}"><i class="fa fa-user"></i> <span>' + suggestion.data.name + '</span></p>';
               html += '        <p title="{!! Lang::get('users.table-email') !!}" class="email"><i class="fa fa-envelope"></i><span>' + suggestion.data.email + '</span></p>';
               html += '        <p title="{!! Lang::get('users.table-phone') !!}"><i class="fa fa-phone"></i> <span>' + suggestion.data.phone + '</span></p>';
               html += '    </div>';
-              html += '    <div class="block">';
-              html += '        <p title="{!! Lang::get('users.table-user_since') !!}"><i class="fa fa-calendar"></i> <span>{!! date('d/m/Y', strtotime(' + suggestion.data.created_at + ')) !!}</span></p>';
-              html += '        <p title="{!! Lang::get('users.table-group-permission') !!}"><i class="fa fa-group"></i><span>' + suggestion.data.role + '</span></p>';
-              html += '    </div>';
+              html += '    <input type="hidden" name="users_id[]" value="' + suggestion.data.id + '" />';
               html += '</div>';
 
               $('#users').append(html);
+            }
           }
       });
 

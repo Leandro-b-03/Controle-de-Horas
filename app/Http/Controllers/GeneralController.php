@@ -217,6 +217,7 @@ class GeneralController extends Controller {
 
         foreach ($users as $user) {
             $find['value'] = $user->first_name . ' ' . $user->last_name;
+            $find['data']['id'] = $user->id;
             $find['data']['username'] = $user->username;
             $find['data']['email'] = $user->email;
             $find['data']['photo'] = $user->photo;

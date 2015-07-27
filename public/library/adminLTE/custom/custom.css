@@ -204,33 +204,37 @@ table.project-time .action {
 	width: 141px;
 }
 
-table tbody tr .img-table, div .img-div {
+table tbody tr .img-table, #users .img-div {
 	width: 100px;
 	float: left;
 	padding-right: 15px;
 }
 
-table tbody tr .table-user-info, div .div-user-info {
+#users .div-user-info {
+	margin-right: 30px;
+}
+
+table tbody tr .table-user-info, #users .div-user-info {
 	float: left;
 }
 
-table tbody tr .table-user-info .block, div .div-user-info .block {
+table tbody tr .table-user-info .block, #users .div-user-info .block {
 	float: left;
 	padding-left: 5px;
 	padding-right: 5px;
 	border-left: thin dashed #727272;
 }
 
-table tbody tr .table-user-info h4, div .div-user-info h4 {
+table tbody tr .table-user-info h4, #users .div-user-info h4 {
 	border-bottom: thin dashed #727272;
 	margin-top: 0px;
 }
 
-table tbody tr .table-user-info p, div .div-user-info p {
+table tbody tr .table-user-info p, #users .div-user-info p {
 	margin-bottom: 0px;
 }
 
-table tbody tr .table-user-info p span, div .div-user-info p span {
+table tbody tr .table-user-info p span, #users .div-user-info p span {
 	margin-left: 7px;
 }
 

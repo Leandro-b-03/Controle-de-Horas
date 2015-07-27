@@ -5,12 +5,8 @@ $(function () {
         }
     });
 
-    $(':checkbox').iCheck({
-        radioClass: 'iradio_flat-yellow',
-        increaseArea: '20%' // optional
-    });
-
-    $(':radio').iCheck({
+    $(':checkbox, :radio').iCheck({
+        checkboxClass: 'icheckbox_square-yellow',
         radioClass: 'iradio_flat-yellow',
         increaseArea: '20%' // optional
     });
