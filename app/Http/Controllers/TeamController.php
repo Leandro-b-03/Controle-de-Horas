@@ -71,7 +71,17 @@ class TeamController extends Controller
 
         try {
             if($validator) {
-                if (Team::create( $inputs )) {
+                $team = Team::create( $inputs );
+                if ($team) {
+                    foreach ($inputs['users_id'] as $user_id) {
+                        $data = array('team_id' => $team->id, 'user_id' => $user_id);
+
+                        if (!UserTeam::create( $data )) {
+                            DB::rollback();
+                            return redirect('teams/' . $id . '/edit')->withInput()->with('return', GeneralController::createMessage('failed', Lang::get('general.' . $this->controller_name), 'update'));
+                        }
+                    }
+
                     return redirect('teams')->with('return', GeneralController::createMessage('success', Lang::get('general.' . $this->controller_name), 'create'));
                 } else {
                     DB::rollback();

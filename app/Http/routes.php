@@ -39,6 +39,8 @@ Route::group(['middleware' => 'auth'], function () {
 
     Route::post('general/verifyCPFJSON', 'GeneralController@verifyCPFJSON');
 
+    Route::get('general/getUser', 'GeneralController@getUser');
+
     Route::resource('projects', 'ProjectController');
 
     Route::resource('proposals', 'ProposalController');

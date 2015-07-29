@@ -230,4 +230,20 @@ class GeneralController extends Controller {
 
         return response()->json($result);
     }
+
+    /**
+     * Generates an array with parameters to users
+     *
+     * @return Json with users
+     */
+    public function getUser(Request $request)
+    {
+        // Get all inputs
+        $id = $request->all();
+
+        // Get user with the id
+        $user = User::find($id['id']);
+
+        return response()->json($user);
+    }
 }
