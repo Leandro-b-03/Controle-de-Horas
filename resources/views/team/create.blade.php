@@ -67,7 +67,7 @@
                 </div>
                 <div class="form-group col-xs-4">
                   <label for="user_id">{!! Lang::get('teams.label-responsible') !!}</label>
-                  <select name="user_id" class="form-control" data-validation="required" data-validation-error-msg="{!! Lang::get('teams.error-responsible') !!}" required>
+                  <select id="user_id" name="user_id" class="form-control" data-validation="required" data-validation-error-msg="{!! Lang::get('teams.error-responsible') !!}" required>
                     <option value="">{!! Lang::get('general.select') !!}</option>
                     @foreach ($data['users'] as $user)
                     <option value="{!! $user->id !!}" {!! (isset($data['team']) ? ($data['team']->user()->getResults()->id == $user->id ? 'selected="selected"' : "") : "") !!}>{!! $user->username !!}</option>
@@ -98,16 +98,15 @@
                 <div id="users" class="form-group col-xs-12">
                   @if (!Request::is('teams/create'))
                   @foreach ($data['users_team'] as $team)
-                  <img class="img-circle img-div" src="../{!! $team->user()->getResults()->photo !!}" />
-                  <div class="div-user-info">
-                    <h4 title="{!! Lang::get('users.table-username') !!}"><i class="fa {!! ($team->user()->getResults()->id == $data['team']->user_id ? 'fa-star' : 'fa-user') !!}"></i> {!! $team->user()->getResults()->username !!}</h4>
-                    <div class="block">
-                        <p title="{!! Lang::get('users.table-name') !!}"><i class="fa fa-user"></i> <span>{!! $team->user()->getResults()->first_name . ' ' . $team->user()->getResults()->last_name !!}</span></p>
-                        <p title="{!! Lang::get('users.table-email') !!}" class="email"><i class="fa fa-envelope"></i><span>{!! $team->user()->getResults()->email !!}</span></p>
-                        <p title="{!! Lang::get('users.table-phone') !!}"><i class="fa fa-phone"></i> <span>{!! $team->user()->getResults()->phone !!}</span></p>
+                    <img data-id="{!! $team->user()->getResults()->id !!}" class="img-circle img-div" src="../{!! $team->user()->getResults()->photo !!}" />
+                    <div data-id="{!! $team->user()->getResults()->id !!}" class="div-user-info">
+                      <h4 title="{!! Lang::get('users.table-username') !!}"><i class="fa {!! ($team->user()->getResults()->id == $data['team']->user_id ? 'fa-star' : 'fa-user') !!}"></i> {!! $team->user()->getResults()->username !!}<a data-id="{!! $team->user()->getResults()->id !!}" class="btn btn-xs btn-danger user-remove pull-right"><i class="fa fa-remove"></i></a></h4>
+                      <div class="block">
+                          <p title="{!! Lang::get('users.table-name') !!}"><i class="fa fa-user"></i> <span>{!! $team->user()->getResults()->first_name . ' ' . $team->user()->getResults()->last_name !!}</span></p>
+                          <p title="{!! Lang::get('users.table-email') !!}" class="email"><i class="fa fa-envelope"></i><span>{!! $team->user()->getResults()->email !!}</span></p>
+                      </div>
+                      <input type="hidden" name="users_id[]" value="{!! $team->user()->getResults()->id !!}" />
                     </div>
-                    <input type="hidden" name="users_id[]" value="{!! $team->user()->getResults()->id !!}" />
-                  </div>
                   @endforeach
                   @endif
                 </div>
@@ -136,18 +135,47 @@
     <script>
       $(".my-colorpicker2").colorpicker();
 
+      $('#user_id').change(function() {
+        $.ajax({
+          url: '/general/getUser',
+          data: {id: $(this).val()},
+          type: "GET",
+          success: function(data) {
+            data = JSON.parse(data);
+            console.log(data);
+            if($('#users :input[value="' + data.id + '"]').length === 0) {
+              var html = '';
+              html += '<img data-id="' + data.id + '" class="img-circle img-div" src="../' + data.photo + '" />';
+              html += '<div data-id="' + data.id + '" class="div-user-info">';
+              html += '    <h4 title="{!! Lang::get('users.table-username') !!}"><i class="fa fa-star"></i> ' + data.username + '<a data-id="' + data.id + '" class="btn btn-xs btn-danger user-remove pull-right"><i class="fa fa-remove"></i></a></h4>';
+              html += '    <div class="block">';
+              html += '        <p title="{!! Lang::get('users.table-name') !!}"><i class="fa fa-user"></i> <span>' + data.first_name + ' ' + data.last_name + '</span></p>';
+              html += '        <p title="{!! Lang::get('users.table-email') !!}" class="email"><i class="fa fa-envelope"></i><span>' + data.email + '</span></p>';
+              html += '    </div>';
+              html += '    <input type="hidden" name="users_id[]" value="' + data.id + '" />';
+              html += '</div>';
+
+              $('#users').append(html);
+            }
+          }
+        });
+      });
+
+      @if (Request::is('teams/create'))
+
+      @endif
+
       $('#users-autocomplete').autocomplete({
           serviceUrl: '/autocomplete/users',
           onSelect: function (suggestion) {
             if($('#users :input[value="' + suggestion.data.id + '"]').length === 0) {
               var html = '';
-              html += '<img class="img-circle img-div" src="../' + suggestion.data.photo + '" />';
-              html += '<div class="div-user-info">';
-              html += '    <h4 title="{!! Lang::get('users.table-username') !!}"><i class="fa fa-user"></i> ' + suggestion.data.username + '</h4>';
+              html += '<img data-id="' + suggestion.data.id + '" class="img-circle img-div" src="../' + suggestion.data.photo + '" />';
+              html += '<div data-id="' + suggestion.data.id + '" class="div-user-info">';
+              html += '    <h4 title="{!! Lang::get('users.table-username') !!}"><i class="fa fa-user"></i> ' + suggestion.data.username + '<a data-id="' + suggestion.data.id + '" class="btn btn-xs btn-danger user-remove pull-right"><i class="fa fa-remove"></i></a></h4>';
               html += '    <div class="block">';
               html += '        <p title="{!! Lang::get('users.table-name') !!}"><i class="fa fa-user"></i> <span>' + suggestion.data.name + '</span></p>';
               html += '        <p title="{!! Lang::get('users.table-email') !!}" class="email"><i class="fa fa-envelope"></i><span>' + suggestion.data.email + '</span></p>';
-              html += '        <p title="{!! Lang::get('users.table-phone') !!}"><i class="fa fa-phone"></i> <span>' + suggestion.data.phone + '</span></p>';
               html += '    </div>';
               html += '    <input type="hidden" name="users_id[]" value="' + suggestion.data.id + '" />';
               html += '</div>';
@@ -156,6 +184,13 @@
             }
           }
       });
+
+      $('.user-remove').click(function() {
+        var id = $(this).data('id');
+        console.log(id);
+        $('img[data-id="' + id + '"]').remove();
+        $('div[data-id="' + id + '"]').remove();
+      })
 
       $.validate();
 
