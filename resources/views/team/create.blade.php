@@ -123,6 +123,8 @@
 @endsection
 
 @section('scripts')
+    <!-- JS-Cookie -->
+    {!! Html::script("library/adminLTE/plugins/js-cookie/src/js.cookie.js") !!}
     <!-- Jasny-bootstrap -->
     {!! Html::script("library/adminLTE/plugins/jasny-bootstrap/js/jasny-bootstrap.min.js") !!}
     <!-- Color Picker -->
@@ -133,36 +135,87 @@
     {!! Html::script("library/adminLTE/plugins/jQuery-Form-Validator/form-validator/jquery.form-validator.min.js") !!}
 
     <script>
+      var leader = "{!! (isset($data['team']) ? $data['team']->user_id : '') !!}";
+
+      var users_team = {!! (!Request::is('teams/create') ? 'getUsers()' : (Request::is('teams/create') ? '(Cookie.get("users_team") != undefined) ? Cookie.get("users_team") : [] ' : '[]')) !!};
+
       $(".my-colorpicker2").colorpicker();
 
       $('#user_id').change(function() {
-        $.ajax({
-          url: '/general/getUser',
-          data: {id: $(this).val()},
-          type: "GET",
-          success: function(data) {
-            data = JSON.parse(data);
-            console.log(data);
-            if($('#users :input[value="' + data.id + '"]').length === 0) {
-              var html = '';
-              html += '<img data-id="' + data.id + '" class="img-circle img-div" src="../' + data.photo + '" />';
-              html += '<div data-id="' + data.id + '" class="div-user-info">';
-              html += '    <h4 title="{!! Lang::get('users.table-username') !!}"><i class="fa fa-star"></i> ' + data.username + '<a data-id="' + data.id + '" class="btn btn-xs btn-danger user-remove pull-right"><i class="fa fa-remove"></i></a></h4>';
-              html += '    <div class="block">';
-              html += '        <p title="{!! Lang::get('users.table-name') !!}"><i class="fa fa-user"></i> <span>' + data.first_name + ' ' + data.last_name + '</span></p>';
-              html += '        <p title="{!! Lang::get('users.table-email') !!}" class="email"><i class="fa fa-envelope"></i><span>' + data.email + '</span></p>';
-              html += '    </div>';
-              html += '    <input type="hidden" name="users_id[]" value="' + data.id + '" />';
-              html += '</div>';
+        if ($(this).val() != "") {
+          $.ajax({
+            url: '/general/getUser',
+            data: {id: $(this).val()},
+            type: "GET",
+            success: function(data) {
+              data = JSON.parse(data);
 
-              $('#users').append(html);
+              if($('#users :input[value="' + data.id + '"]').length === 0) {
+                $('#users div[data-id="' + leader + '"] h4 i.fa').removeClass('fa-star').addClass('fa-user');
+
+                var html = '';
+                html += '<img data-id="' + data.id + '" class="img-circle img-div" src="../' + data.photo + '" />';
+                html += '<div data-id="' + data.id + '" class="div-user-info">';
+                html += '    <h4 title="{!! Lang::get('users.table-username') !!}"><i class="fa fa-star"></i> ' + data.username + '<a data-id="' + data.id + '" class="btn btn-xs btn-danger user-remove pull-right"><i class="fa fa-remove"></i></a></h4>';
+                html += '    <div class="block">';
+                html += '        <p title="{!! Lang::get('users.table-name') !!}"><i class="fa fa-user"></i> <span>' + data.first_name + ' ' + data.last_name + '</span></p>';
+                html += '        <p title="{!! Lang::get('users.table-email') !!}" class="email"><i class="fa fa-envelope"></i><span>' + data.email + '</span></p>';
+                html += '    </div>';
+                html += '    <input type="hidden" name="users_id[]" value="' + data.id + '" />';
+                html += '</div>';
+
+                $('#users').append(html);
+
+                leader = data.id;
+
+                setCookie('users_team');
+              } else {
+                if (leader != data.id) {
+                  $('#users div[data-id="' + leader + '"] h4 i.fa').removeClass('fa-star').addClass('fa-user');
+                  $('#users div[data-id="' + data.id + '"] h4 i.fa').removeClass('fa-user').addClass('fa-star');
+
+                  leader = data.id;
+                }
+              }
             }
-          }
-        });
+          });
+        }
       });
 
       @if (Request::is('teams/create'))
+      if (users_team != "") {
+        $.ajax({
+          url: '/general/getUsers',
+          data: {ids: users_team},
+          type: "GET",
+          success: function(data) {
+            var users = JSON.parse(data);
 
+            leader = $('#user_id').val();
+
+            users.forEach(function(element, data) {
+              if($('#users :input[value="' + data.id + '"]').length === 0) {
+                var html = '';
+                html += '<img data-id="' + data.id + '" class="img-circle img-div" src="../' + data.photo + '" />';
+                html += '<div data-id="' + data.id + '" class="div-user-info">';
+                html += '    <h4 title="{!! Lang::get('users.table-username') !!}"><i class="fa fa-user"></i> ' + data.username + '<a data-id="' + data.id + '" class="btn btn-xs btn-danger user-remove pull-right"><i class="fa fa-remove"></i></a></h4>';
+                html += '    <div class="block">';
+                html += '        <p title="{!! Lang::get('users.table-name') !!}"><i class="fa fa-user"></i> <span>' + data.first_name + ' ' + data.last_name + '</span></p>';
+                html += '        <p title="{!! Lang::get('users.table-email') !!}" class="email"><i class="fa fa-envelope"></i><span>' + data.email + '</span></p>';
+                html += '    </div>';
+                html += '    <input type="hidden" name="users_id[]" value="' + data.id + '" />';
+                html += '</div>';
+
+                $('#users').append(html);
+
+                setCookie('users_team');
+              }
+              
+              $('#users div[data-id="' + leader + '"] h4 i.fa').removeClass('fa-user').addClass('fa-star');
+            });
+          }
+        });
+      }
       @endif
 
       $('#users-autocomplete').autocomplete({
@@ -181,15 +234,32 @@
               html += '</div>';
 
               $('#users').append(html);
+
+              setCookie('users_team');
             }
           }
       });
 
+      function getUsers() {
+        var users_team = [];
+        $('#users div[data-id]').each(function() {
+          users_team.push($(this).data('id'));
+        });
+
+        return users_team;
+      }
+
+      function setCookie(type) {
+        users_team = getUsers();
+        Cookies.set("users_team", users_team, { expires: 7 });
+      }
+
       $('.user-remove').click(function() {
         var id = $(this).data('id');
-        console.log(id);
-        $('img[data-id="' + id + '"]').remove();
-        $('div[data-id="' + id + '"]').remove();
+        if (id != leader) {
+          $('img[data-id="' + id + '"]').remove();
+          $('div[data-id="' + id + '"]').remove();
+        }
       })
 
       $.validate();
