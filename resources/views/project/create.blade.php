@@ -59,11 +59,11 @@
             {!! Form::open(array('route' => [ 'projects.update', $data['project']->id ], 'method' => 'PUT', 'name' => 'project-form', 'id' => 'edit')) !!}
             @endif
               <div class="box-body">
-                <div class="form-group col-xs-3">
+                <div class="form-group col-xs-4">
                   <label for="name">{!! Lang::get('projects.label-name') !!}</label>
                   <input type="text" class="form-control" name="name" id="name"  value="{!! (isset($data['project']) ? $data['project']->name : (Request::old('name') ? Request::old('name') : '')) !!}" placeholder="{!! Lang::get('projects.ph-name') !!}" data-validation="length" data-validation-length="3-25" data-validation-error-msg="{!! Lang::get('projects.error-name') !!}" required>
                 </div>
-                <div class="form-group col-xs-3">
+                <div class="form-group col-xs-4">
                   <label for="user_id">{!! Lang::get('projects.label-manager') !!}</label>
                   <select name="user_id" class="form-control" data-validation="required" data-validation-error-msg="{!! Lang::get('projects.error-manager') !!}" required>
                     <option value="">{!! Lang::get('general.select') !!}</option>
@@ -72,16 +72,7 @@
                     @endforeach
                   </select>
                 </div>
-                <div class="form-group col-xs-3">
-                  <label for="client_id">{!! Lang::get('general.clients') !!}</label>
-                  <select name="client_id" class="form-control" data-validation="required" data-validation-error-msg="{!! Lang::get('projects.error-clients') !!}" required>
-                    <option value="">{!! Lang::get('general.select') !!}</option>
-                    @foreach ($data['clients'] as $client)
-                    <option value="{!! $client->id !!}" {!! (isset($data['project']) ? ($data['project']->proposal()->getResults()->client()->getResults()->id == $client->id ? 'selected="selected"' : "") : "") !!}>{!! $client->name !!}</option>
-                    @endforeach
-                  </select>
-                </div>
-                <div class="form-group col-xs-3">
+                <div class="form-group col-xs-4">
                   <label for="proposal_id">{!! Lang::get('general.proposals') !!}</label>
                   <select name="proposal_id" class="form-control" data-validation="required" data-validation-error-msg="{!! Lang::get('projects.error-projects') !!}" required>
                     <option value="">{!! Lang::get('general.select') !!}</option>
@@ -238,19 +229,21 @@
           return html;
       }
 
-      $('.budget').on('input', function() {
+      $(document).on('input', '.project-time td .budget', function() {
         var total_budget = 0;
-        $('.budget').each(function(){
-          total_budget = total_budget + parseFloat($(this).val());
+
+        $('.budget').each(function() {
+          total_budget = total_budget + parseFloat(($(this).val() != undefined ? $(this).val() : 0 ));
         });
 
         $('#budget, #budget_view').val(total_budget);
       });
 
-      $('.schedule_time').on('input', function() {
+      $(document).on('input', '.project-time td .schedule_time', function() {
         var total_schedule_time = 0;
-        $('.schedule_time').each(function(){
-          total_schedule_time = total_schedule_time + parseFloat($(this).val());
+
+        $('.schedule_time').each(function() {
+          total_schedule_time = total_schedule_time + parseFloat(($(this).val() != undefined ? $(this).val() : 0 ));
         });
 
         $('#schedule_time, #schedule_time_view').val(total_schedule_time);

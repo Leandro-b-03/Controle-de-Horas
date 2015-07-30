@@ -28,9 +28,9 @@ class UserTableSeeder extends Seeder
         ]);
 
         DB::table('users')->insert([
-            'username'          => 'Admin 2',
-            'first_name'        => 'Admin',
-            'last_name'         => 'SVLabs',
+            'username'          => 'Eleonor',
+            'first_name'        => 'Eleonor',
+            'last_name'         => 'Amora',
             'email'             => 'admin2@svlabs.com.br',
             'photo'             => '../uploads/users/photos/img-thing.jpg',
             'phone'             => '(11) 99890-9909',
@@ -38,6 +38,7 @@ class UserTableSeeder extends Seeder
             'cpf'               => '123.456.789-19',
             'birthday'          => '1990-10-04',
             'password'          => bcrypt('123456'),
+            'gender'            => 'F',
         ]);
 
         $admin                  = new Role;
@@ -56,7 +57,7 @@ class UserTableSeeder extends Seeder
         $user = User::where('username', '=', 'Admin')->first();
         $user->attachRole($admin);
 
-        $user2 = User::where('username', '=', 'Admin 2')->first();
+        $user2 = User::where('username', '=', 'Eleonor')->first();
         $user2->attachRole($admin);
     }
 }

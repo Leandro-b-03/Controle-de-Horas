@@ -18,6 +18,7 @@ class CreateProjectsTable extends Migration
             $table->integer('proposal_id')->unsigned();
             $table->string('name');
             $table->decimal('budget', 9, 2);
+            $table->integer('schedule_time');
             $table->string('description');
             $table->text('long_description');
             $table->enum('status', ['A', 'D', 'F'])->default('A');

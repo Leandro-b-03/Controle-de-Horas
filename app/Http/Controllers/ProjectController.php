@@ -86,6 +86,7 @@ class ProjectController extends Controller
         try {
             if($validator) {
                 $project = Project::create( $inputs );
+                
                 if ($project) {
                     foreach ($projects_time as $project_time) {
                         $project_time['cycle'] = $project_time['cycle'][0];
@@ -93,7 +94,7 @@ class ProjectController extends Controller
                         $project_time['budget'] = $project_time['budget'][0];
                         $project_time['project_id'] = $project->id;
 
-                        if (ProjectTime::create( $project_time )) {
+                        if (!ProjectTime::create( $project_time )) {
                             DB::rollback();
                             return redirect('projects/create')->withInput()->with('return', GeneralController::createMessage('failed', Lang::get('general.' . $this->controller_name), 'create'));
                         }
