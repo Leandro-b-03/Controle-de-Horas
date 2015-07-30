@@ -11,7 +11,7 @@
     <!-- Bootstrap 3.3.4 -->
     {!! Html::style("library/adminLTE/bootstrap/css/bootstrap.min.css") !!}
     <!-- Font Awesome Icons -->
-    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css" />
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css" rel="stylesheet" type="text/css" />
     <!-- Ionicons -->
     <link href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css" rel="stylesheet" type="text/css" />
     <!-- Theme style -->
@@ -216,7 +216,7 @@
           <!-- /.search form -->
           <!-- sidebar menu: : style can be found in sidebar.less -->
           <ul class="sidebar-menu">
-            <li class="header">Principal</li>
+            <li class="header">{!! Lang::get('general.nav-menu') !!}</li>
             <li {!! ((Request::is('dashboard/*') || Request::is('dashboard')) ? 'class="active"' : '') !!}>
               <a href="{!! URL::to('dashboard') !!}">
                 <i class="fa fa-dashboard"></i> <span>{!! Lang::get('general.dashboard') !!}</span></i>
@@ -224,12 +224,12 @@
             </li>
             <li {!! ((Request::is('proposals/*') || Request::is('proposals')) ? 'class="active"' : '') !!}>
               <a href="{!! URL::to('proposals') !!}">
-                <i class="fa fa-file"></i> <span>{!! Lang::get('general.proposals') !!}</span></i>
+                <i class="fa fa-briefcase"></i> <span>{!! Lang::get('general.proposals') !!}</span></i>
               </a>
             </li>
             <li {!! ((Request::is('projects/*') || Request::is('projects')) ? 'class="active"' : '') !!}>
               <a href="{!! URL::to('projects') !!}">
-                <i class="fa fa-archive"></i> <span>{!! Lang::get('general.projects') !!}</span></i>
+                <i class="fa fa-wrench"></i> <span>{!! Lang::get('general.projects') !!}</span></i>
               </a>
             </li>
             <li {!! ((Request::is('clients/*') || Request::is('clients')) ? 'class="active"' : '') !!}>

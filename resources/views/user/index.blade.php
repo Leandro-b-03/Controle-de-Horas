@@ -73,7 +73,7 @@
                             </div>
                             <div class="block">
                                 <p title="{!! Lang::get('users.table-user_since') !!}"><i class="fa fa-calendar"></i> <span>{!! date('d/m/Y', strtotime($user->created_at)) !!}</span></p>
-                                <p title="{!! Lang::get('users.table-group-permission') !!}"><i class="fa fa-group"></i><span>{!! $user->roles()->first()->display_name !!}</span></p>
+                                <p title="{!! Lang::get('users.table-group-permission') !!}"><i class="fa fa-shield"></i><span>{!! $user->roles()->first()->display_name !!}</span></p>
                             </div>
                         </div>
                     </td>

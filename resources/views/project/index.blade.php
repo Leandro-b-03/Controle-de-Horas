@@ -67,8 +67,8 @@
                 <tr>
                     <td><input type="checkbox" class="delete" data-value="{!! $project->id !!}" /></td>
                     <td>{!! $project->name !!}</td>
-                    <td>{!! $project->short_description !!}</td>
-                    <td>{!! $project->proposal()->client()->getResults()->name !!}</td>
+                    <td>{!! $project->description !!}</td>
+                    <td>{!! $project->proposal()->getResults()->client()->getResults()->name !!}</td>
                     <td>{!! $project->proposal()->getResults()->name !!}</td>
                     <td>{!! date('d/m/Y', strtotime($project->created_at)) !!}</td>
                     <td>{!! $project->schedule_time !!}</td>

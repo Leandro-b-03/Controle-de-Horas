@@ -148,8 +148,6 @@ class TeamController extends Controller
         // Get all the input from update.
         $inputs = $request->all();
 
-        // die(d($inputs));
-
         try {
             foreach ($inputs as $input => $value) {
                 if($team->{$input})
