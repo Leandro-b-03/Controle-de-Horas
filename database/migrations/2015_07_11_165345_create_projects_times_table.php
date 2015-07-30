@@ -14,8 +14,9 @@ class CreateProjectsTimesTable extends Migration
     {
         Schema::create('projects_times', function (Blueprint $table) {
             $table->increments('id');
-            $table->decimal('budget', 9, 2);
             $table->integer('project_id')->unsigned();
+            $table->string('cycle');
+            $table->decimal('budget', 9, 2);
             $table->integer('schedule_time');
             $table->timestamps();
             

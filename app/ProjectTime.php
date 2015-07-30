@@ -16,7 +16,7 @@ class ProjectTime extends Model
      *
      * @var array
      */
-    protected $fillable = ['project_id', 'budget', 'schedule_time'];
+    protected $fillable = ['project_id', 'cycle', 'budget', 'schedule_time'];
 
     /**
      * Get the user record associated with the project.

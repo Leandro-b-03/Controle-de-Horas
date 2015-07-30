@@ -16,7 +16,7 @@ class Project extends Model
      *
      * @var array
      */
-    protected $fillable = ['user_id', 'client_id', 'name', 'short_description', 'description', 'schedule_time', 'time_spend'];
+    protected $fillable = ['user_id', 'client_id', 'proposal_id', 'name', 'description', 'long_description', 'schedule_time', 'time_spend'];
 
     /**
      * Get the user record associated with the project.
@@ -32,6 +32,14 @@ class Project extends Model
     public function client()
     {
         return $this->belongsTo('App\Client', 'client_id');
+    }
+
+    /**
+     * Get the proposal record associated with the project.
+     */
+    public function proposal()
+    {
+        return $this->belongsTo('App\Proposal', 'proposal_id');
     }
 
 }

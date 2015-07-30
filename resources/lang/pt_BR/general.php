@@ -49,7 +49,7 @@ return [
     'add-icon'                      => '<i class="fa fa-plus"></i> Adicionar',
 
     // Menu & Controller
-    'principal'                     => 'Principal',
+    'nav-menu'                      => 'Menu de navegação',
     'dashboard'                     => 'Dashboard',
     'projects'                      => 'Projetos',
     'proposals'                     => 'Propostas',

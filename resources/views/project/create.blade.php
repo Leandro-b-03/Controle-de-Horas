@@ -59,25 +59,34 @@
             {!! Form::open(array('route' => [ 'projects.update', $data['project']->id ], 'method' => 'PUT', 'name' => 'project-form', 'id' => 'edit')) !!}
             @endif
               <div class="box-body">
-                <div class="form-group col-xs-4">
+                <div class="form-group col-xs-3">
                   <label for="name">{!! Lang::get('projects.label-name') !!}</label>
                   <input type="text" class="form-control" name="name" id="name"  value="{!! (isset($data['project']) ? $data['project']->name : (Request::old('name') ? Request::old('name') : '')) !!}" placeholder="{!! Lang::get('projects.ph-name') !!}" data-validation="length" data-validation-length="3-25" data-validation-error-msg="{!! Lang::get('projects.error-name') !!}" required>
                 </div>
-                <div class="form-group col-xs-4">
+                <div class="form-group col-xs-3">
                   <label for="user_id">{!! Lang::get('projects.label-manager') !!}</label>
                   <select name="user_id" class="form-control" data-validation="required" data-validation-error-msg="{!! Lang::get('projects.error-manager') !!}" required>
                     <option value="">{!! Lang::get('general.select') !!}</option>
                     @foreach ($data['users'] as $user)
-                    <option value="{!! $user->id !!}" {!! (isset($data['project']) ? ($project->user()->getResults()->id == $user->id ? 'selected="selected"' : "") : "") !!}>{!! $user->username !!}</option>
+                    <option value="{!! $user->id !!}" {!! (isset($data['project']) ? ($data['project']->user()->getResults()->id == $user->id ? 'selected="selected"' : "") : "") !!}>{!! $user->username !!}</option>
                     @endforeach
                   </select>
                 </div>
-                <div class="form-group col-xs-4">
+                <div class="form-group col-xs-3">
                   <label for="client_id">{!! Lang::get('general.clients') !!}</label>
                   <select name="client_id" class="form-control" data-validation="required" data-validation-error-msg="{!! Lang::get('projects.error-clients') !!}" required>
                     <option value="">{!! Lang::get('general.select') !!}</option>
                     @foreach ($data['clients'] as $client)
-                    <option value="{!! $client->id !!}" {!! (isset($data['project']) ? ($project->client()->getResults()->id == $client->id ? 'selected="selected"' : "") : "") !!}>{!! $client->name !!}</option>
+                    <option value="{!! $client->id !!}" {!! (isset($data['project']) ? ($data['project']->proposal()->getResults()->client()->getResults()->id == $client->id ? 'selected="selected"' : "") : "") !!}>{!! $client->name !!}</option>
+                    @endforeach
+                  </select>
+                </div>
+                <div class="form-group col-xs-3">
+                  <label for="proposal_id">{!! Lang::get('general.proposals') !!}</label>
+                  <select name="proposal_id" class="form-control" data-validation="required" data-validation-error-msg="{!! Lang::get('projects.error-projects') !!}" required>
+                    <option value="">{!! Lang::get('general.select') !!}</option>
+                    @foreach ($data['proposals'] as $proposal)
+                    <option value="{!! $proposal->id !!}" {!! (isset($data['project']) ? ($data['project']->proposal()->getResults()->id == $proposal->id ? 'selected="selected"' : "") : "") !!}>{!! $proposal->name !!}</option>
                     @endforeach
                   </select>
                 </div>
@@ -97,11 +106,13 @@
                 </div>
                 <div class="form-group col-xs-3">
                   <label for="budget">{!! Lang::get('projects.label-budget') !!}</label>
-                  <input type="text" class="form-control" name="budget" id="budget" placeholder="{!! Lang::get('projects.ph-budget') !!}" value="{!! (isset($data['project']) ? $data['project']->budget : (Request::old('budget') ? Request::old('budget') : '')) !!}" disabled="disabled">
+                  <input type="text" class="form-control" name="budget_view" id="budget_view" placeholder="{!! Lang::get('projects.ph-budget') !!}" value="{!! (isset($data['project']) ? $data['project']->budget : (Request::old('budget') ? Request::old('budget') : '')) !!}" disabled="disabled">
+                  <input type="hidden" class="form-control" name="budget" id="budget" value="{!! (isset($data['project']) ? $data['project']->budget : (Request::old('budget') ? Request::old('budget') : '')) !!}">
                 </div>
                 <div class="form-group col-xs-3">
                   <label for="schedule_time">{!! Lang::get('projects.label-schedule_time') !!}</label>
-                  <input type="text" class="form-control" name="schedule_time" id="schedule_time" placeholder="{!! Lang::get('projects.ph-schedule_time') !!}" value="{!! (isset($data['project']) ? $data['project']->schedule_time : (Request::old('schedule_time') ? Request::old('schedule_time') : '')) !!}" disabled="disabled">
+                  <input type="text" class="form-control" name="schedule_time_view" id="schedule_time_view" placeholder="{!! Lang::get('projects.ph-schedule_time') !!}" value="{!! (isset($data['project']) ? $data['project']->schedule_time : (Request::old('schedule_time') ? Request::old('schedule_time') : '')) !!}" disabled="disabled">
+                  <input type="hidden" class="form-control" name="schedule_time" id="schedule_time" value="{!! (isset($data['project']) ? $data['project']->schedule_time : (Request::old('schedule_time') ? Request::old('schedule_time') : '')) !!}">
                 </div>
                 <div class="form-group col-xs-8">
                 </div>
@@ -116,14 +127,23 @@
                       </tr>
                     </thead>
                     <tbody>
+                      @if (Request::is('projects/create'))
                       <tr>
-                        <td><input type="hidden" name="project_time[{!! (isset($data['project']) ? $data['project']->projects_time()->first()->id : (Request::old('project_time[project_time_id][]') ? Request::old('project_time[project_time_id][]') : '1')) !!}][]" id="project_time_id" value="{!! (isset($data['project']) ? $data['project']->projects_time()->first()->id : (Request::old('project_time[project_time_id][]') ? Request::old('project_time[project_time_id][]') : '1')) !!}"><input type="text" class="form-control" name="project_time[{!! (isset($data['project']) ? $data['project']->projects_time()->first()->id : (Request::old('project_time[project_time_id][]') ? Request::old('project_time[project_time_id][]') : '1')) !!}][cycle][]" class="cycle" placeholder="{!! Lang::get('projects.ph-cycle') !!}" value="{!! (isset($data['project']) ? $data['project']->cycle : (Request::old('cycle') ? Request::old('cycle') : '')) !!}"></td>
-                        <td><input type="text" class="form-control" name="project_time[{!! (isset($data['project']) ? $data['project']->projects_time()->first()->id : (Request::old('project_time[project_time_id][]') ? Request::old('project_time[project_time_id][]') : '1')) !!}][schedule_time][]" class="schedule_time" placeholder="{!! Lang::get('projects.ph-schedule_time') !!}" value="{!! (isset($data['project']) ? $data['project']->schedule_time : (Request::old('schedule_time') ? Request::old('schedule_time') : '')) !!}"></td>
-                        <td><input type="text" class="form-control" name="project_time[{!! (isset($data['project']) ? $data['project']->projects_time()->first()->id : (Request::old('project_time[project_time_id][]') ? Request::old('project_time[project_time_id][]') : '1')) !!}][budget][]" class="budget" placeholder="{!! Lang::get('projects.ph-budget') !!}" value="{!! (isset($data['project']) ? $data['project']->budget : (Request::old('budget') ? Request::old('budget') : '')) !!}"></td>
-                        <td><a data-id="{!! (isset($data['project']) ? $data['project']->projects_time()->first()->id : (Request::old('project_time[project_time_id][]') ? Request::old('project_time[project_time_id][]') : '1')) !!}" class="btn btn-default tasks-row" data-target="#tasks" data-toggle="modal" data-backdrop="static"><i class="fa fa-plus"></i> {!! Lang::get('projects.tasks') !!}</a> <a class="btn btn-danger remove" title="{!! Lang::get('general.remove') !!}" disabled="disabled"><i class="fa fa-remove"></i></a></td>
-                        {{-- <td></td> --}}
-                        {{-- @foreach ($controllers as $controller) --}}
+                        <td><input type="hidden" name="project_time[{!! (Request::old('project_time[project_time_id][]') ? Request::old('project_time[project_time_id][]') : '1') !!}][]" id="project_time_id" value="{!! (Request::old('project_time[project_time_id][]') ? Request::old('project_time[project_time_id][]') : '1') !!}"><input type="text" class="form-control cycle" name="project_time[{!! (Request::old('project_time[project_time_id][]') ? Request::old('project_time[project_time_id][]') : '1') !!}][cycle][]" class="cycle" placeholder="{!! Lang::get('projects.ph-cycle') !!}" value="{!! (isset($data['project']) ? $data['project']->cycle : (Request::old('cycle') ? Request::old('cycle') : '')) !!}"></td>
+                        <td><input type="text" class="form-control schedule_time" name="project_time[{!! (Request::old('project_time[project_time_id][]') ? Request::old('project_time[project_time_id][]') : '1') !!}][schedule_time][]" class="schedule_time" placeholder="{!! Lang::get('projects.ph-schedule_time') !!}" value="{!! (isset($data['project']) ? $data['project']->schedule_time : (Request::old('schedule_time') ? Request::old('schedule_time') : '')) !!}"></td>
+                        <td><input type="text" class="form-control budget" name="project_time[{!! (Request::old('project_time[project_time_id][]') ? Request::old('project_time[project_time_id][]') : '1') !!}][budget][]" class="budget" placeholder="{!! Lang::get('projects.ph-budget') !!}" value="{!! (isset($data['project']) ? $data['project']->budget : (Request::old('budget') ? Request::old('budget') : '')) !!}"></td>
+                        <td><a data-id="{!! (Request::old('project_time[project_time_id][]') ? Request::old('project_time[project_time_id][]') : '1') !!}" class="btn btn-default tasks-row" data-target="#tasks" data-toggle="modal" data-backdrop="static"><i class="fa fa-plus"></i> {!! Lang::get('projects.tasks') !!}</a> <a class="btn btn-danger remove" title="{!! Lang::get('general.remove') !!}" disabled="disabled"><i class="fa fa-remove"></i></a></td>
                       </tr>
+                      @else
+                      @foreach ($data['projects_times'] as $project_time)
+                      <tr>
+                        <td><input type="hidden" name="project_time[{!! $project_time->id !!}][]" id="project_time_id" value="{!! $project_time->id !!}"><input type="text" class="form-control cycle" name="project_time[{!! $project_time->id !!}][cycle][]" class="cycle" placeholder="{!! Lang::get('projects.ph-cycle') !!}" value="{!! $project_time->cycle !!}"></td>
+                        <td><input type="text" class="form-control schedule_time" name="project_time[{!! $project_time->id !!}][schedule_time][]" class="schedule_time" placeholder="{!! Lang::get('projects.ph-schedule_time') !!}" value="{!! $project_time->schedule_time !!}"></td>
+                        <td><input type="text" class="form-control budget" name="project_time[{!! $project_time->id !!}][budget][]" class="budget" placeholder="{!! Lang::get('projects.ph-budget') !!}" value="{!! $project_time->budget !!}"></td>
+                        <td><a data-id="{!! $project_time->id !!}" class="btn btn-default tasks-row" data-target="#tasks" data-toggle="modal" data-backdrop="static"><i class="fa fa-plus"></i> {!! Lang::get('projects.tasks') !!}</a> <a class="btn btn-danger remove" title="{!! Lang::get('general.remove') !!}" disabled="disabled"><i class="fa fa-remove"></i></a></td>
+                      </tr>
+                      @endforeach
+                      @endif
                     </tbody>
                     <tfoot>
                       <tr><td colspan="4"><a id="add-row" class="btn btn-info"><i class="fa fa-plus"></i> {!! Lang::get('projects.add-row') !!}</a></td></tr>
@@ -218,15 +238,33 @@
           return html;
       }
 
+      $('.budget').on('input', function() {
+        var total_budget = 0;
+        $('.budget').each(function(){
+          total_budget = total_budget + parseFloat($(this).val());
+        });
+
+        $('#budget, #budget_view').val(total_budget);
+      });
+
+      $('.schedule_time').on('input', function() {
+        var total_schedule_time = 0;
+        $('.schedule_time').each(function(){
+          total_schedule_time = total_schedule_time + parseFloat($(this).val());
+        });
+
+        $('#schedule_time, #schedule_time_view').val(total_schedule_time);
+      });
+
       $('#add-row').click(function() {
         var row = parseInt($('.project-time').find('tbody tr td input[type=hidden]:last').val()) + 1;
 
         var html = '';
         
         html += '<tr>';
-        html += '<td><input type="hidden" name="project_time[' + row + '][]" id="project_time_id" value="' + row + '"><input type="text" class="form-control" name="project_time[' + row + '][cycle][]" class="cycle" placeholder="{!! Lang::get('projects.ph-cycle') !!}" value=""></td>';
-        html += '<td><input type="text" class="form-control" name="project_time[' + row + '][schedule_time][]" class="schedule_time" placeholder="{!! Lang::get('projects.ph-time') !!}" value=""></td>';
-        html += '<td><input type="text" class="form-control" name="project_time[' + row + '][budget][]" class="budget" placeholder="{!! Lang::get('projects.ph-budget') !!}" value=""></td>';
+        html += '<td><input type="hidden" name="project_time[' + row + '][]" id="project_time_id" value="' + row + '"><input type="text" class="form-control cycle" name="project_time[' + row + '][cycle][]" class="cycle" placeholder="{!! Lang::get('projects.ph-cycle') !!}" value=""></td>';
+        html += '<td><input type="text" class="form-control schedule_time" name="project_time[' + row + '][schedule_time][]" class="schedule_time" placeholder="{!! Lang::get('projects.ph-time') !!}" value=""></td>';
+        html += '<td><input type="text" class="form-control budget" name="project_time[' + row + '][budget][]" class="budget" placeholder="{!! Lang::get('projects.ph-budget') !!}" value=""></td>';
         html += '<td><a class="btn btn-default"><i class="fa fa-plus"></i> {!! Lang::get('projects.tasks') !!}</a> <a class="btn btn-danger remove" title="{!! Lang::get('general.remove') !!}"><i class="fa fa-remove"></i></a></td>';
         html += '</tr>';
         $('.project-time').find('tbody').append(html);

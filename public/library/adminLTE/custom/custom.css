@@ -238,6 +238,11 @@ table tbody tr .table-user-info p span, #users .div-user-info p span {
 	margin-left: 7px;
 }
 
+table h1, table h2, table h3, table h4, table h5, table h6, table p {
+	font-size: 14px;
+	margin: 0px;
+}
+
 #tasks .modal-content {
 	background-color: #ECF0F5;
 }
