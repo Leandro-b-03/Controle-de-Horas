@@ -25,4 +25,20 @@ class Team extends Model
     {
         return $this->belongsTo('App\User', 'user_id');
     }
+
+    /**
+     * Get the all teams with the string...
+     */
+    public function scopefindTeam($query, $string)
+    {
+        return $query->where('name', 'like', '%' . $string . '%');
+    }
+
+    /**
+     * Get the all teams with the array...
+     */
+    public function scopefindTeamsJson($query, $array)
+    {
+        return $query->whereIn('id', $array);
+    }
 }

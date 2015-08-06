@@ -31,6 +31,8 @@ Route::group(['middleware' => 'auth'], function () {
 
     Route::get('autocomplete/users', 'GeneralController@getUserAutocomplete');
 
+    Route::get('autocomplete/team', 'GeneralController@getTeamAutocomplete');
+
     Route::get('general/createNotificationJSON', 'GeneralController@createNotificationJSON');
 
     Route::get('general/createMessageJSON', 'GeneralController@createMessageJSON');
@@ -41,13 +43,19 @@ Route::group(['middleware' => 'auth'], function () {
 
     Route::get('general/getUser', 'GeneralController@getUser');
 
-    Route::resource('projects', 'ProjectController');
+    Route::get('general/getProjectTimes', 'GeneralController@getProjectTimes');
 
     Route::resource('proposals', 'ProposalController');
+
+    Route::resource('projects', 'ProjectController');
+
+    Route::resource('tasks', 'TaskController');
 
     Route::resource('clients', 'ClientController');
 
     Route::resource('users', 'UserController');
+
+    Route::resource('timesheets', 'TimesheetController');
 
     Route::resource('teams', 'TeamController');
 

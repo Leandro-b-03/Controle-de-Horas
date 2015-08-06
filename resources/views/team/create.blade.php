@@ -9,7 +9,7 @@
     {!! Html::style('library/adminLTE/plugins/datatables/dataTables.bootstrap.css') !!}
     <!-- Color Picker -->
     {!! Html::style("library/adminLTE/plugins/colorpicker/bootstrap-colorpicker.min.css") !!}
-    <!-- Color Picker -->
+    <!-- jQuery-Autocomplete -->
     {!! Html::style("library/adminLTE/plugins/jQuery-Autocomplete/content/styles-custom.css") !!}
     <!-- jQuery-Form-Validator -->
     {!! Html::style("library/adminLTE/plugins/jQuery-Form-Validator/form-validator/theme-default.min.css") !!}

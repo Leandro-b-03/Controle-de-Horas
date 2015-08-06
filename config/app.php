@@ -175,6 +175,7 @@ return [
         Vinkla\Pusher\PusherServiceProvider::class,
         Zizaco\Entrust\EntrustServiceProvider::class,
         // Intervention\Image\ImageServiceProvider::class,
+        MaddHatter\LaravelFullcalendar\ServiceProvider::class,
 
         /*
          * Personalization Services Providers...
@@ -235,7 +236,8 @@ return [
         'Entrust'       => Zizaco\Entrust\EntrustFacade::class,
         'PusherManager' => Vinkla\Pusher\Facades\Pusher::class,
         //'Image'         => Intervention\Image\Facades\Image::class,
-        'AWS'           => Aws\Laravel\AwsFacade::class
+        'AWS'           => Aws\Laravel\AwsFacade::class,
+        'Calendar'      => MaddHatter\LaravelFullcalendar\Facades\Calendar::class,
 
     ],
 

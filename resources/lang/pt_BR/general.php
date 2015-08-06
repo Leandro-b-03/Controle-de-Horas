@@ -51,6 +51,7 @@ return [
     // Menu & Controller
     'nav-menu'                      => 'Menu de navegação',
     'dashboard'                     => 'Dashboard',
+    'tasks'                         => 'Tarefas',
     'projects'                      => 'Projetos',
     'proposals'                     => 'Propostas',
     'clients'                       => 'Clientes',
@@ -59,6 +60,7 @@ return [
     'users-list'                    => 'Lista de colaboradores',
     'group-permissions'             => 'Permiss&otilde;es de grupo',
     'DashboardController'           => 'Dashboard',
+    'TaskController'                => 'Tarefas',
     'ProjectController'             => 'Projetos',
     'ProposalController'            => 'Propostas',
     'ClientController'              => 'Clientes',

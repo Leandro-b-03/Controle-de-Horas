@@ -232,9 +232,20 @@
                 <i class="fa fa-wrench"></i> <span>{!! Lang::get('general.projects') !!}</span></i>
               </a>
             </li>
+            <li {!! ((Request::is('tasks/*') || Request::is('tasks')) ? 'class="active"' : '') !!}>
+              <a href="{!! URL::to('tasks') !!}">
+                <i class="fa fa-tasks"></i> <span>{!! Lang::get('general.tasks') !!}</span></i>
+              </a>
+            </li>
             <li {!! ((Request::is('clients/*') || Request::is('clients')) ? 'class="active"' : '') !!}>
               <a href="{!! URL::to('clients') !!}">
                 <i class="fa fa-user-secret"></i> <span>{!! Lang::get('general.clients') !!}</span></i>
+              </a>
+            </li>
+            </li>
+            <li {!! ((Request::is('timesheets/*') || Request::is('timesheets')) ? 'class="active"' : '') !!}>
+              <a href="{!! URL::to('timesheets') !!}">
+                <i class="fa fa-clock-o"></i> <span>{!! Lang::get('general.timesheets') !!}</span></i>
               </a>
             </li>
             <li class="treeview {!! ((Request::is('users/*') || Request::is('users')) || (Request::is('group-permissions/*') || Request::is('group-permissions')) || (Request::is('teams/*') || Request::is('teams')) ? 'active' : '') !!}">

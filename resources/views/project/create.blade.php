@@ -123,7 +123,7 @@
                         <td><input type="hidden" name="project_time[{!! (Request::old('project_time[project_time_id][]') ? Request::old('project_time[project_time_id][]') : '1') !!}][]" id="project_time_id" value="{!! (Request::old('project_time[project_time_id][]') ? Request::old('project_time[project_time_id][]') : '1') !!}"><input type="text" class="form-control cycle" name="project_time[{!! (Request::old('project_time[project_time_id][]') ? Request::old('project_time[project_time_id][]') : '1') !!}][cycle][]" class="cycle" placeholder="{!! Lang::get('projects.ph-cycle') !!}" value="{!! (isset($data['project']) ? $data['project']->cycle : (Request::old('cycle') ? Request::old('cycle') : '')) !!}"></td>
                         <td><input type="text" class="form-control schedule_time" name="project_time[{!! (Request::old('project_time[project_time_id][]') ? Request::old('project_time[project_time_id][]') : '1') !!}][schedule_time][]" class="schedule_time" placeholder="{!! Lang::get('projects.ph-schedule_time') !!}" value="{!! (isset($data['project']) ? $data['project']->schedule_time : (Request::old('schedule_time') ? Request::old('schedule_time') : '')) !!}"></td>
                         <td><input type="text" class="form-control budget" name="project_time[{!! (Request::old('project_time[project_time_id][]') ? Request::old('project_time[project_time_id][]') : '1') !!}][budget][]" class="budget" placeholder="{!! Lang::get('projects.ph-budget') !!}" value="{!! (isset($data['project']) ? $data['project']->budget : (Request::old('budget') ? Request::old('budget') : '')) !!}"></td>
-                        <td><a data-id="{!! (Request::old('project_time[project_time_id][]') ? Request::old('project_time[project_time_id][]') : '1') !!}" class="btn btn-default tasks-row" data-target="#tasks" data-toggle="modal" data-backdrop="static"><i class="fa fa-plus"></i> {!! Lang::get('projects.tasks') !!}</a> <a class="btn btn-danger remove" title="{!! Lang::get('general.remove') !!}" disabled="disabled"><i class="fa fa-remove"></i></a></td>
+                        <td><a class="btn btn-danger remove" title="{!! Lang::get('general.remove') !!}"><i class="fa fa-remove"></i></a></td>
                       </tr>
                       @else
                       @foreach ($data['projects_times'] as $project_time)
@@ -131,7 +131,7 @@
                         <td><input type="hidden" name="project_time[{!! $project_time->id !!}][]" id="project_time_id" value="{!! $project_time->id !!}"><input type="text" class="form-control cycle" name="project_time[{!! $project_time->id !!}][cycle][]" class="cycle" placeholder="{!! Lang::get('projects.ph-cycle') !!}" value="{!! $project_time->cycle !!}"></td>
                         <td><input type="text" class="form-control schedule_time" name="project_time[{!! $project_time->id !!}][schedule_time][]" class="schedule_time" placeholder="{!! Lang::get('projects.ph-schedule_time') !!}" value="{!! $project_time->schedule_time !!}"></td>
                         <td><input type="text" class="form-control budget" name="project_time[{!! $project_time->id !!}][budget][]" class="budget" placeholder="{!! Lang::get('projects.ph-budget') !!}" value="{!! $project_time->budget !!}"></td>
-                        <td><a data-id="{!! $project_time->id !!}" class="btn btn-default tasks-row" data-target="#tasks" data-toggle="modal" data-backdrop="static"><i class="fa fa-plus"></i> {!! Lang::get('projects.tasks') !!}</a> <a class="btn btn-danger remove" title="{!! Lang::get('general.remove') !!}" disabled="disabled"><i class="fa fa-remove"></i></a></td>
+                        <td><a class="btn btn-danger remove" title="{!! Lang::get('general.remove') !!}"><i class="fa fa-remove"></i></a></td>
                       </tr>
                       @endforeach
                       @endif
@@ -150,43 +150,6 @@
           </div><!-- /.box -->
         </div>
       </div>
-      <div id="tasks" class="modal">
-        <div class="modal-dialog modal-lg">
-          <div class="modal-content">
-            <div class="modal-header">
-              <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
-              <h4 class="modal-title">{!! Lang::get('projects.tasks') !!}</h4>
-            </div>
-            <div class="modal-body">
-              <input type="hidden" id="row-id-task" value='' />
-              <div class="row">
-                <div id="task-action" class="col-md-12">
-                  <a id="add-task-new" class="btn btn-default pull-right"><i class="fa fa-plus"></i> {!! Lang::get('projects.new-task') !!}</a>
-                </div>
-              </div>
-              <hr />
-              <div id="task-lines" class="row">
-              </div>
-              <div id="task-form">
-                <div class="form-group col-xs-12">
-                  <label for="task_name">{!! Lang::get('projects.label-task_name') !!}</label>
-                  <input type="text" class="form-control" name="task_name" id="task_name" placeholder="{!! Lang::get('projects.ph-task_name') !!}" value="{!! (isset($data['project']) ? $data['project']->task_name : (Request::old('task_name') ? Request::old('task_name') : '')) !!}" data-validation="length" data-validation-length="5-50" data-validation-error-msg="{!! Lang::get('projects.error-task_name') !!}">
-                </div>
-                <div class="form-group col-xs-12">
-                  <label for="task_description">{!! Lang::get('projects.label-task_description') !!}</label>
-                  <input type="text" class="form-control" name="task_description" id="task_description" placeholder="{!! Lang::get('projects.ph-task_description') !!}" value="{!! (isset($data['project']) ? $data['project']->task_description : (Request::old('task_description') ? Request::old('task_description') : '')) !!}" data-validation="length" data-validation-length="10-100" data-validation-error-msg="{!! Lang::get('projects.error-task_description') !!}">
-                </div>
-              </div>
-            </div>
-            <div class="modal-footer">
-              <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Close</button>
-              <a id="back-task" class="btn btn-danger">{!! Lang::get('general.back-icon') !!} </a>
-              <a id="add-task" class="btn btn-primary">{!! Lang::get('general.add-icon') !!}</a>
-              {{-- <button type="button" class="btn btn-primary">Save changes</button> --}}
-            </div>
-          </div><!-- /.modal-content -->
-        </div><!-- /.modal-dialog -->
-      </div><!-- /.modal -->
     </section>
 @endsection
 
@@ -258,50 +221,9 @@
         html += '<td><input type="hidden" name="project_time[' + row + '][]" id="project_time_id" value="' + row + '"><input type="text" class="form-control cycle" name="project_time[' + row + '][cycle][]" class="cycle" placeholder="{!! Lang::get('projects.ph-cycle') !!}" value=""></td>';
         html += '<td><input type="text" class="form-control schedule_time" name="project_time[' + row + '][schedule_time][]" class="schedule_time" placeholder="{!! Lang::get('projects.ph-time') !!}" value=""></td>';
         html += '<td><input type="text" class="form-control budget" name="project_time[' + row + '][budget][]" class="budget" placeholder="{!! Lang::get('projects.ph-budget') !!}" value=""></td>';
-        html += '<td><a class="btn btn-default"><i class="fa fa-plus"></i> {!! Lang::get('projects.tasks') !!}</a> <a class="btn btn-danger remove" title="{!! Lang::get('general.remove') !!}"><i class="fa fa-remove"></i></a></td>';
+        html += '<td><a class="btn btn-danger remove" title="{!! Lang::get('general.remove') !!}"><i class="fa fa-remove"></i></a></td>';
         html += '</tr>';
         $('.project-time').find('tbody').append(html);
-      });
-
-      $('#add-task-new').click(function() {
-        $('#add-task-new').hide();
-        $('#task-lines').hide();
-        $('#task-form').show();
-        $('#add-task').show();
-        $('#back-task').show();
-      });
-
-      $('#back-task').click(function() {
-        $('#add-task-new').show();
-        $('#task-lines').show();
-        $('#task-form').hide();
-        $('#add-task').hide();
-        $('#back-task').hide();
-      });
-
-      $('#add-task').click(function() {
-        $('#add-task-new').show();
-        $('#task-lines').show();
-        $('#task-form').hide();
-        $('#add-task').hide();
-        $('#back-task').hide();
-
-        var html = '';
-
-        html += '<div class="col-md-12">';
-        html += '<div class="info-box">';
-        html += '<span class="info-box-icon bg-aqua"><i class="fa fa-tasks"></i></span>';
-        html += '<div class="info-box-content">';
-        html += '<span class="info-box-text">' + $('#task_name').val() + '</span>';
-        html += '<span class="info-box-number">' + $('#task_description').val() + '</span>';
-        html += '</div><!-- /.info-box-content -->';
-        html += '</div><!-- /.info-box -->';
-        html += '</div><!-- /.col -->';
-
-        $('#task_name').val('');
-        $('#task_description').val('');
-
-        $('#task-lines').append(html);
       });
     </script>
 @endsection

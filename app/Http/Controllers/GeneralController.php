@@ -2,6 +2,8 @@
 
 use Lang;
 use App\User;
+use App\Team;
+use App\ProjectTime;
 use App\Http\Requests;
 use Illuminate\Http\Request;
 
@@ -232,6 +234,33 @@ class GeneralController extends Controller {
     }
 
     /**
+     * Generates an array with parameters to teams
+     *
+     * @return Json with teams
+     */
+    public function getTeamAutocomplete(Request $request)
+    {
+        // Get all inputs
+        $string = $request->all();
+
+        // Search teams with the string
+        $teams = Team::findTeam($string['query'])->get();
+
+        $result = array();
+
+        foreach ($teams as $team) {
+            $find['value'] = $team->name;
+            $find['data']['id'] = $team->id;
+            $find['data']['name'] = $team->name;
+            $find['data']['color'] = $team->color;
+
+            $result['suggestions'][] = $find;
+        }
+
+        return response()->json($result);
+    }
+
+    /**
      * Generates an array with parameters to users
      *
      * @return Json with users
@@ -245,5 +274,19 @@ class GeneralController extends Controller {
         $user = User::find($id['id']);
 
         return response()->json($user);
+    }
+
+    /**
+     * Generates an array with parameters to Project Times
+     *
+     * @return Json with Project Times
+     */
+    public function getProjectTimes(Request $request)
+    {
+        $id = $request->get('id');
+
+        $projects_times = ProjectTime::where('project_id', $id)->get();
+
+        return response()->json($projects_times);
     }
 }

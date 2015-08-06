@@ -16,7 +16,7 @@ class Project extends Model
      *
      * @var array
      */
-    protected $fillable = ['user_id', 'client_id', 'proposal_id', 'name', 'description', 'long_description', 'schedule_time', 'time_spend'];
+    protected $fillable = ['user_id', 'client_id', 'proposal_id', 'name', 'description', 'long_description', 'budget', 'schedule_time', 'time_spend'];
 
     /**
      * Get the user record associated with the project.
