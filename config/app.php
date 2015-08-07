@@ -1,6 +1,7 @@
 <?php
 header('Content-Type: text/html; charset=utf-8');
-setlocale(LC_ALL, 'pt_BR', 'pt_BR.utf-8', 'pt_BR.utf-8', 'portuguese');
+setlocale(LC_ALL, "pt_BR", "pt_BR.iso-8859-1", "pt_BR.utf-8", "portuguese");
+setlocale(LC_TIME, 'ptb', 'pt_BR', 'portuguese-brazil', 'bra', 'brazil', 'pt_BR.utf-8', 'pt_BR.iso-8859-1', 'br');
 
 return [
 
@@ -181,6 +182,11 @@ return [
          * Personalization Services Providers...
          */
         Aws\Laravel\AwsServiceProvider::class,
+
+        /*
+         * Autoamtion Services Providers...
+         */
+        Orangehill\Iseed\IseedServiceProvider::class,
 
     ],
 

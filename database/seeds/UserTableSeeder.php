@@ -14,6 +14,12 @@ class UserTableSeeder extends Seeder
      */
     public function run()
     {
+        DB::table('users')->delete();
+        DB::table('permissions')->delete();
+        DB::table('permission_role')->delete();
+        DB::table('roles')->delete();
+        DB::table('role_user')->delete();
+
         DB::table('users')->insert([
             'username'          => 'Admin',
             'first_name'        => 'Admin',

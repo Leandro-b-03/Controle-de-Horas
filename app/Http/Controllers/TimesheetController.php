@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 
 use DB;
+use Auth;
 use Lang;
 use Calendar;
 use App\Timesheet;
@@ -26,20 +27,45 @@ class TimesheetController extends Controller
     public function index()
     {
         // Get all the timesheets
-        $timesheets = Timesheet::All();
-        $data['timesheets'] = $timesheets;
+        $all_timesheets = Timesheet::where('user_id', Auth::user()->id)->orderBy('workday', 'desc')->get();
+
+        d($all_timesheets);
+
+        foreach ($all_timesheets as &$timesheets) {
+            $timesheets->workday = Carbon::createFromFormat('Y-m-d H', $timesheets->workday . '00');
+        }
+
+        $data['timesheets'] = $all_timesheets;
+
+        $timesheet_today = $all_timesheets->first();
+        $data['timesheet_today'] = $timesheet_today;
+
+        setlocale(LC_TIME, 'ptb', 'pt_BR', 'portuguese-brazil', 'bra', 'brazil', 'pt_BR.utf-8', 'pt_BR.iso-8859-1', 'br');
 
         $month = Carbon::now()->month;
 
         // Get the first day
-        $firstday = new Carbon('first day of this month');
-        $data['firstday'] = $firstday;
+        $today = new Carbon();
+        $data['today'] = $today;
 
-        d($firstday);
+        $week = [];
 
-        // Get the last day
-        $lastday = new Carbon('last day of this month');
-        $data['lastday'] = $lastday;
+        for ($day = 6; $day >= 0; $day--) {
+            $days = new Carbon();
+
+            if ($today->dayOfWeek >= $day)
+                $week[] = $days->subDay($today->dayOfWeek - $day - 2);
+            else
+                $week[] = $days->addDay($today->dayOfWeek - $day - 2);
+        }
+
+        sort($week);
+
+        $data['week'] = $week;
+
+        foreach ($week as $day) {
+            d($all_timesheets->find('workday'), $day->toDateString());
+        }
 
         // Return the timesheets view.
         return view('timesheet.index')->with('data', $data);
@@ -52,8 +78,7 @@ class TimesheetController extends Controller
      */
     public function create()
     {
-        // Return the timesheet view.
-        return view('timesheet.create');
+        // Empty because theres no page
     }
 
     /**
@@ -63,37 +88,25 @@ class TimesheetController extends Controller
      */
     public function store(Request $request)
     {
-        $inputs = $request->all();
-        
-        // Validation of the fields
-        $validator = Validator::make(
-            [
-                $inputs
-            ],
-            [
-                'name' => 'required',
-                'password' => 'required|min:8',
-                'email' => 'required|email|unique:users'
-            ]
+        DB::beginTransaction();
+
+        // Get the actual date
+        $data = Carbon::now();
+
+        $data = array(
+            'user_id' => Auth::user()->id,
+            'workday' => $data->toDateString(),
+            'hours' => 0,
+            'start' => $data->toTimeString()
+            // 'end' => ,
+            // 'status' => 
         );
 
-        try {
-            $inputs['phone'] = str_replace('_', '', $inputs['phone']);
+        $timesheet = Timesheet::create($data);
 
-            if($validator) {
-                if (Timesheet::create( $inputs )) {
-                    return redirect('timesheets')->with('return', GeneralController::createMessage('success', Lang::get('general.' . $this->controller_name), 'create'));
-                } else {
-                    DB::rollback();
-                    return redirect('timesheets/create')->withInput()->with('return', GeneralController::createMessage('failed', Lang::get('general.' . $this->controller_name), 'create'));
-                }
-            } else {
-                DB::rollback();
-                return redirect('timesheets/create')->withInput()->with('return', GeneralController::createMessage('failed', Lang::get('general.' . $this->controller_name), 'create-failed'));
-            }
-        } catch (Exception $e){
-            DB::rollback();
-            return redirect('timesheets/create')->withInput()->with('return', GeneralController::createMessage('failed', Lang::get('general.' . $this->controller_name), 'create-failed'));
+        if ($timesheet) {
+            DB::commit();
+            return response()->json($timesheet);
         }
     }
 
@@ -132,33 +145,7 @@ class TimesheetController extends Controller
      */
     public function update($id, Request $request)
     {
-        DB::beginTransaction();
 
-        // Get timesheet with param $id
-        $timesheet = Timesheet::find($id);
-
-        // Get all the input from update.
-        $inputs = $request->all();
-
-        try {
-            $inputs['phone'] = str_replace('_', '', $inputs['phone']);
-
-            foreach($inputs as $input => $value) {
-                if($timesheet->{$input})
-                    $timesheet->{$input} = $value;
-            }
-
-            if ($timesheet->save()) {
-                DB::commit();
-                return redirect('timesheets')->with('return', GeneralController::createMessage('success', Lang::get('general.' . $this->controller_name), 'update'));
-            } else {
-                DB::rollback();
-                return redirect('timesheets/' . $id . '/edit')->withInput()->with('return', GeneralController::createMessage('failed', Lang::get('general.' . $this->controller_name), 'update'));
-            }
-        } catch (Exception $e) {
-            DB::rollback();
-            return redirect('timesheets/' . $id . '/edit')->withInput()->with('return', GeneralController::createMessage('failed', Lang::get('general.' . $this->controller_name), 'update'));
-        }
     }
 
     /**

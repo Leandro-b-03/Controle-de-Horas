@@ -41,9 +41,12 @@ return [
     'delete'                        => '<i class="fa fa-remove"></i> Deletar cliente(s)',
 
     // Table
-    'title-name'                    => 'Nome do cliente',
-    'title-responsible'             => 'Responsavel',
-    'title-email'                   => 'E-mail',
-    'title-phone'                   => 'Telefone',
-    'title-created_at'              => 'Cliente criado em',
+    'title-day'                     => 'Dia',
+    'title-start'                   => 'Entrada',
+    'title-end'                     => 'Termino',
+    'title-task'                    => 'Tarefas',
+    'day'                           => 'Dia',
+    'start'                         => 'Iniciar',
+    'end'                           => 'Termino',
+    'task'                          => 'Tarefas',
 ];

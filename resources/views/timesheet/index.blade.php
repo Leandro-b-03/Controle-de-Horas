@@ -5,8 +5,6 @@
 @stop
 
 @section('style')
-    <!-- DATA TABLES -->
-    {!! Html::style('library/adminLTE/plugins/datatables/dataTables.bootstrap.css') !!}
 @stop
 
 @section('content')
@@ -47,58 +45,31 @@
             <a id="delete" data-name="Cliente" class="btn btn-danger">{!! Lang::get('timesheets.delete') !!}</a>
         </div>
         <hr class="clearfix" />
-        <table class="">
+        <table class="table table-bordered">
             <thead>
                 <tr>
-                    <th>{!! Lang::get('timesheets.weekend') !!}</th>
-                    <th>{!! $data['firstday']->format('F') !!}</th>
+                    <th class="day">{!! Lang::get('timesheets.title-day') !!}</th>
+                    <th class="month">{!! $data['today']->format('F') !!}</th>
+                    <th class="start">{!! Lang::get('timesheets.title-start') !!}</th>
+                    <th class="task">{!! Lang::get('timesheets.title-task') !!}</th>
+                    <th class="end">{!! Lang::get('timesheets.title-end') !!}</th>
                 </tr>
             </thead>
             <tbody>
-                @for($day = $data['firstday']->day; $day <= $data['lastday']->day; $day++)
-                <tr>
-                    @if($day == 1)
-                    <td>{!! $data['firstday']->format('j') !!}</td>
-                    <td>{!! $data['firstday']->format('l') !!}</td>
-                    @else
-                    <td>{!! $data['firstday']->addDay(1)->format('j') !!}</td>
-                    <td>{!! $data['firstday']->format('l') !!}</td>
-                    @endif
+                @foreach($data['week'] as $day)
+                <tr {!! ($day->dayOfWeek === 0 || $day->dayOfWeek === 6 ?  'class="weekend"' : '') !!} {!! ($day->isSameDay($data['today']) ?  'class="today active"' : '') !!}>
+                    <td>{!! $day->format('j') !!}</td>
+                    <td>{!! $day->format('l') !!}</td>
+                    <td {!! ($day->isSameDay($data['today']) ?  'id="start_now"' : '') !!}>{!! ($data['timesheet_today'] ? ($day->isSameDay($data['timesheet_today']->workday) ? '<p>' . $data['timesheet_today']->start . '</p>' : ($day->isSameDay($data['today']) ? '<a id="start" class="btn btn-primary" ><span class="fa fa-calendar-plus-o"></span> ' . Lang::get('timesheets.start') . '</a>' : '')) : '') !!}</td>
+                    <td></td>
+                    <td></td>
                 </tr>
-                @endfor
+                @endforeach
             </tbody>
             <tfoot>
                 <tr></tr>
             </tfoot>
         </table>
-        {{-- <table id="timesheet-list" class="table table-bordered table-striped">
-            <thead>
-                <tr>
-                    <th class="select-tr"><input type="checkbox" class="select-all" /></th>
-                    <th>{!! Lang::get('timesheets.title-name') !!}</th>
-                    <th>{!! Lang::get('timesheets.title-responsible') !!}</th>
-                    <th>{!! Lang::get('timesheets.title-email') !!}</th>
-                    <th>{!! Lang::get('timesheets.title-phone') !!}</th>
-                    <th>{!! Lang::get('timesheets.title-created_at') !!}</th>
-                    <th class="action-tr">{!! Lang::get('general.action') !!}</th>
-                </tr>
-            </thead>
-            @if($data['timesheets']->count())
-            <tbody>
-                @foreach($data['timesheets'] as $timesheet)
-                <tr>
-                    <td><input type="checkbox" class="delete" data-value="{!! $timesheet->id !!}" /></td>
-                    <td>{!! $timesheet->name !!}</td>
-                    <td>{!! $timesheet->responsible !!}</td>
-                    <td>{!! $timesheet->email !!}</td>
-                    <td>{!! $timesheet->phone !!}</td>
-                    <td>{!! date('d/m/Y', strtotime($timesheet->created_at)) !!}</td>
-                    <td><a href="{!! URL::to('timesheets/' . $timesheet->id . '/edit') !!}" class="btn btn-primary">Editar</a></td>
-                </tr>
-                @endforeach
-            </tbody>
-            @endif
-        </table> --}}
         {!! Form::open(array('route' => 'timesheets.destroy', 'method' => 'DELETE', 'id' => 'delete-form')) !!}
             <input type="hidden" name="id" id="delete-id" name="delete_id" value="">
         {!! Form::close() !!}
@@ -110,11 +81,28 @@
 @endsection
 
 @section('scripts')
-    <!-- DATA TABES SCRIPT -->
-    {!! Html::script("library/adminLTE/plugins/datatables/jquery.dataTables.min.js") !!}
-    {!! Html::script("library/adminLTE/plugins/datatables/dataTables.bootstrap.min.js") !!}
     <!-- SlimScroll -->
     {!! Html::script("library/adminLTE/plugins/slimScroll/jquery.slimscroll.min.js") !!}
     <!-- FastClick -->
     {!! Html::script("library/adminLTE/plugins/fastclick/fastclick.min.js") !!}
+
+    <script type="text/javascript" charset="utf-8" async defer>
+        var timesheet;
+        $('#start').click(function() {
+            $.ajax({
+                url: '/timesheets',
+                type: "POST",
+                success: function(data) {
+                    data = JSON.parse(data);
+                    $('#start').remove();
+
+                    var html = '<p>' + data.start + '</p>';
+
+                    $('#start_now').append(html);
+
+                    timesheet = data;
+                }
+            });
+        })
+    </script>
 @endsection
