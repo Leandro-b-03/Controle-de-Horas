@@ -27,22 +27,11 @@ class TimesheetController extends Controller
     public function index()
     {
         // Get all the timesheets
-        $all_timesheets = Timesheet::where('user_id', Auth::user()->id)->orderBy('workday', 'desc')->get();
-
-        d($all_timesheets);
-
-        foreach ($all_timesheets as &$timesheets) {
-            $timesheets->workday = Carbon::createFromFormat('Y-m-d H', $timesheets->workday . '00');
-        }
-
-        $data['timesheets'] = $all_timesheets;
-
-        $timesheet_today = $all_timesheets->first();
+        $timesheet_today = Timesheet::where('user_id', Auth::user()->id)->orderBy('workday', 'desc')->get()->first();
+        $timesheet_today->workday = Carbon::createFromFormat('Y-m-d H', $timesheet_today->workday . '00');
         $data['timesheet_today'] = $timesheet_today;
 
         setlocale(LC_TIME, 'ptb', 'pt_BR', 'portuguese-brazil', 'bra', 'brazil', 'pt_BR.utf-8', 'pt_BR.iso-8859-1', 'br');
-
-        $month = Carbon::now()->month;
 
         // Get the first day
         $today = new Carbon();
@@ -50,22 +39,64 @@ class TimesheetController extends Controller
 
         $week = [];
 
-        for ($day = 6; $day >= 0; $day--) {
-            $days = new Carbon();
+        for ($days = 6; $days >= 0; $days--) {
+            $day = new Carbon();
 
-            if ($today->dayOfWeek >= $day)
-                $week[] = $days->subDay($today->dayOfWeek - $day - 2);
-            else
-                $week[] = $days->addDay($today->dayOfWeek - $day - 2);
+            switch ($today->dayOfWeek) {
+                case Carbon::SUNDAY:
+                    $day->subDay($today->dayOfWeek - $days);
+                    break;
+                case Carbon::MONDAY:
+                    if ($today->dayOfWeek <= $day)
+                        $day->subDay($today->dayOfWeek - $days);
+                    else
+                        $day->addDay($today->dayOfWeek - $days - 2);
+                    break;
+                case Carbon::TUESDAY:
+                    if ($today->dayOfWeek <= $day)
+                        $day->subDay($today->dayOfWeek - $days);
+                    else
+                        $day->addDay($today->dayOfWeek - $days - 3);
+                    break;
+                case Carbon::WEDNESDAY:
+                    if ($today->dayOfWeek <= $day)
+                        $day->subDay($today->dayOfWeek - $days);
+                    else
+                        $day->addDay($today->dayOfWeek - $days - 4);
+                    break;
+                case Carbon::THURSDAY:
+                    if ($today->dayOfWeek <= $day)
+                        $day->subDay($today->dayOfWeek - $days);
+                    else
+                        $day->addDay($today->dayOfWeek - $days - 5);
+                    break;
+                case Carbon::FRIDAY:
+                    if ($today->dayOfWeek <= $day)
+                        $day->subDay($today->dayOfWeek - $days);
+                    else
+                        $day->addDay($today->dayOfWeek - $days - 6);
+                    break;
+                case Carbon::SATURDAY:
+                    if ($today->dayOfWeek <= $day)
+                        $day->subDay($today->dayOfWeek - $days);
+                    else
+                        $day->addDay($today->dayOfWeek - $days - 7);
+                    break;
+            }
+
+            $workday = Timesheet::findWorkday($day->toDateString())->get()->first();
+
+            $day_info = array('day' => $day, 'workday' => $workday);
+            $week[] = $day_info;
         }
 
         sort($week);
 
+        d($week);
+
         $data['week'] = $week;
 
-        foreach ($week as $day) {
-            d($all_timesheets->find('workday'), $day->toDateString());
-        }
+        d($data);
 
         // Return the timesheets view.
         return view('timesheet.index')->with('data', $data);

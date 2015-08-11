@@ -17,4 +17,12 @@ class Timesheet extends Model
 	 * @var array
 	 */
 	protected $fillable = ['user_id', 'workday', 'hours', 'start', 'end', 'status'];
+
+    /**
+     * Get the all workdays with the date...
+     */
+	public function scopefindWorkday($query, $date)
+    {
+        return $query->where('workday', $date);
+    }
 }

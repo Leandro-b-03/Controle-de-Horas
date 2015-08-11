@@ -40,10 +40,6 @@
         </div>
     </div>
     <div class="box-body">
-        <div class="pull-right">
-            <a href="{!! URL::to('timesheets/create') !!}" class="btn btn-primary">{!! Lang::get('timesheets.new') !!}</a>
-            <a id="delete" data-name="Cliente" class="btn btn-danger">{!! Lang::get('timesheets.delete') !!}</a>
-        </div>
         <hr class="clearfix" />
         <table class="table table-bordered">
             <thead>
@@ -57,10 +53,10 @@
             </thead>
             <tbody>
                 @foreach($data['week'] as $day)
-                <tr {!! ($day->dayOfWeek === 0 || $day->dayOfWeek === 6 ?  'class="weekend"' : '') !!} {!! ($day->isSameDay($data['today']) ?  'class="today active"' : '') !!}>
-                    <td>{!! $day->format('j') !!}</td>
-                    <td>{!! $day->format('l') !!}</td>
-                    <td {!! ($day->isSameDay($data['today']) ?  'id="start_now"' : '') !!}>{!! ($data['timesheet_today'] ? ($day->isSameDay($data['timesheet_today']->workday) ? '<p>' . $data['timesheet_today']->start . '</p>' : ($day->isSameDay($data['today']) ? '<a id="start" class="btn btn-primary" ><span class="fa fa-calendar-plus-o"></span> ' . Lang::get('timesheets.start') . '</a>' : '')) : '') !!}</td>
+                <tr class="{!! ($day['day']->dayOfWeek === 0 || $day['day']->dayOfWeek === 6 ?  'weekend' : '') !!} {!! ($day['day']->isSameDay($data['today']) ? 'today active' : '') !!}">
+                    <td>{!! $day['day']->format('j') !!}</td>
+                    <td>{!! $day['day']->format('l') !!}</td>
+                    <td {!! ($day['day']->isSameDay($data['today']) ?  'id="start_now"' : '') !!}>{!! ($day['workday'] ? ($day['day']->isSameDay($data['today']) ? '<p>' . $day['workday']->start . '</p>' : ($day['day']->isSameDay($data['today']) ? '<a id="start" class="btn btn-primary" ><span class="fa fa-calendar-plus-o"></span> ' . Lang::get('timesheets.start') . '</a>' : '')) : '') !!}</td>
                     <td></td>
                     <td></td>
                 </tr>
