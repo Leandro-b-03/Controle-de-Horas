@@ -272,6 +272,10 @@ table thead tr th.start, table thead tr th.end {
 	width: 75px;
 }
 
+/*table tbody #lunch_time a {
+	display: none;
+}*/
+
 #tasks .modal-content {
 	background-color: #ECF0F5;
 }

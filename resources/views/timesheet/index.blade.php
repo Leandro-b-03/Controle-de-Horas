@@ -47,8 +47,9 @@
                     <th class="day">{!! Lang::get('timesheets.title-day') !!}</th>
                     <th class="month">{!! $data['today']->format('F') !!}</th>
                     <th class="start">{!! Lang::get('timesheets.title-start') !!}</th>
-                    <th class="task">{!! Lang::get('timesheets.title-task') !!}</th>
+                    <th class="end">{!! Lang::get('timesheets.title-lunch') !!}</th>
                     <th class="end">{!! Lang::get('timesheets.title-end') !!}</th>
+                    <th class="task">{!! Lang::get('timesheets.title-task') !!}</th>
                 </tr>
             </thead>
             <tbody>
@@ -56,7 +57,8 @@
                 <tr class="{!! ($day['day']->dayOfWeek === 0 || $day['day']->dayOfWeek === 6 ?  'weekend' : '') !!} {!! ($day['day']->isSameDay($data['today']) ? 'today active' : '') !!}">
                     <td>{!! $day['day']->format('j') !!}</td>
                     <td>{!! $day['day']->format('l') !!}</td>
-                    <td {!! ($day['day']->isSameDay($data['today']) ?  'id="start_now"' : '') !!}>{!! ($day['workday'] ? ($day['day']->isSameDay($data['today']) ? '<p>' . $day['workday']->start . '</p>' : ($day['day']->isSameDay($data['today']) ? '<a id="start" class="btn btn-primary" ><span class="fa fa-calendar-plus-o"></span> ' . Lang::get('timesheets.start') . '</a>' : '')) : '') !!}</td>
+                    <td {!! ($day['day']->isSameDay($data['today']) ? 'id="start_now"' : '') !!}>{!! ($day['workday'] ? '<p>' . $day['workday']->start . '</p>' : ($day['day']->isSameDay($data['today']) ? '<a id="start" class="btn btn-primary" ><span class="fa fa-calendar-plus-o"></span> ' . Lang::get('timesheets.start') . '</a>' : '---')) !!}</td>
+                    <td {!! ($day['day']->isSameDay($data['today']) ? 'id="lunch_time"' : '') !!}>{!! $day['lunch'] !!}</td>
                     <td></td>
                     <td></td>
                 </tr>
@@ -66,14 +68,12 @@
                 <tr></tr>
             </tfoot>
         </table>
-        {!! Form::open(array('route' => 'timesheets.destroy', 'method' => 'DELETE', 'id' => 'delete-form')) !!}
-            <input type="hidden" name="id" id="delete-id" name="delete_id" value="">
-        {!! Form::close() !!}
     </div><!-- /.box-body -->
     <div class="box-footer">
       Footer
   </div><!-- /.box-footer-->
 </div><!-- /.box -->
+
 @endsection
 
 @section('scripts')
@@ -83,18 +83,55 @@
     {!! Html::script("library/adminLTE/plugins/fastclick/fastclick.min.js") !!}
 
     <script type="text/javascript" charset="utf-8" async defer>
-        var timesheet;
+        var timesheet = {!! (isset($data['timesheet_today']) ? 'JSON.parse(\'' . $data['timesheet_today'] . '\')' : '{}') !!};
+
         $('#start').click(function() {
             $.ajax({
                 url: '/timesheets',
+                data: 'lunch_start=false&start=true',
                 type: "POST",
                 success: function(data) {
                     data = JSON.parse(data);
                     $('#start').remove();
 
                     var html = '<p>' + data.start + '</p>';
-
                     $('#start_now').append(html);
+
+                    $('#lunch_time').html('<a id="lunch_start" class="btn btn-primary" ><span class="fa fa-cutlery"></span> {!! Lang::get('timesheets.start') !!}</a>');
+
+                    timesheet = data;
+                }
+            });
+        });
+
+        $(document).on('click', '#lunch_start', function() {
+            $.ajax({
+                url: '/timesheets',
+                data: 'lunch_start=true&id=' + timesheet.id,
+                type: "POST",
+                success: function(data) {
+                    data = JSON.parse(data);
+                    $('#lunch_start').remove();
+
+                    var html = '<a id="lunch_end" class="btn btn-primary" ><span class="fa fa-cutlery"></span> {!! Lang::get('timesheets.end') !!}</a>';
+                    $('#lunch_time').append(html);
+
+                    timesheet = data;
+                }
+            });
+        });
+
+        $(document).on('click', '#lunch_end', function() {
+            $.ajax({
+                url: '/timesheets',
+                data: 'lunch_end=true&id=' + timesheet.id,
+                type: "POST",
+                success: function(data) {
+                    data = JSON.parse(data);
+                    $('#lunch_end').remove();
+
+                    var html = '<p>' + data.start + '</p>';
+                    $('#lunch_time').append(html);
 
                     timesheet = data;
                 }
