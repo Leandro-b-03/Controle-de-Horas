@@ -14,9 +14,11 @@ return [
     */
 
     // Labels
-    'label-name'                    => 'Nome',
+    'label-name'                    => 'ID',
+    'label-description'             => 'Descri&ccedil;&atilde;o',
     'label-proposal'                => 'Proposta',
-    'ph-name'                       => 'Nome da proposta',
+    'ph-name'                       => 'Id da proposta',
+    'ph-description'                => 'Descri&ccedil;&atilde;o da proposta',
     'ph-resume'                     => 'Proposta...',
     'error-name'                    => 'O nome da proposta precisa ser alfanum&eacute;rico e deve conter de 3 a 40 caract&eacute;res)',
     'error-proposal'                => 'A proposta não deve estar em branco',

@@ -44,7 +44,7 @@
       </div>
       <div class="row">
         <!-- left column -->
-        <div class="col-md-8">
+        <div class="col-md-10">
           <!-- general form elements -->
           <div class="box box-primary">
             <div class="box-header">
@@ -89,9 +89,9 @@
                 <div class="form-group col-xs-5">
                   <label for="users">{!! Lang::get('general.users') !!}</label>
                   <div class="input-group">
-                    <input type="text" class="form-control" id="users-autocomplete" placeholder="{!! Lang::get('team.search-user-name') !!}" />
+                    <input type="text" class="form-control" id="users-autocomplete" placeholder="{!! Lang::get('teams.search-user-name') !!}" />
                     <span class="input-group-btn">
-                      <a id="search-user" class="btn btn-default"><i class="fa fa-search-plus"></i> {!! Lang::get('team.search-user') !!}</a>
+                      <a id="search-user" class="btn btn-default"><i class="fa fa-search-plus"></i> {!! Lang::get('general.btn-search') !!}</a>
                     </span>
                   </div>
                 </div>
@@ -137,9 +137,50 @@
     <script>
       var leader = "{!! (isset($data['team']) ? $data['team']->user_id : '') !!}";
 
-      var users_team = {!! (!Request::is('teams/create') ? 'getUsers()' : (Request::is('teams/create') ? '(Cookie.get("users_team") != undefined) ? Cookie.get("users_team") : [] ' : '[]')) !!};
+      // var users_team = {!! (!Request::is('teams/create') ? 'getUsers()' : (Request::is('teams/create') ? '(Cookie.get("users_team") != undefined) ? Cookie.get("users_team") : [] ' : '[]')) !!};
+
+      var users_team = {!! (!Request::is('teams/create') ? 'getUsers()' : '[]') !!};
 
       $(".my-colorpicker2").colorpicker();
+
+      if ($('#user_id').val() != '') {
+        $.ajax({
+          url: '/general/getUser',
+          data: {id: $('#user_id').val()},
+          type: "GET",
+          success: function(data) {
+            data = JSON.parse(data);
+
+            if($('#users :input[value="' + data.id + '"]').length === 0) {
+              $('#users div[data-id="' + leader + '"] h4 i.fa').removeClass('fa-star').addClass('fa-user');
+
+              var html = '';
+              html += '<img data-id="' + data.id + '" class="img-circle img-div" src="../' + data.photo + '" />';
+              html += '<div data-id="' + data.id + '" class="div-user-info">';
+              html += '    <h4 title="{!! Lang::get('users.table-username') !!}"><i class="fa fa-star"></i> ' + data.username + '<a data-id="' + data.id + '" class="btn btn-xs btn-danger user-remove pull-right"><i class="fa fa-remove"></i></a></h4>';
+              html += '    <div class="block">';
+              html += '        <p title="{!! Lang::get('users.table-name') !!}"><i class="fa fa-user"></i> <span>' + data.first_name + ' ' + data.last_name + '</span></p>';
+              html += '        <p title="{!! Lang::get('users.table-email') !!}" class="email"><i class="fa fa-envelope"></i><span>' + data.email + '</span></p>';
+              html += '    </div>';
+              html += '    <input type="hidden" name="users_id[]" value="' + data.id + '" />';
+              html += '</div>';
+
+              $('#users').append(html);
+
+              leader = data.id;
+
+              // setCookie('users_team');
+            } else {
+              if (leader != data.id) {
+                $('#users div[data-id="' + leader + '"] h4 i.fa').removeClass('fa-star').addClass('fa-user');
+                $('#users div[data-id="' + data.id + '"] h4 i.fa').removeClass('fa-user').addClass('fa-star');
+
+                leader = data.id;
+              }
+            }
+          }
+        });
+      }
 
       $('#user_id').change(function() {
         if ($(this).val() != "") {
@@ -168,7 +209,7 @@
 
                 leader = data.id;
 
-                setCookie('users_team');
+                // setCookie('users_team');
               } else {
                 if (leader != data.id) {
                   $('#users div[data-id="' + leader + '"] h4 i.fa').removeClass('fa-star').addClass('fa-user');
@@ -235,7 +276,7 @@
 
               $('#users').append(html);
 
-              setCookie('users_team');
+              // // setCookie('users_team');
             }
           }
       });

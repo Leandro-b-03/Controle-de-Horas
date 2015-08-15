@@ -20,6 +20,7 @@ return [
     'ph-name'                       => 'Nome do equipe',
     'ph-responsible'                => 'Nome do respon&aacute;vel',
     'ph-color'                      => 'Cor do equipe',
+    'search-user-name'              => 'Digite o nome do colaborador',
     'error-name'                    => 'O nome do equipe precisa ser alfanum&eacute;rico e deve conter de 3 a 12 caract&eacute;res)',
     'error-responsible'             => 'O nome do respons&aacute;vel deve ter de 3 a 80 caract&eacute;res',
     'error-color'                   => 'O telefone deve ter o formato (11) 11111-111 ou (11) 11111-1111',
