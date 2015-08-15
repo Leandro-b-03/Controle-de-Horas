@@ -131,7 +131,7 @@ return [
         /*
          * Development Service Providers...
          */
-        // Barryvdh\Debugbar\ServiceProvider::class,
+        Barryvdh\Debugbar\ServiceProvider::class,
 
         /*
          * Laravel Framework Service Providers...
@@ -184,9 +184,14 @@ return [
         Aws\Laravel\AwsServiceProvider::class,
 
         /*
-         * Autoamtion Services Providers...
+         * Automation Services Providers...
          */
         Orangehill\Iseed\IseedServiceProvider::class,
+
+        /*
+         * My Services Providers...
+         */
+        App\Providers\HelperServiceProvider::class,
 
     ],
 
@@ -232,6 +237,7 @@ return [
         'Schema'        => Illuminate\Support\Facades\Schema::class,
         'Session'       => Illuminate\Support\Facades\Session::class,
         'Storage'       => Illuminate\Support\Facades\Storage::class,
+        'Str'           => Illuminate\Support\Str::class,
         'URL'           => Illuminate\Support\Facades\URL::class,
         'Validator'     => Illuminate\Support\Facades\Validator::class,
         'View'          => Illuminate\Support\Facades\View::class,

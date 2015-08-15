@@ -4,7 +4,7 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Group Clients Language Lines
+    | Tasks Language Lines
     |--------------------------------------------------------------------------
     |
     | The following language lines are used all library to build

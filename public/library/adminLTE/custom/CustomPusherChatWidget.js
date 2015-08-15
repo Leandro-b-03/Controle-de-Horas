@@ -128,14 +128,14 @@ PusherChatWidget.prototype._sendChatMessage = function(data) {
       'chat_info': data
     },
     complete: function(xhr, status) {
-      Pusher.log('Chat message sent. Result: ' + status + ' : ' + xhr.responseText);
+      // Pusher.log('Chat message sent. Result: ' + status + ' : ' + xhr.responseText);
       if(xhr.status === 200) {
         self._messageInputEl.val('');
       }
       self._messageInputEl.removeAttr('readonly');
     },
     success: function(result) {
-      console.log(result);
+      // console.log(result);
     }
   })
 };

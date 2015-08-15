@@ -16,13 +16,15 @@ class CreateProposalsTable extends Migration
             $table->increments('id');
             $table->integer('user_id')->unsigned();
             $table->integer('client_id')->unsigned();
+            $table->integer('proposal_type_id')->unsigned();
             $table->string('name');
-            $table->text('proposal');
+            $table->string('description');
             $table->boolean('status');
             $table->timestamps();
 
             $table->foreign('user_id')->references('id')->on('users')->onUpdate('cascade')->onDelete('cascade');
             $table->foreign('client_id')->references('id')->on('clients')->onUpdate('cascade')->onDelete('cascade');
+            $table->foreign('proposal_type_id')->references('id')->on('proposals_types')->onUpdate('cascade')->onDelete('cascade');
         });
     }
 

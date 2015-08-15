@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "d30565797c0fce553e49a178b7fdd004",
+    "hash": "b37bd631ac8770fb31a088bef09883c9",
     "packages": [
         {
             "name": "aws/aws-sdk-php",
@@ -407,6 +407,58 @@
                 "utils"
             ],
             "time": "2015-07-23 00:54:12"
+        },
+        {
+            "name": "devfactory/taxonomy",
+            "version": "3.0.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/DevFactoryCH/taxonomy.git",
+                "reference": "ab49373fde02c20092e3feb3851e5b6168a33c0a"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/DevFactoryCH/taxonomy/zipball/ab49373fde02c20092e3feb3851e5b6168a33c0a",
+                "reference": "ab49373fde02c20092e3feb3851e5b6168a33c0a",
+                "shasum": ""
+            },
+            "require": {
+                "illuminate/support": "~5.0",
+                "php": "~5.4"
+            },
+            "require-dev": {
+                "codeclimate/php-test-reporter": "dev-master",
+                "mockery/mockery": "dev-master@dev"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "2.0.x-dev"
+                }
+            },
+            "autoload": {
+                "classmap": [
+                    "src/migrations"
+                ],
+                "psr-4": {
+                    "Devfactory\\Taxonomy\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Mark Cameron",
+                    "email": "mark.cameron@devfactory.ch"
+                }
+            ],
+            "description": "Create and manage a heirarchical taxonomy of terms within different vocabularies",
+            "keywords": [
+                "taxonomy"
+            ],
+            "time": "2015-03-31 09:14:15"
         },
         {
             "name": "dnoegel/php-xdg-base-dir",
@@ -1008,7 +1060,7 @@
                     "name": "Jeremy Lindblom",
                     "email": "jeremeamia@gmail.com",
                     "homepage": "https://github.com/jeremeamia",
-                    "role": "developer"
+                    "role": "Developer"
                 }
             ],
             "description": "Serialize Closure objects, including their context and binding",
@@ -3155,7 +3207,7 @@
             ],
             "authors": [
                 {
-                    "name": "Pádraic Brady",
+                    "name": "Padraic Brady",
                     "email": "padraic.brady@gmail.com",
                     "homepage": "http://blog.astrumfutura.com"
                 },
@@ -3644,7 +3696,6 @@
         },
         {
             "name": "phpunit/phpunit",
-<<<<<<< HEAD
             "version": "4.8.4",
             "source": {
                 "type": "git",
@@ -3655,18 +3706,6 @@
                 "type": "zip",
                 "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/55bf1d6092b0e13a1f26bd5eaffeef3d8ad85ea7",
                 "reference": "55bf1d6092b0e13a1f26bd5eaffeef3d8ad85ea7",
-=======
-            "version": "4.8.3",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "fd3050e26e3105f416d74c4d33aea659b406c59d"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/fd3050e26e3105f416d74c4d33aea659b406c59d",
-                "reference": "fd3050e26e3105f416d74c4d33aea659b406c59d",
->>>>>>> ac999a6e509062d4f0a8b715725b8960fcb4a456
                 "shasum": ""
             },
             "require": {
@@ -3725,11 +3764,7 @@
                 "testing",
                 "xunit"
             ],
-<<<<<<< HEAD
             "time": "2015-08-15 04:21:23"
-=======
-            "time": "2015-08-10 09:16:56"
->>>>>>> ac999a6e509062d4f0a8b715725b8960fcb4a456
         },
         {
             "name": "phpunit/phpunit-mock-objects",
