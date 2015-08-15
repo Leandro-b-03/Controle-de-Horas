@@ -28,7 +28,10 @@ class TimesheetController extends Controller
     {
         // Get all the timesheets
         $timesheet_today = Timesheet::where('user_id', Auth::user()->id)->orderBy('workday', 'desc')->get()->first();
-        $timesheet_today->workday = Carbon::createFromFormat('Y-m-d H', $timesheet_today->workday . '00');
+        if ($timesheet_today) {
+            $timesheet_today->workday = Carbon::createFromFormat('Y-m-d H', $timesheet_today->workday . '00');
+        }
+        
         $data['timesheet_today'] = $timesheet_today;
 
         setlocale(LC_TIME, 'ptb', 'pt_BR', 'portuguese-brazil', 'bra', 'brazil', 'pt_BR.utf-8', 'pt_BR.iso-8859-1', 'br');
@@ -36,6 +39,17 @@ class TimesheetController extends Controller
         // Get the first day
         $today = new Carbon();
         $data['today'] = $today;
+
+        $lhs = explode(':', $timesheet_today->lunch_start);
+        $lunch_start = Carbon::createFromTime($lhs[0], $lhs[1], $lhs[2], 'America/Sao_Paulo');
+                    
+        $lhe = explode(':', $timesheet_today->lunch_end);
+        $lunch_end = Carbon::createFromTime($lhe[0], $lhe[1], $lhe[2], 'America/Sao_Paulo');
+
+        d($lunch_start);
+        d($lunch_end);
+
+        d($lunch_start->diffInHours($lunch_end));
 
         $week = [];
 
@@ -47,37 +61,37 @@ class TimesheetController extends Controller
                     $day->subDay($today->dayOfWeek - $days);
                     break;
                 case Carbon::MONDAY:
-                    if ($today->dayOfWeek <= $day)
+                    if ($today->dayOfWeek <= $days)
                         $day->subDay($today->dayOfWeek - $days);
                     else
                         $day->addDay($today->dayOfWeek - $days - 2);
                     break;
                 case Carbon::TUESDAY:
-                    if ($today->dayOfWeek <= $day)
+                    if ($today->dayOfWeek <= $days)
                         $day->subDay($today->dayOfWeek - $days);
                     else
                         $day->addDay($today->dayOfWeek - $days - 3);
                     break;
                 case Carbon::WEDNESDAY:
-                    if ($today->dayOfWeek <= $day)
+                    if ($today->dayOfWeek <= $days)
                         $day->subDay($today->dayOfWeek - $days);
                     else
                         $day->addDay($today->dayOfWeek - $days - 4);
                     break;
                 case Carbon::THURSDAY:
-                    if ($today->dayOfWeek <= $day)
+                    if ($today->dayOfWeek <= $days)
                         $day->subDay($today->dayOfWeek - $days);
                     else
                         $day->addDay($today->dayOfWeek - $days - 5);
                     break;
                 case Carbon::FRIDAY:
-                    if ($today->dayOfWeek <= $day)
+                    if ($today->dayOfWeek <= $days)
                         $day->subDay($today->dayOfWeek - $days);
                     else
                         $day->addDay($today->dayOfWeek - $days - 6);
                     break;
                 case Carbon::SATURDAY:
-                    if ($today->dayOfWeek <= $day)
+                    if ($today->dayOfWeek <= $days)
                         $day->subDay($today->dayOfWeek - $days);
                     else
                         $day->addDay($today->dayOfWeek - $days - 7);
@@ -86,17 +100,27 @@ class TimesheetController extends Controller
 
             $workday = Timesheet::findWorkday($day->toDateString())->get()->first();
 
-            $day_info = array('day' => $day, 'workday' => $workday);
+            if ($workday){
+                if ($workday->lunch_start != '00:00:00') {
+                    if ($workday->lunch_end != '00:00:00') {
+                        $lunch = '<p>' . $workday->lunch_hours . '</p>';
+                    } else {
+                        $lunch = '<a id="lunch_end" class="btn btn-primary" ><span class="fa fa-cutlery"></span> ' . Lang::get('timesheets.end') . '</a>';
+                    }
+                } else {
+                    $lunch = '<a id="lunch_start" class="btn btn-primary" ><span class="fa fa-cutlery"></span> ' . Lang::get('timesheets.start') . '</a>';
+                }
+            } else {
+                $lunch = '---';
+            }
+            
+            $day_info = array('day' => $day, 'workday' => $workday, 'lunch' => $lunch);
             $week[] = $day_info;
         }
 
         sort($week);
 
-        d($week);
-
         $data['week'] = $week;
-
-        d($data);
 
         // Return the timesheets view.
         return view('timesheet.index')->with('data', $data);
@@ -121,23 +145,57 @@ class TimesheetController extends Controller
     {
         DB::beginTransaction();
 
+        $inputs = $request->all();
+
         // Get the actual date
         $data = Carbon::now();
 
-        $data = array(
-            'user_id' => Auth::user()->id,
-            'workday' => $data->toDateString(),
-            'hours' => 0,
-            'start' => $data->toTimeString()
-            // 'end' => ,
-            // 'status' => 
-        );
+        // die($inputs['start'] === 'false');
 
-        $timesheet = Timesheet::create($data);
+        if (isset($inputs['start'])) {
+            $data = array(
+                'user_id' => Auth::user()->id,
+                'workday' => $data->toDateString(),
+                'hours' => 0,
+                'start' => $data->toTimeString()
+                // 'end' => ,
+                // 'status' => 
+            );
 
-        if ($timesheet) {
-            DB::commit();
-            return response()->json($timesheet);
+            $timesheet = Timesheet::create($data);
+
+            if ($timesheet) {
+                DB::commit();
+                return response()->json($timesheet);
+            }
+        } else if (isset($inputs['lunch_start'])) {
+            $timesheet = Timesheet::find($inputs['id']);
+
+            //die(d($timesheet));
+
+            $timesheet->lunch_start = $data->toTimeString();
+
+            if ($timesheet->save()) {
+                DB::commit();
+                return response()->json($timesheet);
+            }
+        } else if (isset($inputs['lunch_end'])) {
+            $timesheet = Timesheet::find($inputs['id']);
+
+            $timesheet->lunch_end = $data->toTimeString();
+
+            $lhs = explode(':', $timesheet->lunch_start);
+            $lunch_start = Carbon::createFromTime($lhs[0], $lhs[1], $lhs[2], 'America/Sao_Paulo');
+                        
+            $lhe = explode(':', $timesheet->lunch_end);
+            $lunch_end = Carbon::createFromTime($lhe[0], $lhe[1], $lhe[2], 'America/Sao_Paulo');
+
+            $timesheet->lunch_hours = $lunch_start->diffInHours($lunch_end);
+
+            if ($timesheet->save()) {
+                DB::commit();
+                return response()->json($timesheet);
+            }
         }
     }
 

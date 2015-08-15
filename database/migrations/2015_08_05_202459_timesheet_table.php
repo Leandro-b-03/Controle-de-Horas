@@ -16,9 +16,12 @@ class TimesheetTable extends Migration
             $table->increments('id');
             $table->integer('user_id')->unsigned();
             $table->date('workday');
-            $table->decimal('hours', 2, 2);
             $table->time('start');
+            $table->time('lunch_start');
+            $table->time('lunch_end');
+            $table->decimal('lunch_hours', 2, 2);
             $table->time('end');
+            $table->decimal('hours', 2, 2);
             $table->enum('status', ['W', 'F', 'P', 'N'])->default('N');
             $table->timestamps();
 

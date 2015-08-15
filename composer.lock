@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "4d487d023a6ab19249591a513ca990e4",
+    "hash": "d30565797c0fce553e49a178b7fdd004",
     "packages": [
         {
             "name": "aws/aws-sdk-php",
@@ -1008,7 +1008,7 @@
                     "name": "Jeremy Lindblom",
                     "email": "jeremeamia@gmail.com",
                     "homepage": "https://github.com/jeremeamia",
-                    "role": "Developer"
+                    "role": "developer"
                 }
             ],
             "description": "Serialize Closure objects, including their context and binding",
@@ -3155,7 +3155,7 @@
             ],
             "authors": [
                 {
-                    "name": "Padraic Brady",
+                    "name": "Pádraic Brady",
                     "email": "padraic.brady@gmail.com",
                     "homepage": "http://blog.astrumfutura.com"
                 },
@@ -3644,6 +3644,7 @@
         },
         {
             "name": "phpunit/phpunit",
+<<<<<<< HEAD
             "version": "4.8.4",
             "source": {
                 "type": "git",
@@ -3654,6 +3655,18 @@
                 "type": "zip",
                 "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/55bf1d6092b0e13a1f26bd5eaffeef3d8ad85ea7",
                 "reference": "55bf1d6092b0e13a1f26bd5eaffeef3d8ad85ea7",
+=======
+            "version": "4.8.3",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/sebastianbergmann/phpunit.git",
+                "reference": "fd3050e26e3105f416d74c4d33aea659b406c59d"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/fd3050e26e3105f416d74c4d33aea659b406c59d",
+                "reference": "fd3050e26e3105f416d74c4d33aea659b406c59d",
+>>>>>>> ac999a6e509062d4f0a8b715725b8960fcb4a456
                 "shasum": ""
             },
             "require": {
@@ -3712,7 +3725,11 @@
                 "testing",
                 "xunit"
             ],
+<<<<<<< HEAD
             "time": "2015-08-15 04:21:23"
+=======
+            "time": "2015-08-10 09:16:56"
+>>>>>>> ac999a6e509062d4f0a8b715725b8960fcb4a456
         },
         {
             "name": "phpunit/phpunit-mock-objects",

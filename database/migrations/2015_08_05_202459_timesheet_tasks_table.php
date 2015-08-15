@@ -22,7 +22,7 @@ class TimesheetTasksTable extends Migration
             $table->timestamps();
 
             $table->foreign('timesheet_id')->references('id')->on('timesheets')->onUpdate('cascade')->onDelete('cascade');
-            $table->foreign('project_time_task_id')->references('id')->on('project_time_task')->onUpdate('cascade')->onDelete('cascade');
+            $table->foreign('project_time_task_id')->references('id')->on('projects_times_tasks')->onUpdate('cascade')->onDelete('cascade');
         });
     }
 

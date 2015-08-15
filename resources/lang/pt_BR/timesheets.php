@@ -45,6 +45,7 @@ return [
     'title-start'                   => 'Entrada',
     'title-end'                     => 'Termino',
     'title-task'                    => 'Tarefas',
+    'title-lunch'                   => 'Almo&ccedil;o',
     'day'                           => 'Dia',
     'start'                         => 'Iniciar',
     'end'                           => 'Termino',
