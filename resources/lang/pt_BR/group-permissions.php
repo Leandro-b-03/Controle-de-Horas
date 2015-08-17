@@ -14,7 +14,7 @@ return [
     */
 
     // Labels
-    'label-display_name'            => 'Nome de exibição',
+    'label-display_name'            => 'Nome de exibi&ccedil;&atilde;o',
     'label-description'             => 'Descri&ccedil;&atilde;o do grupo',
     'char_left'                     => 'caract&eacute;res restantes',
     'ph-name'                       => 'Nome do grupo',

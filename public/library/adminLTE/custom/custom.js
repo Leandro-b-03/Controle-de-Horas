@@ -135,16 +135,18 @@ function responsive_filemanager_callback(field_id){
 var PresenceChannel = pusher.subscribe("presence-user-" + user.id);
 
 //do something with our new information
-PresenceChannel.bind('new_notification', function(notification){
+PresenceChannel.bind ('new_notification', function(notification) {
     // assign the notification's message to a <div></div>notification
     $('li.notifications-menu .dropdown-menu .menu').prepend(createNotification(notification));
+
+    titleCounter();
 });
 
 //subscribe to our notifications channel
 var notificationsChannel = pusher.subscribe('notifications');
 
 //do something with our new information
-notificationsChannel.bind('new_notification', function(notification){
+notificationsChannel.bind ('new_notification', function(notification) {
     // assign the notification's message to a <div></div>notification
     $('li.notifications-menu .dropdown-menu .menu').prepend(createNotification(notification));
 
@@ -170,13 +172,28 @@ function createNotification(notification) {
     return new_message;
 }
 
-function titleCounter() {
-    original_title = document.title;
 
-    update_count = parseInt($('.message-count').html()) + parseInt($('.notification-count').html()) + parseInt($('.tasks-count').html());
+var original_title = document.title;
+
+function titleCounter() {
+    notification = parseInt($('.notification-count').html());
+    message = parseInt($('.message-count').html());
+    tasks = parseInt($('.tasks-count').html());
+
+    console.log(notification);
+    console.log(message);
+    console.log(tasks);
+
+    update_count = ($.isNumeric(notification) ? notification : 0) + ($.isNumeric(message) ? message : 0) + ($.isNumeric(tasks) ? tasks : 0);
+
+    console.log(update_count);
 
     document.title = "(" + update_count + ") " + original_title;
+
+    $.playSound('library/adminLTE/sounds/alert');
 }
+
+titleCounter();
 
 /*$(function() {
     var chatWidget = new PusherChatWidget(pusher, {

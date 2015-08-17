@@ -62,7 +62,7 @@
               <li class="dropdown messages-menu">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                   <i class="fa fa-envelope-o"></i>
-                  <span class="label label-success">4</span>
+                  <span class="label label-success message-count">4</span>
                 </a>
                 <ul class="dropdown-menu">
                   <li class="header">You have 4 messages</li>
@@ -83,7 +83,7 @@
                       </li><!-- end message -->
                     </ul>
                   </li>
-                  <li class="footer"><a href="#">See All Messages</a></li>
+                  <li class="footer"><a href="#">{!! Lang::get('general.all-messages') !!}</a></li>
                 </ul>
               </li>
               <!-- Notifications: style can be found in dropdown.less -->
@@ -93,11 +93,11 @@
                   <span class="label label-warning notification-count">{!! Auth::user()->getNotifications()->unseen()->get()->count() != 0 ? Auth::user()->getNotifications()->unseen()->get()->count() : '' !!}</span>
                 </a>
                 <ul class="dropdown-menu">
-                  <li class="header">{!! Lang::choice('general.bavbar-notification', Auth::user()->getNotifications()->unseen()->get()->count(), ['count' => Auth::user()->getNotifications()->unseen()->get()->count() ]) !!}</li>
+                  <li class="header">{!! Lang::choice('general.navbar-notification', Auth::user()->getNotifications()->unseen()->get()->count(), ['count' => Auth::user()->getNotifications()->unseen()->get()->count() ]) !!}</li>
                   <li>
                     <!-- inner menu: contains the actual data -->
                     <ul class="menu">
-                      @foreach (Auth::user()->getNotifications()->get() as $notification)
+                      @foreach (Auth::user()->getNotifications()->orderBy('created_at', 'desc')->get() as $notification)
                       <li>
                         <a href="{!! $notification->href !!}">
                           <i class="fa fa-{!! $notification->faicon !!} text-aqua"></i> {!! $notification->message !!}
@@ -106,14 +106,14 @@
                       @endforeach
                     </ul>
                   </li>
-                  <li class="footer"><a href="#">View all</a></li>
+                  <li class="footer"><a href="#">{!! Lang::get('general.all-notifications') !!}</a></li>
                 </ul>
               </li>
               <!-- Tasks: style can be found in dropdown.less -->
               <li class="dropdown tasks-menu">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                   <i class="fa fa-flag-o"></i>
-                  <span class="label label-danger">9</span>
+                  <span class="label label-danger tasks-count">9</span>
                 </a>
                 <ul class="dropdown-menu">
                   <li class="header">You have 9 tasks</li>
@@ -136,7 +136,7 @@
                     </ul>
                   </li>
                   <li class="footer">
-                    <a href="#">View all tasks</a>
+                    <a href="#">{!! Lang::get('general.all-tasks') !!}</a>
                   </li>
                 </ul>
               </li>
@@ -435,6 +435,8 @@
     {!! Html::script("library/adminLTE/plugins/fastclick/fastclick.min.js") !!}
     <!-- iCheck -->
     {!! Html::script("library/adminLTE/plugins/iCheck/icheck.min.js") !!}
+    <!-- jQuery-Play-sound -->
+    {!! Html::script("library/adminLTE/plugins/jquery-play-sound/jquery.playSound.js") !!}
     @section('scripts')
     @show
     <script>
