@@ -177,6 +177,7 @@ return [
         Zizaco\Entrust\EntrustServiceProvider::class,
         // Intervention\Image\ImageServiceProvider::class,
         MaddHatter\LaravelFullcalendar\ServiceProvider::class,
+        Laravel\Socialite\SocialiteServiceProvider::class,
 
         /*
          * Personalization Services Providers...
@@ -244,6 +245,7 @@ return [
         //'Image'         => Intervention\Image\Facades\Image::class,
         'AWS'           => Aws\Laravel\AwsFacade::class,
         'Calendar'      => MaddHatter\LaravelFullcalendar\Facades\Calendar::class,
+        'Socialite'     => Laravel\Socialite\Facades\Socialite::class,
 
     ],
 

@@ -20,7 +20,8 @@
         "aws/aws-sdk-php-laravel": "dev-master",
         "maddhatter/laravel-fullcalendar": "dev-master",
         "nesbot/carbon": "^1.20@dev",
-        "orangehill/iseed": "dev-master"
+        "orangehill/iseed": "dev-master",
+        "laravel/socialite": "^3.0@dev"
     },
     "require-dev": {
         "fzaninotto/faker": "~1.4",
