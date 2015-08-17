@@ -1,3 +1,0 @@
-SET HTTPS_PROXY="naturabr\118088971:3540f8e4**@172.26.46.70:8080" && composer update
-
-SET HTTPS_PROXY="naturabr\118088971:3540f8e4**@172.26.46.70:8080" && git pull
