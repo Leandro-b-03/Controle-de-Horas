@@ -4,7 +4,7 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Group Clients Language Lines
+    | Tasks Language Lines
     |--------------------------------------------------------------------------
     |
     | The following language lines are used all library to build
@@ -20,6 +20,7 @@ return [
     'ph-responsible'                => 'Nome do respon&aacute;vel',
     'ph-phone'                      => 'Telefone do tarefa',
     'ph-email'                      => 'E-mail do tarefa',
+    'search-team-name'              => 'Pesquisar nome da equipe',
     'error-name'                    => 'O nome do tarefa precisa ser alfanum&eacute;rico e deve conter de 3 a 12 caract&eacute;res)',
     'error-responsible'             => 'O nome do respons&aacute;vel deve ter de 3 a 80 caract&eacute;res',
 

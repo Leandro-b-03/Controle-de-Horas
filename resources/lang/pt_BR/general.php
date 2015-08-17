@@ -96,6 +96,9 @@ return [
     ''                              => '',
     ''                              => '',
 
+    // Buttons
+    'btn-search'                    => 'Pesquisar',
+
     // CRUD
     'view'                          => 'Visualizar',
     'create'                        => 'Criar',

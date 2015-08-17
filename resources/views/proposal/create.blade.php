@@ -42,7 +42,7 @@
       </div>
       <div class="row">
         <!-- left column -->
-        <div class="col-md-8">
+        <div class="col-md-10">
           <!-- general form elements -->
           <div class="box box-primary">
             <div class="box-header">
@@ -59,9 +59,13 @@
             {!! Form::open(array('route' => [ 'proposals.update', $data['proposal']->id ], 'method' => 'PUT')) !!}
             @endif
               <div class="box-body">
-                <div class="form-group col-xs-8">
+                <div class="form-group col-xs-2">
                   <label for="name">{!! Lang::get('proposals.label-name') !!}</label>
                   <input type="text" class="form-control" name="name" id="name"  value="{!! (isset($data['proposal']) ? $data['proposal']->name : (Request::old('name') ? Request::old('name') : '')) !!}" placeholder="{!! Lang::get('proposals.ph-name') !!}" data-validation="length" data-validation-length="3-40" data-validation-error-msg="{!! Lang::get('proposals.error-name') !!}" required>
+                </div>
+                <div class="form-group col-xs-6">
+                  <label for="description">{!! Lang::get('proposals.label-description') !!}</label>
+                  <input type="text" class="form-control" name="description" id="description"  value="{!! (isset($data['proposal']) ? $data['proposal']->description : (Request::old('description') ? Request::old('description') : '')) !!}" placeholder="{!! Lang::get('proposals.ph-description') !!}" data-validation="length" data-validation-length="3-40" data-validation-error-msg="{!! Lang::get('proposals.error-description') !!}" required>
                 </div>
                 <div class="form-group col-xs-4">
                   <label for="client_id">{!! Lang::get('general.clients') !!}</label>
@@ -71,6 +75,9 @@
                     <option value="{!! $client->id !!}" {!! (isset($data['proposal']) ? ($data['proposal']->client()->getResults()->id == $client->id ? 'selected="selected"' : "") : "") !!}>{!! $client->name !!}</option>
                     @endforeach
                   </select>
+                </div>
+                <div class="form-group col-xs-12">
+                  <hr />
                 </div>
                 <div class="form-group col-xs-12">
                   <hr />

@@ -42,7 +42,7 @@
       </div>
       <div class="row">
         <!-- left column -->
-        <div class="col-md-8">
+        <div class="col-md-10">
           <!-- general form elements -->
           <div class="box box-primary">
             <div class="box-header">
@@ -89,9 +89,9 @@
                 <div class="form-group col-xs-5">
                   <label for="teams">{!! Lang::get('general.teams') !!}</label>
                   <div class="input-group">
-                    <input type="text" class="form-control" id="teams-autocomplete" placeholder="{!! Lang::get('team.search-team-name') !!}" />
+                    <input type="text" class="form-control" id="teams-autocomplete" placeholder="{!! Lang::get('tasks.search-team-name') !!}" />
                     <span class="input-group-btn">
-                      <a id="search-team" class="btn btn-default"><i class="fa fa-search-plus"></i> {!! Lang::get('team.search-team') !!}</a>
+                      <a id="search-team" class="btn btn-default"><i class="fa fa-search-plus"></i> {!! Lang::get('general.btn-search') !!}</a>
                     </span>
                   </div>
                 </div>

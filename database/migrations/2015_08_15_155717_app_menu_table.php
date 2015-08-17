@@ -3,7 +3,7 @@
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateClientsTable extends Migration
+class AppMenuTable extends Migration
 {
     /**
      * Run the migrations.
@@ -12,14 +12,12 @@ class CreateClientsTable extends Migration
      */
     public function up()
     {
-        
-        Schema::create('clients', function (Blueprint $table) {
+        Schema::create('app_menu', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('name');
-            $table->string('responsible');
-            $table->string('email');
-            $table->string('phone');
-            $table->text('description');
+            $table->string('nome');
+            $table->string('icon');
+            $table->string('url');
+            $table->integer('parent_id');
             $table->timestamps();
         });
     }
@@ -31,6 +29,6 @@ class CreateClientsTable extends Migration
      */
     public function down()
     {
-        Schema::drop('clients');
+        Schema::drop('app_menu');
     }
 }

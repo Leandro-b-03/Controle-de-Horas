@@ -1,12 +1,12 @@
 /**
- * Creates an instance of a PusherChatWidget, binds to a chat channel on the pusher instance and
+ * Creates an instance of a PusherChatWidgetDashboard, binds to a chat channel on the pusher instance and
  * and creates the UI for the chat widget.
  *
  * @param {Pusher} pusher The Pusher object used for the chat widget.
  * @param {Map} options A hash of key value options for the widget.
  */
-function PusherChatWidget(pusher, options) {
-  PusherChatWidget.instances.push(this);
+function PusherChatWidgetDashboard(pusher, options) {
+  PusherChatWidgetDashboard.instances.push(this);
   var self = this;
   
   this._pusher = pusher;
@@ -31,7 +31,7 @@ function PusherChatWidget(pusher, options) {
   
   // remove any unsupported characters from the chat channel name
   // see: http://pusher.com/docs/client_api_guide/client_channels#naming-channels
-  this.settings.channelName = PusherChatWidget.getValidChannelName(this.settings.channelName);
+  this.settings.channelName = PusherChatWidgetDashboard.getValidChannelName(this.settings.channelName);
   
   this._chatChannel = this._pusher.subscribe(this.settings.channelName);
 
@@ -41,11 +41,11 @@ function PusherChatWidget(pusher, options) {
     
   this._itemCount = 0;
   
-  this._widget = PusherChatWidget._createHTML(this.settings.appendTo);
+  this._widget = PusherChatWidgetDashboard._createHTML(this.settings.appendTo);
   this._nicknameEl = user.username;
   this._emailEl = user.email;  
   this._messageInputEl = this._widget.find('input[type="text"]');
-  this._messagesEl = this._widget.find('div.direct-chat-messages');
+  this._messagesEl = this._widget.find('div.messages');
 
   this._widget.find('button.pusher-chat-widget-send-btn').click(function() {
     self._sendChatButtonClicked();
@@ -60,17 +60,17 @@ function PusherChatWidget(pusher, options) {
   
   this._startTimeMonitor();
 };
-PusherChatWidget.instances = [];
+PusherChatWidgetDashboard.instances = [];
 
 /* @private */
-PusherChatWidget.prototype._chatMessageReceived = function(data) {
+PusherChatWidgetDashboard.prototype._chatMessageReceived = function(data) {
   var self = this;
   
   if(this._itemCount === 0) {
     this._messagesEl.html('');
   }
   
-  var messageEl = PusherChatWidget._buildListItem(data, this._chatChannel);
+  var messageEl = PusherChatWidgetDashboard._buildListItem(data, this._chatChannel);
   console.log(messageEl);
   messageEl.hide();
   this._messagesEl.append(messageEl);
@@ -93,7 +93,7 @@ PusherChatWidget.prototype._chatMessageReceived = function(data) {
 };
 
 /* @private */
-PusherChatWidget.prototype._sendChatButtonClicked = function() {
+PusherChatWidgetDashboard.prototype._sendChatButtonClicked = function() {
   var nickname = user.username; // optional
   var email = user.email; // optional
   if(!nickname) {
@@ -116,7 +116,7 @@ PusherChatWidget.prototype._sendChatButtonClicked = function() {
 };
 
 /* @private */
-PusherChatWidget.prototype._sendChatMessage = function(data) {
+PusherChatWidgetDashboard.prototype._sendChatMessage = function(data) {
   var self = this;
   
   this._messageInputEl.attr('readonly', 'readonly');
@@ -141,26 +141,26 @@ PusherChatWidget.prototype._sendChatMessage = function(data) {
 };
 
 /* @private */
-PusherChatWidget.prototype._startTimeMonitor = function() {
+PusherChatWidgetDashboard.prototype._startTimeMonitor = function() {
   var self = this;
   
   setInterval(function() {
     self._messagesEl.children('.activity').each(function(i, el) {
       var timeEl = $(el).find('a.timestamp span[data-activity-published]');
       var time = timeEl.attr('data-activity-published');
-      var newDesc = PusherChatWidget.timeToDescription(time);
+      var newDesc = PusherChatWidgetDashboard.timeToDescription(time);
       timeEl.text(newDesc);
     });
   }, 10 * 1000)
 };
 
 /* @private */
-PusherChatWidget._createHTML = function(appendTo) {
+PusherChatWidgetDashboard._createHTML = function(appendTo) {
   var html = '' +
-  '<div class="chat-block">' +
+  /*'<div class="chat-block">' +
     '<div class="col-md-2">' +
       '<!-- DIRECT CHAT PRIMARY -->' +
-      '<div class="box box-primary direct-chat direct-chat-primary">' +
+      '<div class="box box-primary primary">' +
         '<div class="box-header with-border">' +
           '<h3 class="box-title">Direct Chat</h3>' +
           '<div class="box-tools pull-right">' +
@@ -173,9 +173,9 @@ PusherChatWidget._createHTML = function(appendTo) {
         '<div class="box-body chat-body">' +
           '<!-- Contacts are loaded here -->' +
           '<!-- Conversations are loaded here -->' +
-          '<div class="direct-chat-messages">' +
+          '<div class="messages">' +
           '</div>' +
-          '<div class="direct-chat-contacts">' +
+          '<div class="contacts">' +
             '<ul class="contacts-list">' +
               '<li>' +
                 '<a href="#">' +
@@ -190,7 +190,7 @@ PusherChatWidget._createHTML = function(appendTo) {
                 '</a>' +
               '</li><!-- End Contact Item -->' +
             '</ul><!-- /.contatcts-list -->' +
-          '</div><!-- /.direct-chat-pane -->' +
+          '</div><!-- /.pane -->' +
         '</div><!-- /.box-body -->' +
         '<div class="box-footer">' +
           '<form action="#" method="post">' +
@@ -202,36 +202,78 @@ PusherChatWidget._createHTML = function(appendTo) {
             '</div>' +
           '</form>' +
         '</div><!-- /.box-footer-->' +
-      '</div><!--/.direct-chat -->' +
-    '</div>';
-  '</div>';
+      '</div><!--/.-->' +
+    '</div>' +
+  '</div>';*/
+
+  '<div class="box box-success">' +
+    '<div class="box-header">' +
+      '<i class="fa fa-comments-o"></i>' +
+      '<h3 class="box-title">Chat</h3>' +
+      '<div class="box-tools pull-right" data-toggle="tooltip" title="Status">' +
+        '<div class="btn-group" data-toggle="btn-toggle" >' +
+          '<button type="button" class="btn btn-default btn-sm active"><i class="fa fa-square text-green"></i></button>' +
+          '<button type="button" class="btn btn-default btn-sm"><i class="fa fa-square text-red"></i></button>' +
+        '</div>' +
+      '</div>' +
+    '</div>' +
+    '<div class="box-body chat messages" id="chat-box">' +
+      
+    '</div><!-- /.chat -->' +
+    '<div class="box-footer">' +
+      '<div class="input-group">' +
+        '<input name="message" type="text" class="form-control" placeholder="Type message..."/>' +
+        '<div class="input-group-btn">' +
+          '<button type="button" class="btn btn-success pusher-chat-widget-send-btn"><i class="fa fa-plus"></i></button>' +
+        '</div>' +
+      '</div>' +
+    '</div>' +
+  '</div><!-- /.box (chat box) -->';
+
   var widget = $(html);
   $(appendTo).append(widget);
+
+  //SLIMSCROLL FOR CHAT WIDGET
+  $('#chat-box').slimScroll({
+    height: '250px'
+  });
+  
   return widget;
 };
 
 /* @private */
-PusherChatWidget._buildListItem = function(activity, channel) {
+PusherChatWidgetDashboard._buildListItem = function(activity, channel) {
   var message = '';
 
   console.log(channel);
 
-  if (channel.members.me.id != activity.actor.id){
+  /*if (channel.members.me.id != activity.actor.id){
     message += '<!-- Message. Default to the left -->';
-    message += '<div class="direct-chat-msg">';
+    message += '<div class="msg">';
   } else {
     message += '<!-- Message to the right -->';
-    message += '<div class="direct-chat-msg right">';
+    message += '<div class="msg right">';
   }
-  message += '  <div class="direct-chat-info clearfix">';
-  message += '    <span class="direct-chat-name pull-left">' + activity.actor.displayName.replace(/\\'/g, "'") + '</span>';
-  message += '    <span class="direct-chat-timestamp pull-right" title="' + activity.published + '" data-activity-published="' + activity.published + '">' + PusherChatWidget.timeToDescription(activity.published) + '</span>';
-  message += '  </div><!-- /.direct-chat-info -->';
-  message += '  <img class="direct-chat-img" src="' + activity.actor.image.url + '" alt="message user image"><!-- /.direct-chat-img -->';
-  message += '  <div class="direct-chat-text">';
+  message += '  <div class="info clearfix">';
+  message += '    <span class="name pull-left">' + activity.actor.displayName.replace(/\\'/g, "'") + '</span>';
+  message += '    <span class="timestamp pull-right" title="' + activity.published + '" data-activity-published="' + activity.published + '">' + PusherChatWidgetDashboard.timeToDescription(activity.published) + '</span>';
+  message += '  </div><!-- /.info -->';
+  message += '  <img class="img online" src="' + activity.actor.image.url + '" alt="message user image"><!-- /.img -->';
+  message += '  <div class="text">';
   message +=      activity.body.replace(/\\('|&quot;)/g, '$1');
-  message += '  </div><!-- /.direct-chat-text -->';
-  message += '</div><!-- /.direct-chat-msg -->';                
+  message += '  </div><!-- /.text -->';
+  message += '</div><!-- /.msg -->'; */
+
+  message += '<div class="item">';
+  message += '<img src="' + activity.actor.image.url + '" alt="user image" class="online">';
+  message += '<p class="message">';
+  message += '<a href="#" class="name">';
+  message += '<small class="text-muted pull-right"><i class="fa fa-clock-o"></i> ' + PusherChatWidgetDashboard.timeToDescription(activity.published) + '</small>';
+  message += activity.actor.displayName.replace(/\\'/g, "'");
+  message += '</a>';
+  message += activity.body.replace(/\\('|&quot;)/g, '$1');
+  message += '</p>';
+  message += '</div>';
   
   return $(message);
 };
@@ -242,7 +284,7 @@ PusherChatWidget._buildListItem = function(activity, channel) {
  *
  * @see http://pusher.com/docs/client_api_guide/client_channels#naming-channels
  */
-PusherChatWidget.getValidChannelName = function(from) {
+PusherChatWidgetDashboard.getValidChannelName = function(from) {
   var pattern = /(\W)+/g;
   return from.replace(pattern, '-');
 }
@@ -251,7 +293,7 @@ PusherChatWidget.getValidChannelName = function(from) {
  * converts a string or date parameter into a 'social media style'
  * time description.
  */
-PusherChatWidget.timeToDescription = function(time) {
+PusherChatWidgetDashboard.timeToDescription = function(time) {
   if(time instanceof Date === false) {
     time = new Date(Date.parse(time));
   }

@@ -4,7 +4,7 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Group Users Language Lines
+    | Users Language Lines
     |--------------------------------------------------------------------------
     |
     | The following language lines are used all library to build

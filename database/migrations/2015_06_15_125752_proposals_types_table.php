@@ -3,7 +3,7 @@
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateClientsTable extends Migration
+class ProposalsTypesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -12,14 +12,9 @@ class CreateClientsTable extends Migration
      */
     public function up()
     {
-        
-        Schema::create('clients', function (Blueprint $table) {
+        Schema::create('proposals_types', function (Blueprint $table) {
             $table->increments('id');
             $table->string('name');
-            $table->string('responsible');
-            $table->string('email');
-            $table->string('phone');
-            $table->text('description');
             $table->timestamps();
         });
     }
@@ -31,6 +26,6 @@ class CreateClientsTable extends Migration
      */
     public function down()
     {
-        Schema::drop('clients');
+        Schema::drop('proposals_types');
     }
 }

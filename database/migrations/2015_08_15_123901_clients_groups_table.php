@@ -3,7 +3,7 @@
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateProposalsTable extends Migration
+class ClientsGroupsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -12,19 +12,14 @@ class CreateProposalsTable extends Migration
      */
     public function up()
     {
-        Schema::create('proposals', function (Blueprint $table) {
+        Schema::create('clients_groups', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('user_id')->unsigned();
             $table->integer('client_id')->unsigned();
-            $table->integer('proposal_type_id')->unsigned();
             $table->string('name');
-            $table->string('description');
-            $table->boolean('status');
+            $table->text('description');
             $table->timestamps();
 
-            $table->foreign('user_id')->references('id')->on('users')->onUpdate('cascade')->onDelete('cascade');
             $table->foreign('client_id')->references('id')->on('clients')->onUpdate('cascade')->onDelete('cascade');
-            $table->foreign('proposal_type_id')->references('id')->on('proposals_types')->onUpdate('cascade')->onDelete('cascade');
         });
     }
 
@@ -35,6 +30,6 @@ class CreateProposalsTable extends Migration
      */
     public function down()
     {
-        Schema::drop('proposals');
+        Schema::drop('clients_groups');
     }
 }
