@@ -5,11 +5,14 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 
 use DB;
+use Auth;
 use Lang;
 use App\Team;
 use App\User;
 use App\UserTeam;
+use PusherManager;
 use App\Http\Requests;
+use App\UserNotification;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Controllers\GeneralController;
@@ -80,8 +83,37 @@ class TeamController extends Controller
                             DB::rollback();
                             return redirect('teams/' . $id . '/edit')->withInput()->with('return', GeneralController::createMessage('failed', Lang::get('general.' . $this->controller_name), 'update'));
                         }
+
+                        $notification = [];
+
+                        $notification['user_id'] = $user_id;
+
+                        if ($user_id == Auth::user()->id) {
+                            if ($user_id == Auth::user()->id && $user_id == $team->user_id) {
+                                $notification['message'] = Lang::get('teams.include-create_lider', ['team' => $team->name]);
+                            } else {
+                                $notification['message'] = Lang::get('teams.include-create', ['team' => $team->name]);
+                            }
+                        } else if ($user_id == $team->user_id) {
+                            $notification['message'] = Lang::get('teams.include-lider', ['team' => $team->name]);
+                        } else {
+                            $notification['message'] = Lang::get('teams.include-user', ['team' => $team->name]);
+                        }
+
+                        $notification['faicon'] = 'group';
+
+                        PusherManager::trigger('presence-user-' . $user_id, 'new_notification', $notification);
+
+                        $notification['see'] = 0;
+
+                        if (!UserNotification::create($notification)) {
+                            $notification_fail['message'] = Lang::get('general.failed-notification');
+                            $notification_fail['faicon'] = 'times';
+                            PusherManager::trigger('presence-user-' . Auth::user()->id, 'new_notification', $notification);
+                        }
                     }
 
+                    DB::commit();
                     return redirect('teams')->with('return', GeneralController::createMessage('success', Lang::get('general.' . $this->controller_name), 'create'));
                 } else {
                     DB::rollback();
@@ -155,8 +187,6 @@ class TeamController extends Controller
             }
 
             if ($team->save()) {
-                DB::commit();
-
                 $user_team = UserTeam::where('team_id', $id)->get();
 
                 if ($user_team->count() > 0) {
@@ -170,8 +200,37 @@ class TeamController extends Controller
                         DB::rollback();
                         return redirect('teams/' . $id . '/edit')->withInput()->with('return', GeneralController::createMessage('failed', Lang::get('general.' . $this->controller_name), 'update'));
                     }
+
+                    $notification = [];
+
+                    $notification['user_id'] = $user_id;
+
+                    if ($user_id == Auth::user()->id) {
+                        if ($user_id == Auth::user()->id && $user_id == $team->user_id) {
+                            $notification['message'] = Lang::get('teams.include-alter_lider', ['team' => $team->name]);
+                        } else {
+                            $notification['message'] = Lang::get('teams.include-alter', ['team' => $team->name]);
+                        }
+                    } else if ($user_id == $team->user_id) {
+                        $notification['message'] = Lang::get('teams.include-lider', ['team' => $team->name]);
+                    } else {
+                        $notification['message'] = Lang::get('teams.include-user', ['team' => $team->name]);
+                    }
+
+                    $notification['faicon'] = 'group';
+
+                    PusherManager::trigger('presence-user-' . $user_id, 'new_notification', $notification);
+
+                    $notification['see'] = 0;
+
+                    if (!UserNotification::create($notification)) {
+                        $notification_fail['message'] = Lang::get('general.failed-notification');
+                        $notification_fail['faicon'] = 'times';
+                        PusherManager::trigger('presence-user-' . Auth::user()->id, 'new_notification', $notification);
+                    }
                 }
 
+                DB::commit();
                 return redirect('teams')->with('return', GeneralController::createMessage('success', Lang::get('general.' . $this->controller_name), 'update'));
             } else {
                 DB::rollback();

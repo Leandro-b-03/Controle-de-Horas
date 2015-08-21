@@ -14,6 +14,13 @@ class UserNotification extends Model
 	 */
 	protected $table = 'users_notifications';
 
+	/**
+	 * The attributes that are mass assignable.
+	 *
+	 * @var array
+	 */
+	protected $fillable = ['user_id', 'message', 'faicon', 'see'];
+
 
 	public function scopeunseen($query)
     {

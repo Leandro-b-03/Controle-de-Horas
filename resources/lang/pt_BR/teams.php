@@ -44,4 +44,12 @@ return [
     'title-color'                   => 'Cor',
     'title-preview'                 => 'Preview',
     'title-created_at'              => 'Cliente criado em',
+
+    // Notifications
+    'include-user'                  => 'Voc&ecirc; faz parte da equipe <strong>:team</strong>',
+    'include-lider'                 => 'Voc&ecirc; &eacute; lider da equipe <strong>:team</strong>',
+    'include-alter'                 => 'Voc&ecirc; alterou a equipe <strong>:team</strong>',
+    'include-create'                => 'Voc&ecirc; criou a equipe <strong>:team</strong>',
+    'include-alter_lider'           => 'Voc&ecirc; alterou e &eacute; lider da equipe <strong>:team</strong>',
+    'include-create_lider'          => 'Voc&ecirc; criou e &eacute; lider da equipe <strong>:team</strong>',
 ];

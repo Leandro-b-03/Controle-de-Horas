@@ -49,7 +49,7 @@ return [
     'add-icon'                      => '<i class="fa fa-plus"></i> Adicionar',
 
     // Menu & Controller
-    'nav-menu'                      => 'Menu de navegação',
+    'nav-menu'                      => 'Menu de navega&ccedil;&atilde;o',
     'dashboard'                     => 'Dashboard',
     'tasks'                         => 'Tarefas',
     'projects'                      => 'Projetos',
@@ -116,10 +116,16 @@ return [
     'failed-delete'                 => 'Houve erro ao deletar o(s)/a(s) :name(s)',
     'failed-password'               => 'Senhas não coecidem',
     'failed-fields'                 => 'Campos com valores errados e/ou inv&aacute;lidos',
+    'failed-notification'           => 'Usu&aacute;rio n&atilde;o recebeu a notifica&ccedil;&atilde;o',
 
     // Sentences with variable :string
     'member-since'                  => 'Membro desde :month-year',
-    'bavbar-notification'           => '{0}Você não possui notificações|{1}Você tem :count notificação|{2,Inf}Você tem :count notificações',
+    'navbar-message'                => '{0}Voc&ecirc; não possui mensagens|{1}Voc&ecirc; tem :count mensagens|[2,Inf]Voc&ecirc; tem :count mensagens',
+    'navbar-notification'           => '{0}Voc&ecirc; não possui notificações|{1}Voc&ecirc; tem :count notifica&ccedil;&atilde;o|[2,Inf]Voc&ecirc; tem :count notificações',
+    'navbar-tasks'                  => '{0}Voc&ecirc; não possui tarefas|{1}Voc&ecirc; tem :count notifica&ccedil;&atilde;o|[2,Inf]Voc&ecirc; tem :count tarefas',
+    'all-messages'                  => 'Ver todas as mensagens',
+    'all-notifications'             => 'Ver todas notificações',
+    'all-tasks'                     => 'Ver todas as tarefas',
     ''                              => '',
 
     // Chat
