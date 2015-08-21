@@ -113,7 +113,7 @@ return [
     |
     */
 
-    'app_version' => '0.11 - Beta',
+    'app_version' => '0.15 - Beta',
 
     /*
     |--------------------------------------------------------------------------
@@ -178,6 +178,7 @@ return [
         // Intervention\Image\ImageServiceProvider::class,
         MaddHatter\LaravelFullcalendar\ServiceProvider::class,
         Laravel\Socialite\SocialiteServiceProvider::class,
+        Torann\GeoIP\GeoIPServiceProvider::class,
 
         /*
          * Personalization Services Providers...
@@ -252,6 +253,7 @@ return [
         'AWS'           => Aws\Laravel\AwsFacade::class,
         'Calendar'      => MaddHatter\LaravelFullcalendar\Facades\Calendar::class,
         'Socialite'     => Laravel\Socialite\Facades\Socialite::class,
+        'GeoIP'         => Torann\GeoIP\GeoIPFacade::class,
 
     ],
 
