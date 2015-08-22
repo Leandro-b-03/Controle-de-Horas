@@ -139,7 +139,7 @@ PresenceChannel.bind ('new_notification', function(notification) {
     // assign the notification's message to a <div></div>notification
     $('li.notifications-menu .dropdown-menu .menu').prepend(createNotification(notification));
 
-    titleCounter();
+    titleCounter(true);
 });
 
 //subscribe to our notifications channel
@@ -150,7 +150,7 @@ notificationsChannel.bind ('new_notification', function(notification) {
     // assign the notification's message to a <div></div>notification
     $('li.notifications-menu .dropdown-menu .menu').prepend(createNotification(notification));
 
-    titleCounter();
+    titleCounter(true);
 });
 
 function createNotification(notification) {
@@ -175,7 +175,7 @@ function createNotification(notification) {
 
 var original_title = document.title;
 
-function titleCounter() {
+function titleCounter(sound) {
     notification = parseInt($('.notification-count').html());
     message = parseInt($('.message-count').html());
     tasks = parseInt($('.tasks-count').html());
@@ -190,10 +190,11 @@ function titleCounter() {
 
     document.title = "(" + update_count + ") " + original_title;
 
-    $.playSound('library/adminLTE/sounds/alert');
+    if (sound)
+        $.playSound('library/adminLTE/sounds/alert');
 }
 
-titleCounter();
+titleCounter(false);
 
 /*$(function() {
     var chatWidget = new PusherChatWidget(pusher, {

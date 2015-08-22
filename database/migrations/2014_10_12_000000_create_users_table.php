@@ -25,6 +25,8 @@ class CreateUsersTable extends Migration
             $table->date('birthday');
             $table->string('password', 60);
             $table->enum('gender', ['F', 'M'])->default('M');
+            $table->enum('status', ['N', 'A', 'D', 'B'])->default('N');
+            $table->string('confirmation_code')->nullable();
             $table->rememberToken();
             $table->timestamps();
         });

@@ -19,6 +19,8 @@ Route::controllers([
 	'password' => 'Auth\PasswordController',
 ]);
 
+Route::get('email/confirm', 'GeneralController@confirm');
+
 /*
  * Access
  */
@@ -72,6 +74,12 @@ Route::group(['middleware' => 'auth'], function () {
     Entrust::routeNeedsPermission('clients/create', 'ClientController@create');
     Entrust::routeNeedsPermission('clients/*/edit', 'ClientController@edit');
     Entrust::routeNeedsPermission('clients/delete', 'ClientController@delete');
+
+    Route::resource('client-groups', 'ClientGroupController');
+    Entrust::routeNeedsPermission('client-groups', 'ClientGroupController@index');
+    Entrust::routeNeedsPermission('client-groups/create', 'ClientGroupController@create');
+    Entrust::routeNeedsPermission('client-groups/*/edit', 'ClientGroupController@edit');
+    Entrust::routeNeedsPermission('client-groups/delete', 'ClientGroupController@delete');
 
     Route::resource('users', 'UserController');
     Entrust::routeNeedsPermission('users', 'UserController@index');

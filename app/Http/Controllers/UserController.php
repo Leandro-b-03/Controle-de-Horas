@@ -75,6 +75,10 @@ class UserController extends Controller
                 ]
             );
 
+            $confirmation_code = str_random(30);
+
+            $input['confirmation_code'] = $confirmation_code;
+
             if ($input['password'] == $input['password_confirmation']) {
                 if($validator) {
                     $input['birthday'] = date('Y-m-d', strtotime(str_replace('/', '-', $input['birthday'])));
@@ -84,6 +88,7 @@ class UserController extends Controller
 
                     if ($user) {
                         $user->attachRole(Role::find($input['role']));
+                        GeneralController::mail($user, 'signup');                        
                         DB::commit();
                         return redirect('users')->with('return', GeneralController::createMessage('success', Lang::get('general.' . $this->controller_name), 'create'));
                     } else {

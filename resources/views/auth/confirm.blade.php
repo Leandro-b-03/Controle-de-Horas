@@ -22,39 +22,29 @@
     <![endif]-->
   </head>
   <body class="login-page">
-    <div class="login-box">
+    <div class="login-box" style="width: 500px">
       <div class="login-logo">
         <a target="_blank" href="http://www.svlabs.com.br/"><b>SVL</b>abs</a>
       </div><!-- /.login-logo -->
       <div class="login-box-body">
-        <p class="login-box-msg">Faça login para entrar no dashboard</p>
-        <form method="POST" action="/auth/login">
-		      {!! csrf_field() !!}
-          <div class="form-group has-feedback">
-            <input name="email" type="email" class="form-control" placeholder="Email"/>
-            <span class="glyphicon glyphicon-envelope form-control-feedback"></span>
-          </div>
-          <div class="form-group has-feedback">
-            <input name="password" type="password" class="form-control" placeholder="Password"/>
-            <span class="glyphicon glyphicon-lock form-control-feedback"></span>
-          </div>
-          <div class="row">
-            <div class="col-xs-8">    
-              <div class="checkbox icheck">
-                <label>
-                  <input type="checkbox"> Lembrar-me
-                </label>
-              </div>                        
-            </div><!-- /.col -->
-            <div class="col-xs-4">
-              <button type="submit" class="btn btn-primary btn-block btn-flat">Entrar</button>
-            </div><!-- /.col -->
-          </div>
-        </form>
-
-        <!-- <a href="#">I forgot my password</a><br>
-        <a href="register.html" class="text-center">Register a new membership</a> x-->
-
+      @if (isset($status))
+        <h1>Conta ativada com sucesso!</h1>
+        <p>Você será redirecionado(a) para a tela de login em alguns instantes.<br />
+           <a href="{!! URL::to('/') !!}">Clique aqui se não for redirecionado(a).</a>
+        </p><br />
+      @endif
+      @if (isset($token))
+        <h1>Houve um erro ao verificar o token!</h1>
+        <p>O token de verificação não existe ou já foi validade por favor entre em contato com o <a href="mailto:admin@svlabs.com?subject=Validação de Email" "Validação de Email">administrador</a>.<br />
+           <a href="{!! URL::to('/') !!}">Clique aqui para ir a tela de login.</a>
+        </p><br />
+      @endif
+      @if (isset($dbase))
+        <h1>Houve um erro ao ativar a conta!</h1>
+        <p>Não foi possivel ativar a conta por problemas técnicos por favor entre em contato com o <a href="mailto:admin@svlabs.com?subject=Validação de Email" "Validação de Email">administrador</a>.<br />
+           <a href="{!! URL::to('/') !!}">Clique aqui para ir a tela de login.</a>
+        </p><br />
+      @endif
       </div><!-- /.login-box-body -->
     </div><!-- /.login-box -->
 
@@ -65,13 +55,11 @@
     <!-- iCheck -->
     {!! Html::script("library/adminLTE/plugins/iCheck/icheck.min.js") !!}
     <script>
-      $(function () {
-        $('input').iCheck({
-          checkboxClass: 'icheckbox_square-yellow',
-          radioClass: 'iradio_square-yellow',
-          increaseArea: '20%' // optional
-        });
-      });
+    @if (isset($status))
+      window.setTimeout(function() {
+        window.location.href = "{!! URL::to('/') !!}";
+      }, 5000);
     </script>
+    @endif
   </body>
 </html>

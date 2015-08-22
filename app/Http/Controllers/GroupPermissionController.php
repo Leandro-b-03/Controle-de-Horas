@@ -40,29 +40,8 @@ class GroupPermissionController extends Controller
      */
     public function create()
     {
-        // Create an array with all the controlles names
-        $controllers = [];
-
-        foreach (Route::getRoutes()->getRoutes() as $route)
-        {
-            //d($route);
-            $action = $route->getAction();
-
-            if (array_key_exists('controller', $action))
-            {
-                // You can also use explode('@', $action['controller']); here
-                // to separate the class name from the method
-                $names = explode('\\', $action['controller']);
-                $controller = explode('@', $names[count($names) - 1]);
-                if (!in_array($controller[0], $controllers)) {
-                    if ($controller[0] != "AuthController" and $controller[0] != 'PasswordController' and $controller[0] != 'HomeController' and $controller[0] != 'DashboardController' and $controller[0] != 'GeneralController')
-                        $controllers[] = $controller[0];
-                }
-            }
-        }
-
         // Return the group view.
-        return view('group-permission.create')->with('controllers', $controllers);
+        return view('group-permission.create')->with('controllers', $this->getControllers());
     }
 
     /**
@@ -176,28 +155,8 @@ class GroupPermissionController extends Controller
 
         $data['role'] = $role;
 
-        // Create an array with all the controlles names
-        $controllers = [];
-
-        foreach (Route::getRoutes()->getRoutes() as $route)
-        {
-            $action = $route->getAction();
-
-            if (array_key_exists('controller', $action))
-            {
-                // You can also use explode('@', $action['controller']); here
-                // to separate the class name from the method
-                $names = explode('\\', $action['controller']);
-                $controller = explode('@', $names[count($names) - 1]);
-                if (!in_array($controller[0], $controllers)) {
-                    if ($controller[0] != "AuthController" and $controller[0] != 'PasswordController' and $controller[0] != 'HomeController' and $controller[0] != 'DashboardController' and $controller[0] != 'GeneralController')
-                        $controllers[] = $controller[0];
-                }
-            }
-        }
-
         // Return the group view.
-        return view('group-permission.create')->with('controllers', $controllers)->with('data', $data);
+        return view('group-permission.create')->with('controllers', $this->getControllers())->with('data', $data);
     }
 
     /**
@@ -322,5 +281,43 @@ class GroupPermissionController extends Controller
             DB::rollback();
             return redirect('group-permissions')->with('return', GeneralController::createMessage('failed', Lang::get('general.' . $this->controller_name), 'delete'));
         }
+    }
+
+    /**
+     * Verify every control to add to permission.
+     *
+     * @return array with all controllers
+     */
+    private function getControllers()
+    {
+        // Create an array with all the controlles names
+        $controllers = [];
+
+        foreach (Route::getRoutes()->getRoutes() as $route)
+        {
+            //d($route);
+            $action = $route->getAction();
+
+            if (array_key_exists('controller', $action))
+            {
+                // You can also use explode('@', $action['controller']); here
+                // to separate the class name from the method
+                $names = explode('\\', $action['controller']);
+                $controller = explode('@', $names[count($names) - 1]);
+                if (!in_array($controller[0], $controllers)) {
+                    if ($controller[0] != "AuthController"
+                        and $controller[0] != 'PasswordController'
+                        and $controller[0] != 'HomeController'
+                        and $controller[0] != 'DashboardController'
+                        and $controller[0] != 'GeneralController'
+                        and $controller[0] != 'OpenHandlerController'
+                        and $controller[0] != 'AssetController'
+                        and $controller[0] != 'PusherController')
+                        $controllers[] = $controller[0];
+                }
+            }
+        }
+
+        return $controllers;
     }
 }

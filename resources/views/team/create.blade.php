@@ -274,6 +274,8 @@
               html += '    <input type="hidden" name="users_id[]" value="' + suggestion.data.id + '" />';
               html += '</div>';
 
+              $('#users-autocomplete').val("");
+
               $('#users').append(html);
 
               // // setCookie('users_team');
@@ -295,7 +297,7 @@
         Cookies.set("users_team", users_team, { expires: 7 });
       }
 
-      $('.user-remove').click(function() {
+      $(document).on('click', '.user-remove', function() {
         var id = $(this).data('id');
         if (id != leader) {
           $('img[data-id="' + id + '"]').remove();

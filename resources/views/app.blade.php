@@ -72,7 +72,7 @@
                       <li><!-- start message -->
                         <a href="#">
                           <div class="pull-left">
-                            <img src="{!! Auth::user()->photo !!}" class="img-circle" alt="User Image"/>
+                            <img src="{!! URL::to(Auth::user()->photo) !!}" class="img-circle" alt="User Image"/>
                           </div>
                           <h4>
                             Support Team
@@ -143,13 +143,13 @@
               <!-- User Account: style can be found in dropdown.less -->
               <li class="dropdown user user-menu">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                  <img src="{!! Auth::user()->photo !!}" class="user-image" alt="User Image"/>
+                  <img src="{!! URL::to(Auth::user()->photo) !!}" class="user-image" alt="User Image"/>
                   <span class="hidden-xs">{!! Auth::user()->first_name !!} {!! Auth::user()->last_name !!}</span>
                 </a>
                 <ul class="dropdown-menu">
                   <!-- User image -->
                   <li class="user-header">
-                    <img src="{!! Auth::user()->photo !!}" class="img-circle" alt="User Image" />
+                    <img src="{!! URL::to(Auth::user()->photo) !!}" class="img-circle" alt="User Image" />
                     <p>
                       {!! Auth::user()->first_name !!} {!! Auth::user()->last_name !!} - Web Developer
                       <small>{!! Lang::get('general.member-since', ['month-year' => date('F \d\e Y', strtotime(Auth::user()->created_at))]) !!}</small>
@@ -196,7 +196,7 @@
           <!-- Sidebar user panel -->
           <div class="user-panel">
             <div class="pull-left image">
-              <img src="{!! Auth::user()->photo !!}" class="img-circle" alt="User Image" />
+              <img src="{!! URL::to(Auth::user()->photo) !!}" class="img-circle" alt="User Image" />
             </div>
             <div class="pull-left info">
               <p>{!! Auth::user()->first_name !!} {!! Auth::user()->last_name !!}</p>

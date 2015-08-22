@@ -10,9 +10,7 @@ use Lang;
 use App\Team;
 use App\User;
 use App\UserTeam;
-use PusherManager;
 use App\Http\Requests;
-use App\UserNotification;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Controllers\GeneralController;
@@ -102,15 +100,7 @@ class TeamController extends Controller
 
                         $notification['faicon'] = 'group';
 
-                        PusherManager::trigger('presence-user-' . $user_id, 'new_notification', $notification);
-
-                        $notification['see'] = 0;
-
-                        if (!UserNotification::create($notification)) {
-                            $notification_fail['message'] = Lang::get('general.failed-notification');
-                            $notification_fail['faicon'] = 'times';
-                            PusherManager::trigger('presence-user-' . Auth::user()->id, 'new_notification', $notification);
-                        }
+                        GeneralController::createNotification($user_id, $notification);
                     }
 
                     DB::commit();
@@ -219,15 +209,7 @@ class TeamController extends Controller
 
                     $notification['faicon'] = 'group';
 
-                    PusherManager::trigger('presence-user-' . $user_id, 'new_notification', $notification);
-
-                    $notification['see'] = 0;
-
-                    if (!UserNotification::create($notification)) {
-                        $notification_fail['message'] = Lang::get('general.failed-notification');
-                        $notification_fail['faicon'] = 'times';
-                        PusherManager::trigger('presence-user-' . Auth::user()->id, 'new_notification', $notification);
-                    }
+                    GeneralController::createNotification($user_id, $notification);
                 }
 
                 DB::commit();
