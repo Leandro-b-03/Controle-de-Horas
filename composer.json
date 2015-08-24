@@ -22,7 +22,8 @@
         "nesbot/carbon": "^1.20@dev",
         "orangehill/iseed": "dev-master",
         "laravel/socialite": "^3.0@dev",
-        "torann/geoip": "^0.2.0@dev"
+        "torann/geoip": "^0.2.0@dev",
+        "laravel/envoy": "~1.0"
     },
     "require-dev": {
         "fzaninotto/faker": "~1.4",
