@@ -98,7 +98,7 @@ return [
     |
     */
 
-    'log' => 'single',
+    'log' => 'daily',
 
     /*
     |--------------------------------------------------------------------------
@@ -179,6 +179,7 @@ return [
         MaddHatter\LaravelFullcalendar\ServiceProvider::class,
         Laravel\Socialite\SocialiteServiceProvider::class,
         Torann\GeoIP\GeoIPServiceProvider::class,
+        Appitventures\Phpgmaps\PhpgmapsServiceProvider::class,
 
         /*
          * Personalization Services Providers...
@@ -254,6 +255,7 @@ return [
         'Calendar'      => MaddHatter\LaravelFullcalendar\Facades\Calendar::class,
         'Socialite'     => Laravel\Socialite\Facades\Socialite::class,
         'GeoIP'         => Torann\GeoIP\GeoIPFacade::class,
+        'Gmaps'         => Appitventures\Phpgmaps\Facades\Phpgmaps::class,
 
     ],
 

@@ -23,7 +23,8 @@
         "orangehill/iseed": "dev-master",
         "laravel/socialite": "^3.0@dev",
         "torann/geoip": "^0.2.0@dev",
-        "laravel/envoy": "~1.0"
+        "laravel/envoy": "~1.0",
+        "appitventures/phpgmaps": "2.0.*@dev"
     },
     "require-dev": {
         "fzaninotto/faker": "~1.4",
