@@ -40,16 +40,16 @@ return array(
 	*/
 
 	'default_location' => array (
-		"ip"           => "127.0.0.0",
+		"ip"           => "127.0.0.1",
 		"isoCode"      => "BR",
 		"country"      => "Brazil",
 		"city"         => "Barueri",
 		"state"        => "São Paulo",
 		"postal_code"  => "06415-070",
-		"lat"          => -23.51,
-		"lon"          => -46.88,
+		"lat"          => -23.4893582,
+		"lon"          => -46.8877693,
 		"timezone"     => "America/Sao_Paulo",
-		"continent"    => "NA",
+		"continent"    => "SA",
 	),
 
 );
