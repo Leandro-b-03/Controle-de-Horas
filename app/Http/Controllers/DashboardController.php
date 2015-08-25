@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 
 use GeoIP;
 use Geocoder;
+use App\User;
+use App\Project;
 use PusherManager;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
@@ -22,6 +24,14 @@ class DashboardController extends Controller
         // GeoIP
         $location = GeoIP::getLocation();
         $data['location'] = $location;
+
+        // New Users
+        $new_users = User::orderBy('created_at')->take(8)->get();
+        $data['new_users'] = $new_users;
+
+        // New Projects
+        $new_projects = Project::orderBy('created_at')->take(8)->get();
+        $data['new_projects'] = $new_projects;
 
         // Return the dashboard view.
         return view('dashboard.index')->with('data', $data);

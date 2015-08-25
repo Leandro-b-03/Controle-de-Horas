@@ -100,8 +100,8 @@ Route::group(['middleware' => 'auth'], function () {
     Entrust::routeNeedsPermission('teams/delete', 'TeamController@delete');
 
     Route::resource('group-permissions', 'GroupPermissionController');
-    Entrust::routeNeedsPermission('permissions-permissions', 'GroupPermissionController@index');
-    Entrust::routeNeedsPermission('permissions-permissions/create', 'GroupPermissionController@create');
-    Entrust::routeNeedsPermission('permissions-permissions/*/edit', 'GroupPermissionController@edit');
-    Entrust::routeNeedsPermission('permissions-permissions/delete', 'GroupPermissionController@delete');
+    Entrust::routeNeedsPermission('group-permissions', 'GroupPermissionController@index');
+    Entrust::routeNeedsPermission('group-permissions/create', 'GroupPermissionController@create');
+    Entrust::routeNeedsPermission('group-permissions/*/edit', 'GroupPermissionController@edit');
+    Entrust::routeNeedsPermission('group-permissions/delete', 'GroupPermissionController@delete');
 });

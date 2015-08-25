@@ -79,6 +79,27 @@
                 <div class="form-group col-xs-12">
                   <hr />
                 </div>
+                <div class="form-group col-xs-4">
+                  <label for="version_id">{!! Lang::get('proposals.label-version') !!}</label>
+                  <select name="version_id" class="form-control" data-validation="required" data-validation-error-msg="{!! Lang::get('proposals.error-clients') !!}" required>
+                    <option value="">{!! Lang::get('general.select') !!}</option>
+                    @if($data['versions'] != null)
+                    @foreach ($data['versions'] as $version)
+                    <option value="{!! $version->id !!}" {!! (isset($data['versions']) ? ($data['proposal']->client()->getResults()->id == $client->id ? 'selected="selected"' : "") : "") !!}>{!! $client->name !!}</option>
+                    @endforeach
+                    @endif
+                  </select>
+                </div>
+                <div class="form-group col-xs-5">
+                  <label for="version_id">{!! Lang::get('proposals.label-status') !!}</label>
+                  <div class="checkbox">
+                    <label><input type="checkbox"> {!! Lang::get('proposals.label-send') !!}</label>
+                    <label><input type="checkbox" > {!! Lang::get('proposals.label-approved') !!}</label>
+                  </div>
+                </div>
+                {{-- <div class="form-group col-xs-3">
+                  <label for="version_id">{!! Lang::get('proposals.label-') !!}</label>
+                </div> --}}
                 <div class="form-group col-xs-12">
                   <hr />
                 </div>

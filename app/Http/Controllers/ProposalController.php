@@ -43,6 +43,8 @@ class ProposalController extends Controller
         $clients = Client::all();
         $data['clients'] = $clients;
 
+        $data['versions'] = null;
+
         // Return the proposal view.
         return view('proposal.create')->with('data', $data);
     }
