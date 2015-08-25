@@ -27,7 +27,7 @@
         <a target="_blank" href="http://www.svlabs.com.br/"><b>SVL</b>abs</a>
       </div><!-- /.login-logo -->
       <div class="login-box-body">
-        <p class="login-box-msg">Entre para iniciar sua sessão</p>
+        <p class="login-box-msg">Faça login para entrar no dashboard</p>
         <form method="POST" action="/auth/login">
 		      {!! csrf_field() !!}
           <div class="form-group has-feedback">

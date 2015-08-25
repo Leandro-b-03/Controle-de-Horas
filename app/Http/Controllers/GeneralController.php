@@ -1,10 +1,16 @@
 <?php namespace App\Http\Controllers;
 
+use DB;
+use URL;
 use Lang;
+use Mail;
 use App\User;
 use App\Team;
+use PusherManager;
+use Carbon\Carbon;
 use App\ProjectTime;
 use App\Http\Requests;
+use App\UserNotification;
 use Illuminate\Http\Request;
 
 class GeneralController extends Controller {
@@ -19,6 +25,8 @@ class GeneralController extends Controller {
     | controllers, you are free to modify or remove it as you desire.
     |
     */
+
+    /* Ajax requisitions */
 
     /**
      * Generates an array with parameters to messages
@@ -93,6 +101,96 @@ class GeneralController extends Controller {
 
         return response()->json($response);
     }
+
+    /**
+     * Generates an array with parameters to users
+     *
+     * @return Json with users
+     */
+    public function getUserAutocomplete(Request $request)
+    {
+        // Get all inputs
+        $string = $request->all();
+
+        // Search users with the string
+        $users = User::findUserAC($string['query'])->get();
+
+        $result = array();
+
+        foreach ($users as $user) {
+            $find['value'] = $user->first_name . ' ' . $user->last_name;
+            $find['data']['id'] = $user->id;
+            $find['data']['username'] = $user->username;
+            $find['data']['email'] = $user->email;
+            $find['data']['photo'] = $user->photo;
+            $find['data']['name'] = $user->first_name . ' ' . $user->last_name;
+            $find['data']['role'] = $user->roles()->first()->display_name;
+            $find['data']['created_at'] = $user->created_at;
+
+            $result['suggestions'][] = $find;
+        }
+
+        return response()->json($result);
+    }
+
+    /**
+     * Generates an array with parameters to teams
+     *
+     * @return Json with teams
+     */
+    public function getTeamAutocomplete(Request $request)
+    {
+        // Get all inputs
+        $string = $request->all();
+
+        // Search teams with the string
+        $teams = Team::findTeam($string['query'])->get();
+
+        $result = array();
+
+        foreach ($teams as $team) {
+            $find['value'] = $team->name;
+            $find['data']['id'] = $team->id;
+            $find['data']['name'] = $team->name;
+            $find['data']['color'] = $team->color;
+
+            $result['suggestions'][] = $find;
+        }
+
+        return response()->json($result);
+    }
+
+    /**
+     * Generates an array with parameters to users
+     *
+     * @return Json with users
+     */
+    public function getUser(Request $request)
+    {
+        // Get all inputs
+        $id = $request->all();
+
+        // Get user with the id
+        $user = User::find($id['id']);
+
+        return response()->json($user);
+    }
+
+    /**
+     * Generates an array with parameters to Project Times
+     *
+     * @return Json with Project Times
+     */
+    public function getProjectTimes(Request $request)
+    {
+        $id = $request->get('id');
+
+        $projects_times = ProjectTime::where('project_id', $id)->get();
+
+        return response()->json($projects_times);
+    }
+
+    /* Statics Functions */
 
     /**
      * Generates an array with parameters to messages
@@ -197,96 +295,88 @@ class GeneralController extends Controller {
      *
      * @return Array with message
      */
-    public static function createNotification($type, $icon, $message)
+    public static function createNotification($user_id, $notification)
     {
-        
+        PusherManager::trigger('presence-user-' . $user_id, 'new_notification', $notification);
+
+        $notification['see'] = 0;
+
+        if (!UserNotification::create($notification)) {
+            $notification_fail['message'] = Lang::get('general.failed-notification');
+            $notification_fail['faicon'] = 'times';
+            PusherManager::trigger('presence-user-' . Auth::user()->id, 'new_notification', $notification);
+        }
     }
 
     /**
-     * Generates an array with parameters to users
+     * Send e-mails
      *
-     * @return Json with users
+     * @return E-mail send
      */
-    public function getUserAutocomplete(Request $request)
+    public static function mail($data, $type)
     {
-        // Get all inputs
-        $string = $request->all();
+        // Verify what kind is the email
+        switch ($type) {
+            case 'signup':
+                $send = [];
 
-        // Search users with the string
-        $users = User::findUserAC($string['query'])->get();
-
-        $result = array();
-
-        foreach ($users as $user) {
-            $find['value'] = $user->first_name . ' ' . $user->last_name;
-            $find['data']['id'] = $user->id;
-            $find['data']['username'] = $user->username;
-            $find['data']['email'] = $user->email;
-            $find['data']['photo'] = $user->photo;
-            $find['data']['name'] = $user->first_name . ' ' . $user->last_name;
-            $find['data']['role'] = $user->roles()->first()->display_name;
-            $find['data']['created_at'] = $user->created_at;
-
-            $result['suggestions'][] = $find;
+                $send['company']    = 'SVLabs';
+                $send['email']      = $data->email;
+                $send['year']       = Carbon::now()->format('Y');
+                $send['name']       = $data->first_name;
+                $send['url']        = URL::to('auth/confirm?ce=' . $data->confirmation_code);
+                Mail::send('emails.signup', ['data' => $send], function ($message) use ($send) {
+                        $message->from('leandro.b.03@gmail.com', 'Leandro');
+                        $message->to($send['email'], $send['name'])->subject(Lang::get('emails.signup-title'));
+                    });
+                break;
+            case 'update':
+            case 'delete':
+            default:
+                # code...
+                break;
         }
 
-        return response()->json($result);
+        return true;
     }
 
+    /* Routes */
+
     /**
-     * Generates an array with parameters to teams
+     * Confirm e-mail of the user
      *
-     * @return Json with teams
+     * @return Response
      */
-    public function getTeamAutocomplete(Request $request)
+    public function confirm(Request $request)
     {
-        // Get all inputs
-        $string = $request->all();
+        DB::beginTransaction();
 
-        // Search teams with the string
-        $teams = Team::findTeam($string['query'])->get();
+        $inputs = $request->all();
 
-        $result = array();
+        // Get the user request
+        $user = User::findConfirmationCode($inputs['ce'])->get()->first();
 
-        foreach ($teams as $team) {
-            $find['value'] = $team->name;
-            $find['data']['id'] = $team->id;
-            $find['data']['name'] = $team->name;
-            $find['data']['color'] = $team->color;
-
-            $result['suggestions'][] = $find;
+        if ($user) {
+            $user->status = 'A';
+        } else {
+            // Return the user view.
+            return view('auth.confirm')->with('token', false);
         }
 
-        return response()->json($result);
-    }
-
-    /**
-     * Generates an array with parameters to users
-     *
-     * @return Json with users
-     */
-    public function getUser(Request $request)
-    {
-        // Get all inputs
-        $id = $request->all();
-
-        // Get user with the id
-        $user = User::find($id['id']);
-
-        return response()->json($user);
-    }
-
-    /**
-     * Generates an array with parameters to Project Times
-     *
-     * @return Json with Project Times
-     */
-    public function getProjectTimes(Request $request)
-    {
-        $id = $request->get('id');
-
-        $projects_times = ProjectTime::where('project_id', $id)->get();
-
-        return response()->json($projects_times);
+        try {
+            if ($user->save()) {
+                DB::commit();
+                // Return the user view.
+                return view('auth.confirm')->with('status', true);
+            } else {
+                DB::rollback();
+                // Return the user view.
+                return view('auth.confirm')->with('dbase', false);
+            }
+        } catch (Exception $e) {
+            DB::rollback();
+            // Return the user view.
+            return view('auth.confirm')->with('dbase', false);
+        }
     }
 }

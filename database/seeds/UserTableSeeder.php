@@ -31,6 +31,7 @@ class UserTableSeeder extends Seeder
             'cpf'               => '123.456.789-09',
             'birthday'          => '1990-10-04',
             'password'          => bcrypt('123456'),
+            'status'            => 'A',
         ]);
 
         DB::table('users')->insert([
@@ -45,6 +46,7 @@ class UserTableSeeder extends Seeder
             'birthday'          => '1990-10-04',
             'password'          => bcrypt('123456'),
             'gender'            => 'F',
+            'status'            => 'A',
         ]);
 
         $admin                  = new Role;
@@ -60,10 +62,10 @@ class UserTableSeeder extends Seeder
 
         $admin->perms()->sync(array($god_mode->id));
 
-        $user = User::where('username', '=', 'Admin')->first();
-        $user->attachRole($admin);
+        // $user = User::where('username', '=', 'Admin')->first();
+        // $user->attachRole($admin);
 
-        $user2 = User::where('username', '=', 'Eleonor')->first();
-        $user2->attachRole($admin);
+        // $user2 = User::where('username', '=', 'Eleonor')->first();
+        // $user2->attachRole($admin);
     }
 }

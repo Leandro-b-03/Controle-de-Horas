@@ -15,10 +15,10 @@ return [
     |
     */
     'credentials' => [
-        'key'    => env('AKIAIIHHWTZ7VTIIVTAA'),
-        'secret' => env('AtgGiFTauZR1wzTVOLqyc8Gw4RG/7yGC/SoOY2bvLhSQ'),
+        'key'    => env('AKIAIETXGEOQ6Y26M6SQ'),
+        'secret' => env('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'),
     ],
-    'region' => env('AWS_REGION', 'us-east-1'),
+    'region' => env('AWS_REGION', 'us-west-2'),
     'version' => 'latest',
 
 ];
