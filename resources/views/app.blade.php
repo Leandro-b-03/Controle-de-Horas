@@ -236,7 +236,7 @@
                   <h4 class="modal-title">Gerenciador de arquivos</h4>
                 </div>
                 <div class="modal-body">
-                  <iframe src="{{ URL::to('/') }}/filemanager/dialog.php?type=1&field_id=photo"></iframe>
+                  <iframe id="filemanager-iframe" src="{{ URL::to('/') }}/filemanager/dialog.php?type=1&field_id=photo"></iframe>
                 </div>
               </div><!-- /.modal-content -->
             </div><!-- /.modal-dialog -->

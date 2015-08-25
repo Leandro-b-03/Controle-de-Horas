@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 
+use GeoIP;
+use Geocoder;
 use PusherManager;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
@@ -17,8 +19,12 @@ class DashboardController extends Controller
      */
     public function index()
     {
+        // GeoIP
+        $location = GeoIP::getLocation();
+        $data['location'] = $location;
+
         // Return the dashboard view.
-        return view('dashboard.index');
+        return view('dashboard.index')->with('data', $data);
     }
 
     /**

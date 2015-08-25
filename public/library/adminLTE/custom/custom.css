@@ -323,3 +323,8 @@ table thead tr th.start, table thead tr th.end {
 	position: fixed;
 	bottom: 41px;
 }
+
+#map {
+	height: 328px;
+	width: 100%;
+}
