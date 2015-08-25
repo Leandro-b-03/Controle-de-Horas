@@ -45,7 +45,7 @@ return array(
 		"country"      => "Brazil",
 		"city"         => "Barueri",
 		"state"        => "São Paulo",
-		"postal_code"  => "06415-000",
+		"postal_code"  => "06415-070",
 		"lat"          => -23.51,
 		"lon"          => -46.88,
 		"timezone"     => "America/Sao_Paulo",
