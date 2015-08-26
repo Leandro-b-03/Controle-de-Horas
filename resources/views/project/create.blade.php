@@ -67,9 +67,11 @@
                   <label for="user_id">{!! Lang::get('projects.label-manager') !!}</label>
                   <select name="user_id" class="form-control" data-validation="required" data-validation-error-msg="{!! Lang::get('projects.error-manager') !!}" required>
                     <option value="">{!! Lang::get('general.select') !!}</option>
+                    @if ($data['users'])
                     @foreach ($data['users'] as $user)
                     <option value="{!! $user->id !!}" {!! (isset($data['project']) ? ($data['project']->user()->getResults()->id == $user->id ? 'selected="selected"' : "") : "") !!}>{!! $user->username !!}</option>
                     @endforeach
+                    @endif
                   </select>
                 </div>
                 <div class="form-group col-xs-4">

@@ -71,30 +71,44 @@
                   <label for="client_id">{!! Lang::get('general.clients') !!}</label>
                   <select name="client_id" class="form-control" data-validation="required" data-validation-error-msg="{!! Lang::get('proposals.error-clients') !!}" required>
                     <option value="">{!! Lang::get('general.select') !!}</option>
+                    @if($data['clients'] != null)
                     @foreach ($data['clients'] as $client)
                     <option value="{!! $client->id !!}" {!! (isset($data['proposal']) ? ($data['proposal']->client()->getResults()->id == $client->id ? 'selected="selected"' : "") : "") !!}>{!! $client->name !!}</option>
                     @endforeach
+                    @endif
                   </select>
                 </div>
                 <div class="form-group col-xs-12">
                   <hr />
                 </div>
-                <div class="form-group col-xs-4">
-                  <label for="version_id">{!! Lang::get('proposals.label-version') !!}</label>
-                  <select name="version_id" class="form-control" data-validation="required" data-validation-error-msg="{!! Lang::get('proposals.error-clients') !!}" required>
+                <div class="form-group col-xs-3">
+                  <label for="proposal_type_id">{!! Lang::get('proposals.label-type') !!}</label>
+                  <select name="proposal_type_id" class="form-control" data-validation="required" data-validation-error-msg="{!! Lang::get('proposals.error-clients') !!}" required>
                     <option value="">{!! Lang::get('general.select') !!}</option>
+                    @if($data['types'] != null)
+                    @foreach ($data['types'] as $type)
+                    <option value="{!! $type->id !!}" {!! (isset($data['proposal']) ? ($data['proposal']->type()->getResults()->id == $type->id ? 'selected="selected"' : "") : "") !!}>{!! $type->name !!}</option>
+                    @endforeach
+                    @endif
+                  </select>
+                </div>
+                <div class="form-group col-xs-2">
+                  <label for="version_id">{!! Lang::get('proposals.label-version') !!}</label>
+                  <select id="version_id" name="version_id" class="form-control" data-validation="required" data-validation-error-msg="{!! Lang::get('proposals.error-clients') !!}" required>
+                    <option value="new">{!! Lang::get('proposals.ph-new_version') !!}</option>
                     @if($data['versions'] != null)
                     @foreach ($data['versions'] as $version)
-                    <option value="{!! $version->id !!}" {!! (isset($data['versions']) ? ($data['proposal']->client()->getResults()->id == $client->id ? 'selected="selected"' : "") : "") !!}>{!! $client->name !!}</option>
+                    <option value="{!! $version->id !!}" {!! ($version->active ? 'selected="selected"' : "") !!}>{!! $version->version !!}</option>
                     @endforeach
                     @endif
                   </select>
                 </div>
                 <div class="form-group col-xs-5">
-                  <label for="version_id">{!! Lang::get('proposals.label-status') !!}</label>
+                  <label>{!! Lang::get('proposals.label-status') !!}</label>
                   <div class="checkbox">
-                    <label><input type="checkbox"> {!! Lang::get('proposals.label-send') !!}</label>
-                    <label><input type="checkbox" > {!! Lang::get('proposals.label-approved') !!}</label>
+                    <label class="label-checkbox-fix"><input type="checkbox" disabled="disabled"> {!! Lang::get('proposals.label-send') !!}</label>
+                    <label class="label-checkbox-fix"><input type="checkbox" disabled="disabled"> {!! Lang::get('proposals.label-approved') !!}</label>
+                    <label class="label-checkbox-fix"><input type="checkbox" name="status"> {!! Lang::get('proposals.label-cancelled') !!}</label>
                   </div>
                 </div>
                 {{-- <div class="form-group col-xs-3">
@@ -105,7 +119,7 @@
                 </div>
                 <div class="form-group col-xs-12">
                   <label for="proposal">{!! Lang::get('proposals.label-proposal') !!}</label>
-                  <textarea name="proposal" id="proposal" rows="10" placeholder="{!! Lang::get('proposals.ph-proposal') !!}" data-validation-error-msg="{!! Lang::get('proposals.error-proposal') !!}" required>{!! (isset($data['proposal']) ? $data['proposal']->proposal : (Request::old('proposal') ? Request::old('proposal') : '')) !!}</textarea>
+                  <textarea name="proposal" id="proposal" rows="10" placeholder="{!! Lang::get('proposals.ph-proposal') !!}" data-validation-error-msg="{!! Lang::get('proposals.error-proposal') !!}" required>{!! (isset($data['versions']) ? $data['versions']->where('active', 1)->first()->proposal : (Request::old('proposal') ? Request::old('proposal') : '')) !!}</textarea>
                 </div>
                 <input type="hidden" name="user_id" id="user_id" value="{!! (isset($data['proposal']) ? $data['proposal']->user_id : (Request::old('user_id') ? Request::old('user_id') : Auth::user()->id)) !!}">
               </div><!-- /.box-body -->
@@ -114,6 +128,11 @@
                 <a href="{!! URL::to('proposals') !!}" class="btn btn-danger">{!! Lang::get('general.back') !!}</a>
               </div>
             {!! Form::close() !!}
+            @if($data['versions'] != null)
+            @foreach ($data['versions'] as $version)
+            <input type="hidden" id="{!! $version->version !!}" value="{!! htmlspecialchars($version->proposal) !!}" />
+            @endforeach
+            @endif
           </div><!-- /.box -->
         </div>
       </div>
@@ -143,6 +162,10 @@
         } else {
           return;
         }
+      });
+
+      $('#version_id').change(function() {
+        ckeditor.setData($('#' + $('#version_id option:selected').text()).val());
       });
 
       function throwMessage(data) {
