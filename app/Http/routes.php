@@ -43,6 +43,8 @@ Route::group(['middleware' => 'auth'], function () {
 
     Route::get('general/createMessageJSON', 'GeneralController@createMessageJSON');
 
+    Route::get('general/projectName', 'GeneralController@projectNameJSON');
+
     Route::post('general/verifyEmailJSON', 'GeneralController@verifyEmailJSON');
 
     Route::post('general/verifyCPFJSON', 'GeneralController@verifyCPFJSON');
@@ -50,6 +52,8 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('general/getUser', 'GeneralController@getUser');
 
     Route::get('general/getProjectTimes', 'GeneralController@getProjectTimes');
+
+    Route::get('profile/{id}', 'UserController@show');
 
     Route::resource('proposals', 'ProposalController');
     Entrust::routeNeedsPermission('proposals', 'ProposalController@index');

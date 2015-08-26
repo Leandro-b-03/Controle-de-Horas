@@ -117,7 +117,12 @@ class UserController extends Controller
      */
     public function show($id)
     {
-        //
+        // Retrive the user with param $id
+        $user = User::find($id);
+        $data['user'] = $user;
+
+        // Return the dashboard view.
+        return view('user.profile')->with('data', $data);
     }
 
     /**

@@ -1,7 +1,7 @@
 @extends('app')
 
 @section('title')
-    {!! Lang::get('general.app-tittle', ['controller' => Lang::get('general.clients')]) !!}
+    {!! Lang::get('general.app-tittle', ['controller' => Lang::get('general.client-groups')]) !!}
 @stop
 
 @section('style')
@@ -13,11 +13,11 @@
 
 @section('content')
         <h1>
-            {!! Lang::get('general.clients') !!}
-            @if (Request::is('clients/create'))
-            <small>{!! Lang::get('clients.create') !!}</small>
+            {!! Lang::get('general.client-groups') !!}
+            @if (Request::is('client-groups/create'))
+            <small>{!! Lang::get('client-groups.create') !!}</small>
             @else
-            <small>{!! Lang::get('clients.edit') !!}</small>
+            <small>{!! Lang::get('client-groups.edit') !!}</small>
             @endif
         </h1>
         <!-- <ol class="breadcrumb">
@@ -51,32 +51,38 @@
               @endif
             </div><!-- /.box-header -->
             <!-- form start -->
-            @if (Request::is('clients/create'))
-            {!! Form::open(array('route' => 'clients.store')) !!}
+            @if (Request::is('client-groups/create'))
+            {!! Form::open(array('route' => 'client-groups.store')) !!}
             @else
-            {!! Form::open(array('route' => [ 'clients.update', $data['client']->id ], 'method' => 'PUT')) !!}
+            {!! Form::open(array('route' => [ 'client-groups.update', $data['client']->id ], 'method' => 'PUT')) !!}
             @endif
               <div class="box-body">
-                <div class="form-group col-xs-12">
-                  <label for="name">{!! Lang::get('clients.label-name') !!}</label>
-                  <input type="text" class="form-control" name="name" id="name"  value="{!! (isset($data['client']) ? $data['client']->name : (Request::old('name') ? Request::old('name') : '')) !!}" placeholder="{!! Lang::get('clients.ph-name') !!}" data-validation="length" data-validation-length="3-12" data-validation-error-msg="{!! Lang::get('clients.error-name') !!}" required>
-                </div>
-                <div class="form-group col-xs-12">
-                  <label for="responsible">{!! Lang::get('clients.label-responsible') !!}</label>
-                  <input type="text" class="form-control" name="responsible" id="responsible"  value="{!! (isset($data['client']) ? $data['client']->responsible : (Request::old('responsible') ? Request::old('responsible') : '')) !!}" placeholder="{!! Lang::get('clients.ph-responsible') !!}" data-validation="length" data-validation-length="3-80" data-validation-error-msg="{!! Lang::get('clients.error-responsible') !!}" required>
-                </div>
-                <div class="form-group col-xs-8">
-                  <label for="email">{!! Lang::get('clients.label-email') !!}</label>
-                  <input type="email" class="form-control" name="email" id="email"  value="{!! (isset($data['client']) ? $data['client']->email : (Request::old('email') ? Request::old('email') : '')) !!}" placeholder="{!! Lang::get('clients.ph-email') !!}" data-validation="email" data-validation-error-msg="{!! Lang::get('clients.error-email') !!}" required>
+                <div class="form-group col-xs-5">
+                  <label for="name">{!! Lang::get('client-groups.label-name') !!}</label>
+                  <input type="text" class="form-control" name="name" id="name"  value="{!! (isset($data['client']) ? $data['client']->name : (Request::old('name') ? Request::old('name') : '')) !!}" placeholder="{!! Lang::get('client-groups.ph-name') !!}" data-validation="length" data-validation-length="3-12" data-validation-error-msg="{!! Lang::get('client-groups.error-name') !!}" required>
                 </div>
                 <div class="form-group col-xs-4">
-                  <label for="phone">{!! Lang::get('clients.label-phone') !!}</label>
-                  <input type="text" class="form-control input-mask" data-mask="(99) *****-****" name="phone" id="phone"  value="{!! (isset($data['client']) ? $data['client']->phone : (Request::old('phone') ? Request::old('phone') : '')) !!}" placeholder="{!! Lang::get('clients.ph-phone') !!}" data-validation="custom" data-validation-regexp="^\([1-9]{2}\)\ [2-9][0-9]{3,4}\-[0-9_]{3,4}$" data-validation-error-msg="{!! Lang::get('clients.error-phone') !!}" required>
+                  <label for="client_id">{!! Lang::get('general.clients') !!}</label>
+                  <select name="client_id" class="form-control" data-validation="required" data-validation-error-msg="{!! Lang::get('proposals.error-clients') !!}" required>
+                    <option value="">{!! Lang::get('general.select') !!}</option>
+                    @if($data['clients'] != null)
+                    @foreach ($data['clients'] as $client)
+                    <option value="{!! $client->id !!}" {!! (isset($data['proposal']) ? ($data['proposal']->client()->getResults()->id == $client->id ? 'selected="selected"' : "") : "") !!}>{!! $client->name !!}</option>
+                    @endforeach
+                    @endif
+                  </select>
+                </div>
+                <div class="form-group col-xs-12">
+                  <hr/ >
+                </div>
+                <div class="form-group col-xs-7">
+                  <label for="description">{!! Lang::get('client-groups.label-description') . ' (<span id="description-maxlength">255</span>) ' . Lang::get('general.char_left') !!}</label>
+                  <textarea class="form-control" name="description" id="description" placeholder="{!! Lang::get('client-groups.ph-description') !!}" data-validation="length" data-validation-length="10-255" data-validation-error-msg="{!! Lang::get('client-groups.error-description') !!}">{!! (isset($data['project']) ? $data['project']->description : (Request::old('description') ? Request::old('description') : '')) !!}</textarea>
                 </div>
               </div><!-- /.box-body -->
               <div class="box-footer">
                 <button type="submit" class="btn btn-primary">{!! Lang::get('general.save') !!}</button>
-                <a href="{!! URL::to('clients') !!}" class="btn btn-danger">{!! Lang::get('general.back') !!}</a>
+                <a href="{!! URL::to('client-groups') !!}" class="btn btn-danger">{!! Lang::get('general.back') !!}</a>
               </div>
             {!! Form::close() !!}
           </div><!-- /.box -->
@@ -93,6 +99,8 @@
 
     <script>
       $.validate();
+      
+      $('#description').restrictLength($('#description-maxlength'));
 
       $('form').submit(function(e) {
         if ($(this).find('.has-error').length > 0) {

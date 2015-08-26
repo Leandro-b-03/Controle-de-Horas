@@ -76,7 +76,7 @@
                 </div>
                 <div class="form-group col-xs-4">
                   <label for="proposal_id">{!! Lang::get('general.proposals') !!}</label>
-                  <select name="proposal_id" class="form-control" data-validation="required" data-validation-error-msg="{!! Lang::get('projects.error-projects') !!}" required>
+                  <select id="proposal_id" name="proposal_id" class="form-control" data-validation="required" data-validation-error-msg="{!! Lang::get('projects.error-projects') !!}" required>
                     <option value="">{!! Lang::get('general.select') !!}</option>
                     @foreach ($data['proposals'] as $proposal)
                     <option value="{!! $proposal->id !!}" {!! (isset($data['project']) ? ($data['project']->proposal()->getResults()->id == $proposal->id ? 'selected="selected"' : "") : "") !!}>{!! $proposal->name !!}</option>
@@ -87,11 +87,11 @@
                   <hr />
                 </div>
                 <div class="form-group col-xs-5">
-                  <label for="description">{!! Lang::get('projects.label-description') . ' (<span id="description-maxlength">100</span>) ' . Lang::get('projects.char_left') !!}</label>
+                  <label for="description">{!! Lang::get('projects.label-description') . ' (<span id="description-maxlength">100</span>) ' . Lang::get('general.char_left') !!}</label>
                   <textarea class="form-control" name="description" id="description" placeholder="{!! Lang::get('projects.ph-description') !!}" data-validation="length" data-validation-length="10-100" data-validation-error-msg="{!! Lang::get('projects.error-description') !!}">{!! (isset($data['project']) ? $data['project']->description : (Request::old('description') ? Request::old('description') : '')) !!}</textarea>
                 </div>
                 <div class="form-group col-xs-7">
-                  <label for="long_description">{!! Lang::get('projects.label-long_description') . ' (<span id="long_description-maxlength">255</span>) ' . Lang::get('projects.char_left') !!}</label>
+                  <label for="long_description">{!! Lang::get('projects.label-long_description') . ' (<span id="long_description-maxlength">255</span>) ' . Lang::get('general.char_left') !!}</label>
                   <textarea class="form-control" name="long_description" id="long_description" placeholder="{!! Lang::get('projects.ph-long_description') !!}" data-validation="length" data-validation-length="10-255" data-validation-error-msg="{!! Lang::get('projects.error-long_description') !!}">{!! (isset($data['project']) ? $data['project']->long_description : (Request::old('long_description') ? Request::old('long_description') : '')) !!}</textarea>
                 </div>
                 <div class="form-group col-xs-12">
@@ -193,6 +193,18 @@
 
           return html;
       }
+
+      $('#proposal_id').on('change', function() {
+          $.ajax({
+            url: '/general/projectName',
+            data: {id: $(this).val()},
+            type: "GET",
+            success: function(data) {
+              data = JSON.parse(data);
+              $('#name').val(data.name);
+            }
+          });
+      });
 
       $(document).on('input', '.project-time td .budget', function() {
         var total_budget = 0;

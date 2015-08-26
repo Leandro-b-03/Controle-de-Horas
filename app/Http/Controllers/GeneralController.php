@@ -6,10 +6,13 @@ use Lang;
 use Mail;
 use App\User;
 use App\Team;
+use App\Proposal;
 use PusherManager;
 use Carbon\Carbon;
 use App\ProjectTime;
+use App\ProposalType;
 use App\Http\Requests;
+use App\ProposalVersion;
 use App\UserNotification;
 use Illuminate\Http\Request;
 
@@ -52,6 +55,22 @@ class GeneralController extends Controller {
         $inputs = $request->all();
 
         return response()->json($this->createMessage($inputs['type'], $inputs['name'], $inputs['kind'], (isset($inputs['message']) ? $inputs['message'] : '')));
+    }
+
+    /**
+     * Generates a name to project
+     *
+     * @return Array with message
+     */
+    public function projectNameJSON(Request $request)
+    {
+        // Get the data receive from ajax.
+        $inputs = $request->all();
+
+        $proposal = Proposal::find($inputs['id']);
+        
+
+        return response()->json($data);
     }
 
     public function verifyEmailJSON(Request $request)

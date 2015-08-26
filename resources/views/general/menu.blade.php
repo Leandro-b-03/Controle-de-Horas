@@ -44,7 +44,7 @@
   </li>
   @endif
   @if(Entrust::can(['ClientController@index', 'ClientGroupController@index']))
-  <li class="treeview {!! ((Request::is('clients/*') || Request::is('clients')) || (Request::is('clients-group/*') || Request::is('clients-group')) ? 'active' : '') !!}">
+  <li class="treeview {!! ((Request::is('clients/*') || Request::is('clients')) || (Request::is('client-groups/*') || Request::is('client-groups')) ? 'active' : '') !!}">
     <a href="#">
       <i class="fa fa-user-secret"></i> <span>{!! Lang::get('general.clients') !!}</span>
       <i class="fa fa-angle-left pull-right"></i>
@@ -56,8 +56,8 @@
       </li>
       @endif
       @if(Entrust::can(['ClientGroupController@index']))
-      <li {!! ((Request::is('clients-group/*') || Request::is('clients-group')) ? 'class="active"' : '') !!}>
-        <a href="{!! URL::to('clients-group') !!}"><i class="fa fa-shield"></i> {!! Lang::get('general.clients-group') !!}</a>
+      <li {!! ((Request::is('client-groups/*') || Request::is('client-groups')) ? 'class="active"' : '') !!}>
+        <a href="{!! URL::to('client-groups') !!}"><i class="fa fa-shield"></i> {!! Lang::get('general.client-groups') !!}</a>
       </li>
       @endif
     </ul>

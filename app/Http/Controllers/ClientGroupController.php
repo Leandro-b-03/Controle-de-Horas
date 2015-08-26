@@ -24,12 +24,12 @@ class ClientGroupController extends Controller
      */
     public function index()
     {
-        // Get all the client_groups
+        // Get all the client-groups
         $client_groups = ClientGroup::All();
-        $data['client_groups'] = $client_groups;
+        $data['client-groups'] = $client_groups;
 
-        // Return the client_groups view.
-        return view('client.index')->with('data', $data);
+        // Return the client-groups view.
+        return view('client-group.index')->with('data', $data);
     }
 
     /**
@@ -39,8 +39,12 @@ class ClientGroupController extends Controller
      */
     public function create()
     {
-        // Return the client view.
-        return view('client.create');
+        // Get all clients
+        $clients = Client::all();
+        $data['clients'] = $clients;
+
+        // Return the client-view.
+        return view('client-group.create')->with('data', $data);
     }
 
     /**
@@ -65,22 +69,20 @@ class ClientGroupController extends Controller
         );
 
         try {
-            $inputs['phone'] = str_replace('_', '', $inputs['phone']);
-
             if($validator) {
                 if (ClientGroup::create( $inputs )) {
-                    return redirect('client_groups')->with('return', GeneralController::createMessage('success', Lang::get('general.' . $this->controller_name), 'create'));
+                    return redirect('client-groups')->with('return', GeneralController::createMessage('success', Lang::get('general.' . $this->controller_name), 'create'));
                 } else {
                     DB::rollback();
-                    return redirect('client_groups/create')->withInput()->with('return', GeneralController::createMessage('failed', Lang::get('general.' . $this->controller_name), 'create'));
+                    return redirect('client-groups/create')->withInput()->with('return', GeneralController::createMessage('failed', Lang::get('general.' . $this->controller_name), 'create'));
                 }
             } else {
                 DB::rollback();
-                return redirect('client_groups/create')->withInput()->with('return', GeneralController::createMessage('failed', Lang::get('general.' . $this->controller_name), 'create-failed'));
+                return redirect('client-groups/create')->withInput()->with('return', GeneralController::createMessage('failed', Lang::get('general.' . $this->controller_name), 'create-failed'));
             }
         } catch (Exception $e){
             DB::rollback();
-            return redirect('client_groups/create')->withInput()->with('return', GeneralController::createMessage('failed', Lang::get('general.' . $this->controller_name), 'create-failed'));
+            return redirect('client-groups/create')->withInput()->with('return', GeneralController::createMessage('failed', Lang::get('general.' . $this->controller_name), 'create-failed'));
         }
     }
 
@@ -103,12 +105,16 @@ class ClientGroupController extends Controller
      */
     public function edit($id)
     {
-        // Retrive the client with param $id
-        $client = ClientGroup::find($id);
-        $data['client'] = $client;
+        // Get all clients
+        $clients = Client::all();
+        $data['clients'] = $clients;
+
+        // Retrive the client-with param $id
+        $client_group = ClientGroup::find($id);
+        $data['client-group'] = $client_group;
 
         // Return the dashboard view.
-        return view('client.create')->with('data', $data);
+        return view('client-group.create')->with('data', $data);
     }
 
     /**
@@ -121,15 +127,13 @@ class ClientGroupController extends Controller
     {
         DB::beginTransaction();
 
-        // Get client with param $id
-        $client = ClientGroup::find($id);
+        // Get client-with param $id
+        $client_group = ClientGroup::find($id);
 
         // Get all the input from update.
         $inputs = $request->all();
 
         try {
-            $inputs['phone'] = str_replace('_', '', $inputs['phone']);
-
             foreach($inputs as $input => $value) {
                 if($client->{$input})
                     $client->{$input} = $value;
@@ -137,14 +141,14 @@ class ClientGroupController extends Controller
 
             if ($client->save()) {
                 DB::commit();
-                return redirect('client_groups')->with('return', GeneralController::createMessage('success', Lang::get('general.' . $this->controller_name), 'update'));
+                return redirect('client-groups')->with('return', GeneralController::createMessage('success', Lang::get('general.' . $this->controller_name), 'update'));
             } else {
                 DB::rollback();
-                return redirect('client_groups/' . $id . '/edit')->withInput()->with('return', GeneralController::createMessage('failed', Lang::get('general.' . $this->controller_name), 'update'));
+                return redirect('client-groups/' . $id . '/edit')->withInput()->with('return', GeneralController::createMessage('failed', Lang::get('general.' . $this->controller_name), 'update'));
             }
         } catch (Exception $e) {
             DB::rollback();
-            return redirect('client_groups/' . $id . '/edit')->withInput()->with('return', GeneralController::createMessage('failed', Lang::get('general.' . $this->controller_name), 'update'));
+            return redirect('client-groups/' . $id . '/edit')->withInput()->with('return', GeneralController::createMessage('failed', Lang::get('general.' . $this->controller_name), 'update'));
         }
     }
 
@@ -166,14 +170,14 @@ class ClientGroupController extends Controller
         try {
             if (ClientGroup::destroy($ids)) {
                 DB::commit();
-                return redirect('client_groups')->with('return', GeneralController::createMessage('success', Lang::get('general.' . $this->controller_name), 'delete'));
+                return redirect('client-groups')->with('return', GeneralController::createMessage('success', Lang::get('general.' . $this->controller_name), 'delete'));
             } else {
                 DB::rollback();
-                return redirect('client_groups')->with('return', GeneralController::createMessage('failed', Lang::get('general.' . $this->controller_name), 'delete'));
+                return redirect('client-groups')->with('return', GeneralController::createMessage('failed', Lang::get('general.' . $this->controller_name), 'delete'));
             }
         } catch (Exception $e) {
             DB::rollback();
-            return redirect('client_groups')->with('return', GeneralController::createMessage('failed', Lang::get('general.' . $this->controller_name), 'delete'));
+            return redirect('client-groups')->with('return', GeneralController::createMessage('failed', Lang::get('general.' . $this->controller_name), 'delete'));
         }
     }
 }
