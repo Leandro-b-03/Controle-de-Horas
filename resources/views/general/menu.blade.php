@@ -57,7 +57,7 @@
       @endif
       @if(Entrust::can(['ClientGroupController@index']))
       <li {!! ((Request::is('client-groups/*') || Request::is('client-groups')) ? 'class="active"' : '') !!}>
-        <a href="{!! URL::to('client-groups') !!}"><i class="fa fa-shield"></i> {!! Lang::get('general.client-groups') !!}</a>
+        <a href="{!! URL::to('client-groups') !!}"><i class="fa fa-compass"></i> {!! Lang::get('general.client-groups') !!}</a>
       </li>
       @endif
     </ul>
