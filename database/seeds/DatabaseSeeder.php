@@ -18,5 +18,12 @@ class DatabaseSeeder extends Seeder
         Model::reguard();
     	$this->call('TeamsTableSeeder');
 		$this->call('ClientsTableSeeder');
+		$this->call('RoleUserTableSeeder');
+        $this->call('ClientsGroupsTableSeeder');
+        $this->call('ProposalsTypesTableSeeder');
+		$this->call('ProposalsTableSeeder');
+		$this->call('PermissionsTableSeeder');
+		$this->call('PermissionRoleTableSeeder');
+		$this->call('ProposalsVersionsTableSeeder');
 	}
 }

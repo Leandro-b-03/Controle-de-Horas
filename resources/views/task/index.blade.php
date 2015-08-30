@@ -64,7 +64,7 @@
                 <tr>
                     <td><input type="checkbox" class="delete" data-value="{!! $task->id !!}" /></td>
                     <td>{!! $task->name !!}</td>
-                    <td>{!! $task->projects_times()->getResults()->project()->getResults()->name !!}</td>
+                    <td>{!! $task->projects_times()->getResults()->project()->getResults()->name . $task->projects_times()->getResults()->project()->getResults()->name_complement !!}</td>
                     <td>
                         @foreach ($task->teams as $team)
                             <span class="label label-success" style="background-color: {!! $team->color !!} !important">{!! $team->name !!}</span>&nbsp;

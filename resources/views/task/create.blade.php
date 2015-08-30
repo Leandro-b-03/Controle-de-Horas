@@ -65,16 +65,16 @@
                 </div>
                 <div class="form-group col-xs-4">
                   <label for="project_id">{!! Lang::get('general.projects') !!}</label>
-                  <select name="project_id" id="project_id" class="form-control" data-validation="required" data-validation-error-msg="{!! Lang::get('projects.error-projects') !!}" required>
+                  <select name="project_id" id="project_id" class="form-control" data-validation="required" data-validation-error-msg="{!! Lang::get('tasks.error-projects') !!}" required>
                     <option value="">{!! Lang::get('general.select') !!}</option>
                     @foreach ($data['projects'] as $project)
-                    <option value="{!! $project->id !!}" {!! (isset($data['project']) ? ($data['project']->project()->getResults()->id == $project->id ? 'selected="selected"' : "") : "") !!}>{!! $project->name !!}</option>
+                    <option value="{!! $project->id !!}" {!! (isset($data['project']) ? ($data['project']->project()->getResults()->id == $project->id ? 'selected="selected"' : "") : "") !!}>{!! $project->name . $project->name_complement !!}</option>
                     @endforeach
                   </select>
                 </div>
                 <div class="form-group col-xs-4">
                   <label for="project_time_id">{!! Lang::get('projects.cycle') !!}</label>
-                  <select name="project_time_id" id="project_time_id" class="form-control" data-validation="required" data-validation-error-msg="{!! Lang::get('projects.error-projects') !!}" required disabled="disabled">
+                  <select name="project_time_id" id="project_time_id" class="form-control" data-validation="required" data-validation-error-msg="{!! Lang::get('tasks.error-cycle') !!}" required disabled="disabled">
                     <option value="">{!! Lang::get('general.select') !!}</option>
                     @if (Request::is('group-permissions/edit'))
                     @foreach ($data['projects_times'] as $project_time)
@@ -86,16 +86,15 @@
                 <div class="form-group col-xs-12">
                   <hr />
                 </div>
-                <div class="form-group col-xs-5">
+                <div class="form-group col-xs-12">
                   <label for="teams">{!! Lang::get('general.teams') !!}</label>
-                  <div class="input-group">
-                    <input type="text" class="form-control" id="teams-autocomplete" placeholder="{!! Lang::get('tasks.search-team-name') !!}" />
-                    <span class="input-group-btn">
-                      <a id="search-team" class="btn btn-default"><i class="fa fa-search-plus"></i> {!! Lang::get('general.btn-search') !!}</a>
-                    </span>
-                  </div>
-                </div>
-                <div id="teams" class="form-group col-xs-12">
+                  <select type="text" name="teams[]" id="teams" class="form-control multiple" multiple="multiple" id="teams-autocomplete" data-validation="required" data-validation-error-msg="{!! Lang::get('tasks.error-teams') !!}"  required>
+                    @if(isset($data['teams']))
+                    @foreach($data['teams'] as $team)
+                    <option value="{!! $team->id !!}">{!! $team->name !!}</option>
+                    @endforeach
+                    @endif
+                  </select>
                 </div>
               </div><!-- /.box-body -->
               <div class="box-footer">
@@ -118,10 +117,18 @@
     {!! Html::script("library/adminLTE/plugins/jQuery-Form-Validator/form-validator/jquery.form-validator.min.js") !!}
 
     <script>
+      if($('#project_id').val()) {
+        getCycle($('#project_id').val())
+      }
+
       $('#project_id').on('change', function() {
+        getCycle($(this).val())
+      });
+
+      function getCycle(id) {
         $.ajax({
           url: '/general/getProjectTimes',
-          data: {id: $(this).val()},
+          data: {id: id},
           type: "GET",
           success: function(data) {
             var project_times = JSON.parse(data);
@@ -147,21 +154,7 @@
             }
           }
         });
-      });
-
-      $('#teams-autocomplete').autocomplete({
-          serviceUrl: '/autocomplete/team',
-          onSelect: function (suggestion) {
-            if($('#teams :input[value="' + suggestion.data.id + '"]').length === 0) {
-              var html = '';
-
-              html += '<span class="label label-success" style="background-color: ' + suggestion.data.color + ' !important">' + suggestion.data.name + '</span>&nbsp;';
-              html += '<input type="hidden" name="teams[]" value="' + suggestion.data.id + '" />'
-
-              $('#teams').append(html);
-            }
-          }
-      });
+      }
 
       $.validate();
 

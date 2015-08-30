@@ -33,6 +33,8 @@ $(function () {
         }
     });
 
+    $("select").select2();
+
     function throwMessage(data) {
         html = '<div class="alert alert-' + data.class + ' alert-dismissable">';
         html += '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>';

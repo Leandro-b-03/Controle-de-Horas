@@ -111,7 +111,7 @@ class ClientGroupController extends Controller
 
         // Retrive the client-with param $id
         $client_group = ClientGroup::find($id);
-        $data['client-group'] = $client_group;
+        $data['client_group'] = $client_group;
 
         // Return the dashboard view.
         return view('client-group.create')->with('data', $data);
@@ -135,11 +135,11 @@ class ClientGroupController extends Controller
 
         try {
             foreach($inputs as $input => $value) {
-                if($client->{$input})
-                    $client->{$input} = $value;
+                if($client_group->{$input})
+                    $client_group->{$input} = $value;
             }
 
-            if ($client->save()) {
+            if ($client_group->save()) {
                 DB::commit();
                 return redirect('client-groups')->with('return', GeneralController::createMessage('success', Lang::get('general.' . $this->controller_name), 'update'));
             } else {

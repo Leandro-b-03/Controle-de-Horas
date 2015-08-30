@@ -16,7 +16,7 @@ class Proposal extends Model
 	 *
 	 * @var array
 	 */
-	protected $fillable = ['user_id', 'client_id', 'name', 'description', 'proposal_type_id'];
+	protected $fillable = ['user_id', 'client_id', 'client_group_id', 'name', 'description', 'proposal_type_id'];
 
     /**
      * Get the user record associated with the project.
@@ -35,7 +35,15 @@ class Proposal extends Model
     }
 
     /**
-     * Get the client record associated with the project.
+     * Get the client group record associated with the project.
+     */
+    public function clientGroup()
+    {
+        return $this->belongsTo('App\ProposalType', 'proposal_type_id');
+    }
+
+    /**
+     * Get the type record associated with the project.
      */
     public function type()
     {

@@ -24,7 +24,8 @@
         "laravel/socialite": "^3.0@dev",
         "torann/geoip": "^0.2.0@dev",
         "laravel/envoy": "~1.0",
-        "alexpechkarev/google-geocoder": "dev-master"
+        "alexpechkarev/google-geocoder": "dev-master",
+        "doctrine/dbal": "^2.6@dev"
     },
     "require-dev": {
         "fzaninotto/faker": "~1.4",

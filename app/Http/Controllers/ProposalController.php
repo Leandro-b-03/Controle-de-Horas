@@ -8,9 +8,10 @@ use DB;
 use Lang;
 use App\Client;
 use App\Proposal;
+use App\ClientGroup;
 use App\ProposalType;
-use App\ProposalVersion;
 use App\Http\Requests;
+use App\ProposalVersion;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Controllers\GeneralController;
@@ -145,6 +146,10 @@ class ProposalController extends Controller
         // Retrive the proposal with param $id
         $proposal = Proposal::find($id);
         $data['proposal'] = $proposal;
+
+        // Get all client groups
+        $client_groups = ClientGroup::where('client_id', $proposal->client_id)->get();
+        $data['client_groups'] = $client_groups;
 
         // Return the dashboard view.
         return view('proposal.create')->with('data', $data);

@@ -53,6 +53,8 @@ Route::group(['middleware' => 'auth'], function () {
 
     Route::get('general/getProjectTimes', 'GeneralController@getProjectTimes');
 
+    Route::get('general/getClientGroup', 'GeneralController@getClientGroup');
+
     Route::get('profile/{id}', 'UserController@show');
 
     Route::resource('proposals', 'ProposalController');

@@ -14,8 +14,8 @@
     <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css" rel="stylesheet" type="text/css" />
     <!-- Ionicons -->
     <link href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css" rel="stylesheet" type="text/css" />
-    <!-- Theme style -->
-    {!! Html::style("library/adminLTE/dist/css/AdminLTE.min.css") !!}
+    <!-- Select2 -->
+    {!! Html::style("library/adminLTE/plugins/select2/select2.min.css") !!}
     <!-- AdminLTE Skins. Choose a skin from the css/skins 
          folder instead of downloading all of them to reduce the load. -->
     {!! Html::style("library/adminLTE/dist/css/skins/_all-skins.min.css") !!}
@@ -23,6 +23,11 @@
     <!-- iCheck -->
     {!! Html::style("library/adminLTE/plugins/iCheck/square/yellow.css") !!}
     {!! Html::style("library/adminLTE/plugins/iCheck/flat/yellow.css") !!}
+    <!-- Theme style -->
+    {!! Html::style("library/adminLTE/dist/css/AdminLTE.min.css") !!}
+    <!-- AdminLTE Skins. Choose a skin from the css/skins
+         folder instead of downloading all of them to reduce the load. -->
+    {!! Html::style("library/adminLTE/dist/css/skins/_all-skins.min.css") !!}
 
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -433,6 +438,8 @@
     {!! Html::script("library/adminLTE/plugins/fastclick/fastclick.min.js") !!}
     <!-- iCheck -->
     {!! Html::script("library/adminLTE/plugins/iCheck/icheck.min.js") !!}
+    <!-- Select2 -->
+    {!! Html::script("library/adminLTE/plugins/select2/select2.full.min.js") !!}
     <!-- jQuery-Play-sound -->
     {!! Html::script("library/adminLTE/plugins/jquery-play-sound/jquery.playSound.js") !!}
     <!-- Dashboard -->

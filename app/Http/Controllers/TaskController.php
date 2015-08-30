@@ -49,6 +49,10 @@ class TaskController extends Controller
         $projects = Project::all();
         $data['projects'] = $projects;
 
+        // Get all projects
+        $teams = Team::all();
+        $data['teams'] = $teams;
+
         // Return the task view.
         return view('task.create')->with('data', $data);
     }
@@ -73,7 +77,7 @@ class TaskController extends Controller
                 'email' => 'required|email|unique:users'
             ]
         );
-
+        
         try {
             $inputs['teams'] = json_encode($inputs['teams']);
 
