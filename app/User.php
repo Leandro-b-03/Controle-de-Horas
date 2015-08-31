@@ -39,7 +39,15 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
      */
     public function getNotifications()
     {
-        return $this->hasMany('App\UserNotification', 'user_id');
+        return $this->hasMany('App\UserNotification');
+    }
+
+    /**
+     * Get the user settings...
+     */
+	public function settings()
+    {
+        return $this->hasOne('App\UserSetting');
     }
 
     /**
