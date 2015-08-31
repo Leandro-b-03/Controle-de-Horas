@@ -47,6 +47,7 @@ return [
     'remove-icon'                   => '<i class="fa fa-remove"></i> Remover',
     'add'                           => 'Adicionar',
     'add-icon'                      => '<i class="fa fa-plus"></i> Adicionar',
+    'char_left'                     => 'caract&eacute;res restantes',
 
     // Menu & Controller
     'nav-menu'                      => 'Menu de navega&ccedil;&atilde;o',
@@ -56,6 +57,7 @@ return [
     'proposals'                     => 'Propostas',
     'timesheets'                    => 'Timesheets',
     'clients'                       => 'Clientes',
+    'client-groups'                 => 'Segmento de clientes',
     'teams'                         => 'Equipes',
     'users'                         => 'Colaboradores',
     'users-list'                    => 'Lista de colaboradores',
@@ -66,6 +68,7 @@ return [
     'ProposalController'            => 'Propostas',
     'TimesheetController'           => 'Timesheets',
     'ClientController'              => 'Clientes',
+    'ClientGroupController'         => 'Segmento de clientes',
     'TeamController'                => 'Equipes',
     'UserController'                => 'Colaboradores',
     'GroupPermissionController'     => 'Permiss&otilde;es de grupo',

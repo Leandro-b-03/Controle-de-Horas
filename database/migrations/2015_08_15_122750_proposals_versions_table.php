@@ -18,11 +18,13 @@ class ProposalsVersionsTable extends Migration
             $table->text('proposal');
             $table->string('version');
             $table->integer('send');
+            $table->date('date_send');
+            $table->date('date_return');
             $table->boolean('authorise');
             $table->date('data_authorise');
             $table->boolean('signing_board');
             $table->date('date_signing_board');
-            $table->date('date_return');
+            $table->integer('active');
             $table->timestamps();
 
             $table->foreign('proposal_id')->references('id')->on('proposals')->onUpdate('cascade')->onDelete('cascade');

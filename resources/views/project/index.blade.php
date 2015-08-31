@@ -66,7 +66,7 @@
                 @foreach($data['projects'] as $project)
                 <tr>
                     <td><input type="checkbox" class="delete" data-value="{!! $project->id !!}" /></td>
-                    <td>{!! $project->name !!}</td>
+                    <td>{!! $project->name . $project->name_complement !!}</td>
                     <td>{!! $project->description !!}</td>
                     <td>{!! $project->proposal()->getResults()->client()->getResults()->name !!}</td>
                     <td>{!! $project->proposal()->getResults()->name !!}</td>

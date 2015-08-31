@@ -8,7 +8,10 @@ use DB;
 use Lang;
 use App\Client;
 use App\Proposal;
+use App\ClientGroup;
+use App\ProposalType;
 use App\Http\Requests;
+use App\ProposalVersion;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Controllers\GeneralController;
@@ -45,6 +48,10 @@ class ProposalController extends Controller
 
         $data['versions'] = null;
 
+        // Get all types
+        $types = ProposalType::orderBy('name')->get();
+        $data['types'] = $types;
+
         // Return the proposal view.
         return view('proposal.create')->with('data', $data);
     }
@@ -70,6 +77,8 @@ class ProposalController extends Controller
             ]
         );
 
+        d($inputs);
+
         if ($inputs['proposal'] == "" || $inputs['proposal'] == null || !$inputs['proposal']) {
             DB::rollback();
             return redirect('proposals/create')->withInput()->with('return', GeneralController::createMessage('failed', Lang::get('general.' . $this->controller_name), 'custom', Lang::get('proposals.error-proposal')));
@@ -77,8 +86,18 @@ class ProposalController extends Controller
 
         try {
             if($validator) {
-                if (Proposal::create( $inputs )) {
-                    return redirect('proposals')->with('return', GeneralController::createMessage('success', Lang::get('general.' . $this->controller_name), 'create'));
+                $proposal = Proposal::create( $inputs );
+                if ($proposal) {
+                    $inputs['proposal_id'] = $proposal->id;
+                    $inputs['version'] = 'v1';
+                    $inputs['active'] = true;
+                    if (ProposalVersion::create( $inputs )) {
+                        DB::commit();
+                        return redirect('proposals')->with('return', GeneralController::createMessage('success', Lang::get('general.' . $this->controller_name), 'create'));
+                    } else {
+                        DB::rollback();
+                        return redirect('proposals/create')->withInput()->with('return', GeneralController::createMessage('failed', Lang::get('general.' . $this->controller_name), 'create'));
+                    }
                 } else {
                     DB::rollback();
                     return redirect('proposals/create')->withInput()->with('return', GeneralController::createMessage('failed', Lang::get('general.' . $this->controller_name), 'create'));
@@ -116,9 +135,21 @@ class ProposalController extends Controller
         $clients = Client::all();
         $data['clients'] = $clients;
 
+        // Get all clients
+        $versions = ProposalVersion::orderBy('created_at')->where('proposal_id', $id)->get();
+        $data['versions'] = $versions;
+
+        // Get all types
+        $types = ProposalType::orderBy('name', 'desc')->get();
+        $data['types'] = $types;
+
         // Retrive the proposal with param $id
         $proposal = Proposal::find($id);
         $data['proposal'] = $proposal;
+
+        // Get all client groups
+        $client_groups = ClientGroup::where('client_id', $proposal->client_id)->get();
+        $data['client_groups'] = $client_groups;
 
         // Return the dashboard view.
         return view('proposal.create')->with('data', $data);
@@ -147,13 +178,47 @@ class ProposalController extends Controller
 
         try {
             foreach($inputs as $input => $value) {
-                if ($proposal->{$input} || $input == 'proposal')
+                if ($proposal->{$input})
                     $proposal->{$input} = $value;
             }
 
+            $success = false;
+
             if ($proposal->save()) {
-                DB::commit();
-                return redirect('proposals')->with('return', GeneralController::createMessage('success', Lang::get('general.' . $this->controller_name), 'update'));
+                if ($inputs['version_id'] == 'new') {
+                    $inputs['proposal_id'] = $proposal->id;
+                    $inputs['version'] = 'v'. (ProposalVersion::where('proposal_id', $id)->count() + 1);
+                    $inputs['active'] = '1';
+                    
+                    if (ProposalVersion::create( $inputs )) {
+                        $success = true;
+                    }
+                } else {
+                    $proposal_version_active = ProposalVersion::where('proposal_id', $id)->where('active', 1)->get()->first();
+
+                    $proposal_version = ProposalVersion::find($inputs['version_id']);
+                    $proposal_version->proposal = $inputs['proposal'];
+                    $proposal_version->active = true;
+
+                    if ($proposal_version_active->id != $inputs['version_id']) {
+                        $proposal_version_active->active = false;
+                        if ($proposal_version->save() && $proposal_version_active->save()){
+                            $success = true;
+                        }
+                    } else {
+                        if ($proposal_version->save()) {
+                            $success = true;
+                        }
+                    }
+                }
+
+                if ($success == true){
+                    DB::commit();
+                    return redirect('proposals')->with('return', GeneralController::createMessage('success', Lang::get('general.' . $this->controller_name), 'update'));
+                } else {
+                    DB::rollback();
+                    return redirect('proposals/' . $id . '/edit')->withInput()->with('return', GeneralController::createMessage('failed', Lang::get('general.' . $this->controller_name), 'update'));
+                }
             } else {
                 DB::rollback();
                 return redirect('proposals/' . $id . '/edit')->withInput()->with('return', GeneralController::createMessage('failed', Lang::get('general.' . $this->controller_name), 'update'));

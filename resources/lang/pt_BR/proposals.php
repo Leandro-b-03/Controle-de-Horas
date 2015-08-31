@@ -4,7 +4,7 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    |  Clients Language Lines
+    |  Proposal Language Lines
     |--------------------------------------------------------------------------
     |
     | The following language lines are used all library to build
@@ -17,16 +17,21 @@ return [
     'label-name'                    => 'ID',
     'label-description'             => 'Descri&ccedil;&atilde;o',
     'label-proposal'                => 'Proposta',
+    'label-type'                    => 'Tipo da proposta',
     'label-version'                 => 'Vers&atilde;o',
     'label-status'                  => 'Status',
     'label-send'                    => 'Enviado',
+    'label-cancelled'               => 'Cancelado',
     'label-approved'                => 'Aprovado',
+    'label-client_group'            => 'Grupo',
     'ph-name'                       => 'Id da proposta',
     'ph-description'                => 'Descri&ccedil;&atilde;o da proposta',
     'ph-resume'                     => 'Proposta...',
+    'ph-new_version'                => 'Nova vers&atilde;o',
     'error-name'                    => 'O nome da proposta precisa ser alfanum&eacute;rico e deve conter de 3 a 40 caract&eacute;res)',
     'error-proposal'                => 'A proposta não deve estar em branco',
     'error-clients'                 => 'Selecione um cliente para a proposta',
+    'error-error-clients_group'     => 'Selecione o grupo de cliente para a proposta',
 
     // Controller
     'create-new'                    => 'Criar novo ',

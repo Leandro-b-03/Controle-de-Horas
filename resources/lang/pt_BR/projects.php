@@ -29,7 +29,6 @@ return [
     'error-last_name'               => 'Descri&ccedil;&atilde;o longa inv&aacute;lida',
     'error-manager'                 => 'Selecione um gerente para o projeto',
     'error-clients'                 => 'Selecione um cliente para o projeto',
-    'char_left'                     => 'caract&eacute;res restantes',
 
     // Controller
     'create-new'                    => 'Criar novo ',

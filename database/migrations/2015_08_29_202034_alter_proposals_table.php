@@ -3,7 +3,7 @@
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class ProposalsTypesTable extends Migration
+class AlterProposalsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -12,11 +12,8 @@ class ProposalsTypesTable extends Migration
      */
     public function up()
     {
-        Schema::create('proposals_types', function (Blueprint $table) {
-            $table->increments('id');
-            $table->string('name');
-            $table->string('description');
-            $table->timestamps();
+        Schema::table('proposals', function (Blueprint $table) {
+            //
         });
     }
 
@@ -27,6 +24,8 @@ class ProposalsTypesTable extends Migration
      */
     public function down()
     {
-        Schema::drop('proposals_types');
+        Schema::table('proposals', function (Blueprint $table) {
+            //
+        });
     }
 }

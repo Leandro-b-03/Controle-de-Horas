@@ -22,7 +22,9 @@ return [
     'ph-email'                      => 'E-mail do tarefa',
     'search-team-name'              => 'Pesquisar nome da equipe',
     'error-name'                    => 'O nome do tarefa precisa ser alfanum&eacute;rico e deve conter de 3 a 12 caract&eacute;res)',
-    'error-responsible'             => 'O nome do respons&aacute;vel deve ter de 3 a 80 caract&eacute;res',
+    'error-projects'                => 'Selecione um projeto',
+    'error-cycle'                   => 'Selecione um ciclo',
+    'error-teams'                   => 'Selecione ao menos uma equipe',
 
     // Controller
     'create-new'                    => 'Criar novo ',
@@ -39,5 +41,6 @@ return [
 
     // Table
     'title-name'                    => 'Nome do tarefa',
+    'title-teams'                   => 'Equipes',
     'title-created_at'              => 'Tarefa criada em',
 ];

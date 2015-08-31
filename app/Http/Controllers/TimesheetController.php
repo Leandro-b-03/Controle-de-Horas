@@ -40,16 +40,20 @@ class TimesheetController extends Controller
         $today = new Carbon();
         $data['today'] = $today;
 
-        $lhs = explode(':', $timesheet_today->lunch_start);
-        $lunch_start = Carbon::createFromTime($lhs[0], $lhs[1], $lhs[2], 'America/Sao_Paulo');
-                    
-        $lhe = explode(':', $timesheet_today->lunch_end);
-        $lunch_end = Carbon::createFromTime($lhe[0], $lhe[1], $lhe[2], 'America/Sao_Paulo');
+        if($timesheet_today){
+            if($timesheet_today->lunch_start != null) {
+                $lhs = explode(':', $timesheet_today->lunch_start);
+                $lunch_start = Carbon::createFromTime($lhs[0], $lhs[1], $lhs[2], 'America/Sao_Paulo');
+                            
+                $lhe = explode(':', $timesheet_today->lunch_end);
+                $lunch_end = Carbon::createFromTime($lhe[0], $lhe[1], $lhe[2], 'America/Sao_Paulo');
 
-        d($lunch_start);
-        d($lunch_end);
+                d($lunch_start);
+                d($lunch_end);
 
-        d($lunch_start->diffInHours($lunch_end));
+                d($lunch_start->diffInHours($lunch_end));
+            }
+        }
 
         $week = [];
 
@@ -171,8 +175,6 @@ class TimesheetController extends Controller
         } else if (isset($inputs['lunch_start'])) {
             $timesheet = Timesheet::find($inputs['id']);
 
-            //die(d($timesheet));
-
             $timesheet->lunch_start = $data->toTimeString();
 
             if ($timesheet->save()) {
@@ -190,11 +192,17 @@ class TimesheetController extends Controller
             $lhe = explode(':', $timesheet->lunch_end);
             $lunch_end = Carbon::createFromTime($lhe[0], $lhe[1], $lhe[2], 'America/Sao_Paulo');
 
-            $timesheet->lunch_hours = $lunch_start->diffInHours($lunch_end);
+            $total_time = $lunch_start->diffInHours($lunch_end);
 
-            if ($timesheet->save()) {
-                DB::commit();
-                return response()->json($timesheet);
+            if($total_time > 1.0) {
+                $timesheet->lunch_hours = $total_time;
+
+                if ($timesheet->save()) {
+                    DB::commit();
+                    return response()->json($timesheet);
+                }
+            } else {
+                return response()->json(['error' => 'true', 'message' => Lang::get('timesheets.error-lunch')]);
             }
         }
     }

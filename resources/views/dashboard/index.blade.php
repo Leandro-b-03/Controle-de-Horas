@@ -437,50 +437,22 @@
                 </div><!-- /.box-header -->
                 <div class="box-body">
                   <ul class="products-list product-list-in-box">
+                    @if (isset($data['new_projects']))
+                    @foreach ($data['new_projects'] as $new_project)
                     <li class="item">
                       <div class="product-img">
-                        <img src="dist/img/default-50x50.gif" alt="Product Image">
+                        {{-- <img src="dist/img/default-50x50.gif" alt="Product Image"> --}}
+                        <span class="project-icon fa fa-suitcase"></span>
                       </div>
                       <div class="product-info">
-                        <a href="javascript::;" class="product-title">Samsung TV <span class="label label-warning pull-right">$1800</span></a>
+                        <a href="javascript::;" class="product-title">{!! $new_project->name !!} <span class="label label-warning pull-right">{!! date('d/m/Y', strtotime($new_project->created_at)) !!}</span></a>
                         <span class="product-description">
-                          Samsung 32" 1080p 60Hz LED Smart HDTV.
+                          {!! $new_project->description !!}
                         </span>
                       </div>
                     </li><!-- /.item -->
-                    <li class="item">
-                      <div class="product-img">
-                        <img src="dist/img/default-50x50.gif" alt="Product Image">
-                      </div>
-                      <div class="product-info">
-                        <a href="javascript::;" class="product-title">Bicycle <span class="label label-info pull-right">$700</span></a>
-                        <span class="product-description">
-                          26" Mongoose Dolomite Men's 7-speed, Navy Blue.
-                        </span>
-                      </div>
-                    </li><!-- /.item -->
-                    <li class="item">
-                      <div class="product-img">
-                        <img src="dist/img/default-50x50.gif" alt="Product Image">
-                      </div>
-                      <div class="product-info">
-                        <a href="javascript::;" class="product-title">Xbox One <span class="label label-danger pull-right">$350</span></a>
-                        <span class="product-description">
-                          Xbox One Console Bundle with Halo Master Chief Collection.
-                        </span>
-                      </div>
-                    </li><!-- /.item -->
-                    <li class="item">
-                      <div class="product-img">
-                        <img src="dist/img/default-50x50.gif" alt="Product Image">
-                      </div>
-                      <div class="product-info">
-                        <a href="javascript::;" class="product-title">PlayStation 4 <span class="label label-success pull-right">$399</span></a>
-                        <span class="product-description">
-                          PlayStation 4 500GB Console (PS4)
-                        </span>
-                      </div>
-                    </li><!-- /.item -->
+                    @endforeach
+                    @endif
                   </ul>
                 </div><!-- /.box-body -->
                 <div class="box-footer text-center">

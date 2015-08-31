@@ -6,10 +6,14 @@ use Lang;
 use Mail;
 use App\User;
 use App\Team;
+use App\Proposal;
 use PusherManager;
 use Carbon\Carbon;
+use App\ClientGroup;
 use App\ProjectTime;
+use App\ProposalType;
 use App\Http\Requests;
+use App\ProposalVersion;
 use App\UserNotification;
 use Illuminate\Http\Request;
 
@@ -52,6 +56,30 @@ class GeneralController extends Controller {
         $inputs = $request->all();
 
         return response()->json($this->createMessage($inputs['type'], $inputs['name'], $inputs['kind'], (isset($inputs['message']) ? $inputs['message'] : '')));
+    }
+
+    /**
+     * Generates a name to project
+     *
+     * @return Array with message
+     */
+    public function projectNameJSON(Request $request)
+    {
+        // Get the data receive from ajax.
+        $inputs = $request->all();
+
+        $name = "-";
+
+        $proposal = Proposal::find($inputs['id']);
+        $proposal_version = ProposalVersion::find($proposal->id)->where('active', 1)->first();
+        $name .= $proposal->client()->getResults()->name;
+        $name .= "-" . $proposal->type()->getResults()->name;
+        $name .= "-" . $proposal->clientGroup()->getResults()->name;
+        $name .= "-" . $proposal->name;
+        $name .= "-" . Carbon::now()->format('m/y');
+        $name .= " " . $proposal_version->version;
+
+        return strtoupper($name);
     }
 
     public function verifyEmailJSON(Request $request)
@@ -188,6 +216,20 @@ class GeneralController extends Controller {
         $projects_times = ProjectTime::where('project_id', $id)->get();
 
         return response()->json($projects_times);
+    }
+
+    /**
+     * Generates an array with parameters to client groups
+     *
+     * @return Json with client groups
+     */
+    public function getClientGroup(Request $request)
+    {
+        $id = $request->get('id');
+
+        $client_group = ClientGroup::where('client_id', $id)->get();
+
+        return response()->json($client_group);
     }
 
     /* Statics Functions */

@@ -328,3 +328,12 @@ table thead tr th.start, table thead tr th.end {
 	height: 328px;
 	width: 100%;
 }
+
+.label-checkbox-fix {
+	padding-left: 0px !important;
+	padding-right: 20px;
+}
+
+.project-icon {
+	font-size: 50px !important;
+}

@@ -14,8 +14,8 @@
     <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css" rel="stylesheet" type="text/css" />
     <!-- Ionicons -->
     <link href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css" rel="stylesheet" type="text/css" />
-    <!-- Theme style -->
-    {!! Html::style("library/adminLTE/dist/css/AdminLTE.min.css") !!}
+    <!-- Select2 -->
+    {!! Html::style("library/adminLTE/plugins/select2/select2.min.css") !!}
     <!-- AdminLTE Skins. Choose a skin from the css/skins 
          folder instead of downloading all of them to reduce the load. -->
     {!! Html::style("library/adminLTE/dist/css/skins/_all-skins.min.css") !!}
@@ -23,6 +23,11 @@
     <!-- iCheck -->
     {!! Html::style("library/adminLTE/plugins/iCheck/square/yellow.css") !!}
     {!! Html::style("library/adminLTE/plugins/iCheck/flat/yellow.css") !!}
+    <!-- Theme style -->
+    {!! Html::style("library/adminLTE/dist/css/AdminLTE.min.css") !!}
+    <!-- AdminLTE Skins. Choose a skin from the css/skins
+         folder instead of downloading all of them to reduce the load. -->
+    {!! Html::style("library/adminLTE/dist/css/skins/_all-skins.min.css") !!}
 
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -156,7 +161,7 @@
                     </p>
                   </li>
                   <!-- Menu Body -->
-                  <li class="user-body">
+                  {{-- <li class="user-body">
                     <div class="col-xs-4 text-center">
                       <a href="#">Followers</a>
                     </div>
@@ -166,11 +171,11 @@
                     <div class="col-xs-4 text-center">
                       <a href="#">Friends</a>
                     </div>
-                  </li>
+                  </li> --}}
                   <!-- Menu Footer-->
                   <li class="user-footer">
                     <div class="pull-left">
-                      <a href="#" class="btn btn-default btn-flat">Profile</a>
+                      <a href="{!! URL::to('profile/' . Auth::user()->id) !!}" class="btn btn-default btn-flat">Profile</a>
                     </div>
                     <div class="pull-right">
                       <a href="{!! URL::to('auth/logout') !!}" class="btn btn-danger btn-flat">Sair da Sessão</a>
@@ -433,6 +438,8 @@
     {!! Html::script("library/adminLTE/plugins/fastclick/fastclick.min.js") !!}
     <!-- iCheck -->
     {!! Html::script("library/adminLTE/plugins/iCheck/icheck.min.js") !!}
+    <!-- Select2 -->
+    {!! Html::script("library/adminLTE/plugins/select2/select2.full.min.js") !!}
     <!-- jQuery-Play-sound -->
     {!! Html::script("library/adminLTE/plugins/jquery-play-sound/jquery.playSound.js") !!}
     <!-- Dashboard -->
