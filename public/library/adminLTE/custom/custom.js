@@ -123,6 +123,13 @@ $(function () {
     }
 });
 
+// check for Geolocation support
+if (navigator.geolocation) {
+  console.log('Geolocation is supported!');
+} else {
+  console.log('Geolocation is not supported for this Browser/OS version yet.');
+}
+
 function responsive_filemanager_callback(field_id){
     var url = $('#'+field_id).val();
     var url_web = location.origin;
