@@ -70,7 +70,7 @@ Route::group(['middleware' => 'auth'], function () {
     Entrust::routeNeedsPermission('projects/delete', 'ProjectController@delete');
 
     Route::resource('tasks', 'TaskController');
-    Entrust::routeNeedsPermission('tasks', 'TaskController@index1', Redirect::to('/'), true);
+    Entrust::routeNeedsPermission('tasks', 'TaskController@index');
     Entrust::routeNeedsPermission('tasks/create', 'TaskController@create');
     Entrust::routeNeedsPermission('tasks/*/edit', 'TaskController@edit');
     Entrust::routeNeedsPermission('tasks/delete', 'TaskController@delete');
