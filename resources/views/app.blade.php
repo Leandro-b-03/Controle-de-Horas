@@ -432,21 +432,23 @@
 
     <!-- Bootstrap 3.3.2 JS -->
     {!! Html::script("library/adminLTE/bootstrap/js/bootstrap.min.js") !!}
-    <!-- SlimScroll -->
-    {!! Html::script("library/adminLTE/plugins/slimScroll/jquery.slimscroll.min.js") !!}
     <!-- FastClick -->
     {!! Html::script("library/adminLTE/plugins/fastclick/fastclick.min.js") !!}
+    <!-- AdminLTE App -->
+    {!! Html::script("library/adminLTE/dist/js/app.min.js") !!}
+    <!-- SlimScroll -->
+    {!! Html::script("library/adminLTE/plugins/slimScroll/jquery.slimscroll.min.js") !!}
     <!-- iCheck -->
     {!! Html::script("library/adminLTE/plugins/iCheck/icheck.min.js") !!}
     <!-- Select2 -->
     {!! Html::script("library/adminLTE/plugins/select2/select2.full.min.js") !!}
     <!-- jQuery-Play-sound -->
     {!! Html::script("library/adminLTE/plugins/jquery-play-sound/jquery.playSound.js") !!}
-    <!-- Dashboard -->
-    {!! Html::script("library/adminLTE/dist/js/demo.js") !!}
     @section('scripts')
     @show
     <script>
+    	var settings = {!! (Auth::user()->settings()->getResults()) ? '"' . Auth::user()->setting()->getResults()->toJSON() . '"' : '{}' !!};
+
       $.ajaxSetup({
           headers: {
               'X-CSRF-TOKEN':'{!! csrf_token() !!}'
@@ -476,9 +478,11 @@
     </script>
     <!-- Custom PusherChatWidget.js -->
     {!! Html::script("library/adminLTE/custom/CustomPusherChatWidget.js") !!}
+    <!-- Dashboard -->
+    <!-- {!! Html::script("library/adminLTE/dist/js/demo.js") !!} -->
+    <!-- Dashboard -->
+    {!! Html::script("library/adminLTE/custom/demo.js") !!}
     <!-- Custom script -->
     {!! Html::script("library/adminLTE/custom/custom.js") !!}
-    <!-- AdminLTE App -->
-    {!! Html::script("library/adminLTE/dist/js/app.min.js") !!}
   </body>
 </html>

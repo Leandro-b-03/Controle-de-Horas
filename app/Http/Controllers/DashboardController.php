@@ -26,11 +26,11 @@ class DashboardController extends Controller
         $data['location'] = $location;
 
         // New Users
-        $new_users = User::orderBy('created_at')->take(8)->get();
+        $new_users = User::orderBy('created_at', 'desc')->take(8)->get();
         $data['new_users'] = $new_users;
 
         // New Projects
-        $new_projects = Project::orderBy('created_at')->take(8)->get();
+        $new_projects = Project::orderBy('created_at', 'desc')->take(8)->get();
         $data['new_projects'] = $new_projects;
 
         // Return the dashboard view.

@@ -11,6 +11,7 @@ use PusherManager;
 use Carbon\Carbon;
 use App\ClientGroup;
 use App\ProjectTime;
+use App\UserSetting;
 use App\ProposalType;
 use App\Http\Requests;
 use App\ProposalVersion;
@@ -228,6 +229,26 @@ class GeneralController extends Controller {
         $id = $request->get('id');
 
         $client_group = ClientGroup::where('client_id', $id)->get();
+
+        return response()->json($client_group);
+    }
+
+    /**
+     * Save the user settings
+     *
+     * @return Json with message true or false
+     */
+    public function saveSettings(Request $request)
+    {
+        $inputs = $request->all();
+
+        $settings = UserSetting::where('user_id', Auth::user()->id);
+
+        if ($settings) {
+            foreach ($inputs as $key => $value) {
+                # code...
+            }
+        }
 
         return response()->json($client_group);
     }

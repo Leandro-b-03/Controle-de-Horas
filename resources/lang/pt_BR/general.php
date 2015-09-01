@@ -148,4 +148,8 @@ return [
     ''                              => '',
     ''                              => '',
 
+    // Date
+    'date-today'                    => 'Hoje',
+    'date-yesterday'                => 'Ontem',
+
 ];
