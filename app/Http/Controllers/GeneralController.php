@@ -2,6 +2,7 @@
 
 use DB;
 use URL;
+use Auth;
 use Lang;
 use Mail;
 use App\User;
@@ -15,6 +16,7 @@ use App\UserSetting;
 use App\ProposalType;
 use App\Http\Requests;
 use App\ProposalVersion;
+use App\UserLocalization;
 use App\UserNotification;
 use Illuminate\Http\Request;
 
@@ -242,15 +244,69 @@ class GeneralController extends Controller {
     {
         $inputs = $request->all();
 
-        $settings = UserSetting::where('user_id', Auth::user()->id);
+        $settings = UserSetting::where('user_id', Auth::user()->id)->get()->first();
 
-        if ($settings) {
-            foreach ($inputs as $key => $value) {
-                # code...
+        $data = [];
+        
+        if ($settings->count() != 0) {
+            foreach($inputs as $input => $value) {
+                $settings->{$input} = $value;
+            }
+            if ($settings->save()) {
+                $data['success'] = true;
+                $data['message'] = 'salvo';
+            } else {
+                $data['error'] = true;
+                $data['message'] = 'não salvo';
+            }
+        } else {
+            if (UserSetting::create( $inputs )) {
+                $data['success'] = true;
+                $data['message'] = 'salvo';
+            } else {
+                $data['error'] = true;
+                $data['message'] = 'não salvo';
             }
         }
 
-        return response()->json($client_group);
+        return response()->json($data);
+    }
+
+    /**
+     * Save the user position
+     *
+     * @return Json with message true or false
+     */
+    public function saveLocalization(Request $request)
+    {
+        $inputs = $request->all();
+
+        $localization = UserLocalization::where('user_id', Auth::user()->id)->orderBy('created_at', 'desc')->get()->first();
+
+        $data = [];
+        
+        if ($localization) {
+            if (substr($localization->latitude, 0, 7) != substr($inputs['latitude'], 0, 7)
+                && substr($localization->longitude, 0, 7) != substr($inputs['longitude'], 0, 7)) {
+                if (UserLocalization::create ($inputs)) {
+                    $data['success'] = true;
+                    $data['message'] = 'salvo';
+                } else {
+                    $data['error'] = true;
+                    $data['message'] = 'não salvo';
+                }
+            }
+        } else {
+            if (UserLocalization::create ($inputs)) {
+                $data['success'] = true;
+                $data['message'] = 'salvo';
+            } else {
+                $data['error'] = true;
+                $data['message'] = 'não salvo';
+            }
+        }
+
+        return response()->json($data);
     }
 
     /* Statics Functions */

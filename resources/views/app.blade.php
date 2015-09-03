@@ -16,6 +16,8 @@
     <link href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css" rel="stylesheet" type="text/css" />
     <!-- Select2 -->
     {!! Html::style("library/adminLTE/plugins/select2/select2.min.css") !!}
+    <!-- PNotify -->
+    {!! Html::style("library/adminLTE/plugins/pnotify/src/pnotify.core.css") !!}
     <!-- AdminLTE Skins. Choose a skin from the css/skins 
          folder instead of downloading all of them to reduce the load. -->
     {!! Html::style("library/adminLTE/dist/css/skins/_all-skins.min.css") !!}
@@ -40,7 +42,7 @@
     <!-- Custom style -->
     {!! Html::style("library/adminLTE/custom/custom.css") !!}
   </head>
-  <body class="skin-yellow sidebar-mini">
+  <body class="{!! Auth::user()->settings()->getResults()->skin ? Auth::user()->settings()->getResults()->skin : 'skin-yellow' !!} {!! Auth::user()->settings()->getResults()->boxed ? Auth::user()->settings()->getResults()->boxed : '' !!} {!! Auth::user()->settings()->getResults()->sidebar_toggle ? Auth::user()->settings()->getResults()->sidebar_toggle : '' !!} sidebar-mini">
     <!-- Site wrapper -->
     <div class="wrapper">
       <div class="notification"></div>
@@ -257,8 +259,8 @@
         <strong>Copyright &copy; 2015 <a href="http://www.svlabs.com.br">SVLabs</a>.</strong> Todos os direitos reservados.
       </footer>
       
-<!-- Control Sidebar -->
-      <aside class="control-sidebar control-sidebar-dark">
+			<!-- Control Sidebar -->
+      <aside class="control-sidebar control-sidebar-{!! (Auth::user()->settings()->getResults()->right_sidebar_white == 'true') ? 'light' : 'dark' !!}">
         <!-- Create the tabs -->
         <ul class="nav nav-tabs nav-justified control-sidebar-tabs">
           <li><a href="#control-sidebar-home-tab" data-toggle="tab"><i class="fa fa-home"></i></a></li>
@@ -442,12 +444,14 @@
     {!! Html::script("library/adminLTE/plugins/iCheck/icheck.min.js") !!}
     <!-- Select2 -->
     {!! Html::script("library/adminLTE/plugins/select2/select2.full.min.js") !!}
+    <!-- PNotify -->
+    {!! Html::script("library/adminLTE/plugins/pnotify/src/pnotify.core.js") !!}
     <!-- jQuery-Play-sound -->
     {!! Html::script("library/adminLTE/plugins/jquery-play-sound/jquery.playSound.js") !!}
     @section('scripts')
     @show
     <script>
-    	var settings = {!! (Auth::user()->settings()->getResults()) ? '"' . Auth::user()->setting()->getResults()->toJSON() . '"' : '{}' !!};
+    	var settings = $.parseJSON('{!! Auth::user()->settings()->getResults() !!}');
 
       $.ajaxSetup({
           headers: {
@@ -455,9 +459,7 @@
           }
       });
 
-      var user = $.parseJSON('{!! json_encode(Auth::user()); !!}');
-
-      var pusher = new Pusher('2a865cce883db16362c7');
+      var user = $.parseJSON('{!! Auth::user() !!}');
 
       var dataTableLang = [];
 

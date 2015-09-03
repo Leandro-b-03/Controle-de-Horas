@@ -16,7 +16,7 @@ class UserSetting extends Model
 	 *
 	 * @var array
 	 */
-	protected $fillable = ['user_id', 'user', 'version', 'send', 'date_send', 'date_return', 'authorise', 'data_authorise', 'signing_board', 'date_signing_board', 'active'];
+	protected $fillable = ['user_id', 'skin', 'boxed', 'sidebar_toggle', 'right_sidebar_slide', 'right_sidebar_white'];
 
     /**
      * Get the user record associated with the project.

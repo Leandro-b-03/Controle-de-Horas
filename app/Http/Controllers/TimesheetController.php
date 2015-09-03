@@ -8,6 +8,7 @@ use DB;
 use Auth;
 use Lang;
 use Calendar;
+use App\Tasks;
 use App\Timesheet;
 use Carbon\Carbon;
 use App\Http\Requests;
@@ -47,11 +48,6 @@ class TimesheetController extends Controller
                             
                 $lhe = explode(':', $timesheet_today->lunch_end);
                 $lunch_end = Carbon::createFromTime($lhe[0], $lhe[1], $lhe[2], 'America/Sao_Paulo');
-
-                d($lunch_start);
-                d($lunch_end);
-
-                d($lunch_start->diffInHours($lunch_end));
             }
         }
 
@@ -125,6 +121,9 @@ class TimesheetController extends Controller
         sort($week);
 
         $data['week'] = $week;
+
+        // Get all tasks
+        $tasks = Tasks::where('teams', 'like', Auth::user()->teams)-:get();
 
         // Return the timesheets view.
         return view('timesheet.index')->with('data', $data);

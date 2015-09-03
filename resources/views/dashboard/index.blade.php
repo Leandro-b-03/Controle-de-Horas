@@ -483,6 +483,8 @@
 
           coord = 'https://www.google.com/maps/embed/v1/place?q=' + startPos.coords.latitude + ',' + startPos.coords.longitude + '&key=AIzaSyCp3jpbdeS8Ccf5zvqQ5lOFQFTeP3FGero';
 
+          savePosition(startPos.coords.latitude, startPos.coords.longitude);
+
           $('#map').attr('src', coord);
         };
 

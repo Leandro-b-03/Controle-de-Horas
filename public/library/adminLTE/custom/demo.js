@@ -57,17 +57,17 @@
           + "<div class='form-group'>"
           + "<label class='control-sidebar-subheading'>"
           + "<input type='checkbox' data-layout='fixed' class='pull-right'/> "
-          + "Fixed layout"
+          + "Layout Fixo"
           + "</label>"
-          + "<p>Activate the fixed layout. You can't use fixed and boxed layouts together</p>"
+          + "<p>Ative o layout fixo. Você não pode usar o layout fixo e box juntos</p>"
           + "</div>"
           //Boxed layout
           + "<div class='form-group'>"
           + "<label class='control-sidebar-subheading'>"
           + "<input type='checkbox' data-layout='layout-boxed'class='pull-right'/> "
-          + "Boxed Layout"
+          + "Layout Box"
           + "</label>"
-          + "<p>Activate the boxed layout</p>"
+          + "<p>Ative o layout box</p>"
           + "</div>"
           //Sidebar Toggle
           + "<div class='form-group'>"
@@ -78,13 +78,13 @@
           + "<p>Toggle the left sidebar's state (open or collapse)</p>"
           + "</div>"
           //Sidebar mini expand on hover toggle
-          + "<div class='form-group'>"
-          + "<label class='control-sidebar-subheading'>"
-          + "<input type='checkbox' data-enable='expandOnHover' class='pull-right'/> "
-          + "Sidebar Expand on Hover"
-          + "</label>"
-          + "<p>Let the sidebar mini expand on hover</p>"
-          + "</div>"
+          // + "<div class='form-group'>"
+          // + "<label class='control-sidebar-subheading'>"
+          // + "<input type='checkbox' data-enable='expandOnHover' class='pull-right'/> "
+          // + "Sidebar Expand on Hover"
+          // + "</label>"
+          // + "<p>Let the sidebar mini expand on hover</p>"
+          // + "</div>"
           //Control Sidebar Toggle
           + "<div class='form-group'>"
           + "<label class='control-sidebar-subheading'>"
@@ -96,7 +96,7 @@
           //Control Sidebar Skin Toggle
           + "<div class='form-group'>"
           + "<label class='control-sidebar-subheading'>"
-          + "<input type='checkbox' data-sidebarskin='toggle' class='pull-right'/> "
+          + "<input type='checkbox' data-sidebarskin='toggle' class='pull-right' " + (settings.right_sidebar_white == 'true' ? "checked='checked'" : "") + " /> "
           + "Toggle Right Sidebar Skin"
           + "</label>"
           + "<p>Toggle between dark and light skins for the right sidebar</p>"
@@ -296,18 +296,43 @@
     });
 
     //Add the layout manager
-    $("[data-layout]").on('ifChecked ifUnchecked', function () {
+    $("[data-layout]").on('ifChecked ifUnchecked', function (event) {
       change_layout($(this).data('layout'));
-      settings.boxed = $(this).data('layout');
+
+      if($(this).data('layout') == "sidebar-collapse"){
+        if (event.type == 'ifChecked')
+          settings.sidebar_toggle = $(this).data('layout');
+        else
+          settings.sidebar_toggle = "";
+      } else {
+        if($(this).data('layout') == 'fixed') {
+          $("[data-layout=\"layout-boxed\"]").iCheck('disable');
+        } else {
+          $("[data-layout=\"fixed\"]").iCheck('disable');
+        }
+
+        if (event.type != 'ifUnchecked') {
+          settings.boxed = $(this).data('layout');
+        } else {
+          $("[data-layout=\"layout-boxed\"]").iCheck('enable');
+          $("[data-layout=\"fixed\"]").iCheck('enable');
+          settings.boxed = '';
+        }
+      }
 
       salveSettings();
     });
 
-    $("[data-controlsidebar]").on('ifChecked ifUnchecked', function () {
+    $("[data-controlsidebar]").on('ifChecked ifUnchecked', function (event) {
       change_layout($(this).data('controlsidebar'));
       var slide = !AdminLTE.options.controlSidebarOptions.slide;
       AdminLTE.options.controlSidebarOptions.slide = slide;
-      settings.right_sidebar_slide = slide;
+      
+      if (event.type == 'ifChecked')
+        settings.right_sidebar_slide = $(this).data('controlsidebar');
+      else
+        settings.right_sidebar_slide = "";
+
       if (!slide)
         $('.control-sidebar').removeClass('control-sidebar-open');
 
@@ -329,14 +354,14 @@
       salveSettings();
     });
 
-    $("[data-enable='expandOnHover']").on('ifChecked ifUnchecked', function () {
-      $(this).attr('disabled', true);
-      AdminLTE.pushMenu.expandOnHover();
-      if (!$('body').hasClass('sidebar-collapse'))
-        $("[data-layout='sidebar-collapse']").click();
+    // $("[data-enable='expandOnHover']").on('ifChecked ifUnchecked', function () {
+    //   $(this).attr('disabled', true);
+    //   AdminLTE.pushMenu.expandOnHover();
+    //   if (!$('body').hasClass('sidebar-collapse'))
+    //     $("[data-layout='sidebar-collapse']").click();
 
-      salveSettings();
-    });
+    //   salveSettings();
+    // });
 
     // Reset options
     if ($('body').hasClass('fixed')) {
@@ -348,8 +373,14 @@
     if ($('body').hasClass('sidebar-collapse')) {
       $("[data-layout='sidebar-collapse']").attr('checked', 'checked');
     }
+    if (settings.right_sidebar_slide != "") {
+      var slide = !AdminLTE.options.controlSidebarOptions.slide;
+      AdminLTE.options.controlSidebarOptions.slide = slide;
+      $("[data-controlsidebar]").attr('checked', 'checked');
+    }
 
     function salveSettings() {
+      console.log(settings);
       $.ajax({
         url: '/general/saveSettings',
         data: settings,
@@ -366,6 +397,5 @@
         }
       });
     }
-
   }
 })(jQuery, $.AdminLTE);

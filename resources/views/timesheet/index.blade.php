@@ -55,12 +55,19 @@
             <tbody>
                 @foreach($data['week'] as $day)
                 <tr class="{!! ($day['day']->dayOfWeek === 0 || $day['day']->dayOfWeek === 6 ?  'weekend' : '') !!} {!! ($day['day']->isSameDay($data['today']) ? 'today active' : '') !!}">
-                    <td>{!! $day['day']->format('j') !!}</td>
+                    <td>{!! $day['day']->format('d') !!}</td>
                     <td>{!! $day['day']->format('l') !!}</td>
                     <td {!! ($day['day']->isSameDay($data['today']) ? 'id="start_now"' : '') !!}>{!! ($day['workday'] ? '<p>' . $day['workday']->start . '</p>' : ($day['day']->isSameDay($data['today']) ? '<a id="start" class="btn btn-primary" ><span class="fa fa-calendar-plus-o"></span> ' . Lang::get('timesheets.start') . '</a>' : '---')) !!}</td>
                     <td {!! ($day['day']->isSameDay($data['today']) ? 'id="lunch_time"' : '') !!}>{!! $day['lunch'] !!}</td>
-                    <td></td>
-                    <td></td>
+                    <td>{!! ($day['workday'] ? '<a id="start" class="btn btn-primary" ><span class="fa fa-clock-o"></span> ' . Lang::get('timesheets.end') . '</a>' : '---') !!}</td>
+                    <td>
+                        @if ($day['workday'])
+                        <select id="" class="" data-validation="required" data-validation-error-msg="{!! Lang::get('proposals.error-clients') !!}" required>
+                            <option value="">{!! Lang::get('general.select') !!}</option>
+                        </select>
+                        <a id="start" class="btn btn-primary"><span class="fa fa-calendar-plus-o"></span> {!! Lang::get('timesheets.start') !!}</a>
+                        @endif
+                    </td>
                 </tr>
                 @endforeach
             </tbody>
@@ -128,12 +135,21 @@
                 type: "POST",
                 success: function(data) {
                     data = JSON.parse(data);
-                    $('#lunch_end').remove();
+                    if (!data.error) {
+                        $('#lunch_end').remove();
 
-                    var html = '<p>' + data.start + '</p>';
-                    $('#lunch_time').append(html);
+                        var html = '<p>' + data.start + '</p>';
+                        $('#lunch_time').append(html);
 
-                    timesheet = data;
+                        timesheet = data;
+                    } else {
+                        new PNotify({
+                            type: "error",
+                            title: "{!! Lang::get('general.failed') !!}",
+                            text: data.message,
+                            addclass: "stack-bottomleft"
+                        });
+                    }
                 }
             });
         })

@@ -57,6 +57,8 @@ Route::group(['middleware' => 'auth'], function () {
 
     Route::get('general/saveSettings', 'GeneralController@saveSettings');
 
+    Route::get('general/saveLocalization', 'GeneralController@saveLocalization');
+
     Route::get('profile/{id}', 'UserController@show');
 
     Route::resource('proposals', 'ProposalController');
