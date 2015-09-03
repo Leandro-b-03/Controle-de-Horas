@@ -181,7 +181,6 @@ function createNotification(notification) {
   return new_message;
 }
 
-
 var original_title = document.title;
 
 function titleCounter(sound) {
@@ -195,6 +194,24 @@ function titleCounter(sound) {
 
   if (sound)
     $.playSound('library/adminLTE/sounds/alert');
+}
+
+function savePosition(latitude, longitude) {
+  $.ajax({
+    url: '/general/saveLocalization',
+    data: { user_id:user.id, latitude: latitude, longitude: longitude },
+    type: "GET",
+    success: function(data) {
+      var settings = JSON.parse(data);
+
+      if (settings.error) {
+        alert(error);
+      } else {
+        $('#client_group_id').prop( "disabled", true ).val($("#target option:first").val());
+        $('#client_group_id').find('option[value!=""]').remove();
+      }
+    }
+  });
 }
 
 titleCounter(false);

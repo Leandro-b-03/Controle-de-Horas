@@ -47,11 +47,6 @@ class TimesheetController extends Controller
                             
                 $lhe = explode(':', $timesheet_today->lunch_end);
                 $lunch_end = Carbon::createFromTime($lhe[0], $lhe[1], $lhe[2], 'America/Sao_Paulo');
-
-                d($lunch_start);
-                d($lunch_end);
-
-                d($lunch_start->diffInHours($lunch_end));
             }
         }
 

@@ -2,21 +2,21 @@
 
 use Illuminate\Database\Eloquent\Model;
 
-class UserSetting extends Model
+class UserLocalization extends Model
 {
     /**
 	 * The database table used by the model.
 	 *
 	 * @var string
 	 */
-	protected $table = 'users_settings';
+	protected $table = 'users_localization';
 
 	/**
 	 * The attributes that are mass assignable.
 	 *
 	 * @var array
 	 */
-	protected $fillable = ['user_id', 'skin', 'boxed', 'sidebar_toggle', 'right_sidebar_slide', 'right_sidebar_white'];
+	protected $fillable = ['user_id', 'latitude', 'longitude'];
 
     /**
      * Get the user record associated with the project.

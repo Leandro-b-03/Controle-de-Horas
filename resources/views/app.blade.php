@@ -40,7 +40,7 @@
     <!-- Custom style -->
     {!! Html::style("library/adminLTE/custom/custom.css") !!}
   </head>
-  <body class="skin-yellow sidebar-mini">
+  <body class="{!! Auth::user()->settings()->getResults()->skin ? Auth::user()->settings()->getResults()->skin : 'skin-yellow' !!} {!! Auth::user()->settings()->getResults()->boxed ? Auth::user()->settings()->getResults()->boxed : '' !!} {!! Auth::user()->settings()->getResults()->sidebar_toggle ? Auth::user()->settings()->getResults()->sidebar_toggle : '' !!} sidebar-mini">
     <!-- Site wrapper -->
     <div class="wrapper">
       <div class="notification"></div>
@@ -257,8 +257,8 @@
         <strong>Copyright &copy; 2015 <a href="http://www.svlabs.com.br">SVLabs</a>.</strong> Todos os direitos reservados.
       </footer>
       
-<!-- Control Sidebar -->
-      <aside class="control-sidebar control-sidebar-dark">
+			<!-- Control Sidebar -->
+      <aside class="control-sidebar control-sidebar-{!! (Auth::user()->settings()->getResults()->right_sidebar_white == 'true') ? 'light' : 'dark' !!}">
         <!-- Create the tabs -->
         <ul class="nav nav-tabs nav-justified control-sidebar-tabs">
           <li><a href="#control-sidebar-home-tab" data-toggle="tab"><i class="fa fa-home"></i></a></li>
@@ -447,7 +447,7 @@
     @section('scripts')
     @show
     <script>
-    	var settings = {!! (Auth::user()->settings()->getResults()) ? '"' . Auth::user()->setting()->getResults()->toJSON() . '"' : '{}' !!};
+    	var settings = $.parseJSON('{!! Auth::user()->settings()->getResults() !!}');
 
       $.ajaxSetup({
           headers: {
@@ -455,7 +455,7 @@
           }
       });
 
-      var user = $.parseJSON('{!! json_encode(Auth::user()); !!}');
+      var user = $.parseJSON('{!! Auth::user() !!}');
 
       var pusher = new Pusher('2a865cce883db16362c7');
 

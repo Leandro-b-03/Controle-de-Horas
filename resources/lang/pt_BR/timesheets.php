@@ -35,11 +35,11 @@ return [
     // Table
     'title-day'                     => 'Dia',
     'title-start'                   => 'Entrada',
-    'title-end'                     => 'Termino',
+    'title-end'                     => 'Saída',
     'title-task'                    => 'Tarefas',
     'title-lunch'                   => 'Almo&ccedil;o',
     'day'                           => 'Dia',
     'start'                         => 'Iniciar',
-    'end'                           => 'Termino',
+    'end'                           => 'Fechar dia',
     'task'                          => 'Tarefas',
 ];
