@@ -8,6 +8,7 @@ use DB;
 use Auth;
 use Lang;
 use Calendar;
+use App\Tasks;
 use App\Timesheet;
 use Carbon\Carbon;
 use App\Http\Requests;
@@ -120,6 +121,9 @@ class TimesheetController extends Controller
         sort($week);
 
         $data['week'] = $week;
+
+        // Get all tasks
+        $tasks = Tasks::where('teams', 'like', Auth::user()->teams)-:get();
 
         // Return the timesheets view.
         return view('timesheet.index')->with('data', $data);

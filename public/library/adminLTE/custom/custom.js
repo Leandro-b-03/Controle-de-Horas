@@ -1,3 +1,7 @@
+var pusher = new Pusher('2a865cce883db16362c7');
+
+PNotify.prototype.options.styling = "fontawesome";
+
 $(function () {
   $.ajaxSetup({
     headers: {

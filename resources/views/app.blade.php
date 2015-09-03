@@ -16,6 +16,8 @@
     <link href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css" rel="stylesheet" type="text/css" />
     <!-- Select2 -->
     {!! Html::style("library/adminLTE/plugins/select2/select2.min.css") !!}
+    <!-- PNotify -->
+    {!! Html::style("library/adminLTE/plugins/pnotify/src/pnotify.core.css") !!}
     <!-- AdminLTE Skins. Choose a skin from the css/skins 
          folder instead of downloading all of them to reduce the load. -->
     {!! Html::style("library/adminLTE/dist/css/skins/_all-skins.min.css") !!}
@@ -442,6 +444,8 @@
     {!! Html::script("library/adminLTE/plugins/iCheck/icheck.min.js") !!}
     <!-- Select2 -->
     {!! Html::script("library/adminLTE/plugins/select2/select2.full.min.js") !!}
+    <!-- PNotify -->
+    {!! Html::script("library/adminLTE/plugins/pnotify/src/pnotify.core.js") !!}
     <!-- jQuery-Play-sound -->
     {!! Html::script("library/adminLTE/plugins/jquery-play-sound/jquery.playSound.js") !!}
     @section('scripts')
@@ -456,8 +460,6 @@
       });
 
       var user = $.parseJSON('{!! Auth::user() !!}');
-
-      var pusher = new Pusher('2a865cce883db16362c7');
 
       var dataTableLang = [];
 
