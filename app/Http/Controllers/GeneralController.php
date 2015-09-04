@@ -248,10 +248,13 @@ class GeneralController extends Controller {
 
         $data = [];
         
-        if ($settings->count() != 0) {
+        if ($settings) {
             foreach($inputs as $input => $value) {
                 $settings->{$input} = $value;
             }
+
+            d($settings);
+
             if ($settings->save()) {
                 $data['success'] = true;
                 $data['message'] = 'salvo';

@@ -79,10 +79,14 @@ class TaskController extends Controller
         );
         
         try {
-            $inputs['teams'] = json_encode($inputs['teams']);
-
             if($validator) {
-                if (Task::create( $inputs )) {
+                $task = Task::create( $inputs );
+                if ($task) {
+                    foreach ($inputs['teams'] as $team){
+
+                    }
+                    
+                    DB::commit();
                     return redirect('tasks')->with('return', GeneralController::createMessage('success', Lang::get('general.' . $this->controller_name), 'create'));
                 } else {
                     DB::rollback();

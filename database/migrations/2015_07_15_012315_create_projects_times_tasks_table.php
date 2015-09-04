@@ -17,7 +17,6 @@ class CreateProjectsTimesTasksTable extends Migration
             $table->integer('project_time_id')->unsigned();
             $table->string('name');
             $table->string('description');
-            $table->json('teams');
             $table->timestamps();
 
             $table->foreign('project_time_id')->references('id')->on('projects_times')->onUpdate('cascade')->onDelete('cascade');

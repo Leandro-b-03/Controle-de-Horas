@@ -11,78 +11,28 @@ class ProjectsTimesTableSeeder extends Seeder {
 	 */
 	public function run()
 	{
-		DB::table('projects_times')->delete();
+		\DB::table('projects_times')->delete();
         
-		DB::table('projects_times')->insert(array (
+		\DB::table('projects_times')->insert(array (
 			0 => 
 			array (
 				'id' => 2,
-				'project_id' => 2,
+				'project_id' => 1,
 				'cycle' => 'Frente',
-				'budget' => '100000.00',
-				'schedule_time' => 100,
-				'created_at' => '2015-07-30 20:24:28',
-				'updated_at' => '2015-07-30 20:24:28',
+				'budget' => '1021100.00',
+				'schedule_time' => 150,
+				'created_at' => '2015-09-03 19:04:05',
+				'updated_at' => '2015-09-03 19:04:05',
 			),
 			1 => 
 			array (
-				'id' => 7,
-				'project_id' => 4,
-				'cycle' => 'Frente',
-				'budget' => '100000.00',
-				'schedule_time' => 100,
-				'created_at' => '2015-07-30 20:28:50',
-				'updated_at' => '2015-07-30 20:28:50',
-			),
-			2 => 
-			array (
-				'id' => 8,
-				'project_id' => 4,
-				'cycle' => 'Planejamento',
-				'budget' => '100000.00',
-				'schedule_time' => 200,
-				'created_at' => '2015-07-30 20:28:50',
-				'updated_at' => '2015-07-30 20:28:50',
-			),
-			3 => 
-			array (
-				'id' => 9,
-				'project_id' => 4,
-				'cycle' => 'Teste',
-				'budget' => '100000.00',
-				'schedule_time' => 200,
-				'created_at' => '2015-07-30 20:28:50',
-				'updated_at' => '2015-07-30 20:28:50',
-			),
-			4 => 
-			array (
-				'id' => 10,
-				'project_id' => 4,
-				'cycle' => 'Reteste',
-				'budget' => '100000.00',
-				'schedule_time' => 200,
-				'created_at' => '2015-07-30 20:28:50',
-				'updated_at' => '2015-07-30 20:28:50',
-			),
-			5 => 
-			array (
-				'id' => 13,
-				'project_id' => 1,
-				'cycle' => 'Frente',
-				'budget' => '10000.00',
-				'schedule_time' => 100,
-				'created_at' => '2015-07-30 20:41:47',
-				'updated_at' => '2015-07-30 20:41:47',
-			),
-			6 => 
-			array (
-				'id' => 14,
+				'id' => 3,
 				'project_id' => 1,
 				'cycle' => 'Planejamento',
-				'budget' => '20000.00',
-				'schedule_time' => 100,
-				'created_at' => '2015-07-30 20:41:47',
-				'updated_at' => '2015-07-30 20:41:47',
+				'budget' => '1000000.00',
+				'schedule_time' => 200,
+				'created_at' => '2015-09-03 19:04:05',
+				'updated_at' => '2015-09-03 19:04:05',
 			),
 		));
 	}
