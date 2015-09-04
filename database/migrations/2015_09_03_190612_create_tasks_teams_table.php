@@ -18,8 +18,8 @@ class CreateTasksTeamsTable extends Migration
             $table->integer('project_time_task_id')->unsigned();
             $table->timestamps();
 
-            $table->foreign('project_time_task_id')->references('id')->on('projects_times_tasks')->onUpdate('cascade')->onDelete('cascade');
             $table->foreign('team_id')->references('id')->on('teams')->onUpdate('cascade')->onDelete('cascade');
+            $table->foreign('project_time_task_id')->references('id')->on('projects_times_tasks')->onUpdate('cascade')->onDelete('cascade');
         });
     }
 

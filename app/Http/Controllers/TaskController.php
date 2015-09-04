@@ -9,6 +9,7 @@ use Lang;
 use App\Task;
 use App\Team;
 use App\Project;
+use App\TaskTeam;
 use App\ProjectTime;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
@@ -77,13 +78,19 @@ class TaskController extends Controller
                 'email' => 'required|email|unique:users'
             ]
         );
-        
+
         try {
             if($validator) {
                 $task = Task::create( $inputs );
                 if ($task) {
-                    foreach ($inputs['teams'] as $team){
+                    foreach ($inputs['teams'] as $team) {
+                        $data['team_id'] = $team;
+                        $data['project_time_task_id'] = $task->id;
 
+                        if (!TaskTeam::create( $data )){
+                            DB::rollback();
+                            return redirect('tasks/create')->withInput()->with('return', GeneralController::createMessage('failed', Lang::get('general.' . $this->controller_name), 'create'));
+                        }
                     }
                     
                     DB::commit();
@@ -123,14 +130,29 @@ class TaskController extends Controller
     {
         // Retrive the task with param $id
         $task = Task::find($id);
-        $data['task'] = $task;
 
-        // Get the project_time
-        $project_time = Project::find($task->projects_time_id)->get();
-        $data['project_time'] = $project_time;
+        if ($task) {
+            $data['task'] = $task;
 
-        // Return the dashboard view.
-        return view('task.create')->with('data', $data);
+            // Get all projects
+            $projects = Project::all();
+            $data['projects'] = $projects;
+
+            // Get the project_time
+            $project_times = ProjectTime::where('project_id', $task->project_id)->get();
+            $data['project_times'] = $project_times;
+
+            // die(d($project_times->first()->id == $task->project_time_id));
+
+            // Get all task teams
+            $task_teams = TaskTeam::where('project_time_task_id', $id)->get();
+            $data['task_teams'] = $task_teams;
+
+            // Return the dashboard view.
+            return view('task.create')->with('data', $data);
+        } else {
+            abort(404);
+        }
     }
 
     /**

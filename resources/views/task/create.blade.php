@@ -68,17 +68,17 @@
                   <select name="project_id" id="project_id" class="form-control" data-validation="required" data-validation-error-msg="{!! Lang::get('tasks.error-projects') !!}" required>
                     <option value="">{!! Lang::get('general.select') !!}</option>
                     @foreach ($data['projects'] as $project)
-                    <option value="{!! $project->id !!}" {!! (isset($data['project']) ? ($data['project']->project()->getResults()->id == $project->id ? 'selected="selected"' : "") : "") !!}>{!! $project->name . $project->name_complement !!}</option>
+                    <option value="{!! $project->id !!}" {!! (isset($data['task']) ? ($data['task']->project_id == $project->id ? 'selected="selected"' : "") : "") !!}>{!! $project->name . $project->name_complement !!}</option>
                     @endforeach
                   </select>
                 </div>
                 <div class="form-group col-xs-4">
                   <label for="project_time_id">{!! Lang::get('projects.cycle') !!}</label>
-                  <select name="project_time_id" id="project_time_id" class="form-control" data-validation="required" data-validation-error-msg="{!! Lang::get('tasks.error-cycle') !!}" required disabled="disabled">
+                  <select name="project_time_id" id="project_time_id" class="form-control" data-validation="required" data-validation-error-msg="{!! Lang::get('tasks.error-cycle') !!}" required {!! (Request::is('tasks/create') ? 'disabled="disabled"' : '') !!}>
                     <option value="">{!! Lang::get('general.select') !!}</option>
-                    @if (Request::is('group-permissions/edit'))
-                    @foreach ($data['projects_times'] as $project_time)
-                    <option value="{!! $project_time->id !!}" {!! (isset($data['project_time']) ? ($data['project_time']->project()->getResults()->id == $project->id ? 'selected="selected"' : "") : "") !!}>{!! $project->name !!}</option>
+                    @if (!Request::is('tasks/create'))
+                    @foreach ($data['project_times'] as $project_time)
+                    <option value="{!! $project_time->id !!}" {!! (isset($data['task']) ? ($data['task']->project_time_id == $project_time->id ? 'selected="selected"' : "") : "") !!}>{!! $project_time->cycle !!}</option>
                     @endforeach
                     @endif
                   </select>
@@ -117,9 +117,9 @@
     {!! Html::script("library/adminLTE/plugins/jQuery-Form-Validator/form-validator/jquery.form-validator.min.js") !!}
 
     <script>
-      if($('#project_id').val()) {
-        getCycle($('#project_id').val())
-      }
+      // if($('#project_id').val()) {
+      //   getCycle($('#project_id').val())
+      // }
 
       $('#project_id').on('change', function() {
         getCycle($(this).val())

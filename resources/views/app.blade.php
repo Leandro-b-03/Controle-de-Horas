@@ -42,7 +42,11 @@
     <!-- Custom style -->
     {!! Html::style("library/adminLTE/custom/custom.css") !!}
   </head>
+  @if(Auth::user()->settings()->getResults())
   <body class="{!! Auth::user()->settings()->getResults()->skin ? Auth::user()->settings()->getResults()->skin : 'skin-yellow' !!} {!! Auth::user()->settings()->getResults()->boxed ? Auth::user()->settings()->getResults()->boxed : '' !!} {!! Auth::user()->settings()->getResults()->sidebar_toggle ? Auth::user()->settings()->getResults()->sidebar_toggle : '' !!} sidebar-mini">
+  @else
+  <body class="skin-yellow sidebar-mini">
+  @endif
     <!-- Site wrapper -->
     <div class="wrapper">
       <div class="notification"></div>
@@ -260,7 +264,7 @@
       </footer>
       
 			<!-- Control Sidebar -->
-      <aside class="control-sidebar control-sidebar-{!! (Auth::user()->settings()->getResults()->right_sidebar_white == 'true') ? 'light' : 'dark' !!}">
+      <aside class="control-sidebar control-sidebar-{!! (Auth::user()->settings()->getResults() ? (Auth::user()->settings()->getResults()->right_sidebar_white == 'true' ? 'light' : 'dark') : 'dark') !!}">
         <!-- Create the tabs -->
         <ul class="nav nav-tabs nav-justified control-sidebar-tabs">
           <li><a href="#control-sidebar-home-tab" data-toggle="tab"><i class="fa fa-home"></i></a></li>
@@ -451,7 +455,7 @@
     @section('scripts')
     @show
     <script>
-    	var settings = $.parseJSON('{!! Auth::user()->settings()->getResults() !!}');
+    	var settings = {!! Auth::user()->settings()->getResults() ? '$.parseJSON(' . Auth::user()->settings()->getResults() . ')' : '{}' !!};
 
       $.ajaxSetup({
           headers: {
