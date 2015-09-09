@@ -9,6 +9,7 @@ use Auth;
 use Lang;
 use Calendar;
 use App\Task;
+use App\Holyday;
 use App\Timesheet;
 use Carbon\Carbon;
 use App\Http\Requests;
@@ -121,6 +122,10 @@ class TimesheetController extends Controller
         sort($week);
 
         $data['week'] = $week;
+
+        // Get all holydays
+        $holydays = Holyday::all();
+        $data['holydays'] = $holydays;
 
         // Get all tasks
         // $tasks = Task::where('teams', 'like', Auth::user()->teams)->get();

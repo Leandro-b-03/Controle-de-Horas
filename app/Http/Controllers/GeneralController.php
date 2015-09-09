@@ -253,8 +253,6 @@ class GeneralController extends Controller {
                 $settings->{$input} = $value;
             }
 
-            d($settings);
-
             if ($settings->save()) {
                 $data['success'] = true;
                 $data['message'] = 'salvo';

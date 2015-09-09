@@ -16,7 +16,7 @@ class Task extends Model
 	 *
 	 * @var array
 	 */
-	protected $fillable = ['name', 'project_id', 'project_time_id', 'description'];
+	protected $fillable = ['name', 'project_id', 'project_time_id'];
 
     /**
      * Get the user record associated with the project_time.

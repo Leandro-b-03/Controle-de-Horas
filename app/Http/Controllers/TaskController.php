@@ -87,7 +87,7 @@ class TaskController extends Controller
                         $data['team_id'] = $team;
                         $data['project_time_task_id'] = $task->id;
 
-                        if (!TaskTeam::create( $data )){
+                        if (!TaskTeam::create( $data )) {
                             DB::rollback();
                             return redirect('tasks/create')->withInput()->with('return', GeneralController::createMessage('failed', Lang::get('general.' . $this->controller_name), 'create'));
                         }
@@ -142,7 +142,9 @@ class TaskController extends Controller
             $project_times = ProjectTime::where('project_id', $task->project_id)->get();
             $data['project_times'] = $project_times;
 
-            // die(d($project_times->first()->id == $task->project_time_id));
+            // Get all projects
+            $teams = Team::all();
+            $data['teams'] = $teams;
 
             // Get all task teams
             $task_teams = TaskTeam::where('project_time_task_id', $id)->get();
@@ -172,7 +174,7 @@ class TaskController extends Controller
         $inputs = $request->all();
 
         try {
-            $inputs['teams'] = json_encode($inputs['teams']);
+            TaskTeam::where('project_time_task_id', $task->id)->delete();
 
             foreach($inputs as $input => $value) {
                 if($task->{$input})
@@ -180,6 +182,16 @@ class TaskController extends Controller
             }
 
             if ($task->save()) {
+                foreach ($inputs['teams'] as $team) {
+                    $data['team_id'] = $team;
+                    $data['project_time_task_id'] = $task->id;
+
+                    if (!TaskTeam::create( $data )) {
+                        DB::rollback();
+                        return redirect('tasks/create')->withInput()->with('return', GeneralController::createMessage('failed', Lang::get('general.' . $this->controller_name), 'create'));
+                    }
+                }
+
                 DB::commit();
                 return redirect('tasks')->with('return', GeneralController::createMessage('success', Lang::get('general.' . $this->controller_name), 'update'));
             } else {
