@@ -1,4 +1,4 @@
-<?php
+<?php/*
 
 use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
@@ -13,6 +13,6 @@ class ExampleTest extends TestCase
      */
     public function testBasicExample()
     {
-        // $this->visit('/')->see('SVLabs');
+        $this->visit('/')->see('SVLabs');
     }
-}
+}*/
