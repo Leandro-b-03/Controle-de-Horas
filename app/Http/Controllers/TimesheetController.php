@@ -104,12 +104,14 @@ class TimesheetController extends Controller
             if ($workday){
                 if ($workday->lunch_start != '00:00:00') {
                     if ($workday->lunch_end != '00:00:00') {
-                        $lunch = '<p>' . $workday->lunch_hours . '</p>';
+                        $hours = floor($workday->lunch_hours / 60);
+                        $minutes = ($workday->lunch_hours % 60);
+                        $lunch = '<p title="' . Lang::get('timesheets.title-lunch') . ': ' . $workday->lunch_start . ' as ' . $workday->lunch_end . '">' . ($hours <= 9 ? "0" . $hours : $hours) . ":" . $minutes . '</p>';
                     } else {
-                        $lunch = '<a id="lunch_end" class="btn btn-primary" ><span class="fa fa-cutlery"></span> ' . Lang::get('timesheets.end') . '</a>';
+                        $lunch = '<a id="lunch_end" class="btn btn-primary" ><span class="fa fa-cutlery"></span> ' . Lang::get('timesheets.lunch_end') . '</a>';
                     }
                 } else {
-                    $lunch = '<a id="lunch_start" class="btn btn-primary" ><span class="fa fa-cutlery"></span> ' . Lang::get('timesheets.start') . '</a>';
+                    $lunch = '<a id="lunch_start" class="btn btn-primary" ><span class="fa fa-cutlery"></span> ' . Lang::get('timesheets.lunch_start') . '</a>';
                 }
             } else {
                 $lunch = '---';
@@ -196,9 +198,13 @@ class TimesheetController extends Controller
             $lhe = explode(':', $timesheet->lunch_end);
             $lunch_end = Carbon::createFromTime($lhe[0], $lhe[1], $lhe[2], 'America/Sao_Paulo');
 
-            $total_time = $lunch_start->diffInHours($lunch_end);
+            // $total_time = $lunch_start->diffInHours($lunch_end);
+            $total_time = $lunch_start->diffInMinutes($lunch_end);
 
-            if($total_time > 1.0) {
+
+
+            // if($total_time > 1.0) {
+            if ($total_time > 0.1) {
                 $timesheet->lunch_hours = $total_time;
 
                 if ($timesheet->save()) {

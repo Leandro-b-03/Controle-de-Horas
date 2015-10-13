@@ -14,7 +14,7 @@ return [
     */
 
     // Labels
-    'error-lunch'                   => 'Voc&ecirc; ainda n&atilde;o completou 1 hora de almoço!',
+    'error-lunch'                   => 'Voc&ecirc; ainda n&atilde;o completou 1 hora de almo&ccedil;o!',
     'error-responsible'             => 'O nome do respons&aacute;vel deve ter de 3 a 80 caract&eacute;res',
     'error-phone'                   => 'O telefone deve ter o formato (11) 11111-111 ou (11) 11111-1111',
     'error-email'                   => 'E-mail inv&aacute;lido',
@@ -39,6 +39,8 @@ return [
     'title-task'                    => 'Tarefas',
     'title-lunch'                   => 'Almo&ccedil;o',
     'day'                           => 'Dia',
+    'lunch_start'                   => 'Iniciar almo&ccedil;o',
+    'lunch_end'                     => 'Fechar almo&ccedil;o',
     'start'                         => 'Iniciar',
     'end'                           => 'Fechar dia',
     'task'                          => 'Tarefas',

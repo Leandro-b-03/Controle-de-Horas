@@ -104,7 +104,7 @@
                     var html = '<p>' + data.start + '</p>';
                     $('#start_now').append(html);
 
-                    $('#lunch_time').html('<a id="lunch_start" class="btn btn-primary" ><span class="fa fa-cutlery"></span> {!! Lang::get('timesheets.start') !!}</a>');
+                    $('#lunch_time').html('<a id="lunch_start" class="btn btn-primary" ><span class="fa fa-cutlery"></span> {!! Lang::get('timesheets.lunch_start') !!}</a>');
 
                     timesheet = data;
                 }
@@ -120,7 +120,7 @@
                     data = JSON.parse(data);
                     $('#lunch_start').remove();
 
-                    var html = '<a id="lunch_end" class="btn btn-primary" ><span class="fa fa-cutlery"></span> {!! Lang::get('timesheets.end') !!}</a>';
+                    var html = '<a id="lunch_end" class="btn btn-primary" ><span class="fa fa-cutlery"></span> {!! Lang::get('timesheets.lunch_end') !!}</a>';
                     $('#lunch_time').append(html);
 
                     timesheet = data;
@@ -138,7 +138,7 @@
                     if (!data.error) {
                         $('#lunch_end').remove();
 
-                        var html = '<p>' + data.start + '</p>';
+                        var html = '<p>' + data.lunch_hours + '</p>';
                         $('#lunch_time').append(html);
 
                         timesheet = data;
