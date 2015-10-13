@@ -21,8 +21,6 @@ class HolydaysTableSeeder extends Seeder {
 				'day' => 1,
 				'month' => 1,
 				'holiday_type' => 'N',
-				'created_at' => '0000-00-00 00:00:00',
-				'updated_at' => '0000-00-00 00:00:00',
 			),
 			1 => 
 			array (
@@ -31,8 +29,6 @@ class HolydaysTableSeeder extends Seeder {
 				'day' => 17,
 				'month' => 2,
 				'holiday_type' => 'N',
-				'created_at' => '0000-00-00 00:00:00',
-				'updated_at' => '0000-00-00 00:00:00',
 			),
 			2 => 
 			array (
@@ -41,8 +37,6 @@ class HolydaysTableSeeder extends Seeder {
 				'day' => 5,
 				'month' => 3,
 				'holiday_type' => 'N',
-				'created_at' => '0000-00-00 00:00:00',
-				'updated_at' => '0000-00-00 00:00:00',
 			),
 			3 => 
 			array (
@@ -51,8 +45,6 @@ class HolydaysTableSeeder extends Seeder {
 				'day' => 21,
 				'month' => 3,
 				'holiday_type' => 'N',
-				'created_at' => '0000-00-00 00:00:00',
-				'updated_at' => '0000-00-00 00:00:00',
 			),
 			4 => 
 			array (
@@ -61,8 +53,6 @@ class HolydaysTableSeeder extends Seeder {
 				'day' => 1,
 				'month' => 5,
 				'holiday_type' => 'N',
-				'created_at' => '0000-00-00 00:00:00',
-				'updated_at' => '0000-00-00 00:00:00',
 			),
 			5 => 
 			array (
@@ -71,8 +61,6 @@ class HolydaysTableSeeder extends Seeder {
 				'day' => 4,
 				'month' => 6,
 				'holiday_type' => 'N',
-				'created_at' => '0000-00-00 00:00:00',
-				'updated_at' => '0000-00-00 00:00:00',
 			),
 			6 => 
 			array (
@@ -81,8 +69,6 @@ class HolydaysTableSeeder extends Seeder {
 				'day' => 7,
 				'month' => 9,
 				'holiday_type' => 'N',
-				'created_at' => '0000-00-00 00:00:00',
-				'updated_at' => '0000-00-00 00:00:00',
 			),
 			7 => 
 			array (
@@ -91,8 +77,6 @@ class HolydaysTableSeeder extends Seeder {
 				'day' => 12,
 				'month' => 10,
 				'holiday_type' => 'N',
-				'created_at' => '0000-00-00 00:00:00',
-				'updated_at' => '0000-00-00 00:00:00',
 			),
 			8 => 
 			array (
@@ -101,8 +85,6 @@ class HolydaysTableSeeder extends Seeder {
 				'day' => 2,
 				'month' => 11,
 				'holiday_type' => 'N',
-				'created_at' => '0000-00-00 00:00:00',
-				'updated_at' => '0000-00-00 00:00:00',
 			),
 			9 => 
 			array (
@@ -111,8 +93,6 @@ class HolydaysTableSeeder extends Seeder {
 				'day' => 15,
 				'month' => 11,
 				'holiday_type' => 'N',
-				'created_at' => '0000-00-00 00:00:00',
-				'updated_at' => '0000-00-00 00:00:00',
 			),
 			10 => 
 			array (
@@ -121,8 +101,6 @@ class HolydaysTableSeeder extends Seeder {
 				'day' => 25,
 				'month' => 12,
 				'holiday_type' => 'N',
-				'created_at' => '0000-00-00 00:00:00',
-				'updated_at' => '0000-00-00 00:00:00',
 			),
 		));
 	}

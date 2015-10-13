@@ -33,4 +33,12 @@ class Task extends Model
     {
         return $this->belongsTo('App\Project', 'project_id');
     }
+
+    /**
+     * Get the user record associated with the project.
+     */
+    public function team()
+    {
+        return $this->hasManyThrough('App\TaskTeam', 'user_id');
+    }
 }

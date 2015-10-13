@@ -17,4 +17,12 @@ class Holyday extends Model
 	 * @var array
 	 */
 	protected $fillable = ['name', 'day', 'month', 'type'];
+
+    /**
+     * Compare dates to see if is holidays
+     */
+	public function scopeisHolyday($query, $day, $month)
+    {
+        return $query->where('day', $day)->where('month', $month);
+    }
 }

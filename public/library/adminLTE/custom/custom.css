@@ -248,6 +248,11 @@ table tbody tr.weekend {
 	opacity: 0.7;
 }
 
+table tbody tr.holyday {
+	background-color: #50F99A;
+	opacity: 0.7;
+}
+
 table tbody tr.today:hover {
 	background-color: rgba(232, 81, 12, 0.3) !important;
 }

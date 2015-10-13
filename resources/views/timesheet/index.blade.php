@@ -54,7 +54,7 @@
             </thead>
             <tbody>
                 @foreach($data['week'] as $day)
-                <tr class="{!! ($day['day']->dayOfWeek === 0 || $day['day']->dayOfWeek === 6 ?  'weekend' : '') !!} {!! ($day['day']->isSameDay($data['today']) ? 'today active' : '') !!}">
+                <tr class="{!! ($day['day']->dayOfWeek === 0 || $day['day']->dayOfWeek === 6 ?  'weekend' : '') !!} {!! ($day['day']->isSameDay($data['today']) ? 'today active' : '') !!}{!! $day['holyday'] ? 'holyday' : '' !!}">
                     <td>{!! $day['day']->format('d') !!}</td>
                     <td>{!! $day['day']->format('l') !!}</td>
                     <td {!! ($day['day']->isSameDay($data['today']) ? 'id="start_now"' : '') !!}>{!! ($day['workday'] ? '<p>' . $day['workday']->start . '</p>' : ($day['day']->isSameDay($data['today']) ? '<a id="start" class="btn btn-primary" ><span class="fa fa-calendar-plus-o"></span> ' . Lang::get('timesheets.start') . '</a>' : '---')) !!}</td>

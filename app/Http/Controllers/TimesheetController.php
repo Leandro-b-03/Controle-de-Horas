@@ -114,8 +114,10 @@ class TimesheetController extends Controller
             } else {
                 $lunch = '---';
             }
+
+            $holyday = Holyday::isHolyday($day->day, $day->month)->get()->first();
             
-            $day_info = array('day' => $day, 'workday' => $workday, 'lunch' => $lunch);
+            $day_info = array('day' => $day, 'workday' => $workday, 'lunch' => $lunch, 'holyday' => $holyday);
             $week[] = $day_info;
         }
 
@@ -123,12 +125,10 @@ class TimesheetController extends Controller
 
         $data['week'] = $week;
 
-        // Get all holydays
-        $holydays = Holyday::all();
-        $data['holydays'] = $holydays;
-
         // Get all tasks
-        // $tasks = Task::where('teams', 'like', Auth::user()->teams)->get();
+        $tasks = Task::team()->where('user_id', Auth::user()->id)->get();
+
+        die(d($tasks));
 
         // Return the timesheets view.
         return view('timesheet.index')->with('data', $data);
