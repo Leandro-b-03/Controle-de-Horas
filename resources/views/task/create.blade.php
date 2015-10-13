@@ -91,7 +91,7 @@
                   <select type="text" name="teams[]" id="teams" class="form-control multiple" multiple="multiple" id="teams-autocomplete" data-validation="required" data-validation-error-msg="{!! Lang::get('tasks.error-teams') !!}"  required>
                     @if(isset($data['teams']))
                     @foreach($data['teams'] as $team)
-                    <option value="{!! $team->id !!}" {!! ( $data['task_teams']->where('team_id', $team->id)->count() !== 0 ? 'selected="selected"' : '' ) !!}>{!! $team->name !!}</option>
+                    <option value="{!! $team->id !!}" {!! (isset($data['task_teams']) ? ($data['task_teams']->where('team_id', $team->id)->count() !== 0 ? 'selected="selected"' : '' ) : '') !!}>{!! $team->name !!}</option>
                     @endforeach
                     @endif
                   </select>

@@ -10,6 +10,8 @@ use Lang;
 use Calendar;
 use App\Task;
 use App\Holyday;
+use App\TaskTeam;
+use App\UserTeam;
 use App\Timesheet;
 use Carbon\Carbon;
 use App\Http\Requests;
@@ -28,19 +30,27 @@ class TimesheetController extends Controller
      */
     public function index()
     {
+        // Get the first day
+        $today = new Carbon();
+        $data['today'] = $today;
+
         // Get all the timesheets
         $timesheet_today = Timesheet::where('user_id', Auth::user()->id)->orderBy('workday', 'desc')->get()->first();
         if ($timesheet_today) {
             $timesheet_today->workday = Carbon::createFromFormat('Y-m-d H', $timesheet_today->workday . '00');
+
+            $diffTime = $timesheet_today->workday->diffInMinutes(new Carbon());
+
+            $hours = floor($diffTime / 60);
+            $minutes = ($diffTime % 60);
+            $time = (($hours <= 9 ? "0" . $hours : $hours) . ":" . $minutes) . ":00";
         }
+
+        $data['time'] = $time;
         
         $data['timesheet_today'] = $timesheet_today;
 
         setlocale(LC_TIME, 'ptb', 'pt_BR', 'portuguese-brazil', 'bra', 'brazil', 'pt_BR.utf-8', 'pt_BR.iso-8859-1', 'br');
-
-        // Get the first day
-        $today = new Carbon();
-        $data['today'] = $today;
 
         if($timesheet_today){
             if($timesheet_today->lunch_start != null) {
@@ -128,9 +138,12 @@ class TimesheetController extends Controller
         $data['week'] = $week;
 
         // Get all tasks
-        $tasks = Task::team()->where('user_id', Auth::user()->id)->get();
+        $teams = UserTeam::getTeams(Auth::user()->id)->get();
 
-        die(d($tasks));
+        $tasksteams = TaskTeam::getTasksTeam($teams->toArray())->get();
+
+        $tasks = Task::getTasks($tasksteams->toArray())->get();
+        $data['tasks'] = $tasks;
 
         // Return the timesheets view.
         return view('timesheet.index')->with('data', $data);

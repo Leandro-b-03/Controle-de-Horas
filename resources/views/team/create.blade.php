@@ -123,8 +123,6 @@
 @endsection
 
 @section('scripts')
-    <!-- JS-Cookie -->
-    {!! Html::script("library/adminLTE/plugins/js-cookie/src/js.cookie.js") !!}
     <!-- Jasny-bootstrap -->
     {!! Html::script("library/adminLTE/plugins/jasny-bootstrap/js/jasny-bootstrap.min.js") !!}
     <!-- Color Picker -->
@@ -137,22 +135,20 @@
     <script>
       var leader = "{!! (isset($data['team']) ? $data['team']->user_id : '') !!}";
 
-      // var users_team = {!! (!Request::is('teams/create') ? 'getUsers()' : (Request::is('teams/create') ? '(Cookie.get("users_team") != undefined) ? Cookie.get("users_team") : [] ' : '[]')) !!};
-
       var users_team = {!! (!Request::is('teams/create') ? 'getUsers()' : '[]') !!};
 
       $(".my-colorpicker2").colorpicker();
 
-      if ($('#user_id').val() != '') {
+      /*if ($('#user_id').val() != '') {
         getUser($('#user_id').val());
-      }
+      }*/
 
-      $('#user_id').change(function() {
+      $('#user_id').on('select2:select', function (e) {
         getUser($(this).val());
       });
 
       function getUser(id) {
-        if ($(this).val() != "") {
+        if (id != "") {
           $.ajax({
             url: '/general/getUser',
             data: {id: id},
@@ -175,6 +171,8 @@
                 html += '</div>';
 
                 $('#users').append(html);
+
+                console.log(html);
 
                 leader = data.id;
 
@@ -217,8 +215,6 @@
                 html += '</div>';
 
                 $('#users').append(html);
-
-                setCookie('users_team');
               }
               
               $('#users div[data-id="' + leader + '"] h4 i.fa').removeClass('fa-user').addClass('fa-star');
@@ -246,8 +242,6 @@
               $('#users-autocomplete').val("");
 
               $('#users').append(html);
-
-              // // setCookie('users_team');
             }
           }
       });
@@ -259,11 +253,6 @@
         });
 
         return users_team;
-      }
-
-      function setCookie(type) {
-        users_team = getUsers();
-        Cookies.set("users_team", users_team, { expires: 7 });
       }
 
       $(document).on('click', '.user-remove', function() {

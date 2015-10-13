@@ -40,6 +40,15 @@
         </div>
     </div>
     <div class="box-body">
+        <div class="col-md-3 col-sm-6 col-xs-12 pull-right">
+          <div class="info-box">
+            <span class="info-box-icon bg-aqua"><i class="fa fa-clock-o"></i></span>
+            <div class="info-box-content">
+              <span class="info-box-text">Total:</span>
+              <span id="timer" class="info-box-number">{!! (isset($data['time']) ? $data['time'] : "00:00:00") !!}</span>
+            </div><!-- /.info-box-content -->
+          </div><!-- /.info-box -->
+        </div>
         <hr class="clearfix" />
         <table class="table table-bordered">
             <thead>
@@ -64,6 +73,11 @@
                         @if ($day['workday'])
                         <select id="" class="" data-validation="required" data-validation-error-msg="{!! Lang::get('proposals.error-clients') !!}" required>
                             <option value="">{!! Lang::get('general.select') !!}</option>
+                            @if (isset($data['tasks']))
+                            @foreach ($data['tasks'] as $task)
+                            <option value="{!! $task->id !!}">{!! $task->name !!}</option>
+                            @endforeach
+                            @endif
                         </select>
                         <a id="start" class="btn btn-primary"><span class="fa fa-calendar-plus-o"></span> {!! Lang::get('timesheets.start') !!}</a>
                         @endif
@@ -88,9 +102,13 @@
     {!! Html::script("library/adminLTE/plugins/slimScroll/jquery.slimscroll.min.js") !!}
     <!-- FastClick -->
     {!! Html::script("library/adminLTE/plugins/fastclick/fastclick.min.js") !!}
+    <!-- Stopwacth -->
+    {!! Html::script("library/adminLTE/plugins/jquery-stopwatch/jquery.stopwatch.js") !!}
 
     <script type="text/javascript" charset="utf-8" async defer>
         var timesheet = {!! (isset($data['timesheet_today']) ? 'JSON.parse(\'' . $data['timesheet_today'] . '\')' : '{}') !!};
+
+        $('#timer').stopwatch().stopwatch('start');
 
         $('#start').click(function() {
             $.ajax({
@@ -152,6 +170,6 @@
                     }
                 }
             });
-        })
+        });
     </script>
 @endsection

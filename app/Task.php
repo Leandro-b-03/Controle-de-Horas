@@ -37,8 +37,8 @@ class Task extends Model
     /**
      * Get the user record associated with the project.
      */
-    public function team()
+    public function scopegetTasks($query, $teams_id)
     {
-        return $this->hasManyThrough('App\TaskTeam', 'user_id');
+        return $query->whereIn('id', $teams_id);
     }
 }

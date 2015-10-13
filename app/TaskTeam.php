@@ -31,6 +31,14 @@ class TaskTeam extends Model
      */
     public function projects_times_tasks()
     {
-        return $this->belongsTo('App\ProjectTime', 'project_time_id');
+        return $this->belongsTo('App\ProjectTime', 'project_time_task_id');
+    }
+
+    /**
+     * Get the user record associated with the project.
+     */
+    public function scopegetTasksTeam($query, $teams_id)
+    {
+        return $query->select('project_time_task_id')->whereIn('team_id', $teams_id);
     }
 }
