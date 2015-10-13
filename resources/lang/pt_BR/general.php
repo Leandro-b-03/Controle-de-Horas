@@ -29,6 +29,7 @@ return [
     'email-used'                    => 'E-mail j&aacute; utilizado',
     'cpf-used'                      => 'CPF j&aacute; utilizado',
     'success'                       => 'Sucesso',
+    'status'                        => 'Status',
     'fail'                          => 'Falha',
     'failed'                        => 'Falhou',
     'online'                        => 'Online',

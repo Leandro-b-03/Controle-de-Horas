@@ -49,7 +49,7 @@ $(function () {
     return html;
   }
 
-  if ($.fn.DataTable) {
+  /*if ($.fn.DataTable) {
     if ($(".table").length > 0) {
       var table = $(".table").not('.permission').DataTable({
         language: {
@@ -72,7 +72,7 @@ $(function () {
         }
       });
     }
-  }
+  }*/
 
   var deselect = true;
   var delete_id = [];
