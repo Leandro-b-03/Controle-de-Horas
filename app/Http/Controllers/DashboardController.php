@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 
+use Auth;
 use GeoIP;
 use Geocoder;
 use App\User;
@@ -21,6 +22,10 @@ class DashboardController extends Controller
      */
     public function index()
     {
+        $user = User::where('username', Auth::user()->getAuthIdentifier())->get()->first();
+
+        Auth::user()->setEloquent($user);
+
         // GeoIP
         $location = GeoIP::getLocation();
         $data['location'] = $location;

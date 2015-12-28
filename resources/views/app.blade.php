@@ -42,8 +42,8 @@
     <!-- Custom style -->
     {!! Html::style("library/adminLTE/custom/custom.css") !!}
   </head>
-  @if(Auth::user()->settings()->getResults())
-  <body class="{!! Auth::user()->settings()->getResults()->skin ? Auth::user()->settings()->getResults()->skin : 'skin-yellow' !!} {!! Auth::user()->settings()->getResults()->boxed ? Auth::user()->settings()->getResults()->boxed : '' !!} {!! Auth::user()->settings()->getResults()->sidebar_toggle ? Auth::user()->settings()->getResults()->sidebar_toggle : '' !!} sidebar-mini">
+  @if(Auth::user()->getEloquent()->settings()->getResults())
+  <body class="{!! Auth::user()->getEloquent()->settings()->getResults()->skin ? Auth::user()->getEloquent()->settings()->getResults()->skin : 'skin-yellow' !!} {!! Auth::user()->getEloquent()->settings()->getResults()->boxed ? Auth::user()->getEloquent()->settings()->getResults()->boxed : '' !!} {!! Auth::user()->getEloquent()->settings()->getResults()->sidebar_toggle ? Auth::user()->getEloquent()->settings()->getResults()->sidebar_toggle : '' !!} sidebar-mini">
   @else
   <body class="skin-yellow sidebar-mini">
   @endif
@@ -83,7 +83,7 @@
                       <li><!-- start message -->
                         <a href="#">
                           <div class="pull-left">
-                            <img src="{!! (Auth::user() ? URL::to(Auth::user()->photo) : '') !!}" class="img-circle" alt="User Image"/>
+                            <img src="{!! (Auth::user()->getEloquent() ? URL::to(Auth::user()->getEloquent()->photo) : '') !!}" class="img-circle" alt="User Image"/>
                           </div>
                           <h4>
                             Support Team
@@ -101,14 +101,14 @@
               <li class="dropdown notifications-menu">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                   <i class="fa fa-bell-o"></i>
-                  <span class="label label-warning notification-count">{!! Auth::user()->getNotifications()->unseen()->get()->count() != 0 ? Auth::user()->getNotifications()->unseen()->get()->count() : '' !!}</span>
+                  <span class="label label-warning notification-count">{!! Auth::user()->getEloquent()->getNotifications()->unseen()->get()->count() != 0 ? Auth::user()->getEloquent()->getNotifications()->unseen()->get()->count() : '' !!}</span>
                 </a>
                 <ul class="dropdown-menu">
-                  <li class="header">{!! Lang::choice('general.navbar-notification', Auth::user()->getNotifications()->unseen()->get()->count(), ['count' => Auth::user()->getNotifications()->unseen()->get()->count() ]) !!}</li>
+                  <li class="header">{!! Lang::choice('general.navbar-notification', Auth::user()->getEloquent()->getNotifications()->unseen()->get()->count(), ['count' => Auth::user()->getEloquent()->getNotifications()->unseen()->get()->count() ]) !!}</li>
                   <li>
                     <!-- inner menu: contains the actual data -->
                     <ul class="menu">
-                      @foreach (Auth::user()->getNotifications()->orderBy('created_at', 'desc')->get() as $notification)
+                      @foreach (Auth::user()->getEloquent()->getNotifications()->orderBy('created_at', 'desc')->get() as $notification)
                       <li>
                         <a href="{!! $notification->href !!}">
                           <i class="fa fa-{!! $notification->faicon !!} text-aqua"></i> {!! $notification->message !!}
@@ -154,16 +154,16 @@
               <!-- User Account: style can be found in dropdown.less -->
               <li class="dropdown user user-menu">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                  <img src="{!! (Auth::user() ? URL::to(Auth::user()->photo) : '') !!}" class="user-image" alt="User Image"/>
-                  <span class="hidden-xs">{!! Auth::user()->first_name !!} {!! Auth::user()->last_name !!}</span>
+                  <img src="{!! (Auth::user()->getEloquent() ? URL::to(Auth::user()->getEloquent()->photo) : '') !!}" class="user-image" alt="User Image"/>
+                  <span class="hidden-xs">{!! Auth::user()->getEloquent()->first_name !!} {!! Auth::user()->getEloquent()->last_name !!}</span>
                 </a>
                 <ul class="dropdown-menu">
                   <!-- User image -->
                   <li class="user-header">
-                    <img src="{!! (Auth::user() ? URL::to(Auth::user()->photo) : '') !!}" class="img-circle" alt="User Image" />
+                    <img src="{!! (Auth::user()->getEloquent() ? URL::to(Auth::user()->getEloquent()->photo) : '') !!}" class="img-circle" alt="User Image" />
                     <p>
-                      {!! Auth::user()->first_name !!} {!! Auth::user()->last_name !!} - Web Developer
-                      <small>{!! Lang::get('general.member-since', ['month-year' => date('F \d\e Y', strtotime(Auth::user()->created_at))]) !!}</small>
+                      {!! Auth::user()->getEloquent()->first_name !!} {!! Auth::user()->getEloquent()->last_name !!} - Web Developer
+                      <small>{!! Lang::get('general.member-since', ['month-year' => date('F \d\e Y', strtotime(Auth::user()->getEloquent()->created_at))]) !!}</small>
                     </p>
                   </li>
                   <!-- Menu Body -->
@@ -181,7 +181,7 @@
                   <!-- Menu Footer-->
                   <li class="user-footer">
                     <div class="pull-left">
-                      <a href="{!! URL::to('profile/' . Auth::user()->id) !!}" class="btn btn-default btn-flat">Profile</a>
+                      <a href="{!! URL::to('profile/' . Auth::user()->getEloquent()->id) !!}" class="btn btn-default btn-flat">Profile</a>
                     </div>
                     <div class="pull-right">
                       <a href="{!! URL::to('auth/logout') !!}" class="btn btn-danger btn-flat">Sair da Sessão</a>
@@ -207,10 +207,10 @@
           <!-- Sidebar user panel -->
           <div class="user-panel">
             <div class="pull-left image">
-              <img src="{!! (Auth::user() ? URL::to(Auth::user()->photo) : '') !!}" class="img-circle" alt="User Image" />
+              <img src="{!! (Auth::user()->getEloquent() ? URL::to(Auth::user()->getEloquent()->photo) : '') !!}" class="img-circle" alt="User Image" />
             </div>
             <div class="pull-left info">
-              <p>{!! Auth::user()->first_name !!} {!! Auth::user()->last_name !!}</p>
+              <p>{!! Auth::user()->getEloquent()->first_name !!} {!! Auth::user()->getEloquent()->last_name !!}</p>
 
               <a href="#"><i class="fa fa-circle text-success"></i> Online</a>
             </div>
@@ -264,7 +264,7 @@
       </footer>
       
 			<!-- Control Sidebar -->
-      <aside class="control-sidebar control-sidebar-{!! (Auth::user()->settings()->getResults() ? (Auth::user()->settings()->getResults()->right_sidebar_white == 'true' ? 'light' : 'dark') : 'dark') !!}">
+      <aside class="control-sidebar control-sidebar-{!! (Auth::user()->getEloquent()->settings()->getResults() ? (Auth::user()->getEloquent()->settings()->getResults()->right_sidebar_white == 'true' ? 'light' : 'dark') : 'dark') !!}">
         <!-- Create the tabs -->
         <ul class="nav nav-tabs nav-justified control-sidebar-tabs">
           <li><a href="#control-sidebar-home-tab" data-toggle="tab"><i class="fa fa-home"></i></a></li>
@@ -455,7 +455,7 @@
     @section('scripts')
     @show
     <script>
-    	var settings = {!! Auth::user()->settings()->getResults() ? '$.parseJSON(' . Auth::user()->settings()->getResults() . ')' : '{}' !!};
+    	var settings = {!! Auth::user()->getEloquent()->settings()->getResults() ? '$.parseJSON(' . Auth::user()->getEloquent()->settings()->getResults() . ')' : '{}' !!};
 
       $.ajaxSetup({
           headers: {
@@ -463,7 +463,7 @@
           }
       });
 
-      var user = $.parseJSON('{!! Auth::user() !!}');
+      var user = $.parseJSON('{!! Auth::user()->getEloquent() !!}');
 
       // var dataTableLang = [];
 

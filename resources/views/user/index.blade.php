@@ -47,44 +47,6 @@
             <a id="delete" data-name="Cliente" class="btn btn-danger">{!! Lang::get('users.delete') !!}</a>
         </div>
         <hr class="clearfix" />
-        {{-- <table id="user-list" class="table table-bordered table-striped">
-            <thead>
-                <tr>
-                    {{-- <th class="select-tr"><input type="checkbox" class="select-all" /></th> -- }}
-                    <th>{!! Lang::get('users.title-user-info') !!}</th>
-                    <th>{!! Lang::get('users.title-projects') !!}</th>
-                    <th>{!! Lang::get('users.title-teams') !!}</th>
-                    <th class="action-tr">{!! Lang::get('general.action') !!}</th>
-                </tr>
-            </thead>
-            @if($data['users']->count())
-            <tbody>
-                @foreach($data['users'] as $user)
-                <tr>
-                    {{-- <td><input type="checkbox" class="delete" data-value="{!! $user->id !!}" /></td> -- }}
-                    <td>
-                        <img class="img-circle img-table" src="{!! $user->photo !!}" />
-                        <div class="table-user-info">
-                            <h4 title="{!! Lang::get('users.table-username') !!}"><i class="fa fa-user"></i> {!! $user->username !!}</h4>
-                            <div class="block">
-                                <p title="{!! Lang::get('users.table-name') !!}"><i class="fa fa-user"></i> <span>{!! $user->first_name . ' ' . $user->last_name !!}</span></p>
-                                <p title="{!! Lang::get('users.table-email') !!}" class="email"><i class="fa fa-envelope"></i><span>{!! $user->email !!}</span></p>
-                                <p title="{!! Lang::get('users.table-phone') !!}"><i class="fa fa-phone"></i> <span>{!! $user->phone !!}</span></p>
-                            </div>
-                            <div class="block">
-                                <p title="{!! Lang::get('users.table-user_since') !!}"><i class="fa fa-calendar"></i> <span>{!! date('d/m/Y', strtotime($user->created_at)) !!}</span></p>
-                                <p title="{!! Lang::get('users.table-group-permission') !!}"><i class="fa fa-shield"></i><span>{!! $user->roles()->first()->display_name !!}</span></p>
-                            </div>
-                        </div>
-                    </td>
-                    <td></td>
-                    <td></td>
-                    <td><a href="{!! URL::to('users/' . $user->id . '/edit') !!}" class="btn btn-primary">{!! Lang::get('general.edit') !!}</a></td>
-                </tr>
-                @endforeach
-            </tbody>
-            @endif
-        </table> --}}
         @if($data['users']->count())
         @foreach($data['users'] as $user)
         <div class="col-md-4">

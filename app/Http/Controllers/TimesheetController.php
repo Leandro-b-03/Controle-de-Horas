@@ -35,7 +35,7 @@ class TimesheetController extends Controller
         $data['today'] = $today;
 
         // Get all the timesheets
-        $timesheet_today = Timesheet::where('user_id', Auth::user()->id)->orderBy('workday', 'desc')->get()->first();
+        /*$timesheet_today = Timesheet::where('user_id', Auth::user()->getEloquent()->id)->orderBy('workday', 'desc')->get()->first();
         if ($timesheet_today) {
             $timesheet_today->workday = Carbon::createFromFormat('Y-m-d H', $timesheet_today->workday . '00');
 
@@ -46,7 +46,7 @@ class TimesheetController extends Controller
             $time = (($hours <= 9 ? "0" . $hours : $hours) . ":" . $minutes) . ":00";
         }
 
-        $data['time'] = $time;
+        // $data['time'] = $time;
         
         $data['timesheet_today'] = $timesheet_today;
 
@@ -138,12 +138,15 @@ class TimesheetController extends Controller
         $data['week'] = $week;
 
         // Get all tasks
-        $teams = UserTeam::getTeams(Auth::user()->id)->get();
+        $teams = UserTeam::getTeams(Auth::user()->getEloquent()->id)->get();
 
         $tasksteams = TaskTeam::getTasksTeam($teams->toArray())->get();
 
         $tasks = Task::getTasks($tasksteams->toArray())->get();
-        $data['tasks'] = $tasks;
+        $data['tasks'] = $tasks;*/
+
+        $projects = DB::connection('openproject')->table('projects')->where('status', 1)->get();
+        $data['projects'] = $projects;
 
         // Return the timesheets view.
         return view('timesheet.index')->with('data', $data);
@@ -177,7 +180,7 @@ class TimesheetController extends Controller
 
         if (isset($inputs['start'])) {
             $data = array(
-                'user_id' => Auth::user()->id,
+                'user_id' => Auth::user()->getEloquent()->id,
                 'workday' => $data->toDateString(),
                 'hours' => 0,
                 'start' => $data->toTimeString()
@@ -228,6 +231,19 @@ class TimesheetController extends Controller
                 return response()->json(['error' => 'true', 'message' => Lang::get('timesheets.error-lunch')]);
             }
         }
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param  int  $id
+     * @return Response
+     */
+    public function getTasks(Request $request)
+    {
+        $tasks = DB::connection('openproject')->table('tasks')->get();
+
+        return response()->json($tasks);
     }
 
     /**

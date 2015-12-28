@@ -62,58 +62,59 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('profile/{id}', 'UserController@show');
 
     Route::resource('proposals', 'ProposalController');
-    Entrust::routeNeedsPermission('proposals', 'ProposalController@index');
-    Entrust::routeNeedsPermission('proposals/create', 'ProposalController@create');
-    Entrust::routeNeedsPermission('proposals/*/edit', 'ProposalController@edit');
-    Entrust::routeNeedsPermission('proposals/delete', 'ProposalController@delete');
+    // Entrust::routeNeedsPermission('proposals', 'ProposalController@index');
+    // Entrust::routeNeedsPermission('proposals/create', 'ProposalController@create');
+    // Entrust::routeNeedsPermission('proposals/*/edit', 'ProposalController@edit');
+    // Entrust::routeNeedsPermission('proposals/delete', 'ProposalController@delete');
 
     Route::resource('projects', 'ProjectController');
-    Entrust::routeNeedsPermission('projects', 'ProjectController@index');
-    Entrust::routeNeedsPermission('projects/create', 'ProjectController@create');
-    Entrust::routeNeedsPermission('projects/*/edit', 'ProjectController@edit');
-    Entrust::routeNeedsPermission('projects/delete', 'ProjectController@delete');
+    // Entrust::routeNeedsPermission('projects', 'ProjectController@index');
+    // Entrust::routeNeedsPermission('projects/create', 'ProjectController@create');
+    // Entrust::routeNeedsPermission('projects/*/edit', 'ProjectController@edit');
+    // Entrust::routeNeedsPermission('projects/delete', 'ProjectController@delete');
 
     Route::resource('tasks', 'TaskController');
-    Entrust::routeNeedsPermission('tasks', 'TaskController@index');
-    Entrust::routeNeedsPermission('tasks/create', 'TaskController@create');
-    Entrust::routeNeedsPermission('tasks/*/edit', 'TaskController@edit');
-    Entrust::routeNeedsPermission('tasks/delete', 'TaskController@delete');
+    // Entrust::routeNeedsPermission('tasks', 'TaskController@index');
+    // Entrust::routeNeedsPermission('tasks/create', 'TaskController@create');
+    // Entrust::routeNeedsPermission('tasks/*/edit', 'TaskController@edit');
+    // Entrust::routeNeedsPermission('tasks/delete', 'TaskController@delete');
 
     Route::resource('clients', 'ClientController');
-    Entrust::routeNeedsPermission('clients', 'ClientController@index');
-    Entrust::routeNeedsPermission('clients/create', 'ClientController@create');
-    Entrust::routeNeedsPermission('clients/*/edit', 'ClientController@edit');
-    Entrust::routeNeedsPermission('clients/delete', 'ClientController@delete');
+    // Entrust::routeNeedsPermission('clients', 'ClientController@index');
+    // Entrust::routeNeedsPermission('clients/create', 'ClientController@create');
+    // Entrust::routeNeedsPermission('clients/*/edit', 'ClientController@edit');
+    // Entrust::routeNeedsPermission('clients/delete', 'ClientController@delete');
 
     Route::resource('client-groups', 'ClientGroupController');
-    Entrust::routeNeedsPermission('client-groups', 'ClientGroupController@index');
-    Entrust::routeNeedsPermission('client-groups/create', 'ClientGroupController@create');
-    Entrust::routeNeedsPermission('client-groups/*/edit', 'ClientGroupController@edit');
-    Entrust::routeNeedsPermission('client-groups/delete', 'ClientGroupController@delete');
+    // Entrust::routeNeedsPermission('client-groups', 'ClientGroupController@index');
+    // Entrust::routeNeedsPermission('client-groups/create', 'ClientGroupController@create');
+    // Entrust::routeNeedsPermission('client-groups/*/edit', 'ClientGroupController@edit');
+    // Entrust::routeNeedsPermission('client-groups/delete', 'ClientGroupController@delete');
 
     Route::resource('users', 'UserController');
-    Entrust::routeNeedsPermission('users', 'UserController@index');
-    Entrust::routeNeedsPermission('users/create', 'UserController@create');
-    Entrust::routeNeedsPermission('users/*/edit', 'UserController@edit');
-    Entrust::routeNeedsPermission('users/delete', 'UserController@delete');
+    // Entrust::routeNeedsPermission('users', 'UserController@index');
+    // Entrust::routeNeedsPermission('users/create', 'UserController@create');
+    // Entrust::routeNeedsPermission('users/*/edit', 'UserController@edit');
+    // Entrust::routeNeedsPermission('users/delete', 'UserController@delete');
 
     Route::resource('timesheets', 'TimesheetController');
-    Entrust::routeNeedsPermission('timesheets', 'TimesheetController@index');
-    Entrust::routeNeedsPermission('timesheets/create', 'TimesheetController@create');
-    Entrust::routeNeedsPermission('timesheets/*/edit', 'TimesheetController@edit');
-    Entrust::routeNeedsPermission('timesheets/delete', 'TimesheetController@delete');
+    Route::get('timesheets/getTasks', 'TimesheetController@getTasks');
+    // Entrust::routeNeedsPermission('timesheets', 'TimesheetController@index');
+    // Entrust::routeNeedsPermission('timesheets/create', 'TimesheetController@create');
+    // Entrust::routeNeedsPermission('timesheets/*/edit', 'TimesheetController@edit');
+    // Entrust::routeNeedsPermission('timesheets/delete', 'TimesheetController@delete');
 
     Route::resource('teams', 'TeamController');
-    Entrust::routeNeedsPermission('teams', 'TeamController@index');
-    Entrust::routeNeedsPermission('teams/create', 'TeamController@create');
-    Entrust::routeNeedsPermission('teams/*/edit', 'TeamController@edit');
-    Entrust::routeNeedsPermission('teams/delete', 'TeamController@delete');
+    // Entrust::routeNeedsPermission('teams', 'TeamController@index');
+    // Entrust::routeNeedsPermission('teams/create', 'TeamController@create');
+    // Entrust::routeNeedsPermission('teams/*/edit', 'TeamController@edit');
+    // Entrust::routeNeedsPermission('teams/delete', 'TeamController@delete');
 
     Route::resource('group-permissions', 'GroupPermissionController');
-    Entrust::routeNeedsPermission('group-permissions', 'GroupPermissionController@index');
-    Entrust::routeNeedsPermission('group-permissions/create', 'GroupPermissionController@create');
-    Entrust::routeNeedsPermission('group-permissions/*/edit', 'GroupPermissionController@edit');
-    Entrust::routeNeedsPermission('group-permissions/delete', 'GroupPermissionController@delete');
+    // Entrust::routeNeedsPermission('group-permissions', 'GroupPermissionController@index');
+    // Entrust::routeNeedsPermission('group-permissions/create', 'GroupPermissionController@create');
+    // Entrust::routeNeedsPermission('group-permissions/*/edit', 'GroupPermissionController@edit');
+    // Entrust::routeNeedsPermission('group-permissions/delete', 'GroupPermissionController@delete');
 });
 
 Route::group(['middleware' => 'guest'], function () {

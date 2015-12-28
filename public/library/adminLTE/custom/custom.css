@@ -342,3 +342,11 @@ table thead tr th.start, table thead tr th.end {
 .project-icon {
 	font-size: 50px !important;
 }
+
+.custom_a {
+	height: 135px;
+}
+
+.play {
+	font-size: 25px;
+}

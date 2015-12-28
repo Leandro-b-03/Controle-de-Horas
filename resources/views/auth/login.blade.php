@@ -31,7 +31,7 @@
         <form method="POST" action="/auth/login">
 		      {!! csrf_field() !!}
           <div class="form-group has-feedback">
-            <input name="email" type="email" class="form-control" placeholder="Email"/>
+            <input name="username" type="text" class="form-control" placeholder="Email"/>
             <span class="glyphicon glyphicon-envelope form-control-feedback"></span>
           </div>
           <div class="form-group has-feedback">

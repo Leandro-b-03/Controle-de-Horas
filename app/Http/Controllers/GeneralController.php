@@ -247,6 +247,8 @@ class GeneralController extends Controller {
         $settings = UserSetting::where('user_id', Auth::user()->id)->get()->first();
 
         $data = [];
+
+        d($settings);
         
         if ($settings) {
             foreach($inputs as $input => $value) {
@@ -261,6 +263,8 @@ class GeneralController extends Controller {
                 $data['message'] = 'não salvo';
             }
         } else {
+            $inputs['user_id'] = Auth::user()->id;
+            d($inputs);
             if (UserSetting::create( $inputs )) {
                 $data['success'] = true;
                 $data['message'] = 'salvo';

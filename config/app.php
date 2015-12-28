@@ -131,7 +131,7 @@ return [
         /*
          * Development Service Providers...
          */
-        Barryvdh\Debugbar\ServiceProvider::class,
+        // Barryvdh\Debugbar\ServiceProvider::class,
 
         /*
          * Laravel Framework Service Providers...
@@ -174,12 +174,13 @@ return [
         Collective\Html\HtmlServiceProvider::class,
         Cviebrock\EloquentSluggable\SluggableServiceProvider::class,
         Vinkla\Pusher\PusherServiceProvider::class,
-        Zizaco\Entrust\EntrustServiceProvider::class,
+        // Zizaco\Entrust\EntrustServiceProvider::class,
         // Intervention\Image\ImageServiceProvider::class,
         MaddHatter\LaravelFullcalendar\ServiceProvider::class,
         Laravel\Socialite\SocialiteServiceProvider::class,
         Torann\GeoIP\GeoIPServiceProvider::class,
         Alexpechkarev\GoogleGeocoder\GoogleGeocoderServiceProvider::class,
+        Dsdevbe\LdapConnector\LdapConnectorServiceProvider::class,
 
         /*
          * Personalization Services Providers...

@@ -30,6 +30,36 @@
         </div>
         @endif
       </div>
+      <div class="box box-solid box-primary">
+        <div class="box-header with-border">
+            <i class="fa fa-tasks"></i>
+            <h3 class="box-title">Tarefa atual</h3>
+        </div>
+        <!-- /.box-header -->
+        <div class="box-body">
+            <div class="col-xs-6">
+                <div class="form-group col-xs-2 custom_a">
+                    <a class="btn btn-large btn-default play"><span class="fa fa-play-circle-o"></span> Iniciar</a>
+                </div>
+                <div class="form-group col-xs-8">
+                    <label for="projects">{!! Lang::get('general.projects') !!}</label>
+                    <select name="projects" class="form-control" data-validation="required" required>
+                        <option value="">{!! Lang::get('general.select') !!}</option>
+                        @foreach ($data['projects'] as $project)
+                        <option value="{!! $project->id !!}">{!! $project->name !!}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div class="form-group col-xs-8">
+                    <label for="tasks">{!! Lang::get('general.tasks') !!}</label>
+                    <select name="tasks" class="form-control" data-validation="required" required>
+                        <option value="">{!! Lang::get('general.select') !!}</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+      <!-- /.box-body -->
+      </div>
       <!-- Default box -->
       <div class="box">
         <div class="box-header with-border">
@@ -40,54 +70,17 @@
         </div>
     </div>
     <div class="box-body">
-        <div class="col-md-3 col-sm-6 col-xs-12 pull-right">
-          <div class="info-box">
-            <span class="info-box-icon bg-aqua"><i class="fa fa-clock-o"></i></span>
-            <div class="info-box-content">
-              <span class="info-box-text">Total:</span>
-              <span id="timer" class="info-box-number">{!! (isset($data['time']) ? $data['time'] : "00:00:00") !!}</span>
-            </div><!-- /.info-box-content -->
-          </div><!-- /.info-box -->
-        </div>
-        <hr class="clearfix" />
-        <table class="table table-bordered">
+        <table class="table">
             <thead>
                 <tr>
-                    <th class="day">{!! Lang::get('timesheets.title-day') !!}</th>
-                    <th class="month">{!! $data['today']->format('F') !!}</th>
-                    <th class="start">{!! Lang::get('timesheets.title-start') !!}</th>
-                    <th class="end">{!! Lang::get('timesheets.title-lunch') !!}</th>
-                    <th class="end">{!! Lang::get('timesheets.title-end') !!}</th>
-                    <th class="task">{!! Lang::get('timesheets.title-task') !!}</th>
+                    <th>header</th>
                 </tr>
             </thead>
             <tbody>
-                @foreach($data['week'] as $day)
-                <tr class="{!! ($day['day']->dayOfWeek === 0 || $day['day']->dayOfWeek === 6 ?  'weekend' : '') !!} {!! ($day['day']->isSameDay($data['today']) ? 'today active' : '') !!}{!! $day['holyday'] ? 'holyday' : '' !!}">
-                    <td>{!! $day['day']->format('d') !!}</td>
-                    <td>{!! $day['day']->format('l') !!}</td>
-                    <td {!! ($day['day']->isSameDay($data['today']) ? 'id="start_now"' : '') !!}>{!! ($day['workday'] ? '<p>' . $day['workday']->start . '</p>' : ($day['day']->isSameDay($data['today']) ? '<a id="start" class="btn btn-primary" ><span class="fa fa-calendar-plus-o"></span> ' . Lang::get('timesheets.start') . '</a>' : '---')) !!}</td>
-                    <td {!! ($day['day']->isSameDay($data['today']) ? 'id="lunch_time"' : '') !!}>{!! $day['lunch'] !!}</td>
-                    <td>{!! ($day['workday'] ? '<a id="start" class="btn btn-primary" ><span class="fa fa-clock-o"></span> ' . Lang::get('timesheets.end') . '</a>' : '---') !!}</td>
-                    <td>
-                        @if ($day['workday'])
-                        <select id="" class="" data-validation="required" data-validation-error-msg="{!! Lang::get('proposals.error-clients') !!}" required>
-                            <option value="">{!! Lang::get('general.select') !!}</option>
-                            @if (isset($data['tasks']))
-                            @foreach ($data['tasks'] as $task)
-                            <option value="{!! $task->id !!}">{!! $task->name !!}</option>
-                            @endforeach
-                            @endif
-                        </select>
-                        <a id="start" class="btn btn-primary"><span class="fa fa-calendar-plus-o"></span> {!! Lang::get('timesheets.start') !!}</a>
-                        @endif
-                    </td>
+                <tr>
+                    <td>data</td>
                 </tr>
-                @endforeach
             </tbody>
-            <tfoot>
-                <tr></tr>
-            </tfoot>
         </table>
     </div><!-- /.box-body -->
     <div class="box-footer">
@@ -129,47 +122,39 @@
             });
         });
 
-        $(document).on('click', '#lunch_start', function() {
-            $.ajax({
-                url: '/timesheets',
-                data: 'lunch_start=true&id=' + timesheet.id,
-                type: "POST",
-                success: function(data) {
-                    data = JSON.parse(data);
-                    $('#lunch_start').remove();
-
-                    var html = '<a id="lunch_end" class="btn btn-primary" ><span class="fa fa-cutlery"></span> {!! Lang::get('timesheets.lunch_end') !!}</a>';
-                    $('#lunch_time').append(html);
-
-                    timesheet = data;
-                }
-            });
+        $('#tasks').on('change', function() {
+            getCycle($(this).val())
         });
 
-        $(document).on('click', '#lunch_end', function() {
-            $.ajax({
-                url: '/timesheets',
-                data: 'lunch_end=true&id=' + timesheet.id,
-                type: "POST",
-                success: function(data) {
-                    data = JSON.parse(data);
-                    if (!data.error) {
-                        $('#lunch_end').remove();
+        function getCycle(id) {
+          $.ajax({
+            url: '/timesheets',
+            data: {id: id},
+            type: "GET",
+            success: function(data) {
+              var project_times = JSON.parse(data);
 
-                        var html = '<p>' + data.lunch_hours + '</p>';
-                        $('#lunch_time').append(html);
+              console.log(project_times);
 
-                        timesheet = data;
-                    } else {
-                        new PNotify({
-                            type: "error",
-                            title: "{!! Lang::get('general.failed') !!}",
-                            text: data.message,
-                            addclass: "stack-bottomleft"
-                        });
-                    }
-                }
-            });
-        });
+              if (project_times.length > 0) {
+                $('#project_time_id').prop( "disabled", false );
+                $('#project_time_id').find('option[value!=""]').remove();
+
+                var options = [];
+
+                $.each(project_times, function(i, project_time) {
+
+                  options.push('<option value="' + project_time.id + '">' + project_time.cycle + '</select>');
+                  return;
+                });
+
+                $('#project_time_id').append(options);
+              } else {
+                $('#project_time_id').prop( "disabled", true ).val($("#target option:first").val());
+                $('#project_time_id').find('option[value!=""]').remove();
+              }
+            }
+          });
+        }
     </script>
 @endsection
