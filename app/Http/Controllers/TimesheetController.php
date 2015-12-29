@@ -9,12 +9,18 @@ use Auth;
 use Lang;
 use Calendar;
 use App\Task;
+use App\Journal;
 use App\Holyday;
+use App\Project;
 use App\TaskTeam;
 use App\UserTeam;
 use App\Timesheet;
 use Carbon\Carbon;
+use App\TimeEntry;
+use App\TaskJournal;
+use App\TimesheetTask;
 use App\Http\Requests;
+use App\UserOpenProject;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Controllers\GeneralController;
@@ -34,119 +40,41 @@ class TimesheetController extends Controller
         $today = new Carbon();
         $data['today'] = $today;
 
-        // Get all the timesheets
-        /*$timesheet_today = Timesheet::where('user_id', Auth::user()->getEloquent()->id)->orderBy('workday', 'desc')->get()->first();
-        if ($timesheet_today) {
-            $timesheet_today->workday = Carbon::createFromFormat('Y-m-d H', $timesheet_today->workday . '00');
+        // Get the workday
+        $workday = Timesheet::where('user_id', Auth::user()->getEloquent()->id)->where('workday', $today->toDateString())->orderBy('workday', 'desc')->get()->first();
 
-            $diffTime = $timesheet_today->workday->diffInMinutes(new Carbon());
+        try {
+            DB::beginTransaction();
 
-            $hours = floor($diffTime / 60);
-            $minutes = ($diffTime % 60);
-            $time = (($hours <= 9 ? "0" . $hours : $hours) . ":" . $minutes) . ":00";
-        }
+            if (!$workday) {
+                $timesheet = array(
+                    'user_id' => Auth::user()->getEloquent()->id,
+                    'workday' => $today->toDateString(),
+                    'hours' => 0,
+                    'start' => $today->toTimeString()
+                );
 
-        // $data['time'] = $time;
-        
-        $data['timesheet_today'] = $timesheet_today;
+                $timesheet = Timesheet::create($timesheet);
 
-        setlocale(LC_TIME, 'ptb', 'pt_BR', 'portuguese-brazil', 'bra', 'brazil', 'pt_BR.utf-8', 'pt_BR.iso-8859-1', 'br');
-
-        if($timesheet_today){
-            if($timesheet_today->lunch_start != null) {
-                $lhs = explode(':', $timesheet_today->lunch_start);
-                $lunch_start = Carbon::createFromTime($lhs[0], $lhs[1], $lhs[2], 'America/Sao_Paulo');
-                            
-                $lhe = explode(':', $timesheet_today->lunch_end);
-                $lunch_end = Carbon::createFromTime($lhe[0], $lhe[1], $lhe[2], 'America/Sao_Paulo');
-            }
-        }
-
-        $week = [];
-
-        for ($days = 6; $days >= 0; $days--) {
-            $day = new Carbon();
-
-            switch ($today->dayOfWeek) {
-                case Carbon::SUNDAY:
-                    $day->subDay($today->dayOfWeek - $days);
-                    break;
-                case Carbon::MONDAY:
-                    if ($today->dayOfWeek <= $days)
-                        $day->subDay($today->dayOfWeek - $days);
-                    else
-                        $day->addDay($today->dayOfWeek - $days - 2);
-                    break;
-                case Carbon::TUESDAY:
-                    if ($today->dayOfWeek <= $days)
-                        $day->subDay($today->dayOfWeek - $days);
-                    else
-                        $day->addDay($today->dayOfWeek - $days - 3);
-                    break;
-                case Carbon::WEDNESDAY:
-                    if ($today->dayOfWeek <= $days)
-                        $day->subDay($today->dayOfWeek - $days);
-                    else
-                        $day->addDay($today->dayOfWeek - $days - 4);
-                    break;
-                case Carbon::THURSDAY:
-                    if ($today->dayOfWeek <= $days)
-                        $day->subDay($today->dayOfWeek - $days);
-                    else
-                        $day->addDay($today->dayOfWeek - $days - 5);
-                    break;
-                case Carbon::FRIDAY:
-                    if ($today->dayOfWeek <= $days)
-                        $day->subDay($today->dayOfWeek - $days);
-                    else
-                        $day->addDay($today->dayOfWeek - $days - 6);
-                    break;
-                case Carbon::SATURDAY:
-                    if ($today->dayOfWeek <= $days)
-                        $day->subDay($today->dayOfWeek - $days);
-                    else
-                        $day->addDay($today->dayOfWeek - $days - 7);
-                    break;
-            }
-
-            $workday = Timesheet::findWorkday($day->toDateString())->get()->first();
-
-            if ($workday){
-                if ($workday->lunch_start != '00:00:00') {
-                    if ($workday->lunch_end != '00:00:00') {
-                        $hours = floor($workday->lunch_hours / 60);
-                        $minutes = ($workday->lunch_hours % 60);
-                        $lunch = '<p title="' . Lang::get('timesheets.title-lunch') . ': ' . $workday->lunch_start . ' as ' . $workday->lunch_end . '">' . ($hours <= 9 ? "0" . $hours : $hours) . ":" . $minutes . '</p>';
-                    } else {
-                        $lunch = '<a id="lunch_end" class="btn btn-primary" ><span class="fa fa-cutlery"></span> ' . Lang::get('timesheets.lunch_end') . '</a>';
-                    }
-                } else {
-                    $lunch = '<a id="lunch_start" class="btn btn-primary" ><span class="fa fa-cutlery"></span> ' . Lang::get('timesheets.lunch_start') . '</a>';
+                if ($timesheet) {
+                    DB::commit();
+                    $workday = $timesheet;
                 }
-            } else {
-                $lunch = '---';
             }
-
-            $holyday = Holyday::isHolyday($day->day, $day->month)->get()->first();
-            
-            $day_info = array('day' => $day, 'workday' => $workday, 'lunch' => $lunch, 'holyday' => $holyday);
-            $week[] = $day_info;
+        } catch (Exception $e) {
+            DB::rollback();
+            $data['error'] =  Lang::get('general.error-day');
         }
 
-        sort($week);
+        $timesheet_task = TimesheetTask::where('timesheet_id', $workday->id)->where('end', null)->get()->first();
+        $data['timesheet_task'] = $timesheet_task;
 
-        $data['week'] = $week;
-
-        // Get all tasks
-        $teams = UserTeam::getTeams(Auth::user()->getEloquent()->id)->get();
-
-        $tasksteams = TaskTeam::getTasksTeam($teams->toArray())->get();
-
-        $tasks = Task::getTasks($tasksteams->toArray())->get();
-        $data['tasks'] = $tasks;*/
-
-        $projects = DB::connection('openproject')->table('projects')->where('status', 1)->get();
+        $projects = Project::whereIn('status', [1, 7])->get();
         $data['projects'] = $projects;
+
+        // Get all the tasks do today;
+        $tasks = TimesheetTask::where('timesheet_id', $workday->id)->orderBy('id', 'DESC')->get();
+        $data['tasks'] = $tasks;
 
         // Return the timesheets view.
         return view('timesheet.index')->with('data', $data);
@@ -174,76 +102,202 @@ class TimesheetController extends Controller
         $inputs = $request->all();
 
         // Get the actual date
-        $data = Carbon::now();
+        $today = Carbon::now();
 
-        // die($inputs['start'] === 'false');
+        // Get the timesheet of today
+        $workday = Timesheet::where('user_id', Auth::user()->getEloquent()->id)->where('workday', $today->toDateString())->orderBy('workday', 'desc')->get()->first();
 
-        if (isset($inputs['start'])) {
-            $data = array(
-                'user_id' => Auth::user()->getEloquent()->id,
-                'workday' => $data->toDateString(),
-                'hours' => 0,
-                'start' => $data->toTimeString()
-                // 'end' => ,
-                // 'status' => 
-            );
+        try {
+            if (isset($inputs['start'])) {
+                $task = array(
+                    'timesheet_id' => $workday->id,
+                    'project_id' => $inputs['project_id'],
+                    'work_package_id' => $inputs['task_id'],
+                    'start' =>  $today->toTimeString()
+                );
 
-            $timesheet = Timesheet::create($data);
+                $timesheet_task = TimesheetTask::create( $task );
 
-            if ($timesheet) {
-                DB::commit();
-                return response()->json($timesheet);
-            }
-        } else if (isset($inputs['lunch_start'])) {
-            $timesheet = Timesheet::find($inputs['id']);
-
-            $timesheet->lunch_start = $data->toTimeString();
-
-            if ($timesheet->save()) {
-                DB::commit();
-                return response()->json($timesheet);
-            }
-        } else if (isset($inputs['lunch_end'])) {
-            $timesheet = Timesheet::find($inputs['id']);
-
-            $timesheet->lunch_end = $data->toTimeString();
-
-            $lhs = explode(':', $timesheet->lunch_start);
-            $lunch_start = Carbon::createFromTime($lhs[0], $lhs[1], $lhs[2], 'America/Sao_Paulo');
-                        
-            $lhe = explode(':', $timesheet->lunch_end);
-            $lunch_end = Carbon::createFromTime($lhe[0], $lhe[1], $lhe[2], 'America/Sao_Paulo');
-
-            // $total_time = $lunch_start->diffInHours($lunch_end);
-            $total_time = $lunch_start->diffInMinutes($lunch_end);
-
-
-
-            // if($total_time > 1.0) {
-            if ($total_time > 0.1) {
-                $timesheet->lunch_hours = $total_time;
-
-                if ($timesheet->save()) {
+                if ($timesheet_task) {
                     DB::commit();
-                    return response()->json($timesheet);
+
+                    $work_package = Task::find($inputs['task_id']);
+                    $work_package->status_id = 10;
+
+                    if ($work_package->save()) {
+                        DB::commit();
+                        $this->journal($inputs['task_id'], 'WorkPackage', 'work_packages');
+                        
+                        return response()->json($this->line($timesheet_task));
+                    } else {
+                        DB::rollback();
+                        return response()->json(array('error' => Lang::get('general.error')));
+                    }
+                } else {
+                    DB::rollback();
+                    return response()->json(array('error' => Lang::get('general.error')));
                 }
-            } else {
-                return response()->json(['error' => 'true', 'message' => Lang::get('timesheets.error-lunch')]);
+            } else if (isset($inputs['finish']) || isset($inputs['pause']) || isset($inputs['fail'])) {
+                $timesheet_task = TimesheetTask::where('timesheet_id', $workday->id)->where('end', null)->get()->first();
+                $timesheet_task->end = $today->toTimeString();
+
+                $seconds = '00';
+
+                $start = new Carbon($timesheet_task->start);
+
+                $diffTime = $start->diffInMinutes(new Carbon($timesheet_task->end));
+
+                $hours = floor($diffTime / 60);
+                $minutes = ($diffTime % 60);
+                $tminutes = (float)($minutes / 60);
+                $time = (($hours <= 9 ? "0" . $hours : $hours) . ":" . $minutes) . ":" . $seconds;
+
+                $time_entry = array(
+                    'project_id' => $timesheet_task->project_id,
+                    'user_id' => UserOpenProject::where('login', 'LIKE', Auth::user()->getEloquent()->username . '@%')->orWhere('mail', 'LIKE', Auth::user()->getEloquent()->username . '@%')->get()->first()->id,
+                    'work_package_id' => $timesheet_task->work_package_id,
+                    'hours' => (float)$hours + $tminutes,
+                    'activity_id' => 1,
+                    'spent_on' => $start->toDateString(),
+                    'tyear' => $start->year,
+                    'tmonth' => $start->month,
+                    'tweek' => $start->weekOfYear,
+                    'created_on' => Carbon::now(),
+                    'update_on' => Carbon::now()
+                );
+
+                $time_entry = TimeEntry::create ($time_entry);
+
+                if ($timesheet_task->save()) {
+                    DB::commit();
+                } else {
+                    DB::rollback();
+                    return response()->json(array('error' => Lang::get('general.error')));
+                }
+
+                $timesheet_task->hours = $time;
+
+                if ($timesheet_task->save()) {
+                    DB::commit();
+
+                    $status = 11;
+
+                    if (isset($inputs['pause']))
+                        $status = 14;
+
+                    if (isset($inputs['fail']))
+                        $status = 12;
+
+                    $work_package = Task::find($timesheet_task->work_package_id);
+                    $work_package->status_id = $status;
+
+                    if ($work_package->save()) {
+                        DB::commit();
+                        $this->journal($timesheet_task->work_package_id, 'WorkPackage', 'work_packages');
+                        
+                        return response()->json($this->line($timesheet_task));
+                    } else {
+                        DB::rollback();
+                        return response()->json(array('error' => Lang::get('general.error')));
+                    }
+                } else {
+                    DB::rollback();
+                    return response()->json(array('error' => Lang::get('general.error')));
+                }
+            } else if ($inputs['lunch']) {
+                if ($inputs['start']) {
+                    $workday->lunch_start = Carbon::now();
+
+                    if ($workday->save()) {
+                        DB::commit();
+                        $this->journal($timesheet_task->work_package_id, 'WorkPackage', 'work_packages');
+                        
+                        return response()->json($this->line($timesheet_task));
+                    } else {
+                        DB::rollback();
+                        return response()->json(array('error' => Lang::get('general.error')));
+                    }
+                } else {
+                    $workday->lunch_end = Carbon::now();
+
+                    if ($workday->save()) {
+                        DB::commit();
+                        $this->journal($timesheet_task->work_package_id, 'WorkPackage', 'work_packages');
+                        
+                        return response()->json($this->line($timesheet_task));
+                    } else {
+                        DB::rollback();
+                        return response()->json(array('error' => Lang::get('general.error')));
+                    }
+                }
             }
+        } catch (Exception $e) {
+            DB::rollback();
+            return response()->json(array('error' => Lang::get('general.error')));
         }
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return Response
-     */
-    public function getTasks(Request $request)
-    {
-        $tasks = DB::connection('openproject')->table('tasks')->get();
+    public function line($timesheet_task) {
+        $timesheet_task->project    = $timesheet_task->getProject()->getResults()->name;
+        $timesheet_task->task       = $timesheet_task->getTask()->getResults()->subject;
+        $timesheet_task->start      = date("G:i a", strtotime($timesheet_task->start));
+        $timesheet_task->end        = ($timesheet_task->end) ? date("G:i a", strtotime($timesheet_task->end)) : '---';
+        $timesheet_task->hours      = ($timesheet_task->hours) ? date('G:i', strtotime($timesheet_task->hours)) : '---';
 
-        return response()->json($tasks);
+        return $timesheet_task;
+    }
+
+    public function journal($task_id, $type, $activity_type) {
+        $task = Task::find($task_id);
+
+        $user_id = UserOpenProject::where('login', 'LIKE', Auth::user()->getEloquent()->username . '@%')->orWhere('mail', 'LIKE', Auth::user()->getEloquent()->username . '@%')->get()->first()->id;
+
+        $task->assigned_to_id = $user_id;
+
+        try {
+            if ($task->save()) {
+                DB::commit();
+                /*$journal = array(
+                    'journable_type'    => $type,
+                    'user_id'           => $user_id,
+                    'version'           => 1,
+                    'activity_type'     => $activity_type
+                );
+
+                $journal = Journal::create($journal);
+
+                if ($journal) {
+                    $task_journal = $task;
+                    $task_journal['journal_id'] = $journal->id;
+
+                    $task_journal = TaskJournal::create($task_journal);
+
+                    if ($task_journal) {
+                        DB::commit();
+                        $journal->journable_id = $task_journal->id;
+
+                        if ($journal->save()) {
+                            DB::commit();
+                        } else {
+                            DB::rollback();
+                            return response()->json(array('error' => Lang::get('general.error')));
+                        }
+                    } else {
+                        DB::rollback();
+                        return response()->json(array('error' => Lang::get('general.error')));
+                    }
+                } else {
+                    DB::rollback();
+                    return response()->json(array('error' => Lang::get('general.error')));
+                }*/
+            } else {
+                DB::rollback();
+                return response()->json(array('error' => Lang::get('general.error')));
+            }
+        } catch (Exception $e) {
+            DB::rollback();
+            return response()->json(array('error' => Lang::get('general.error')));
+        }
     }
 
     /**

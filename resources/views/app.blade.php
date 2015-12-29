@@ -11,7 +11,7 @@
     <!-- Bootstrap 3.3.4 -->
     {!! Html::style("library/adminLTE/bootstrap/css/bootstrap.min.css") !!}
     <!-- Font Awesome Icons -->
-    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css" rel="stylesheet" type="text/css" />
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css" rel="stylesheet" type="text/css" />
     <!-- Ionicons -->
     <link href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css" rel="stylesheet" type="text/css" />
     <!-- Select2 -->
@@ -160,7 +160,7 @@
                 <ul class="dropdown-menu">
                   <!-- User image -->
                   <li class="user-header">
-                    <img src="{!! (Auth::user()->getEloquent() ? URL::to(Auth::user()->getEloquent()->photo) : '') !!}" class="img-circle" alt="User Image" />
+                    <img src="{!! (Auth::user()->getEloquent() ? URL::to(Auth::user()->getEloquent()->photo) : '') !!}" class="img-circle" alt="{!! Auth::user()->getEloquent()->first_name !!} {!! Auth::user()->getEloquent()->last_name !!}" />
                     <p>
                       {!! Auth::user()->getEloquent()->first_name !!} {!! Auth::user()->getEloquent()->last_name !!} - Web Developer
                       <small>{!! Lang::get('general.member-since', ['month-year' => date('F \d\e Y', strtotime(Auth::user()->getEloquent()->created_at))]) !!}</small>
@@ -260,7 +260,7 @@
         <div class="pull-right hidden-xs">
           <b>Versão</b> {!! Config::get('app.app_version') !!}
         </div>
-        <strong>Copyright &copy; 2015 <a href="http://www.svlabs.com.br">SVLabs</a>.</strong> Todos os direitos reservados.
+        {!! Lang::get('general.copyright') !!}
       </footer>
       
 			<!-- Control Sidebar -->
@@ -455,7 +455,7 @@
     @section('scripts')
     @show
     <script>
-    	var settings = {!! Auth::user()->getEloquent()->settings()->getResults() ? '$.parseJSON(' . Auth::user()->getEloquent()->settings()->getResults() . ')' : '{}' !!};
+    	var settings = {!! Auth::user()->getEloquent()->settings()->getResults() ? "$.parseJSON('" . Auth::user()->getEloquent()->settings()->getResults() . "')" : '{}' !!};
 
       $.ajaxSetup({
           headers: {

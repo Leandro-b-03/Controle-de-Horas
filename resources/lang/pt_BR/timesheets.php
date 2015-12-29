@@ -26,22 +26,27 @@ return [
     'delete-new'                    => 'Deletar o(s) ',
 
     // View sentences
-    'list'                          => 'lista de clientes',
+    'list'                          => 'lista de tarefas',
     'create'                        => 'criar cliente',
     'edit'                          => 'editar cliente',
     'new'                           => '<i class="fa fa-plus"></i> Novo cliente',
     'delete'                        => '<i class="fa fa-remove"></i> Deletar cliente(s)',
+    'no-task'                       => 'Selecione uma tarefa',
 
     // Table
     'title-day'                     => 'Dia',
-    'title-start'                   => 'Entrada',
-    'title-end'                     => 'Saída',
-    'title-task'                    => 'Tarefas',
+    'title-project'                 => 'Projeto',
+    'title-start'                   => 'Iniciado',
+    'title-end'                     => 'Término',
+    'title-task'                    => 'Tarefa',
     'title-lunch'                   => 'Almo&ccedil;o',
     'day'                           => 'Dia',
-    'lunch_start'                   => 'Iniciar almo&ccedil;o',
-    'lunch_end'                     => 'Fechar almo&ccedil;o',
+    'lunch_start'                   => 'Almo&ccedil;o',
+    'lunch_end'                     => 'Almo&ccedil;o',
     'start'                         => 'Iniciar',
     'end'                           => 'Fechar dia',
+    'finish'                        => 'Terminar',
+    'pause'                         => 'Pausar',
+    'fail'                          => 'Falha',
     'task'                          => 'Tarefas',
 ];

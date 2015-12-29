@@ -5,6 +5,13 @@ use Illuminate\Database\Eloquent\Model;
 class Project extends Model
 {
     /**
+     * The database connection used by the model.
+     *
+     * @var string
+     */
+    protected $connection = 'openproject';
+
+    /**
      * The database table used by the model.
      *
      * @var string
@@ -16,30 +23,30 @@ class Project extends Model
      *
      * @var array
      */
-    protected $fillable = ['user_id', 'client_id', 'proposal_id', 'name', 'name_complement', 'description', 'long_description', 'budget', 'schedule_time', 'time_spend'];
+    // protected $fillable = ['user_id', 'client_id', 'proposal_id', 'name', 'name_complement', 'description', 'long_description', 'budget', 'schedule_time', 'time_spend'];
 
     /**
      * Get the user record associated with the project.
      */
-    public function user()
-    {
-        return $this->belongsTo('App\User', 'user_id');
-    }
+    // public function user()
+    // {
+    //     return $this->belongsTo('App\User', 'user_id');
+    // }
 
     /**
      * Get the client record associated with the project.
      */
-    public function client()
-    {
-        return $this->belongsTo('App\Client', 'client_id');
-    }
+    // public function client()
+    // {
+    //     return $this->belongsTo('App\Client', 'client_id');
+    // }
 
     /**
      * Get the proposal record associated with the project.
      */
-    public function proposal()
-    {
-        return $this->belongsTo('App\Proposal', 'proposal_id');
-    }
+    // public function proposal()
+    // {
+    //     return $this->belongsTo('App\Proposal', 'proposal_id');
+    // }
 
 }

@@ -382,7 +382,7 @@
                         <span class="project-icon fa fa-suitcase"></span>
                       </div>
                       <div class="product-info">
-                        <a href="javascript::;" class="product-title">{!! $new_project->name !!} <span class="label label-warning pull-right">{!! date('d/m/Y', strtotime($new_project->created_at)) !!}</span></a>
+                        <a href="javascript::;" class="product-title">{!! $new_project->name !!} <span class="label label-warning pull-right">{!! date('d/m/Y', strtotime($new_project->created_on)) !!}</span></a>
                         <span class="product-description">
                           {!! $new_project->description !!}
                         </span>

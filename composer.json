@@ -10,7 +10,7 @@
         "laravel/elixir": "^1.0@dev",
         "illuminate/html": "^5.0@dev",
         "raveren/kint": "^1.0@dev",
-        "laravelcollective/html": "dev-master",
+        "laravelcollective/html": "5.1.*",
         "zizaco/entrust": "dev-master",
         "vinkla/pusher": "~1.0",
         "guzzle/guzzle": "^3.9@dev",

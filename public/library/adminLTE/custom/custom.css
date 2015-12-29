@@ -345,8 +345,18 @@ table thead tr th.start, table thead tr th.end {
 
 .custom_a {
 	height: 135px;
+	padding: 25px 0px;
 }
 
 .play {
-	font-size: 25px;
+	width: 120px;
+	margin-bottom: 10px;
+}
+
+.custom-callout {
+	height: 130px;
+}
+
+.invisible {
+	display: none;
 }

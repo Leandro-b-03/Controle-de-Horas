@@ -10,12 +10,12 @@
       <i class="fa fa-clock-o"></i> <span>{!! Lang::get('general.timesheets') !!}</span></i>
     </a>
   </li>
-  <li class="treeview {!! ((Request::is('projects/*') || Request::is('projects')) || (Request::is('tasks/*') || Request::is('tasks')) || (Request::is('proposals/*') || Request::is('proposals')) ? 'active' : '') !!}">
+  <!-- <li class="treeview {!! ((Request::is('projects/*') || Request::is('projects')) || (Request::is('tasks/*') || Request::is('tasks')) || (Request::is('proposals/*') || Request::is('proposals')) ? 'active' : '') !!}">
     <a href="#">
       <i class="fa fa-suitcase"></i> <span>{!! Lang::get('general.projects') !!}</span>
       <i class="fa fa-angle-left pull-right"></i>
     </a>
-    <!-- <ul class="treeview-menu">
+    <ul class="treeview-menu">
   
       <li {!! ((Request::is('proposals/*') || Request::is('proposals')) ? 'class="active"' : '') !!}>
         <a href="{!! URL::to('proposals') !!}">
@@ -38,7 +38,7 @@
       </li>
   
     </ul>
-  </li> -->
+  </li>
   <li class="treeview {!! ((Request::is('clients/*') || Request::is('clients')) || (Request::is('client-groups/*') || Request::is('client-groups')) ? 'active' : '') !!}">
     <a href="#">
       <i class="fa fa-user-secret"></i> <span>{!! Lang::get('general.clients') !!}</span>
@@ -56,7 +56,7 @@
       </li>
   
     </ul>
-  </li>
+  </li> -->
   <li class="treeview {!! ((Request::is('users/*') || Request::is('users')) || (Request::is('group-permissions/*') || Request::is('group-permissions')) || (Request::is('teams/*') || Request::is('teams')) ? 'active' : '') !!}">
     <a href="#">
       <i class="fa fa-user"></i> <span>{!! Lang::get('general.users') !!}</span>
@@ -74,9 +74,9 @@
       </li>
   
   
-      <li {!! ((Request::is('teams/*') || Request::is('teams')) ? 'class="active"' : '') !!}>
+      <!-- <li {!! ((Request::is('teams/*') || Request::is('teams')) ? 'class="active"' : '') !!}>
         <a href="{!! URL::to('teams') !!}"><i class="fa fa-group"></i> {!! Lang::get('general.teams') !!}</a>
-      </li>
+      </li> -->
   
     </ul>
   </li>

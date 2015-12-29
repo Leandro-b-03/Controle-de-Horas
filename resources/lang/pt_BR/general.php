@@ -49,6 +49,8 @@ return [
     'add'                           => 'Adicionar',
     'add-icon'                      => '<i class="fa fa-plus"></i> Adicionar',
     'char_left'                     => 'caract&eacute;res restantes',
+    'info'                          => 'Informação',
+    'total'                         => 'Total',
 
     // Menu & Controller
     'nav-menu'                      => 'Menu de navega&ccedil;&atilde;o',
@@ -130,7 +132,7 @@ return [
     'all-messages'                  => 'Ver todas as mensagens',
     'all-notifications'             => 'Ver todas notificações',
     'all-tasks'                     => 'Ver todas as tarefas',
-    ''                              => '',
+    'copyright'                     => 'Copyright &copy; ' . date('Y') . ' <b><a href="http://www.svlabs.com.br" class="text-black">SVLabs</a></b><br>Todos os direitos reservados',
 
     // Chat
     'chat-send'                     => 'Enviar',

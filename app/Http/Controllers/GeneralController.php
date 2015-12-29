@@ -7,6 +7,7 @@ use Lang;
 use Mail;
 use App\User;
 use App\Team;
+use App\Task;
 use App\Proposal;
 use PusherManager;
 use Carbon\Carbon;
@@ -233,6 +234,21 @@ class GeneralController extends Controller {
         $client_group = ClientGroup::where('client_id', $id)->get();
 
         return response()->json($client_group);
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param  int  $id
+     * @return Response
+     */
+    public function getTasks(Request $request)
+    {
+        $project_id = $request->all();
+
+        $tasks = DB::connection('openproject')->table('work_packages')->where('project_id', $project_id['id'])->whereIn('status_id', [1, 12, 14])->whereIn('type_id', [1, 7])->get();
+        
+        return response()->json($tasks);
     }
 
     /**
