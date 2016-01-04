@@ -8,6 +8,7 @@ use DB;
 use Lang;
 use App\User;
 use App\Role;
+use App\UserSetting;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
@@ -61,6 +62,8 @@ class UserController extends Controller
         DB::beginTransaction();
 
         $input = $request->all();
+
+        $input['role'] = 1;
         
         try {
             // Validation of the fields
@@ -88,24 +91,65 @@ class UserController extends Controller
 
                     if ($user) {
                         $user->attachRole(Role::find($input['role']));
-                        GeneralController::mail($user, 'signup');                        
+
+                        $settings = array(
+                            'user_id' => $user->id,
+                            'skin' => 'skin-yellow',
+                            'boxed' => 'false',
+                            'sidebar_toggle' => 'false',
+                            'right_sidebar_slide' => 'control-sidebar-open',
+                            'right_sidebar_white' => 'true'
+                        );
+
+                        $settings = UserSetting::create( $settings );
+
+                        if (!$settings)  {
+                            DB::rollback();
+                            if ($request->is('register')) {
+                                return redirect('register')->withInput()->with('return', GeneralController::createMessage('failed', Lang::get('general.' . $this->controller_name), 'create'));
+                            } else {
+                                return redirect('users/create')->withInput()->with('return', GeneralController::createMessage('failed', Lang::get('general.' . $this->controller_name), 'create'));
+                            }
+                        }
+
+                        // GeneralController::mail($user, 'signup');                        
                         DB::commit();
-                        return redirect('users')->with('return', GeneralController::createMessage('success', Lang::get('general.' . $this->controller_name), 'create'));
+                        if ($request->is('register')) {
+                            return redirect('register')->with('return', GeneralController::createMessage('success', Lang::get('general.' . $this->controller_name), 'create'));
+                        } else {
+                            return redirect('users')->with('return', GeneralController::createMessage('success', Lang::get('general.' . $this->controller_name), 'create'));
+                        }
                     } else {
-                    DB::rollback();
-                        return redirect('users/create')->withInput()->with('return', GeneralController::createMessage('failed', Lang::get('general.' . $this->controller_name), 'create'));
+                        DB::rollback();
+                        if ($request->is('register')) {
+                            return redirect('register')->withInput()->with('return', GeneralController::createMessage('failed', Lang::get('general.' . $this->controller_name), 'create'));
+                        } else {
+                            return redirect('users/create')->withInput()->with('return', GeneralController::createMessage('failed', Lang::get('general.' . $this->controller_name), 'create'));
+                        }
                     }
                 } else {
                     DB::rollback();
-                    return redirect('users/create')->withInput()->with('return', GeneralController::createMessage('failed', Lang::get('general.' . $this->controller_name), 'create-failed'));
+                    if ($request->is('register')) {
+                        return redirect('register')->withInput()->with('return', GeneralController::createMessage('failed', Lang::get('general.' . $this->controller_name), 'create-failed'));
+                    } else {
+                        return redirect('users/create')->withInput()->with('return', GeneralController::createMessage('failed', Lang::get('general.' . $this->controller_name), 'create-failed'));
+                    }
                 }
              } else {
                 DB::rollback();
-                return redirect('users/create')->withInput()->with('return', GeneralController::createMessage('failed', Lang::get('general.' . $this->controller_name), 'password'));
+                if ($request->is('register')) {
+                    return redirect('register')->withInput()->with('return', GeneralController::createMessage('failed', Lang::get('general.' . $this->controller_name), 'password'));
+                } else {
+                    return redirect('users/create')->withInput()->with('return', GeneralController::createMessage('failed', Lang::get('general.' . $this->controller_name), 'password'));
+                }
             }
         } catch (Exeption $e) {
             DB::rollback();
-            return redirect('users/create')->withInput()->with('return', GeneralController::createMessage('failed', Lang::get('general.' . $this->controller_name), 'create-failed'));
+            if ($request->is('register')) {
+                return redirect('register')->withInput()->with('return', GeneralController::createMessage('failed', Lang::get('general.' . $this->controller_name), 'create-failed'));
+            } else {
+                return redirect('users/create')->withInput()->with('return', GeneralController::createMessage('failed', Lang::get('general.' . $this->controller_name), 'create-failed'));
+            }
         }
     }
 

@@ -13,7 +13,7 @@ $(function () {
     checkboxClass: 'icheckbox_square-yellow',
     radioClass: 'iradio_flat-yellow',
         increaseArea: '20%' // optional
-      });
+  });
 
   $('#delete').click(function() {
     if ($('#delete-id').val() != '') {

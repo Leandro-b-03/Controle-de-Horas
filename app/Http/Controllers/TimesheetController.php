@@ -41,7 +41,7 @@ class TimesheetController extends Controller
         $data['today'] = $today;
 
         // Get the workday
-        $workday = Timesheet::where('user_id', Auth::user()->getEloquent()->id)->where('workday', $today->toDateString())->orderBy('workday', 'desc')->get()->first();
+        $workday = Timesheet::where('user_id', Auth::user()->getEloquent()->id)->where('workday', $today->toDateString())->orderBy('workday', 'desc')->get()->first();;
 
         try {
             DB::beginTransaction();
@@ -65,6 +65,7 @@ class TimesheetController extends Controller
             DB::rollback();
             $data['error'] =  Lang::get('general.error-day');
         }
+        $data['workday'] = $workday;
 
         $timesheet_task = TimesheetTask::where('timesheet_id', $workday->id)->where('end', null)->get()->first();
         $data['timesheet_task'] = $timesheet_task;
@@ -205,29 +206,43 @@ class TimesheetController extends Controller
                     return response()->json(array('error' => Lang::get('general.error')));
                 }
             } else if ($inputs['lunch']) {
-                if ($inputs['start']) {
-                    $workday->lunch_start = Carbon::now();
+                if ($inputs['start_lunch']) {
+                    if ($workday->lunch_start == '00:00:00') {
+                        $workday->lunch_start = $today->toTimeString();
 
-                    if ($workday->save()) {
-                        DB::commit();
-                        $this->journal($timesheet_task->work_package_id, 'WorkPackage', 'work_packages');
-                        
-                        return response()->json($this->line($timesheet_task));
-                    } else {
-                        DB::rollback();
-                        return response()->json(array('error' => Lang::get('general.error')));
+                        if ($workday->save()) {
+                            DB::commit();                        
+                            return response()->json($this->lunch($workday));
+                        } else {
+                            DB::rollback();
+                            return response()->json(array('error' => Lang::get('general.error')));
+                        }
                     }
-                } else {
-                    $workday->lunch_end = Carbon::now();
+                }
+                
+                if ($inputs['start_lunch'] == 'false') {
+                    if ($workday->lunch_end == '00:00:00' && $workday->lunch_start != '00:00:00') {
+                        $workday->lunch_end = $today->toTimeString();
 
-                    if ($workday->save()) {
-                        DB::commit();
-                        $this->journal($timesheet_task->work_package_id, 'WorkPackage', 'work_packages');
-                        
-                        return response()->json($this->line($timesheet_task));
-                    } else {
-                        DB::rollback();
-                        return response()->json(array('error' => Lang::get('general.error')));
+                        $start = new Carbon($workday->lunch_start);
+
+                        $diffTime = $start->diffInMinutes(new Carbon($workday->lunch_end));
+
+                        $seconds = '00';
+
+                        $hours = floor($diffTime / 60);
+                        $minutes = ($diffTime % 60);
+                        $time = (($hours <= 9 ? "0" . $hours : $hours) . ":" . $minutes) . ":" . $seconds;
+
+                        $workday->lunch_hours = $time;
+
+                        if ($workday->save()) {
+                            DB::commit();                        
+                            return response()->json($this->lunch($workday));
+                        } else {
+                            DB::rollback();
+                            return response()->json(array('error' => Lang::get('general.error')));
+                        }
                     }
                 }
             }
@@ -245,6 +260,14 @@ class TimesheetController extends Controller
         $timesheet_task->hours      = ($timesheet_task->hours) ? date('G:i', strtotime($timesheet_task->hours)) : '---';
 
         return $timesheet_task;
+    }
+
+    public function lunch($workday) {
+        $workday->lunch_start      = date("G:i a", strtotime($workday->lunch_start));
+        $workday->lunch_end        = ($workday->lunch_end) ? date("G:i a", strtotime($workday->lunch_end)) : '---';
+        $workday->lunch_hours      = ($workday->lunch_hours) ? date('G:i', strtotime($workday->lunch_hours)) : '---';
+
+        return $workday;
     }
 
     public function journal($task_id, $type, $activity_type) {

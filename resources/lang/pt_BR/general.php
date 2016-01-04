@@ -65,6 +65,8 @@ return [
     'users'                         => 'Colaboradores',
     'users-list'                    => 'Lista de colaboradores',
     'group-permissions'             => 'Permiss&otilde;es de grupo',
+    'lockscreen'                    => 'Hor&aacute;rio de almoço',
+    'register'                      => 'Registrar',
     'DashboardController'           => 'Dashboard',
     'TaskController'                => 'Tarefas',
     'ProjectController'             => 'Projetos',
@@ -76,7 +78,7 @@ return [
     'UserController'                => 'Colaboradores',
     'GroupPermissionController'     => 'Permiss&otilde;es de grupo',
     'MessagesController'            => 'Mensagens',
-    ''                              => '',
+    'LockscreenController'          => 'Hor&aacute;rio de almoço',
 
     // Data Tables
     'dataTable-processing'          => 'Carregando...',
@@ -132,7 +134,7 @@ return [
     'all-messages'                  => 'Ver todas as mensagens',
     'all-notifications'             => 'Ver todas notificações',
     'all-tasks'                     => 'Ver todas as tarefas',
-    'copyright'                     => 'Copyright &copy; ' . date('Y') . ' <b><a href="http://www.svlabs.com.br" class="text-black">SVLabs</a></b><br>Todos os direitos reservados',
+    'copyright'                     => '<b>Copyright &copy; ' . date('Y') . ' <a target="_blank" href="http://www.svlabs.com.br" class="text-black">SVLabs</a></b>. Todos os direitos reservados',
 
     // Chat
     'chat-send'                     => 'Enviar',

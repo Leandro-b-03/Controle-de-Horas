@@ -360,3 +360,12 @@ table thead tr th.start, table thead tr th.end {
 .invisible {
 	display: none;
 }
+
+.lockscreen-center {
+	width: 100%;
+	text-align: center;
+}
+
+.register {
+	max-width: 60%;
+}

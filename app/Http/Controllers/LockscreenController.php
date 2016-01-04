@@ -12,6 +12,8 @@ use App\Http\Controllers\Controller;
 
 class LockscreenController extends Controller
 {
+    private $controller_name = 'LockscreenController';
+
     /**
      * Display a listing of the resource.
      *
@@ -21,17 +23,25 @@ class LockscreenController extends Controller
     {
         $today = new Carbon();
 
-        $timesheet = Timesheet::where('user_id', Auth::user()->getEloquent()->id)->where('lunch_start', '!=', '00:00:00')->where('lunch_end', '00:00:00')->get()->first();
+        $timesheet = Timesheet::where('user_id', Auth::user()->getEloquent()->id)->where('lunch_start', '!=', '00:00:00')->where('lunch_end', '00:00:00')->where('workday', $today->toDateString())->get()->first();
 
-        $lunch_time = new Carbon($timesheet->lunch_start);
+        if ($timesheet) {
+            $lunch_time = new Carbon($timesheet->lunch_start);
 
-        $diffTime = $lunch_time->diffInMinutes($today);
+            $diffTime = $lunch_time->diffInMinutes($today);
 
-        $hour = $diffTime / 60;
+            $hour = $diffTime / 60;
 
-        if ($timesheet && ($hour < 1)) {
-            // Return the timesheets view.
-            return view('lockscreen.index');
+            $lunch_time->addHours(1);
+            $data['lunch_time'] = $lunch_time;
+
+            if ($timesheet && ($hour < 1)) {
+                // Return the lockscreen view.
+                return view('lockscreen.index')->with('data', $data);
+            } else {
+                // Return the timesheets view.
+                return redirect()->to('timesheets');
+            }
         } else {
             // Return the timesheets view.
             return redirect()->to('timesheets');

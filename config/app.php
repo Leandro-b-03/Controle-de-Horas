@@ -16,7 +16,7 @@ return [
     |
     */
 
-    'debug' => env('APP_DEBUG'),
+    'debug' => env('APP_DEBUG', true),
 
     /*
     |--------------------------------------------------------------------------
@@ -181,6 +181,7 @@ return [
         Torann\GeoIP\GeoIPServiceProvider::class,
         Alexpechkarev\GoogleGeocoder\GoogleGeocoderServiceProvider::class,
         Dsdevbe\LdapConnector\LdapConnectorServiceProvider::class,
+        Maatwebsite\Excel\ExcelServiceProvider::class,
 
         /*
          * Personalization Services Providers...
@@ -257,6 +258,7 @@ return [
         'Socialite'     => Laravel\Socialite\Facades\Socialite::class,
         'GeoIP'         => Torann\GeoIP\GeoIPFacade::class,
         'Geocoder'      => Alexpechkarev\GoogleGeocoder\GoogleGeocoderServiceProvider::class,
+        'Excel'         => Maatwebsite\Excel\Facades\Excel::class,
 
     ],
 

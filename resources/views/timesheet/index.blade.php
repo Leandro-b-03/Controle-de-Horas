@@ -40,7 +40,12 @@
             <div id="start_settings" class="col-xs-6 {!! !isset($data['timesheet_task']) ? '' : 'invisible' !!}">
                 <div class="form-group col-xs-2 custom_a">
                     <a id="start" class="btn btn-success play"><span class="fa fa-play-circle-o"></span> {!! Lang::get('timesheets.start') !!}</a>
+                    @if ($data['workday']->lunch_start == '00:00:00')
                     <a id="lunch" class="btn btn-primary play"><span class="fa fa-cutlery"></span> {!! Lang::get('timesheets.lunch_start') !!}</a>
+                    @endif
+                    @if ($data['workday']->lunch_start != '00:00:00' && $data['workday']->lunch_end == '00:00:00')
+                    <a id="back" class="btn btn-primary play"><span class="fa fa-cutlery"></span> {!! Lang::get('timesheets.lunch_end') !!}</a>
+                    @endif
                 </div>
                 <div class="form-group col-xs-8">
                     <label for="projects">{!! Lang::get('general.projects') !!}</label>
@@ -92,7 +97,7 @@
         </div>
     </div>
     <div class="box-body">
-        <p id="lunch_time">{!! ($data['workday']->lunch_start != '00:00:00') ? Lang::get('timesheet.lunch-time', ) : Lang::get('timesheet.lunch') !!}</p>
+        <p id="lunch_time">{!! ($data['workday']->lunch_start != '00:00:00') ? Lang::get('timesheet.lunch-time') : Lang::get('timesheet.lunch') !!}</p>
         <table id="tasks-table" class="table table-border">
             <thead>
                 <tr>
@@ -168,7 +173,7 @@
           var data = {};
 
           data.lunch = true;
-          data.start = true;
+          data.start_lunch = true;
 
           lunch(data);
         });
@@ -177,6 +182,7 @@
           var data = {};
 
           data.lunch = true;
+          data.start_lunch = false;
 
           lunch(data);
         });
@@ -205,17 +211,25 @@
           endTask(data);
         });
 
-        function endTask(data) {
+        function lunch(data) {
+          var redirect = data.start_lunch;
+          console.log(redirect);
           $.ajax({
             url: '/timesheets',
             data: data,
             type: "POST",
             success: function(data) {
               var lunch = JSON.parse(data);
+              
+              $('#lunch_time').html('Horario de saida: ' + lunch.lunch_start + '. Horario da volta: ' + lunch.lunch_end + '. Tempo total: ' + lunch.lunch_hours + '.');
 
-
+              $('#back').hide();
             }
           });
+
+          if (redirect) {
+              window.location = "http://timesheet.localhost.com/lock";
+          }
         }
 
         function endTask(data) {

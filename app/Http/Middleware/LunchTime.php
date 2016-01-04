@@ -19,23 +19,27 @@ class LunchTime
     {
         $today = new Carbon();
 
-        $timesheet = Timesheet::where('user_id', $request->user()->getEloquent()->id)->where('lunch_start', '!=', '00:00:00')->where('lunch_end', '00:00:00')->get()->first();
+        if ($request->user()->getEloquent()) {
+            $timesheet = Timesheet::where('user_id', $request->user()->getEloquent()->id)->where('lunch_start', '!=', '00:00:00')->where('lunch_end', '00:00:00')->where('workday', $today->toDateString())->get()->first();
 
-        $lunch_time = new Carbon($timesheet->lunch_start);
+            if ($timesheet) {
+                $lunch_time = new Carbon($timesheet->lunch_start);
 
-        $diffTime = $lunch_time->diffInMinutes($today);
+                $diffTime = $lunch_time->diffInMinutes($today);
 
-        $hour = $diffTime / 60;
+                $hour = $diffTime / 60;
 
-        if ($timesheet && ($hour < 1))
-        {
-            if ($request->ajax())
-            {
-                return response('Unauthorized.', 401);
-            }
-            else
-            {
-                return redirect()->to('lock');
+                if ($timesheet && ($hour < 1))
+                {
+                    if ($request->ajax())
+                    {
+                        return response('Unauthorized.', 401);
+                    }
+                    else
+                    {
+                        return redirect()->to('lock');
+                    }
+                }
             }
         }
 

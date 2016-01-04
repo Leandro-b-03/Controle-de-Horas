@@ -80,7 +80,7 @@
   
     </ul>
   </li>
-  <li class="treeview {!! ((Request::is('users/*') || Request::is('users')) || (Request::is('group-permissions/*') || Request::is('group-permissions')) || (Request::is('teams/*') || Request::is('teams')) ? 'active' : '') !!}">
+  <!-- <li class="treeview {!! ((Request::is('users/*') || Request::is('users')) || (Request::is('group-permissions/*') || Request::is('group-permissions')) || (Request::is('teams/*') || Request::is('teams')) ? 'active' : '') !!}">
     <a href="#">
       <i class="fa fa-cog"></i> <span>{!! Lang::get('general.system') !!}</span>
       <i class="fa fa-angle-left pull-right"></i>
@@ -102,5 +102,5 @@
       </li>
   
     </ul>
-  </li>
+  </li> -->
 </ul>

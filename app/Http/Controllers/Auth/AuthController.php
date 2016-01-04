@@ -70,7 +70,7 @@ class AuthController extends Controller {
             if ($user) {
                 return $this->handleUserWasAuthenticated($request, $throttles);
             } else {
-                die ('não tem');
+                return redirect()->intended('register');
             }
         }
 

@@ -25,9 +25,9 @@ class DashboardController extends Controller
      */
     public function index()
     {
-        $user = User::where('username', Auth::user()->getAuthIdentifier())->get()->first();
-
-        Auth::user()->setEloquent($user);
+        if (Auth::user()->getEloquent() == null) {
+            return redirect()->to('register');
+        }
 
         // GeoIP
         $location = GeoIP::getLocation();

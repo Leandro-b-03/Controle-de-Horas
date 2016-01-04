@@ -63,6 +63,10 @@ Route::group(['middleware' => 'auth'], function () {
         Route::get('general/saveLocalization', 'GeneralController@saveLocalization');
         
         Route::get('general/getTasks', 'GeneralController@getTasks');
+        
+        Route::get('register', function() {
+            return view('auth.register');
+        });
 
         Route::get('profile/{id}', 'UserController@show');
 
@@ -119,6 +123,8 @@ Route::group(['middleware' => 'auth'], function () {
         // Entrust::routeNeedsPermission('group-permissions/create', 'GroupPermissionController@create');
         // Entrust::routeNeedsPermission('group-permissions/*/edit', 'GroupPermissionController@edit');
         // Entrust::routeNeedsPermission('group-permissions/delete', 'GroupPermissionController@delete');
+
+        Route::resource('import', 'DataImportController');
     });
 });
 
