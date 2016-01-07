@@ -132,7 +132,7 @@
                   <label for="proposal">{!! Lang::get('proposals.label-proposal') !!}</label>
                   <textarea name="proposal" id="proposal" rows="10" placeholder="{!! Lang::get('proposals.ph-proposal') !!}" data-validation-error-msg="{!! Lang::get('proposals.error-proposal') !!}" required>{!! (isset($data['versions']) ? $data['versions']->where('active', 1)->first()->proposal : (Request::old('proposal') ? Request::old('proposal') : '')) !!}</textarea>
                 </div>
-                <input type="hidden" name="user_id" id="user_id" value="{!! (isset($data['proposal']) ? $data['proposal']->user_id : (Request::old('user_id') ? Request::old('user_id') : Auth::user()->id)) !!}">
+                <input type="hidden" name="user_id" id="user_id" value="{!! (isset($data['proposal']) ? $data['proposal']->user_id : (Request::old('user_id') ? Request::old('user_id') : Auth::user()->getEloquent()->id)) !!}">
               </div><!-- /.box-body -->
               <div class="box-footer">
                 <button type="submit" class="btn btn-primary">{!! Lang::get('general.save') !!}</button>

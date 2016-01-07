@@ -65,7 +65,10 @@ Route::group(['middleware' => 'auth'], function () {
         Route::get('general/getTasks', 'GeneralController@getTasks');
         
         Route::get('register', function() {
-            return view('auth.register');
+            if (\Auth::user()->getEloquent() == null)
+                return view('auth.register');
+            else
+                return redirect()->to('dashboard');
         });
 
         Route::get('profile/{id}', 'UserController@show');

@@ -247,7 +247,11 @@
                   <h4 class="modal-title">Gerenciador de arquivos</h4>
                 </div>
                 <div class="modal-body">
+                  @if (Request::is('import'))
+                  <iframe id="filemanager-iframe" src="{{ URL::to('/') }}/filemanager/dialog.php?type=2&field_id=xlsx"></iframe>
+                  @else
                   <iframe id="filemanager-iframe" src="{{ URL::to('/') }}/filemanager/dialog.php?type=1&field_id=photo"></iframe>
+                  @endif
                 </div>
               </div><!-- /.modal-content -->
             </div><!-- /.modal-dialog -->

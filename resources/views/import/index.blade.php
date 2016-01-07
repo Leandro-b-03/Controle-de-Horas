@@ -53,7 +53,10 @@
               <div class="box-body">
                 <div class="form-group col-xs-4">
                   <label for="name">{!! Lang::get('import.label-name') !!}</label>
-                  <input type="file" class="form-control" name="name" id="name"  value="" placeholder="{!! Lang::get('import.ph-name') !!}" data-validation="length" data-validation-length="3-40" data-validation-error-msg="{!! Lang::get('import.error-name') !!}" required>
+                  <span class="fa fa-file-excel-o"></span>
+                  <p><a href="#filemanager" role="button" class="" data-toggle="modal">{!! Lang::get('users.a-open_filemanager') !!}</a></p>
+                  <input type="hidden" id="xlsx" name="xlsx" value="source/">
+                  {{-- <input type="file" class="form-control" name="name" id="name"  value="" placeholder="{!! Lang::get('import.ph-name') !!}" data-validation="length" data-validation-length="3-40" data-validation-error-msg="{!! Lang::get('import.error-name') !!}" required> --}}
                 </div>
               </div><!-- /.box-body -->
               <div class="box-footer">

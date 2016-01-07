@@ -4,6 +4,9 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 
+use Excel;
+use App\Task;
+use App\Project;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 
@@ -49,45 +52,53 @@ class DataImportController extends Controller
     public function store(Request $request)
     {
         $inputs = $request->all();
-        
-        // Validation of the fields
-        $validator = Validator::make(
-            [
-                $inputs
-            ],
-            [
-                'name' => 'required',
-                'password' => 'required|min:8',
-                'email' => 'required|email|unique:users'
-            ]
-        );
 
         try {
-            if($validator) {
-                $import = Task::create( $inputs );
-                if ($import) {
-                    foreach ($inputs['teams'] as $team) {
-                        $data['team_id'] = $team;
-                        $data['project_time_import_id'] = $import->id;
+            if($inputs) {
+                ini_set('memory_limit','1024M');
+                $file = urldecode(str_replace('..\\', '', str_replace('/', '\\', $inputs['xlsx'])));
 
-                        if (!TaskTeam::create( $data )) {
-                            DB::rollback();
-                            return redirect('imports/create')->withInput()->with('return', GeneralController::createMessage('failed', Lang::get('general.' . $this->controller_name), 'create'));
+                $data = array();
+
+                Excel::load($file, function($reader) {
+                    // Getting all results
+                    $results = $reader->get();
+
+                    foreach ($results as $sheet) {
+                        $i = 0;
+                        foreach ($sheet as $row) {
+                            if ($sheet->getTitle() == 'Projetos' || $sheet->getTitle() == 'Projeto') {
+                                $data['sheets']['title'][$sheet->getTitle()][$i]['propostaprojeto'] = $row->propostaprojeto;
+
+                                if ($row->op == 'S')
+                                    $data['sheets']['title'][$sheet->getTitle()][$i]['id_op'] = $row->id_op;
+                                else
+                                    $data['sheets']['title'][$sheet->getTitle()][$i]['id_op'] = '00';
+
+                            } else {
+                                foreach ($row as $index => $value) {
+                                    $data['sheets']['title'][$sheet->getTitle()][$i][$index] = $value;
+                                }
+                            }
+
+                            $i++;
                         }
                     }
+                });
+
+                foreach ($data['sheets'] as $sheets) {
                     
-                    DB::commit();
-                    return redirect('imports')->with('return', GeneralController::createMessage('success', Lang::get('general.' . $this->controller_name), 'create'));
-                } else {
-                    DB::rollback();
-                    return redirect('imports/create')->withInput()->with('return', GeneralController::createMessage('failed', Lang::get('general.' . $this->controller_name), 'create'));
                 }
+                
+                die(d('a'));
+
             } else {
                 DB::rollback();
                 return redirect('imports/create')->withInput()->with('return', GeneralController::createMessage('failed', Lang::get('general.' . $this->controller_name), 'create-failed'));
             }
         } catch (Exception $e){
             DB::rollback();
+            die(d($e));
             return redirect('imports/create')->withInput()->with('return', GeneralController::createMessage('failed', Lang::get('general.' . $this->controller_name), 'create-failed'));
         }
     }
