@@ -1,8 +1,10 @@
-<?php namespace App;
+<?php
+
+namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Task extends Model
+class CustomField extends Model
 {
     /**
      * The database connection used by the model.
@@ -16,12 +18,19 @@ class Task extends Model
 	 *
 	 * @var string
 	 */
-	protected $table = 'work_packages';
+	protected $table = 'custom_values';
+
+    /**
+     * Indicates if the model should be timestamped.
+     *
+     * @var bool
+     */
+    public $timestamps = false;
 
     /**
      * The attributes that are mass assignable.
      *
      * @var array
      */
-    protected $fillable = ['type_id', 'project_id', 'subject', 'description', 'status_id', 'assigned_to_id', 'parent_id', 'root_id', 'lft', 'rgt', 'position'];
+    protected $fillable = ['customized_type', 'customized_id', 'custom_field_id', 'value'];
 }
