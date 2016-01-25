@@ -47,7 +47,7 @@
             <!-- form start -->
             {!! Form::open(array('route' => 'import.store')) !!}
               <div class="box-body">
-                <div class="form-group col-xs-2">
+                <div class="form-group col-xs-3">
                   <label for="type">{!! Lang::get('import.label-type') !!}</label>
                   <div class="radio">
                     <label><input name="type" id="type" value="WP" type="radio" data-validation-qty="min1" data-validation-error-msg="{!! Lang::get('import.error-type_female') !!}" {!! (isset($data['user']) ? ($data['user']->type == 'F') ? 'checked="checked"' : ((Request::old('type')) ? ((Request::old('type') == 'F') ? 'checked="checked"' : '') : '') : '' ) !!} required> {!! Lang::get('import.ph-type_wp') !!}</label>
@@ -69,10 +69,48 @@
                 </div>
               </div><!-- /.box-body -->
               <div class="box-footer">
-                <button type="submit" class="btn btn-primary">{!! Lang::get('general.save') !!}</button>
-                <a href="{!! URL::to('import') !!}" class="btn btn-danger">{!! Lang::get('general.back') !!}</a>
+                <button type="submit" class="btn btn-primary">{!! Lang::get('general.import') !!}</button>
               </div>
             {!! Form::close() !!}
+          </div><!-- /.box -->
+          <!-- Default box -->
+          <div class="box">
+            <div class="box-header with-border">
+              <h3 class="box-title">{!! Lang::get('general.import') !!}</h3>
+              <div class="box-tools pull-right">
+                <button class="btn btn-box-tool" data-widget="collapse" data-toggle="tooltip" title="Collapse"><i class="fa fa-minus"></i></button>
+                <button class="btn btn-box-tool" data-widget="remove" data-toggle="tooltip" title="Remove"><i class="fa fa-times"></i></button>
+              </div>
+            </div>
+            <div class="box-body">
+              <table id="tasks-table" class="table table-border">
+                <thead>
+                  <tr>
+                    <th>{!! Lang::get('import.title-name') !!}</th>
+                    <th>{!! Lang::get('import.title-user') !!}</th>
+                    <th>{!! Lang::get('import.title-success') !!}</th>
+                    <th>{!! Lang::get('import.title-error') !!}</th>
+                    <th>{!! Lang::get('import.title-created_at') !!}</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @if ($data['imports'])
+                  @foreach ($data['imports'] as $import)
+                  <tr>
+                    <td>{!! $import->file !!}</td>
+                    <td>{!! $import->getUser()->getResults()->first_name !!}</td>
+                    <td>{!! $import->status ? Lang::get('general.success') : Lang::get('general.failed') !!}</td>
+                    <td>{!! $import->error !!}</td>
+                    <td>{!! date('d/m/Y', strtotime($import->created_at)) !!}</td>
+                  </tr>
+                  @endforeach
+                  @endif
+                </tbody>
+              </table>
+            </div><!-- /.box-body -->
+            <div class="box-footer">
+            Footer
+            </div><!-- /.box-footer-->
           </div><!-- /.box -->
         </div>
       </div>

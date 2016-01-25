@@ -9,6 +9,7 @@ use Auth;
 use Lang;
 use Excel;
 use App\Task;
+use App\Import;
 use App\Project;
 use App\Timesheet;
 use Carbon\Carbon;
@@ -28,8 +29,12 @@ class DataImportController extends Controller
      */
     public function index()
     {
+        // Get all the imports done
+        $imports = Import::all();
+        $data['imports'] = $imports;
+
         // Return the imports view.
-        return view('import.index');
+        return view('import.index')->with('data', $data);
     }
 
     /**
@@ -61,6 +66,19 @@ class DataImportController extends Controller
         $inputs = $request->all();
 
         DB::beginTransaction();
+
+        $import = array(
+            'file' => urldecode(str_replace('..\\', '', str_replace('/', '\\', $inputs['xlsx']))),
+            'user_id' => Auth::user()->id,
+            'status' => 1,
+            'error' => 'Sem erros'
+        );
+
+        $import = Import::create ( $import );
+
+        if ($import) {
+            DB:commit();
+        }
 
         if ($inputs['type'] == 'WP') {
             try {
@@ -346,21 +364,34 @@ class DataImportController extends Controller
                                         DB::commit();
                                     } else {
                                         DB::rolback();
+                                        $import->status = 0;
+                                        $import->error = GeneralController::createMessage('failed', Lang::get('general.' . $this->controller_name), 'create-failed');
+                                        
+                                        if ($import->save())
+                                            DB::commit();
                                     }
                                 }
                             }
                         }
                     }
-                    
-                    d('OK');
-
                 } else {
                     DB::rollback();
+                    $import->status = 0;
+                    $import->error = GeneralController::createMessage('failed', Lang::get('general.' . $this->controller_name), 'create-failed');
+                    
+                    if ($import->save())
+                        DB::commit();
+
                     return redirect('import')->withInput()->with('return', GeneralController::createMessage('failed', Lang::get('general.' . $this->controller_name), 'create-failed'));
                 }
             } catch (Exception $e){
                 DB::rollback();
-                die(d($e));
+                $import->status = 0;
+                $import->error = $e->getMessage();
+                
+                if ($import->save())
+                    DB::commit();
+
                 return redirect('import')->withInput()->with('return', GeneralController::createMessage('failed', Lang::get('general.' . $this->controller_name), 'create-failed'));
             }
         } else if ($inputs['type'] == 'TS') {
@@ -467,16 +498,17 @@ class DataImportController extends Controller
                                         $workday['overtime_hours'] = $time;
                                     }
 
-                                    d($workday);
-
                                     $workday = Timesheet::create( $workday );
-
-                                    d($workday);
 
                                     if ($workday) {
                                         DB::commit();
                                     } else {
                                         DB::rollback();
+                                        $import->status = 0;
+                                        $import->error = GeneralController::createMessage('failed', Lang::get('general.' . $this->controller_name), 'create-failed');
+                                        
+                                        if ($import->save())
+                                            DB::commit();
                                         return redirect('import')->withInput()->with('return', GeneralController::createMessage('failed', Lang::get('general.' . $this->controller_name), 'create-failed'));
                                     }
                                 }
@@ -486,7 +518,11 @@ class DataImportController extends Controller
                 });
             } catch (Exception $e){
                 DB::rollback();
-                die(d($e));
+                $import->status = 0;
+                $import->error = $e->getMessage();
+                
+                if ($import->save())
+                    DB::commit();
                 return redirect('import')->withInput()->with('return', GeneralController::createMessage('failed', Lang::get('general.' . $this->controller_name), 'create-failed'));
             }
 
