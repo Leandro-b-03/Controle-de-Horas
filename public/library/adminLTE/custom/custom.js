@@ -140,6 +140,10 @@ function responsive_filemanager_callback(field_id){
   var url = $('#'+field_id).val();
   var url_web = location.origin;
   $('#'+field_id).val(url.replace(url_web, ''));
+
+  if ($('#file-name').length > 0) {
+    $('#file-name').val(url.replace(url_web, ''));
+  }
   
   $('#image').attr('src', url.replace('../', '/'));
 }

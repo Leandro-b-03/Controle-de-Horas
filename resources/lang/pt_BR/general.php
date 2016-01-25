@@ -66,6 +66,7 @@ return [
     'users-list'                    => 'Lista de colaboradores',
     'group-permissions'             => 'Permiss&otilde;es de grupo',
     'lockscreen'                    => 'Hor&aacute;rio de almoço',
+    'import'                        => 'Importar',
     'register'                      => 'Registrar',
     'DashboardController'           => 'Dashboard',
     'TaskController'                => 'Tarefas',
@@ -79,6 +80,7 @@ return [
     'GroupPermissionController'     => 'Permiss&otilde;es de grupo',
     'MessagesController'            => 'Mensagens',
     'LockscreenController'          => 'Hor&aacute;rio de almoço',
+    'DataImportController'          => 'Importar',
 
     // Data Tables
     'dataTable-processing'          => 'Carregando...',

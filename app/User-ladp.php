@@ -3,10 +3,21 @@
 namespace Dsdevbe\LdapConnector\Model;
 
 use App\User as DBUser;
+use Illuminate\Database\Eloquent\Model;
+use Zizaco\Entrust\Traits\EntrustUserTrait;
 use Illuminate\Contracts\Auth\Authenticatable;
 
-class User implements Authenticatable
+class User extends Model implements Authenticatable
 {
+    use EntrustUserTrait;
+
+    /**
+     * The database table used by the model.
+     *
+     * @var string
+     */
+    protected $table = 'users';
+
     /**
      * @var string
      */
@@ -32,11 +43,34 @@ class User implements Authenticatable
      */
     protected $_user;
 
+    /**
+     * @var integer
+     */
+    public $primaryKey = 'id';
+
+    /**
+     * @var integer
+     */
+    public $id;
+
+    /**
+     * @var array
+     */
+    protected $_eloquent;
+
     public function __construct(array $attributes)
     {
+        $user = DBUser::where('username', $attributes['username'])->get()->first();
         $this->_authIdentifier = $attributes['username'];
         // $this->_authPassword = (isset($attributes['password'])) ? $attributes['password'] : null;
-        $this->_eloquent = DBUser::where('username', $attributes['username'])->get()->first();
+        $this->_eloquent = $user;
+        $this->attributes = $user->attributes;
+        $this->original = $user->original;
+        $this->relations = $user->relations;
+        $this->hidden = $user->hidden;
+        $this->visible = $user->visible;
+        $this->appends = $user->appends;
+        $this->id = $user->id;
     }
 
     /**

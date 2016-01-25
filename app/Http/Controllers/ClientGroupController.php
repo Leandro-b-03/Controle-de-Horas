@@ -56,6 +56,8 @@ class ClientGroupController extends Controller
     {
         $inputs = $request->all();
         
+        DB::beginTransaction();
+        
         // Validation of the fields
         $validator = Validator::make(
             [

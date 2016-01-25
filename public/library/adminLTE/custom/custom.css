@@ -165,10 +165,10 @@ form .img-polaroid {
 	transform: translateX(0px) rotate(0deg);
 }
 
-.bootstrap-switch .bootstrap-switch-handle-on.bootstrap-switch-primary,
+/*.bootstrap-switch .bootstrap-switch-handle-on.bootstrap-switch-primary,
 .bootstrap-switch .bootstrap-switch-handle-off.bootstrap-switch-primary {
     background: #00E347 !important;
-}
+}*/
 
 select.valid, input.valid {
 	background-image: url('images/1436382483_tick.png') !important;

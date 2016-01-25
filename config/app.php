@@ -174,7 +174,7 @@ return [
         Collective\Html\HtmlServiceProvider::class,
         Cviebrock\EloquentSluggable\SluggableServiceProvider::class,
         Vinkla\Pusher\PusherServiceProvider::class,
-        // Zizaco\Entrust\EntrustServiceProvider::class,
+        Zizaco\Entrust\EntrustServiceProvider::class,
         // Intervention\Image\ImageServiceProvider::class,
         MaddHatter\LaravelFullcalendar\ServiceProvider::class,
         Laravel\Socialite\SocialiteServiceProvider::class,
@@ -259,6 +259,9 @@ return [
         'GeoIP'         => Torann\GeoIP\GeoIPFacade::class,
         'Geocoder'      => Alexpechkarev\GoogleGeocoder\GoogleGeocoderServiceProvider::class,
         'Excel'         => Maatwebsite\Excel\Facades\Excel::class,
+        'role'          => Zizaco\Entrust\Middleware\EntrustRole::class,
+        'permission'    => Zizaco\Entrust\Middleware\EntrustPermission::class,
+        'ability'       => Zizaco\Entrust\Middleware\EntrustAbility::class,
 
     ],
 

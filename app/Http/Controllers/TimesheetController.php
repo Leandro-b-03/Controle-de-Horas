@@ -41,7 +41,7 @@ class TimesheetController extends Controller
         $data['today'] = $today;
 
         // Get the workday
-        $workday = Timesheet::where('user_id', Auth::user()->getEloquent()->id)->where('workday', $today->toDateString())->orderBy('workday', 'desc')->get()->first();;
+        $workday = Timesheet::where('user_id', Auth::user()->getEloquent()->id)->where('workday', $today->toDateString())->orderBy('workday', 'desc')->get()->first();
 
         try {
             DB::beginTransaction();
