@@ -465,7 +465,7 @@ class DataImportController extends Controller
 
                                         $hours = floor($diffTime / 60);
                                         $minutes = ($diffTime % 60);
-                                        $time = (($hours <= 9 ? "0" . $hours : $hours) . ":" . $minutes) . ":" . $seconds;
+                                        $time = (($hours <= 9 ? "0" . $hours : $hours) . ":" . ($minutes <= 9 ? "0" . $minutes)) . ":" . $seconds;
 
                                         $workday['hours'] = $time;
                                     }
@@ -479,7 +479,7 @@ class DataImportController extends Controller
 
                                         $hours = floor($diffTime / 60);
                                         $minutes = ($diffTime % 60);
-                                        $time = (($hours <= 9 ? "0" . $hours : $hours) . ":" . $minutes) . ":" . $seconds;
+                                        $time = (($hours <= 9 ? "0" . $hours : $hours) . ":" . ($minutes <= 9 ? "0" . $minutes)) . ":" . $seconds;
 
                                         $workday['lunch_hours'] = $time;
                                     }
@@ -493,7 +493,7 @@ class DataImportController extends Controller
 
                                         $hours = floor($diffTime / 60);
                                         $minutes = ($diffTime % 60);
-                                        $time = (($hours <= 9 ? "0" . $hours : $hours) . ":" . $minutes) . ":" . $seconds;
+                                        $time = (($hours <= 9 ? "0" . $hours : $hours) . ":" . ($minutes <= 9 ? "0" . $minutes)) . ":" . $seconds;
 
                                         $workday['overtime_hours'] = $time;
                                     }

@@ -211,7 +211,7 @@ class TimesheetController extends Controller
                         $workday->lunch_start = $today->toTimeString();
 
                         if ($workday->save()) {
-                            DB::commit();                        
+                            DB::commit();
                             return response()->json($this->lunch($workday));
                         } else {
                             DB::rollback();
@@ -232,18 +232,40 @@ class TimesheetController extends Controller
 
                         $hours = floor($diffTime / 60);
                         $minutes = ($diffTime % 60);
-                        $time = (($hours <= 9 ? "0" . $hours : $hours) . ":" . $minutes) . ":" . $seconds;
+                        $time = (($hours <= 9 ? "0" . $hours : $hours) . ":" . ($minutes <= 9 ? "0" . $minutes)) . ":" . $seconds;
 
                         $workday->lunch_hours = $time;
 
                         if ($workday->save()) {
-                            DB::commit();                        
+                            DB::commit();
                             return response()->json($this->lunch($workday));
                         } else {
                             DB::rollback();
                             return response()->json(array('error' => Lang::get('general.error')));
                         }
                     }
+                }
+            } else if ($inputs['end'] == 'true') {
+                $workday->end = $today->toTimeString();
+
+                $start = new Carbon($workday->start);
+
+                $diffTime = $start->diffInMinutes(new Carbon($workday->end));
+
+                $seconds = '00';
+
+                $hours = floor($diffTime / 60);
+                $minutes = ($diffTime % 60);
+                $time = (($hours <= 9 ? "0" . $hours : $hours) . ":" . ($minutes <= 9 ? "0" . $minutes)) . ":" . $seconds;
+                
+                $workday->hours = $time;
+
+                if ($workday->save()) {
+                    DB::commit();
+                    return response()->json($this->lunch($workday));
+                } else {
+                    DB::rollback();
+                    return response()->json(array('error' => Lang::get('general.error')));
                 }
             }
         } catch (Exception $e) {
@@ -331,7 +353,12 @@ class TimesheetController extends Controller
      */
     public function show($id)
     {
-        //
+        // Get the workdays in the month
+        $month = Timesheet::where(DB::raw('MONTH(workday)'), Carbon::now()->month)->get();
+        $data['month'] = $month;
+
+        // Return the timesheets view.
+        return view('timesheet.show')->with('data', $data);
     }
 
     /**

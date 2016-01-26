@@ -35,11 +35,14 @@ return [
 
     // Table
     'title-day'                     => 'Dia',
+    'title-date'                    => 'Data',
+    'title-holiday'                 => 'Feriado',
     'title-project'                 => 'Projeto',
     'title-start'                   => 'Iniciado',
     'title-end'                     => 'Término',
     'title-task'                    => 'Tarefa',
     'title-lunch'                   => 'Almo&ccedil;o',
+    'title-overtime'                => 'Noturno',
     'day'                           => 'Dia',
     'lunch_start'                   => 'Almo&ccedil;o',
     'lunch_end'                     => 'Almo&ccedil;o',

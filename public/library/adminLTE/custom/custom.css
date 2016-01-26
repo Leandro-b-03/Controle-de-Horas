@@ -369,3 +369,7 @@ table thead tr th.start, table thead tr th.end {
 .register {
 	max-width: 60%;
 }
+
+#month-table th {
+	vertical-align: middle;
+}
