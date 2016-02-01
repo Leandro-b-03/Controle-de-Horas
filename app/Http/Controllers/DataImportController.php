@@ -421,9 +421,9 @@ class DataImportController extends Controller
                                             'lunch_hours' => 0,
                                             'end' => ($row['saida'] != null) ? $row['saida']->toTimeString() : null,
                                             'hours' => 0,
-                                            'overtime_start' => ($row['noturno_entrada'] != null) ? $row['noturno_entrada']->toTimeString() : '00:00:00',
-                                            'overtime_end' => ($row['noturno_saida'] != null) ? $row['noturno_saida']->toTimeString() : '00:00:00',
-                                            'overtime_hours' => 0,
+                                            'nightly_start' => ($row['noturno_entrada'] != null) ? $row['noturno_entrada']->toTimeString() : '00:00:00',
+                                            'nightly_end' => ($row['noturno_saida'] != null) ? $row['noturno_saida']->toTimeString() : '00:00:00',
+                                            'nightly_hours' => 0,
                                             'status' => 'P'
                                         );
                                     } else if ($row['almoco_saida'] && $row['almoco_entrada'] == null) {
@@ -435,9 +435,9 @@ class DataImportController extends Controller
                                             'lunch_end' => '00:00:00',
                                             'end' => ($row['almoco_saida'] != null) ? $row['almoco_saida']->toTimeString() : '00:00:00',
                                             'hours' => 0,
-                                            'overtime_start' => ($row['noturno_entrada'] != null) ? $row['noturno_entrada']->toTimeString() : '00:00:00',
-                                            'overtime_end' => ($row['noturno_saida'] != null) ? $row['noturno_saida']->toTimeString() : '00:00:00',
-                                            'overtime_hours' => 0,
+                                            'nightly_start' => ($row['noturno_entrada'] != null) ? $row['noturno_entrada']->toTimeString() : '00:00:00',
+                                            'nightly_end' => ($row['noturno_saida'] != null) ? $row['noturno_saida']->toTimeString() : '00:00:00',
+                                            'nightly_hours' => 0,
                                             'status' => 'P'
                                         );
                                     } else if ($row['almoco_entrada']) {
@@ -449,9 +449,9 @@ class DataImportController extends Controller
                                             'lunch_end' => '00:00:00',
                                             'end' => ($row['saida'] != null) ? $row['saida']->toTimeString() : null,
                                             'hours' => 0,
-                                            'overtime_start' => ($row['noturno_entrada'] != null) ? $row['noturno_entrada']->toTimeString() : '00:00:00',
-                                            'overtime_end' => ($row['noturno_saida'] != null) ? $row['noturno_saida']->toTimeString() : '00:00:00',
-                                            'overtime_hours' => 0,
+                                            'nightly_start' => ($row['noturno_entrada'] != null) ? $row['noturno_entrada']->toTimeString() : '00:00:00',
+                                            'nightly_end' => ($row['noturno_saida'] != null) ? $row['noturno_saida']->toTimeString() : '00:00:00',
+                                            'nightly_hours' => 0,
                                             'status' => 'P'
                                         );
                                     }
@@ -465,7 +465,7 @@ class DataImportController extends Controller
 
                                         $hours = floor($diffTime / 60);
                                         $minutes = ($diffTime % 60);
-                                        $time = (($hours <= 9 ? "0" . $hours : $hours) . ":" . ($minutes <= 9 ? "0" . $minutes)) . ":" . $seconds;
+                                        $time = (($hours <= 9 ? "0" . $hours : $hours) . ":" . ($minutes <= 9 ? "0" . $minutes : $minutes)) . ":" . $seconds;
 
                                         $workday['hours'] = $time;
                                     }
@@ -479,23 +479,23 @@ class DataImportController extends Controller
 
                                         $hours = floor($diffTime / 60);
                                         $minutes = ($diffTime % 60);
-                                        $time = (($hours <= 9 ? "0" . $hours : $hours) . ":" . ($minutes <= 9 ? "0" . $minutes)) . ":" . $seconds;
+                                        $time = (($hours <= 9 ? "0" . $hours : $hours) . ":" . ($minutes <= 9 ? "0" . $minutes : $minutes)) . ":" . $seconds;
 
                                         $workday['lunch_hours'] = $time;
                                     }
 
-                                    if ($workday['overtime_end'] != null && $workday['overtime_start'] != null) {
-                                        $start = new Carbon($workday['overtime_start']);
+                                    if ($workday['nightly_end'] != null && $workday['nightly_start'] != null) {
+                                        $start = new Carbon($workday['nightly_start']);
 
-                                        $diffTime = $start->diffInMinutes(new Carbon($workday['overtime_end']));
+                                        $diffTime = $start->diffInMinutes(new Carbon($workday['nightly_end'])->addDay());
 
                                         $seconds = '00';
 
                                         $hours = floor($diffTime / 60);
                                         $minutes = ($diffTime % 60);
-                                        $time = (($hours <= 9 ? "0" . $hours : $hours) . ":" . ($minutes <= 9 ? "0" . $minutes)) . ":" . $seconds;
+                                        $time = (($hours <= 9 ? "0" . $hours : $hours) . ":" . ($minutes <= 9 ? "0" . $minutes : $minutes)) . ":" . $seconds;
 
-                                        $workday['overtime_hours'] = $time;
+                                        $workday['nightly_hours'] = $time;
                                     }
 
                                     $workday = Timesheet::create( $workday );

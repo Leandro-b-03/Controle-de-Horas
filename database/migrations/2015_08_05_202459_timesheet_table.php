@@ -22,9 +22,9 @@ class TimesheetTable extends Migration
             $table->decimal('lunch_hours', 4, 2);
             $table->time('end');
             $table->decimal('hours', 4, 2);
-            $table->time('overtime_start');
-            $table->time('overtime');
-            $table->decimal('overtime_hours', 4, 2);
+            $table->time('nightly_start');
+            $table->time('nightly_end');
+            $table->decimal('nightly_hours', 4, 2);
             $table->enum('status', ['W', 'F', 'P', 'N'])->default('N');
             $table->timestamps();
 

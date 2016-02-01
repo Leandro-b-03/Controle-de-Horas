@@ -42,7 +42,7 @@ return [
     'title-end'                     => 'Término',
     'title-task'                    => 'Tarefa',
     'title-lunch'                   => 'Almo&ccedil;o',
-    'title-overtime'                => 'Noturno',
+    'title-nightly'                 => 'Noturno',
     'day'                           => 'Dia',
     'lunch_start'                   => 'Almo&ccedil;o',
     'lunch_end'                     => 'Almo&ccedil;o',

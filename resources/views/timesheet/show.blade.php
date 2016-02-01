@@ -48,7 +48,7 @@
                 <th rowspan="2">{!! Lang::get('timesheets.title-start') !!}</th>
                 <th colspan="2">{!! Lang::get('timesheets.title-lunch') !!}</th>
                 <th rowspan="2">{!! Lang::get('timesheets.title-end') !!}</th>
-                <th colspan="2">{!! Lang::get('timesheets.title-overtime') !!}</th>
+                <th colspan="2">{!! Lang::get('timesheets.title-nightly') !!}</th>
                 <th rowspan="2">{!! Lang::get('general.total') !!}</th>
               </tr>
               <tr>
@@ -64,14 +64,14 @@
               <tr>
                 <td>{!! \Carbon\Carbon::createFromFormat('Y-m-d', $workday->workday)->format('m/d/Y') !!}</td>
                 <td>{!! \Carbon\Carbon::createFromFormat('Y-m-d', $workday->workday)->format('l') !!}</td>
-                <td>{!! $workday->start !!}</td>
+                <td>{!! '' !!}</td>
                 <td>{!! $workday->start !!}</td>
                 <td>{!! $workday->lunch_start !!}</td>
                 <td>{!! $workday->lunch_end !!}</td>
                 <td>{!! $workday->end !!}</td>
-                <td>{!! $workday->overtime_start !!}</td>
-                <td>{!! $workday->overtime_end !!}</td>
-                <td>{!! $workday->hours !!}</td>
+                <td>{!! $workday->nightly_start !!}</td>
+                <td>{!! $workday->nightly_end !!}</td>
+                <td>{!! GeneralHelper::getHoursTotal($workday->hours, $workday->nightly_hours) !!}</td>
               </tr>
               @endforeach
               @endif

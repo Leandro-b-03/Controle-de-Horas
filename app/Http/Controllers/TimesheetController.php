@@ -232,7 +232,7 @@ class TimesheetController extends Controller
 
                         $hours = floor($diffTime / 60);
                         $minutes = ($diffTime % 60);
-                        $time = (($hours <= 9 ? "0" . $hours : $hours) . ":" . ($minutes <= 9 ? "0" . $minutes)) . ":" . $seconds;
+                        $time = (($hours <= 9 ? "0" . $hours : $hours) . ":" . ($minutes <= 9 ? "0" . $minutes : $minutes)) . ":" . $seconds;
 
                         $workday->lunch_hours = $time;
 
@@ -256,7 +256,7 @@ class TimesheetController extends Controller
 
                 $hours = floor($diffTime / 60);
                 $minutes = ($diffTime % 60);
-                $time = (($hours <= 9 ? "0" . $hours : $hours) . ":" . ($minutes <= 9 ? "0" . $minutes)) . ":" . $seconds;
+                $time = (($hours <= 9 ? "0" . $hours : $hours) . ":" . ($minutes <= 9 ? "0" . $minutes : $minutes)) . ":" . $seconds;
                 
                 $workday->hours = $time;
 
@@ -351,10 +351,14 @@ class TimesheetController extends Controller
      * @param  int  $id
      * @return Response
      */
-    public function show($id)
+    public function show($id, Request $request)
     {
         // Get the workdays in the month
-        $month = Timesheet::where(DB::raw('MONTH(workday)'), Carbon::now()->month)->get();
+        $inputs = $request->all();
+
+        // Get the workdays in the month
+        $month = Timesheet::where(DB::raw('MONTH(workday)'), (isset($inputs['month'])) ? $inputs['month'] : Carbon::now()->month)
+            ->where(DB::raw('YEAR(workday)'), (isset($inputs['year'])) ? $inputs['year'] : Carbon::now()->year)->where('user_id', $id)->get();
         $data['month'] = $month;
 
         // Return the timesheets view.
