@@ -49,4 +49,23 @@ class GeneralHelper {
 
         return utf8_encode($date);
     }
+
+    public static function withoutSeconds ($time) {
+        return date('g:ia', strtotime($time));
+    }
+
+    public static function getBgStatus ($status) {
+        switch ($status) {
+            case 1:
+                return 'bg-blue';
+                break;
+            case 13:
+                return 'bg-green';
+                break;
+            
+            default:
+                return 'bg-red';
+                break;
+        }
+    }
 }

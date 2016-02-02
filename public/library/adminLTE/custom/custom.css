@@ -374,6 +374,11 @@ table thead tr th.start, table thead tr th.end {
 	vertical-align: middle;
 }
 
+#month-table-total {
+	max-width: 25%;
+	margin-bottom: 20px;
+}
+
 .skin-black .pace .pace-progress, .skin-black-light .pace .pace-progress {
 	background-color: #000;
 }
@@ -381,10 +386,6 @@ table thead tr th.start, table thead tr th.end {
 .skin-black .pace .pace-activity, .skin-black-light .pace .pace-activity {
 	border-top-color: #000;
 	border-left-color: #000;
-}
-
-#md-timeline {
-	position : absolute;
 }
 
 .fixed {

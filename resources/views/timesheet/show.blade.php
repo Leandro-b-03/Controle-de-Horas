@@ -39,6 +39,48 @@
           </div>
         </div>
         <div class="box-body">
+          <div id="month-select" class="col-xs-6 {!! !isset($data['timesheet_task']) ? '' : 'invisible' !!}">
+            <div class="form-group col-xs-8">
+              <label for="projects">{!! Lang::get('general.projects') !!}</label>
+              <input type="text" name="month" class="form-control" value="" placeholder="">
+            </div>
+            <div class="form-group col-xs-8">
+              <label for="tasks">{!! Lang::get('general.tasks') !!}</label>
+              <input type="text" name="year" class="form-control" value="" placeholder="">
+            </div>
+            <div class="form-group col-xs-8">
+              <a id="select-month" type="button" class="btn btn-success play"><span class="fa fa-calendar"></span> {!! Lang::get('timesheets.start') !!}</a>
+            </div>
+          </div>
+          <table id="month-table-total" class="table table-responsive table-hover table-border table-striped table-bordered pull-right">
+            <thead>
+              <tr>
+                <th colspan="2">Geral</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <th>Total de horas mínima a ser cumprida:</th>
+                <td>160:10:00</td>
+              </tr>
+              <tr>
+                <th>Total de horas trabalhadas mês:</th>
+                <td>170:20:00</td>
+              </tr>
+              <tr>
+                <th>Total de horas crédito mês:</th>
+                <td>10:10:00</td>
+              </tr>
+              <tr>
+                <th>Total de horas débito mês:</th>
+                <td>00:00:00</td>
+              </tr>
+              <tr>
+                <th>Total de horas crédito/débito:</th>
+                <td>28:45:00</td>
+              </tr>
+            </tbody>
+          </table>
           <table id="month-table" class="table table-responsive table-hover table-border table-striped table-bordered">
             <thead>
               <tr>
@@ -62,7 +104,7 @@
               @if ($data['month'])
               @foreach ($data['month'] as $workday)
               <tr>
-                <td><a type="button" class="btn btn-primary btn-xs" data-toggle="modal" data-target="#md-timeline">{!! \Carbon\Carbon::createFromFormat('Y-m-d', $workday->workday)->format('m/d/Y') !!}</td>
+                <td><a type="button" data-id="{!! $workday->id !!}" class="btn btn-primary btn-xs tasks-day" data-toggle="modal" data-target="#md-timeline">{!! \Carbon\Carbon::createFromFormat('Y-m-d', $workday->workday)->format('m/d/Y') !!}</td>
                 <td>{!! html_entity_decode(GeneralHelper::getWeekDay($workday->workday)) !!}</td>
                 <td>{!! '' !!}</td>
                 <td>{!! $workday->start !!}</td>
@@ -77,7 +119,7 @@
               @endif
             </tbody>
           </table>
-      </div><!-- /.box-body -->
+        </div><!-- /.box-body -->
       <div class="box-footer">
       Footer
       </div><!-- /.box-footer-->
@@ -92,99 +134,8 @@
             <h4 class="modal-title" id="myModalLabel">{!! Lang::get('timesheets.task') !!}</h4>
           </div>
           <div class="modal-body fixed">
-            <div class="tab-pane active" id="timeline">
+            <div id="timeline">
                 <!-- The timeline -->
-                <ul class="timeline timeline-inverse">
-                  <!-- timeline time label -->
-                  <li class="time-label">
-                        <span class="bg-red">
-                          10 Feb. 2014
-                        </span>
-                  </li>
-                  <!-- /.timeline-label -->
-                  <!-- timeline item -->
-                  <li>
-                    <i class="fa fa-envelope bg-blue"></i>
-
-                    <div class="timeline-item">
-                      <span class="time"><i class="fa fa-clock-o"></i> 12:05</span>
-
-                      <h3 class="timeline-header"><a href="#">Support Team</a> sent you an email</h3>
-
-                      <div class="timeline-body">
-                        Etsy doostang zoodles disqus groupon greplin oooj voxy zoodles,
-                        weebly ning heekya handango imeem plugg dopplr jibjab, movity
-                        jajah plickers sifteo edmodo ifttt zimbra. Babblely odeo kaboodle
-                        quora plaxo ideeli hulu weebly balihoo...
-                      </div>
-                      <div class="timeline-footer">
-                        <a class="btn btn-primary btn-xs">Read more</a>
-                        <a class="btn btn-danger btn-xs">Delete</a>
-                      </div>
-                    </div>
-                  </li>
-                  <!-- END timeline item -->
-                  <!-- timeline item -->
-                  <li>
-                    <i class="fa fa-user bg-aqua"></i>
-
-                    <div class="timeline-item">
-                      <span class="time"><i class="fa fa-clock-o"></i> 5 mins ago</span>
-
-                      <h3 class="timeline-header no-border"><a href="#">Sarah Young</a> accepted your friend request
-                      </h3>
-                    </div>
-                  </li>
-                  <!-- END timeline item -->
-                  <!-- timeline item -->
-                  <li>
-                    <i class="fa fa-comments bg-yellow"></i>
-
-                    <div class="timeline-item">
-                      <span class="time"><i class="fa fa-clock-o"></i> 27 mins ago</span>
-
-                      <h3 class="timeline-header"><a href="#">Jay White</a> commented on your post</h3>
-
-                      <div class="timeline-body">
-                        Take me to your leader!
-                        Switzerland is small and neutral!
-                        We are more like Germany, ambitious and misunderstood!
-                      </div>
-                      <div class="timeline-footer">
-                        <a class="btn btn-warning btn-flat btn-xs">View comment</a>
-                      </div>
-                    </div>
-                  </li>
-                  <!-- END timeline item -->
-                  <!-- timeline time label -->
-                  <li class="time-label">
-                        <span class="bg-green">
-                          3 Jan. 2014
-                        </span>
-                  </li>
-                  <!-- /.timeline-label -->
-                  <!-- timeline item -->
-                  <li>
-                    <i class="fa fa-camera bg-purple"></i>
-
-                    <div class="timeline-item">
-                      <span class="time"><i class="fa fa-clock-o"></i> 2 days ago</span>
-
-                      <h3 class="timeline-header"><a href="#">Mina Lee</a> uploaded new photos</h3>
-
-                      <div class="timeline-body">
-                        <img src="http://placehold.it/150x100" alt="..." class="margin">
-                        <img src="http://placehold.it/150x100" alt="..." class="margin">
-                        <img src="http://placehold.it/150x100" alt="..." class="margin">
-                        <img src="http://placehold.it/150x100" alt="..." class="margin">
-                      </div>
-                    </div>
-                  </li>
-                  <!-- END timeline item -->
-                  <li>
-                    <i class="fa fa-clock-o bg-gray"></i>
-                  </li>
-                </ul>
               </div>
           </div>
           <div class="modal-footer">
@@ -204,5 +155,21 @@
     {!! Html::script("library/adminLTE/plugins/jquery-stopwatch/jquery.stopwatch.js") !!}
 
     <script type="text/javascript" charset="utf-8" async defer>
+      $(document).ajaxStart(function() { Pace.restart(); });
+
+      $('.tasks-day').click(function() {
+          var data = {};
+          data.id = $(this).data('id');
+
+          $.ajax({
+            url: '/general/getTasksDay',
+            data: data,
+            type: "GET",
+            success: function(data) {
+              $('#timeline').html('');
+              $('#timeline').html($(data));
+            }
+          });
+        });
     </script>
 @endsection

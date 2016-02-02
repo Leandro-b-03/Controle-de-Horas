@@ -10,12 +10,14 @@ use App\Team;
 use App\Task;
 use App\Proposal;
 use PusherManager;
+use App\Timesheet;
 use Carbon\Carbon;
 use App\ClientGroup;
 use App\ProjectTime;
 use App\UserSetting;
 use App\ProposalType;
 use App\Http\Requests;
+use App\TimesheetTask;
 use App\ProposalVersion;
 use App\UserLocalization;
 use App\UserNotification;
@@ -239,7 +241,7 @@ class GeneralController extends Controller {
     /**
      * Display the specified resource.
      *
-     * @param  int  $id
+     * @param  int  $request
      * @return Response
      */
     public function getTasks(Request $request)
@@ -249,6 +251,27 @@ class GeneralController extends Controller {
         $tasks = DB::connection('openproject')->table('work_packages')->where('project_id', $project_id['id'])->whereIn('status_id', [1, 12, 14])->whereIn('type_id', [1, 7])->get();
         
         return response()->json($tasks);
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  int  $request
+     * @
+     */
+    public function getTasksDay(Request $request) {
+        // Get all the inputs
+        $inputs = $request->all();
+
+        // Get all the task on that day or the day
+        $workday = Timesheet::find($inputs['id']);
+        $data['workday'] = $workday;
+
+        // Get all the task on that day or the day
+        $tasks = TimesheetTask::where('timesheet_id', $inputs['id'])->get();
+        $data['tasks'] = $tasks;
+
+        return view('general.timeline')->with('data', $data);
     }
 
     /**
