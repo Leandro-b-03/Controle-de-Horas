@@ -62,8 +62,8 @@
               @if ($data['month'])
               @foreach ($data['month'] as $workday)
               <tr>
-                <td>{!! \Carbon\Carbon::createFromFormat('Y-m-d', $workday->workday)->format('m/d/Y') !!}</td>
-                <td>{!! \Carbon\Carbon::createFromFormat('Y-m-d', $workday->workday)->format('l') !!}</td>
+                <td><a type="button" class="btn btn-primary btn-xs" data-toggle="modal" data-target="#md-timeline">{!! \Carbon\Carbon::createFromFormat('Y-m-d', $workday->workday)->format('m/d/Y') !!}</td>
+                <td>{!! html_entity_decode(GeneralHelper::getWeekDay($workday->workday)) !!}</td>
                 <td>{!! '' !!}</td>
                 <td>{!! $workday->start !!}</td>
                 <td>{!! $workday->lunch_start !!}</td>
@@ -83,6 +83,116 @@
       </div><!-- /.box-footer-->
     </div><!-- /.box -->
 
+    <!-- Modal -->
+    <div class="modal fade" id="md-timeline" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+      <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title" id="myModalLabel">{!! Lang::get('timesheets.task') !!}</h4>
+          </div>
+          <div class="modal-body fixed">
+            <div class="tab-pane active" id="timeline">
+                <!-- The timeline -->
+                <ul class="timeline timeline-inverse">
+                  <!-- timeline time label -->
+                  <li class="time-label">
+                        <span class="bg-red">
+                          10 Feb. 2014
+                        </span>
+                  </li>
+                  <!-- /.timeline-label -->
+                  <!-- timeline item -->
+                  <li>
+                    <i class="fa fa-envelope bg-blue"></i>
+
+                    <div class="timeline-item">
+                      <span class="time"><i class="fa fa-clock-o"></i> 12:05</span>
+
+                      <h3 class="timeline-header"><a href="#">Support Team</a> sent you an email</h3>
+
+                      <div class="timeline-body">
+                        Etsy doostang zoodles disqus groupon greplin oooj voxy zoodles,
+                        weebly ning heekya handango imeem plugg dopplr jibjab, movity
+                        jajah plickers sifteo edmodo ifttt zimbra. Babblely odeo kaboodle
+                        quora plaxo ideeli hulu weebly balihoo...
+                      </div>
+                      <div class="timeline-footer">
+                        <a class="btn btn-primary btn-xs">Read more</a>
+                        <a class="btn btn-danger btn-xs">Delete</a>
+                      </div>
+                    </div>
+                  </li>
+                  <!-- END timeline item -->
+                  <!-- timeline item -->
+                  <li>
+                    <i class="fa fa-user bg-aqua"></i>
+
+                    <div class="timeline-item">
+                      <span class="time"><i class="fa fa-clock-o"></i> 5 mins ago</span>
+
+                      <h3 class="timeline-header no-border"><a href="#">Sarah Young</a> accepted your friend request
+                      </h3>
+                    </div>
+                  </li>
+                  <!-- END timeline item -->
+                  <!-- timeline item -->
+                  <li>
+                    <i class="fa fa-comments bg-yellow"></i>
+
+                    <div class="timeline-item">
+                      <span class="time"><i class="fa fa-clock-o"></i> 27 mins ago</span>
+
+                      <h3 class="timeline-header"><a href="#">Jay White</a> commented on your post</h3>
+
+                      <div class="timeline-body">
+                        Take me to your leader!
+                        Switzerland is small and neutral!
+                        We are more like Germany, ambitious and misunderstood!
+                      </div>
+                      <div class="timeline-footer">
+                        <a class="btn btn-warning btn-flat btn-xs">View comment</a>
+                      </div>
+                    </div>
+                  </li>
+                  <!-- END timeline item -->
+                  <!-- timeline time label -->
+                  <li class="time-label">
+                        <span class="bg-green">
+                          3 Jan. 2014
+                        </span>
+                  </li>
+                  <!-- /.timeline-label -->
+                  <!-- timeline item -->
+                  <li>
+                    <i class="fa fa-camera bg-purple"></i>
+
+                    <div class="timeline-item">
+                      <span class="time"><i class="fa fa-clock-o"></i> 2 days ago</span>
+
+                      <h3 class="timeline-header"><a href="#">Mina Lee</a> uploaded new photos</h3>
+
+                      <div class="timeline-body">
+                        <img src="http://placehold.it/150x100" alt="..." class="margin">
+                        <img src="http://placehold.it/150x100" alt="..." class="margin">
+                        <img src="http://placehold.it/150x100" alt="..." class="margin">
+                        <img src="http://placehold.it/150x100" alt="..." class="margin">
+                      </div>
+                    </div>
+                  </li>
+                  <!-- END timeline item -->
+                  <li>
+                    <i class="fa fa-clock-o bg-gray"></i>
+                  </li>
+                </ul>
+              </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
 @endsection
 
 @section('scripts')
@@ -94,238 +204,5 @@
     {!! Html::script("library/adminLTE/plugins/jquery-stopwatch/jquery.stopwatch.js") !!}
 
     <script type="text/javascript" charset="utf-8" async defer>
-        // var timesheet = {!! (isset($data['timesheet_today']) ? 'JSON.parse(\'' . $data['timesheet_today'] . '\')' : '{}') !!};
-
-        $('#timer').stopwatch().stopwatch('start');
-
-        $('#start').click(function() {
-          var data = {};
-
-          data.start = true;
-          data.project_id = $('#projects').val();
-          data.task_id = $('#tasks').val();
-
-          $.ajax({
-            url: '/timesheets',
-            data: data,
-            type: "POST",
-            success: function(data) {
-              var task = JSON.parse(data);
-              $('#start_settings').addClass('invisible');
-              $('#finish_settings').removeClass('invisible');
-
-              $('#project-name').html($('#projects option:selected').text());
-              $('#task-subject').html($('#tasks option:selected').text());
-              
-              var line = generateLine(task);
-
-              $('#tasks-table tbody').prepend($(line));
-            }
-          });
-        });
-
-        $('#end').click(function() {
-          var data = {};
-
-          data.start = false;
-          data.end = true;
-
-          $.ajax({
-            url: '/timesheets',
-            data: data,
-            type: "POST",
-            success: function(data) {
-              var task = JSON.parse(data);
-              $('#start_settings').addClass('invisible');
-              $('#finish_settings').removeClass('invisible');
-
-              $('#project-name').html($('#projects option:selected').text());
-              $('#task-subject').html($('#tasks option:selected').text());
-              
-              var line = generateLine(task);
-
-              $('#tasks-table tbody').prepend($(line));
-            }
-          });
-        });
-
-        $('#lunch').click(function() {
-          var data = {};
-
-          data.lunch = true;
-          data.start_lunch = true;
-
-          lunch(data);
-        });
-
-        $('#back').click(function() {
-          var data = {};
-
-          data.lunch = true;
-          data.start_lunch = false;
-
-          lunch(data);
-        });
-
-        $('#pause').click(function() {
-          var data = {};
-
-          data.pause = true;
-
-          endTask(data);
-        });
-
-        $('#fail').click(function() {
-          var data = {};
-
-          data.fail = true;
-
-          endTask(data);
-        });
-
-        $('#finish').click(function() {
-          var data = {};
-
-          data.finish = true;
-
-          endTask(data);
-        });
-
-        function lunch(data) {
-          var redirect = data.start_lunch;
-          console.log(redirect);
-          $.ajax({
-            url: '/timesheets',
-            data: data,
-            type: "POST",
-            success: function(data) {
-              var lunch = JSON.parse(data);
-              
-              $('#lunch_time').html('Horario de saida: ' + lunch.lunch_start + '. Horario da volta: ' + lunch.lunch_end + '. Tempo total: ' + lunch.lunch_hours + '.');
-
-              $('#back').hide();
-            }
-          });
-
-          if (redirect) {
-              window.location = "http://timesheet.localhost.com/lock";
-          }
-        }
-
-        function endTask(data) {
-          $.ajax({
-            url: '/timesheets',
-            data: data,
-            type: "POST",
-            success: function(data) {
-              var task = JSON.parse(data);
-              $('#start_settings').removeClass('invisible');
-              $('#finish_settings').addClass('invisible');
-
-              $('#projects').select2();
-              $('#tasks').select2({
-                templateResult: getIcon
-              });
-
-              var line = generateLine(task);
-
-              $('#tasks-table tbody tr:first').remove();
-
-              $('#tasks-table tbody').prepend($(line));
-            }
-          });
-        }
-
-        function generateLine(task) {
-          var html = '';
-
-          html += '<tr>';
-          html +=   '<td>';
-          html +=     task.project;
-          html +=   '</td>';
-          html +=   '<td>';
-          html +=     task.task;
-          html +=   '</td>';
-          html +=   '<td>';
-          html +=     task.start;
-          html +=   '</td>';
-          html +=   '<td>';
-          html +=     (task.end == null ? '---' : task.end) ;
-          html +=   '</td>';
-          html +=   '<td>';
-          html +=     (task.hours == null ? '---' : task.hours) ;
-          html +=   '</td>';
-
-          return html;
-        }
-
-        var _tasks = {};
-
-        $('#projects').on('change', function() {
-            getCycle($(this).val())
-        });
-
-        $('#tasks').on('change', function() {
-            var id = $(this).val();
-            var found = 0;
-
-            $.each(_tasks, function(i, task) {
-              if (task.id == id) {
-                if (task.description != null || task.description != "") 
-                  $('#task-info').html(task.description);
-                else
-                  $('#task-info').html('Tarefa sem descrição');
-
-                found++;
-                return;
-              } else {
-                if (!found) {
-                  $('#task-info').html('Selecione uma tarefa');
-                  return;
-                }
-              }
-          });
-        });
-
-        function getCycle(id) {
-          $.ajax({
-            url: '/general/getTasks',
-            data: {id: id},
-            type: "GET",
-            success: function(data) {
-              var tasks = JSON.parse(data);
-
-              _tasks = tasks;
-
-              if (tasks.length > 0) {
-                $('#tasks').prop( "disabled", false );
-                $('#tasks').find('option[value!=""]').remove();
-
-                var options = [];
-
-                $.each(tasks, function(i, task) {
-                  options.push('<option value="' + task.id + '" data-type="' + task.type_id + '">' + task.subject + '</select>');
-                  return;
-                });
-
-
-                $('#tasks').append(options).select2({
-                  templateResult: getIcon
-                });
-              } else {
-                $('#tasks').prop( "disabled", true ).val($("#target option:first").val());
-                $('#tasks').find('option[value!=""]').remove();
-              }
-            }
-          });
-        }
-
-        function getIcon (task) {
-          if (!task.id) { return task.text; }
-          var $task = $(
-            '<span><span class="fa ' + ($(task.element).data('type') == 1 ? 'fa-file' : 'fa-exclamation-triangle ') + '"></span> ' + task.text + '</span>'
-          );
-          return $task;
-        };
     </script>
 @endsection

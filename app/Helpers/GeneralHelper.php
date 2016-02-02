@@ -35,4 +35,18 @@ class GeneralHelper {
             return "00:00:00";
         }
     }
+
+    public static function getWeekDay ($workday) {
+        $date = strftime('%A', strtotime($workday));
+
+        $date = ucwords(strtolower($date));
+
+        foreach (array('-', '\'') as $delimiter) {
+            if (strpos($date, $delimiter)!== false) {
+                $date = implode($delimiter, array_map('ucfirst', explode($delimiter, $date)));
+            }
+        }
+
+        return utf8_encode($date);
+    }
 }

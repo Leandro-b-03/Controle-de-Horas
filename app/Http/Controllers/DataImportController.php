@@ -487,7 +487,9 @@ class DataImportController extends Controller
                                     if ($workday['nightly_end'] != null && $workday['nightly_start'] != null) {
                                         $start = new Carbon($workday['nightly_start']);
 
-                                        $diffTime = $start->diffInMinutes(new Carbon($workday['nightly_end'])->addDay());
+                                        $end = new Carbon($workday['nightly_end']);
+
+                                        $diffTime = $start->diffInMinutes($end->addDay());
 
                                         $seconds = '00';
 

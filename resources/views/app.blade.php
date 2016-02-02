@@ -30,6 +30,8 @@
     <!-- AdminLTE Skins. Choose a skin from the css/skins
          folder instead of downloading all of them to reduce the load. -->
     {!! Html::style("library/adminLTE/dist/css/skins/_all-skins.min.css") !!}
+    <!-- Pace style -->
+    {!! Html::style("library/adminLTE/plugins/pace/pace.min.css") !!}
 
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -43,9 +45,9 @@
     {!! Html::style("library/adminLTE/custom/custom.css") !!}
   </head>
   @if(Auth::user()->getEloquent()->settings()->getResults())
-  <body class="{!! Auth::user()->getEloquent()->settings()->getResults()->skin ? Auth::user()->getEloquent()->settings()->getResults()->skin : 'skin-yellow' !!} {!! Auth::user()->getEloquent()->settings()->getResults()->boxed ? Auth::user()->getEloquent()->settings()->getResults()->boxed : '' !!} {!! Auth::user()->getEloquent()->settings()->getResults()->sidebar_toggle ? Auth::user()->getEloquent()->settings()->getResults()->sidebar_toggle : '' !!} sidebar-mini">
+  <body class="hold-transition {!! Auth::user()->getEloquent()->settings()->getResults()->skin ? Auth::user()->getEloquent()->settings()->getResults()->skin : 'skin-yellow' !!} {!! Auth::user()->getEloquent()->settings()->getResults()->boxed ? Auth::user()->getEloquent()->settings()->getResults()->boxed : '' !!} {!! Auth::user()->getEloquent()->settings()->getResults()->sidebar_toggle ? Auth::user()->getEloquent()->settings()->getResults()->sidebar_toggle : '' !!} sidebar-mini">
   @else
-  <body class="skin-yellow sidebar-mini">
+  <body class="hold-transition skin-yellow sidebar-mini">
   @endif
     <!-- Site wrapper -->
     <div class="wrapper">
@@ -442,6 +444,8 @@
 
     <!-- Bootstrap 3.3.2 JS -->
     {!! Html::script("library/adminLTE/bootstrap/js/bootstrap.min.js") !!}
+    <!-- PACE -->
+    {!! Html::script("library/adminLTE/plugins/pace/pace.min.js") !!}
     <!-- FastClick -->
     {!! Html::script("library/adminLTE/plugins/fastclick/fastclick.min.js") !!}
     <!-- AdminLTE App -->
