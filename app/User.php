@@ -43,6 +43,14 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
     }
 
     /**
+     * Get the getNotifications record associated with the project.
+     */
+    public function getEloquent()
+    {
+        return $this;
+    }
+
+    /**
      * Get the user settings...
      */
 	public function settings()

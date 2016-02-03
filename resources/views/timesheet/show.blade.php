@@ -62,7 +62,7 @@
               @if ($data['month'])
               @foreach ($data['month'] as $workday)
               <tr>
-                <td><a type="button" class="btn btn-primary btn-xs" data-toggle="modal" data-target="#md-timeline">{!! \Carbon\Carbon::createFromFormat('Y-m-d', $workday->workday)->format('m/d/Y') !!}</td>
+                <td><a type="button" class="btn btn-primary btn-xs" data-id="{!! $workday->id !!}" data-toggle="modal" data-target="#md-timeline">{!! \Carbon\Carbon::createFromFormat('Y-m-d', $workday->workday)->format('m/d/Y') !!}</td>
                 <td>{!! html_entity_decode(GeneralHelper::getWeekDay($workday->workday)) !!}</td>
                 <td>{!! '' !!}</td>
                 <td>{!! $workday->start !!}</td>

@@ -77,7 +77,7 @@ class DataImportController extends Controller
         $import = Import::create ( $import );
 
         if ($import) {
-            DB:commit();
+            DB::commit();
         }
 
         if ($inputs['type'] == 'WP') {
@@ -406,112 +406,114 @@ class DataImportController extends Controller
 
                     foreach ($results as $sheet) {
                         foreach ($sheet as $row) {
-                            if ($row['entrada'] || $row['almoco_entrada']) {
-                                $workday = Timesheet::where('user_id', Auth::user()->getEloquent()->id)->where('workday', $row['data']->toDateString())->orderBy('workday', 'desc')->get()->first();
-                                if (!$workday) {
-                                    $workday = array();
+                            if ($row != null) {
+                                if ($row['entrada'] || $row['almoco_entrada']) {
+                                    $workday = Timesheet::where('user_id', Auth::user()->getEloquent()->id)->where('workday', $row['data']->toDateString())->orderBy('workday', 'desc')->get()->first();
+                                    if (!$workday) {
+                                        $workday = array();
 
-                                    if ($row['saida'] && $row['entrada']) {
-                                        $workday = array (
-                                            'user_id' => Auth::user()->id,
-                                            'workday' => ($row['data'] != null) ? $row['data']->toDateString() : null,
-                                            'start' => ($row['entrada'] != null) ? $row['entrada']->toTimeString() : null,
-                                            'lunch_start' => ($row['almoco_saida'] != null) ? $row['almoco_saida']->toTimeString() : '00:00:00',
-                                            'lunch_end' => ($row['almoco_entrada'] != null) ? $row['almoco_entrada']->toTimeString() : '00:00:00',
-                                            'lunch_hours' => 0,
-                                            'end' => ($row['saida'] != null) ? $row['saida']->toTimeString() : null,
-                                            'hours' => 0,
-                                            'nightly_start' => ($row['noturno_entrada'] != null) ? $row['noturno_entrada']->toTimeString() : '00:00:00',
-                                            'nightly_end' => ($row['noturno_saida'] != null) ? $row['noturno_saida']->toTimeString() : '00:00:00',
-                                            'nightly_hours' => 0,
-                                            'status' => 'P'
-                                        );
-                                    } else if ($row['almoco_saida'] && $row['almoco_entrada'] == null) {
-                                        $workday = array (
-                                            'user_id' => Auth::user()->id,
-                                            'workday' => ($row['data'] != null) ? $row['data']->toDateString() : null,
-                                            'start' => ($row['entrada'] != null) ? $row['entrada']->toTimeString() : null,
-                                            'lunch_start' => '00:00:00',
-                                            'lunch_end' => '00:00:00',
-                                            'end' => ($row['almoco_saida'] != null) ? $row['almoco_saida']->toTimeString() : '00:00:00',
-                                            'hours' => 0,
-                                            'nightly_start' => ($row['noturno_entrada'] != null) ? $row['noturno_entrada']->toTimeString() : '00:00:00',
-                                            'nightly_end' => ($row['noturno_saida'] != null) ? $row['noturno_saida']->toTimeString() : '00:00:00',
-                                            'nightly_hours' => 0,
-                                            'status' => 'P'
-                                        );
-                                    } else if ($row['almoco_entrada']) {
-                                        $workday = array (
-                                            'user_id' => Auth::user()->id,
-                                            'workday' => ($row['data'] != null) ? $row['data']->toDateString() : null,
-                                            'start' => ($row['almoco_entrada'] != null) ? $row['almoco_entrada']->toTimeString() : null,
-                                            'lunch_start' => '00:00:00',
-                                            'lunch_end' => '00:00:00',
-                                            'end' => ($row['saida'] != null) ? $row['saida']->toTimeString() : null,
-                                            'hours' => 0,
-                                            'nightly_start' => ($row['noturno_entrada'] != null) ? $row['noturno_entrada']->toTimeString() : '00:00:00',
-                                            'nightly_end' => ($row['noturno_saida'] != null) ? $row['noturno_saida']->toTimeString() : '00:00:00',
-                                            'nightly_hours' => 0,
-                                            'status' => 'P'
-                                        );
-                                    }
+                                        if ($row['saida'] && $row['entrada']) {
+                                            $workday = array (
+                                                'user_id' => Auth::user()->id,
+                                                'workday' => ($row['data'] != null) ? $row['data']->toDateString() : null,
+                                                'start' => ($row['entrada'] != null) ? $row['entrada']->toTimeString() : null,
+                                                'lunch_start' => ($row['almoco_saida'] != null) ? $row['almoco_saida']->toTimeString() : '00:00:00',
+                                                'lunch_end' => ($row['almoco_entrada'] != null) ? $row['almoco_entrada']->toTimeString() : '00:00:00',
+                                                'lunch_hours' => 0,
+                                                'end' => ($row['saida'] != null) ? $row['saida']->toTimeString() : null,
+                                                'hours' => 0,
+                                                'nightly_start' => ($row['noturno_entrada'] != null) ? $row['noturno_entrada']->toTimeString() : '00:00:00',
+                                                'nightly_end' => ($row['noturno_saida'] != null) ? $row['noturno_saida']->toTimeString() : '00:00:00',
+                                                'nightly_hours' => 0,
+                                                'status' => 'P'
+                                            );
+                                        } else if ($row['almoco_saida'] && $row['almoco_entrada'] == null) {
+                                            $workday = array (
+                                                'user_id' => Auth::user()->id,
+                                                'workday' => ($row['data'] != null) ? $row['data']->toDateString() : null,
+                                                'start' => ($row['entrada'] != null) ? $row['entrada']->toTimeString() : null,
+                                                'lunch_start' => '00:00:00',
+                                                'lunch_end' => '00:00:00',
+                                                'end' => ($row['almoco_saida'] != null) ? $row['almoco_saida']->toTimeString() : '00:00:00',
+                                                'hours' => 0,
+                                                'nightly_start' => ($row['noturno_entrada'] != null) ? $row['noturno_entrada']->toTimeString() : '00:00:00',
+                                                'nightly_end' => ($row['noturno_saida'] != null) ? $row['noturno_saida']->toTimeString() : '00:00:00',
+                                                'nightly_hours' => 0,
+                                                'status' => 'P'
+                                            );
+                                        } else if ($row['almoco_entrada']) {
+                                            $workday = array (
+                                                'user_id' => Auth::user()->id,
+                                                'workday' => ($row['data'] != null) ? $row['data']->toDateString() : null,
+                                                'start' => ($row['almoco_entrada'] != null) ? $row['almoco_entrada']->toTimeString() : null,
+                                                'lunch_start' => '00:00:00',
+                                                'lunch_end' => '00:00:00',
+                                                'end' => ($row['saida'] != null) ? $row['saida']->toTimeString() : null,
+                                                'hours' => 0,
+                                                'nightly_start' => ($row['noturno_entrada'] != null) ? $row['noturno_entrada']->toTimeString() : '00:00:00',
+                                                'nightly_end' => ($row['noturno_saida'] != null) ? $row['noturno_saida']->toTimeString() : '00:00:00',
+                                                'nightly_hours' => 0,
+                                                'status' => 'P'
+                                            );
+                                        }
 
-                                    if ($workday['end'] != '00:00:00' && $workday['start'] != '00:00:00') {
-                                        $start = new Carbon($workday['start']);
+                                        if ($workday['end'] != '00:00:00' && $workday['start'] != '00:00:00') {
+                                            $start = new Carbon($workday['start']);
 
-                                        $diffTime = $start->diffInMinutes(new Carbon($workday['end']));
+                                            $diffTime = $start->diffInMinutes(new Carbon($workday['end']));
 
-                                        $seconds = '00';
+                                            $seconds = '00';
 
-                                        $hours = floor($diffTime / 60);
-                                        $minutes = ($diffTime % 60);
-                                        $time = (($hours <= 9 ? "0" . $hours : $hours) . ":" . ($minutes <= 9 ? "0" . $minutes : $minutes)) . ":" . $seconds;
+                                            $hours = floor($diffTime / 60);
+                                            $minutes = ($diffTime % 60);
+                                            $time = (($hours <= 9 ? "0" . $hours : $hours) . ":" . ($minutes <= 9 ? "0" . $minutes : $minutes)) . ":" . $seconds;
 
-                                        $workday['hours'] = $time;
-                                    }
+                                            $workday['hours'] = $time;
+                                        }
 
-                                    if ($workday['lunch_end'] != null && $workday['lunch_start'] != null) {
-                                        $start = new Carbon($workday['lunch_start']);
+                                        if ($workday['lunch_end'] != null && $workday['lunch_start'] != null) {
+                                            $start = new Carbon($workday['lunch_start']);
 
-                                        $diffTime = $start->diffInMinutes(new Carbon($workday['lunch_end']));
+                                            $diffTime = $start->diffInMinutes(new Carbon($workday['lunch_end']));
 
-                                        $seconds = '00';
+                                            $seconds = '00';
 
-                                        $hours = floor($diffTime / 60);
-                                        $minutes = ($diffTime % 60);
-                                        $time = (($hours <= 9 ? "0" . $hours : $hours) . ":" . ($minutes <= 9 ? "0" . $minutes : $minutes)) . ":" . $seconds;
+                                            $hours = floor($diffTime / 60);
+                                            $minutes = ($diffTime % 60);
+                                            $time = (($hours <= 9 ? "0" . $hours : $hours) . ":" . ($minutes <= 9 ? "0" . $minutes : $minutes)) . ":" . $seconds;
 
-                                        $workday['lunch_hours'] = $time;
-                                    }
+                                            $workday['lunch_hours'] = $time;
+                                        }
 
-                                    if ($workday['nightly_end'] != null && $workday['nightly_start'] != null) {
-                                        $start = new Carbon($workday['nightly_start']);
+                                        if ($workday['nightly_end'] != null && $workday['nightly_start'] != null) {
+                                            $start = new Carbon($workday['nightly_start']);
 
-                                        $end = new Carbon($workday['nightly_end']);
+                                            $end = new Carbon($workday['nightly_end']);
 
-                                        $diffTime = $start->diffInMinutes($end->addDay());
+                                            $diffTime = $start->diffInMinutes($end->addDay());
 
-                                        $seconds = '00';
+                                            $seconds = '00';
 
-                                        $hours = floor($diffTime / 60);
-                                        $minutes = ($diffTime % 60);
-                                        $time = (($hours <= 9 ? "0" . $hours : $hours) . ":" . ($minutes <= 9 ? "0" . $minutes : $minutes)) . ":" . $seconds;
+                                            $hours = floor($diffTime / 60);
+                                            $minutes = ($diffTime % 60);
+                                            $time = (($hours <= 9 ? "0" . $hours : $hours) . ":" . ($minutes <= 9 ? "0" . $minutes : $minutes)) . ":" . $seconds;
 
-                                        $workday['nightly_hours'] = $time;
-                                    }
+                                            $workday['nightly_hours'] = $time;
+                                        }
 
-                                    $workday = Timesheet::create( $workday );
+                                        $workday = Timesheet::create( $workday );
 
-                                    if ($workday) {
-                                        DB::commit();
-                                    } else {
-                                        DB::rollback();
-                                        $import->status = 0;
-                                        $import->error = GeneralController::createMessage('failed', Lang::get('general.' . $this->controller_name), 'create-failed');
-                                        
-                                        if ($import->save())
+                                        if ($workday) {
                                             DB::commit();
-                                        return redirect('import')->withInput()->with('return', GeneralController::createMessage('failed', Lang::get('general.' . $this->controller_name), 'create-failed'));
+                                        } else {
+                                            DB::rollback();
+                                            $import->status = 0;
+                                            $import->error = GeneralController::createMessage('failed', Lang::get('general.' . $this->controller_name), 'create-failed');
+                                            
+                                            if ($import->save())
+                                                DB::commit();
+                                            return redirect('import')->withInput()->with('return', GeneralController::createMessage('failed', Lang::get('general.' . $this->controller_name), 'create-failed'));
+                                        }
                                     }
                                 }
                             }
