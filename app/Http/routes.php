@@ -63,6 +63,8 @@ Route::group(['middleware' => 'auth'], function () {
         Route::get('general/saveLocalization', 'GeneralController@saveLocalization');
         
         Route::get('general/getTasks', 'GeneralController@getTasks');
+
+        Route::get('general/getTasksDay', 'GeneralController@getTasksDay');
         
         Route::get('register', function() {
             if (\Auth::user()->getEloquent() == null)
