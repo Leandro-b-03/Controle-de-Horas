@@ -12,7 +12,7 @@ class CreateHolydaysTable extends Migration
      */
     public function up()
     {
-        Schema::create('holydays', function (Blueprint $table) {
+        Schema::create('holidays', function (Blueprint $table) {
             $table->increments('id');
             $table->text('name');
             $table->integer('day');
@@ -29,6 +29,6 @@ class CreateHolydaysTable extends Migration
      */
     public function down()
     {
-        Schema::drop('holydays');
+        Schema::drop('holidays');
     }
 }

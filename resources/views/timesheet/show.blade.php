@@ -39,18 +39,38 @@
           </div>
         </div>
         <div class="box-body">
-          <div id="month-select" class="col-xs-6 {!! !isset($data['timesheet_task']) ? '' : 'invisible' !!}">
-            <div class="form-group col-xs-8">
-              <label for="projects">{!! Lang::get('general.projects') !!}</label>
-              <input type="text" name="month" class="form-control" value="" placeholder="">
-            </div>
-            <div class="form-group col-xs-8">
-              <label for="tasks">{!! Lang::get('general.tasks') !!}</label>
-              <input type="text" name="year" class="form-control" value="" placeholder="">
-            </div>
-            <div class="form-group col-xs-8">
-              <a id="select-month" type="button" class="btn btn-success play"><span class="fa fa-calendar"></span> {!! Lang::get('timesheets.start') !!}</a>
-            </div>
+          <div class="left-tables pull-left">
+            <table id="month-table-header" class="table table-responsive table-hover table-border table-striped table-bordered">
+              <thead>
+                <tr>
+                  <td class="arrow">
+                    <button class="btn btn-default">‹</button>
+                  </td>
+                  <th class="month">
+                    Janeiro 2016
+                  </th>
+                  <td class="arrow">
+                    <button class="btn btn-default">›</button>
+                  </td>
+                </tr>
+              </thead>
+            </table>
+            <table id="month-table-holidays" class="table table-responsive table-hover table-border table-striped table-bordered">
+              <tbody>
+                <tr>
+                  <td>Data</td>
+                  <td>Descrição</td>
+                  <td>Tipo</td>
+                </tr>
+                @foreach ($data['holidays'] as $holiday)
+                <tr>
+                  <td>{!! ($holiday->day < 9 ? '0' . $holiday->day : $holiday->day) . '/' . ($holiday->month < 9 ? '0' . $holiday->month : $holiday->month) !!}</td>
+                  <td>{!! $holiday->name !!}</td>
+                  <td>{!! $holiday->holiday_type !!}</td>
+                </tr>
+                @endforeach
+              </tbody>
+            </table>
           </div>
           <table id="month-table-total" class="table table-responsive table-hover table-border table-striped table-bordered pull-right">
             <thead>
@@ -86,7 +106,6 @@
               <tr>
                 <th rowspan="2">{!! Lang::get('timesheets.title-date') !!}</th>
                 <th rowspan="2">{!! Lang::get('timesheets.title-day') !!}</th>
-                <th rowspan="2">{!! Lang::get('timesheets.title-holiday') !!}</th>
                 <th rowspan="2">{!! Lang::get('timesheets.title-start') !!}</th>
                 <th colspan="2">{!! Lang::get('timesheets.title-lunch') !!}</th>
                 <th rowspan="2">{!! Lang::get('timesheets.title-end') !!}</th>
@@ -106,7 +125,6 @@
               <tr>
                 <td><a type="button" data-id="{!! $workday->id !!}" class="btn btn-primary btn-xs tasks-day" data-toggle="modal" data-target="#md-timeline">{!! \Carbon\Carbon::createFromFormat('Y-m-d', $workday->workday)->format('m/d/Y') !!}</td>
                 <td>{!! html_entity_decode(GeneralHelper::getWeekDay($workday->workday)) !!}</td>
-                <td>{!! '' !!}</td>
                 <td>{!! $workday->start !!}</td>
                 <td>{!! $workday->lunch_start !!}</td>
                 <td>{!! $workday->lunch_end !!}</td>

@@ -192,13 +192,13 @@ INSERT INTO `ch_clients_groups` VALUES (2,1,'Teste','Teste para segmento','2015-
 UNLOCK TABLES;
 
 --
--- Table structure for table `ch_holydays`
+-- Table structure for table `ch_holidays`
 --
 
-DROP TABLE IF EXISTS `ch_holydays`;
+DROP TABLE IF EXISTS `ch_holidays`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `ch_holydays` (
+CREATE TABLE `ch_holidays` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `name` text COLLATE utf8_unicode_ci NOT NULL,
   `day` int(11) NOT NULL,
@@ -211,13 +211,13 @@ CREATE TABLE `ch_holydays` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `ch_holydays`
+-- Dumping data for table `ch_holidays`
 --
 
-LOCK TABLES `ch_holydays` WRITE;
-/*!40000 ALTER TABLE `ch_holydays` DISABLE KEYS */;
-INSERT INTO `ch_holydays` VALUES (1,'Ano Novo',1,1,'N','0000-00-00 00:00:00','0000-00-00 00:00:00'),(2,'Carnaval',17,2,'N','0000-00-00 00:00:00','0000-00-00 00:00:00'),(3,'Páscoa',5,3,'N','0000-00-00 00:00:00','0000-00-00 00:00:00'),(4,'Tiradentes',21,3,'N','0000-00-00 00:00:00','0000-00-00 00:00:00'),(5,'Dia do Trabalho',1,5,'N','0000-00-00 00:00:00','0000-00-00 00:00:00'),(6,'Corpus Christi',4,6,'N','0000-00-00 00:00:00','0000-00-00 00:00:00'),(7,'Independência do Brasil',7,9,'N','0000-00-00 00:00:00','0000-00-00 00:00:00'),(8,'Nossa Senhora Aparecida',12,10,'N','0000-00-00 00:00:00','0000-00-00 00:00:00'),(9,'Finados',2,11,'N','0000-00-00 00:00:00','0000-00-00 00:00:00'),(10,'Proclamação da República',15,11,'N','0000-00-00 00:00:00','0000-00-00 00:00:00'),(11,'Natal',25,12,'N','0000-00-00 00:00:00','0000-00-00 00:00:00');
-/*!40000 ALTER TABLE `ch_holydays` ENABLE KEYS */;
+LOCK TABLES `ch_holidays` WRITE;
+/*!40000 ALTER TABLE `ch_holidays` DISABLE KEYS */;
+INSERT INTO `ch_holidays` VALUES (1,'Ano Novo',1,1,'N','0000-00-00 00:00:00','0000-00-00 00:00:00'),(2,'Carnaval',17,2,'N','0000-00-00 00:00:00','0000-00-00 00:00:00'),(3,'Páscoa',5,3,'N','0000-00-00 00:00:00','0000-00-00 00:00:00'),(4,'Tiradentes',21,3,'N','0000-00-00 00:00:00','0000-00-00 00:00:00'),(5,'Dia do Trabalho',1,5,'N','0000-00-00 00:00:00','0000-00-00 00:00:00'),(6,'Corpus Christi',4,6,'N','0000-00-00 00:00:00','0000-00-00 00:00:00'),(7,'Independência do Brasil',7,9,'N','0000-00-00 00:00:00','0000-00-00 00:00:00'),(8,'Nossa Senhora Aparecida',12,10,'N','0000-00-00 00:00:00','0000-00-00 00:00:00'),(9,'Finados',2,11,'N','0000-00-00 00:00:00','0000-00-00 00:00:00'),(10,'Proclamação da República',15,11,'N','0000-00-00 00:00:00','0000-00-00 00:00:00'),(11,'Natal',25,12,'N','0000-00-00 00:00:00','0000-00-00 00:00:00');
+/*!40000 ALTER TABLE `ch_holidays` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -239,7 +239,7 @@ CREATE TABLE `ch_migrations` (
 
 LOCK TABLES `ch_migrations` WRITE;
 /*!40000 ALTER TABLE `ch_migrations` DISABLE KEYS */;
-INSERT INTO `ch_migrations` VALUES ('2014_10_12_000000_create_users_table',1),('2014_10_12_100000_create_password_resets_table',1),('2015_06_15_125752_proposals_types_table',1),('2015_06_21_164400_create_clients_table',1),('2015_06_21_165901_clients_groups_table',1),('2015_06_21_171459_create_proposals_table',1),('2015_06_22_144415_create_projects_table',1),('2015_07_02_114149_entrust_setup_tables',1),('2015_07_11_165345_create_projects_times_table',1),('2015_07_15_012315_create_projects_times_tasks_table',1),('2015_07_24_012315_create_users_notifications_table',1),('2015_07_25_013910_chats_table',1),('2015_07_25_014909_chats_messages_table',1),('2015_07_26_120352_create_teams_table',1),('2015_07_26_121230_create_users_teams_table',1),('2015_08_05_194603_calendar_table',1),('2015_08_05_202459_timesheet_table',1),('2015_08_05_202459_timesheet_tasks_table',1),('2015_08_15_122750_proposals_versions_table',1),('2015_08_15_155717_app_menu_table',1),('2015_08_29_202034_alter_proposals_table',1),('2015_08_31_103424_users_localizations_table',1),('2015_08_31_103528_users_benefits_table',1),('2015_08_31_103548_users_settings_table',1),('2015_09_03_190612_create_tasks_teams_table',1),('2015_09_08_183357_create_holydays_table',1);
+INSERT INTO `ch_migrations` VALUES ('2014_10_12_000000_create_users_table',1),('2014_10_12_100000_create_password_resets_table',1),('2015_06_15_125752_proposals_types_table',1),('2015_06_21_164400_create_clients_table',1),('2015_06_21_165901_clients_groups_table',1),('2015_06_21_171459_create_proposals_table',1),('2015_06_22_144415_create_projects_table',1),('2015_07_02_114149_entrust_setup_tables',1),('2015_07_11_165345_create_projects_times_table',1),('2015_07_15_012315_create_projects_times_tasks_table',1),('2015_07_24_012315_create_users_notifications_table',1),('2015_07_25_013910_chats_table',1),('2015_07_25_014909_chats_messages_table',1),('2015_07_26_120352_create_teams_table',1),('2015_07_26_121230_create_users_teams_table',1),('2015_08_05_194603_calendar_table',1),('2015_08_05_202459_timesheet_table',1),('2015_08_05_202459_timesheet_tasks_table',1),('2015_08_15_122750_proposals_versions_table',1),('2015_08_15_155717_app_menu_table',1),('2015_08_29_202034_alter_proposals_table',1),('2015_08_31_103424_users_localizations_table',1),('2015_08_31_103528_users_benefits_table',1),('2015_08_31_103548_users_settings_table',1),('2015_09_03_190612_create_tasks_teams_table',1),('2015_09_08_183357_create_holidays_table',1);
 /*!40000 ALTER TABLE `ch_migrations` ENABLE KEYS */;
 UNLOCK TABLES;
 
