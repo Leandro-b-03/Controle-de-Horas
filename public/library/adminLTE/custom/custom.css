@@ -248,7 +248,7 @@ table tbody tr.weekend {
 	opacity: 0.7;
 }
 
-table tbody tr.holyday {
+table tbody tr.holiday {
 	background-color: #50F99A;
 	opacity: 0.7;
 }
@@ -394,4 +394,27 @@ table thead tr th.start, table thead tr th.end {
 
 #md-timeline .modal-dialog .modal-content .modal-body {
 	height: 600px;
+}
+
+.left-tables {
+	width: 600px;
+}
+
+#month-table-header {
+	text-align: center;
+	margin-bottom: 0px;
+}
+
+#month-table-header .arrow {
+	width: 30px;
+	text-align: center;
+	border-left: none;
+	border-right: none;
+}
+
+#month-table-header .month {
+	text-align: center;
+	font-size: 20px;
+	border-left: none;
+	border-right: none;
 }

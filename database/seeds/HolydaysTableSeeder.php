@@ -11,9 +11,9 @@ class HolydaysTableSeeder extends Seeder {
 	 */
 	public function run()
 	{
-		\DB::table('holydays')->delete();
+		\DB::table('holidays')->delete();
         
-		\DB::table('holydays')->insert(array (
+		\DB::table('holidays')->insert(array (
 			0 => 
 			array (
 				'id' => 1,

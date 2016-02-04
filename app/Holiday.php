@@ -2,14 +2,14 @@
 
 use Illuminate\Database\Eloquent\Model;
 
-class Holyday extends Model
+class Holiday extends Model
 {
     /**
 	 * The database table used by the model.
 	 *
 	 * @var string
 	 */
-	protected $table = 'holydays';
+	protected $table = 'holidays';
 
 	/**
 	 * The attributes that are mass assignable.

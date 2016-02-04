@@ -10,7 +10,7 @@ use Lang;
 use Calendar;
 use App\Task;
 use App\Journal;
-use App\Holyday;
+use App\Holiday;
 use App\Project;
 use App\TaskTeam;
 use App\UserTeam;
@@ -353,16 +353,24 @@ class TimesheetController extends Controller
      */
     public function show($id, Request $request)
     {
-        // Get the workdays in the month
-        $inputs = $request->all();
+        if ($id == Auth::user()->id) {
+            // Get the workdays in the month
+            $inputs = $request->all();
 
-        // Get the workdays in the month
-        $month = Timesheet::where(DB::raw('MONTH(workday)'), (isset($inputs['month'])) ? $inputs['month'] : Carbon::now()->month)
-            ->where(DB::raw('YEAR(workday)'), (isset($inputs['year'])) ? $inputs['year'] : Carbon::now()->year)->where('user_id', $id)->get();
-        $data['month'] = $month;
+            // Get all holidays
+            $holidays = Holiday::where('month', (isset($inputs['month'])) ? $inputs['month'] : Carbon::now()->month)->get();
+            $data['holidays'] = $holidays;
 
-        // Return the timesheets view.
-        return view('timesheet.show')->with('data', $data);
+            // Get the workdays in the month
+            $month = Timesheet::where(DB::raw('MONTH(workday)'), (isset($inputs['month'])) ? $inputs['month'] : Carbon::now()->month)
+                ->where(DB::raw('YEAR(workday)'), (isset($inputs['year'])) ? $inputs['year'] : Carbon::now()->year)->where('user_id', $id)->get();
+            $data['month'] = $month;
+
+            // Return the timesheets view.
+            return view('timesheet.show')->with('data', $data);
+        } else {
+            return redirect('timesheets');
+        }
     }
 
     /**
