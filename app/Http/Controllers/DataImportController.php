@@ -11,6 +11,8 @@ use Excel;
 use App\Task;
 use App\Import;
 use App\Project;
+use App\Holiday;
+use App\Overtime;
 use App\Timesheet;
 use Carbon\Carbon;
 use App\CustomField;
@@ -485,12 +487,15 @@ class DataImportController extends Controller
                                             $workday['lunch_hours'] = $time;
                                         }
 
-                                        if ($workday['nightly_end'] != null && $workday['nightly_start'] != null) {
+                                        if (($workday['nightly_end'] != null && $workday['nightly_start'] != null) && $workday['nightly_end'] != '00:00:00' && $workday['nightly_start'] != '00:00:00') {
                                             $start = new Carbon($workday['nightly_start']);
 
                                             $end = new Carbon($workday['nightly_end']);
 
-                                            $diffTime = $start->diffInMinutes($end->addDay());
+                                            if ($end->hour > 23)
+                                                $diffTime = $start->diffInMinutes($end->addDay());
+                                            else
+                                                $diffTime = $start->diffInMinutes($end);
 
                                             $seconds = '00';
 
@@ -499,6 +504,72 @@ class DataImportController extends Controller
                                             $time = (($hours <= 9 ? "0" . $hours : $hours) . ":" . ($minutes <= 9 ? "0" . $minutes : $minutes)) . ":" . $seconds;
 
                                             $workday['nightly_hours'] = $time;
+                                        } else if ($workday['nightly_end'] != '00:00:00' && $workday['nightly_start'] != '00:00:00') {
+                                            $workday['nightly_hours'] = '00:00:00';
+                                        }
+
+                                        $overtime = Overtime::where('user_id', Auth::user()->id)->get()->first();
+
+                                        if (!$overtime->count()) {
+                                            $overtime = array (
+                                                'user_id' => Auth::user()->id,
+                                                'hours'   => '00:00:00'
+                                            );
+
+
+                                            $overtime = Overtime::create ($overtime);
+
+                                            if (!$overtime) {
+                                                DB::rollback();
+                                                $import->status = 0;
+                                                $import->error = GeneralController::createMessage('failed', Lang::get('general.' . $this->controller_name), 'create-failed');
+                                                
+                                                if ($import->save())
+                                                    DB::commit();
+                                                return redirect('import')->withInput()->with('return', GeneralController::createMessage('failed', Lang::get('general.' . $this->controller_name), 'create-failed'));
+                                            }
+                                        }
+
+                                        $times = array (
+                                            'nightly' => $workday['nightly_hours'],
+                                            'workday' => $workday['hours'],
+                                            'total'   => $overtime->hours
+                                        );
+
+                                        $minutes = 0;
+
+                                        // loop throught all the times
+                                        foreach ($times as $type => $time) {
+                                            if ($type == 'workday') {
+                                                list($hour, $minute) = explode(':', $time);
+                                                $date = new Carbon($workday['workday']);
+                                                $day_of_the_week = $date->dayOfWeek;
+
+                                                $is_holiday = Holiday::where('day',$date->day)->where('month',$date->month)->get();
+                                                
+                                                if ($day_of_the_week != 6 && $day_of_the_week != 7 && !$is_holiday)
+                                                    $minutes += $hour - 8 * 60;
+                                                else
+                                                    $minutes += $hour * 60;
+                                                
+                                                $minutes += $minute;
+                                            }
+                                        }
+
+                                        $hours = floor($minutes / 60);
+                                        $minutes -= $hours * 60;
+                                        $time = (($hours <= 9 ? "0" . $hours : $hours) . ":" . ($minutes <= 9 ? "0" . $minutes : $minutes)) . ":" . $seconds;
+
+                                        $overtime->hours = $time;
+
+                                        if (!$overtime->save()) {
+                                            DB::rollback();
+                                            $import->status = 0;
+                                            $import->error = GeneralController::createMessage('failed', Lang::get('general.' . $this->controller_name), 'create-failed');
+                                            
+                                            if ($import->save())
+                                                DB::commit();
+                                            return redirect('import')->withInput()->with('return', GeneralController::createMessage('failed', Lang::get('general.' . $this->controller_name), 'create-failed'));
                                         }
 
                                         $workday = Timesheet::create( $workday );

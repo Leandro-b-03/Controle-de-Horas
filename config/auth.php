@@ -16,8 +16,7 @@ return [
     |
     */
 
-    'driver' => 'eloquent',
-    // 'driver' => 'ldap',
+    'driver' => (env('APP_ENV') == 'local_nat' ? 'eloquent' :'ldap'),
 
     /*
     |--------------------------------------------------------------------------
