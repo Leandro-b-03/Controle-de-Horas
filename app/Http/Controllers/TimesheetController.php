@@ -9,6 +9,7 @@ use Auth;
 use Lang;
 use Calendar;
 use App\Task;
+use App\Member;
 use App\Journal;
 use App\Holiday;
 use App\Project;
@@ -70,7 +71,11 @@ class TimesheetController extends Controller
         $timesheet_task = TimesheetTask::where('timesheet_id', $workday->id)->where('end', null)->get()->first();
         $data['timesheet_task'] = $timesheet_task;
 
-        $projects = Project::whereIn('status', [1, 7])->get();
+        $user_id = UserOpenProject::where('login', 'LIKE', Auth::user()->getEloquent()->username . '@%')->orWhere('mail', 'LIKE', Auth::user()->getEloquent()->username . '@%')->get()->first()->id;
+
+        $user_projects = Member::select('project_id')->where('user_id', $user_id)->get()->toArray();
+
+        $projects = Project::whereIn('status', [1, 7])->whereIn('id', $user_projects)->get();
         $data['projects'] = $projects;
 
         // Get all the tasks do today;

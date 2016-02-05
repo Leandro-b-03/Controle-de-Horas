@@ -408,7 +408,7 @@ class DataImportController extends Controller
 
                     foreach ($results as $sheet) {
                         foreach ($sheet as $row) {
-                            if ($row != null) {
+                            if ($row->first() != null) {
                                 if ($row['entrada'] || $row['almoco_entrada']) {
                                     $workday = Timesheet::where('user_id', Auth::user()->getEloquent()->id)->where('workday', $row['data']->toDateString())->orderBy('workday', 'desc')->get()->first();
                                     if (!$workday) {
@@ -459,10 +459,14 @@ class DataImportController extends Controller
                                             );
                                         }
 
+                                        $day_in_minute = 0;
+
                                         if ($workday['end'] != '00:00:00' && $workday['start'] != '00:00:00') {
                                             $start = new Carbon($workday['start']);
 
                                             $diffTime = $start->diffInMinutes(new Carbon($workday['end']));
+
+                                            $day_in_minute = $diffTime;
 
                                             $seconds = '00';
 
@@ -487,25 +491,31 @@ class DataImportController extends Controller
                                             $workday['lunch_hours'] = $time;
                                         }
 
-                                        if (($workday['nightly_end'] != null && $workday['nightly_start'] != null) && $workday['nightly_end'] != '00:00:00' && $workday['nightly_start'] != '00:00:00') {
-                                            $start = new Carbon($workday['nightly_start']);
+                                        $nightly_in_minute = 0;
 
-                                            $end = new Carbon($workday['nightly_end']);
+                                        if ($workday['nightly_end'] != null && $workday['nightly_start'] != null) {
+                                            if ($workday['nightly_end'] != '00:00:00') {
+                                                $start = new Carbon($workday['nightly_start']);
 
-                                            if ($end->hour > 23)
-                                                $diffTime = $start->diffInMinutes($end->addDay());
-                                            else
-                                                $diffTime = $start->diffInMinutes($end);
+                                                $end = new Carbon($workday['nightly_end']);
 
-                                            $seconds = '00';
+                                                if ($start->hour > $end->hour)
+                                                    $diffTime = $start->diffInMinutes($end->addDay());
+                                                else
+                                                    $diffTime = $start->diffInMinutes($end);
 
-                                            $hours = floor($diffTime / 60);
-                                            $minutes = ($diffTime % 60);
-                                            $time = (($hours <= 9 ? "0" . $hours : $hours) . ":" . ($minutes <= 9 ? "0" . $minutes : $minutes)) . ":" . $seconds;
+                                                $nightly_in_minute = $diffTime;
 
-                                            $workday['nightly_hours'] = $time;
-                                        } else if ($workday['nightly_end'] != '00:00:00' && $workday['nightly_start'] != '00:00:00') {
-                                            $workday['nightly_hours'] = '00:00:00';
+                                                $seconds = '00';
+
+                                                $hours = floor($diffTime / 60);
+                                                $minutes = ($diffTime % 60);
+                                                $time = (($hours <= 9 ? "0" . $hours : $hours) . ":" . ($minutes <= 9 ? "0" . $minutes : $minutes)) . ":" . $seconds;
+
+                                                $workday['nightly_hours'] = $time;
+                                            } else {
+                                                $workday['nightly_hours'] = '00:00:00';
+                                            }
                                         }
 
                                         $overtime = Overtime::where('user_id', Auth::user()->id)->get()->first();
@@ -531,7 +541,7 @@ class DataImportController extends Controller
                                         }
 
                                         $times = array (
-                                            'nightly' => $workday['nightly_hours'],
+                                            'nightly' => ($workday['nightly_hours'] == 0 ? '00:00:00' : $workday['nightly_hours']),
                                             'workday' => $workday['hours'],
                                             'total'   => $overtime->hours
                                         );
@@ -539,25 +549,37 @@ class DataImportController extends Controller
                                         $minutes = 0;
 
                                         // loop throught all the times
-                                        foreach ($times as $type => $time) {
-                                            if ($type == 'workday') {
-                                                list($hour, $minute) = explode(':', $time);
-                                                $date = new Carbon($workday['workday']);
-                                                $day_of_the_week = $date->dayOfWeek;
+                                        // foreach ($times as $type => $time) {
+                                        //     if ($type == 'workday') {
+                                        //         list($hour, $minute) = explode(':', $time);
+                                        //         $date = new Carbon($workday['workday']);
+                                        //         $day_of_the_week = $date->dayOfWeek;
 
-                                                $is_holiday = Holiday::where('day',$date->day)->where('month',$date->month)->get();
+                                        //         $is_holiday = Holiday::where('day',$date->day)->where('month',$date->month)->get();
                                                 
-                                                if ($day_of_the_week != 6 && $day_of_the_week != 7 && !$is_holiday)
-                                                    $minutes += $hour - 8 * 60;
-                                                else
-                                                    $minutes += $hour * 60;
+                                        //         if ($day_of_the_week != 6 && $day_of_the_week != 7 && !$is_holiday)
+                                        //             $minutes += ($hour - 8) * 60;
+                                        //         else
+                                        //             $minutes += $hour * 60;
                                                 
-                                                $minutes += $minute;
-                                            }
-                                        }
+                                        //         $minutes += $minute;
+                                        //     } else {
+                                        //         list($hour, $minute) = explode(':', $time);
+                                        //         $minutes += $hour * 60;
+                                        //         $minutes += $minute;
+                                        //     }
+                                        // }
+                                        
+                                        $overtime_in_minute = 0;
 
-                                        $hours = floor($minutes / 60);
-                                        $minutes -= $hours * 60;
+                                        list($hour, $minute) = explode(':', $overtime->hours);
+                                        $overtime_in_minute += $hour * 60;
+                                        $overtime_in_minute += $minute;
+
+                                        $total_time = $overtime_in_minute + $nightly_in_minute + ($day_in_minute - 480);
+
+                                        $hours = floor($total_time / 60);
+                                        $minutes = ($total_time % 60);
                                         $time = (($hours <= 9 ? "0" . $hours : $hours) . ":" . ($minutes <= 9 ? "0" . $minutes : $minutes)) . ":" . $seconds;
 
                                         $overtime->hours = $time;
