@@ -2,6 +2,10 @@
 
 namespace App\Http\Controllers;
 
+setlocale(LC_TIME, "Portuguese");
+setlocale(LC_TIME, "Brazil");
+setlocale(LC_TIME, 'ptb', 'pt_BR', 'portuguese-brazil', 'bra', 'brazil', 'pt_BR.utf-8', 'pt_BR.iso-8859-1', 'br', 'portuguese');
+
 use Illuminate\Http\Request;
 
 use DB;
@@ -13,6 +17,7 @@ use App\Member;
 use App\Journal;
 use App\Holiday;
 use App\Project;
+use App\Overtime;
 use App\TaskTeam;
 use App\UserTeam;
 use App\Timesheet;
@@ -51,7 +56,7 @@ class TimesheetController extends Controller
                 $timesheet = array(
                     'user_id' => Auth::user()->getEloquent()->id,
                     'workday' => $today->toDateString(),
-                    'hours' => 0,
+                    'hours' => '00:00:00',
                     'start' => $today->toTimeString()
                 );
 
@@ -66,6 +71,7 @@ class TimesheetController extends Controller
             DB::rollback();
             $data['error'] =  Lang::get('general.error-day');
         }
+
         $data['workday'] = $workday;
 
         $timesheet_task = TimesheetTask::where('timesheet_id', $workday->id)->where('end', null)->get()->first();
@@ -79,7 +85,7 @@ class TimesheetController extends Controller
         $data['projects'] = $projects;
 
         // Get all the tasks do today;
-        $tasks = TimesheetTask::where('timesheet_id', $workday->id)->orderBy('id', 'DESC')->get();
+        $tasks = TimesheetTask::where('timesheet_id', $workday->id)->orderBy('id', 'DESC')->paginate(20);
         $data['tasks'] = $tasks;
 
         // Return the timesheets view.
@@ -279,7 +285,8 @@ class TimesheetController extends Controller
         }
     }
 
-    public function line($timesheet_task) {
+    public function line($timesheet_task)
+    {
         $timesheet_task->project    = $timesheet_task->getProject()->getResults()->name;
         $timesheet_task->task       = $timesheet_task->getTask()->getResults()->subject;
         $timesheet_task->start      = date("G:i a", strtotime($timesheet_task->start));
@@ -289,7 +296,8 @@ class TimesheetController extends Controller
         return $timesheet_task;
     }
 
-    public function lunch($workday) {
+    public function lunch($workday)
+    {
         $workday->lunch_start      = date("G:i a", strtotime($workday->lunch_start));
         $workday->lunch_end        = ($workday->lunch_end) ? date("G:i a", strtotime($workday->lunch_end)) : '---';
         $workday->lunch_hours      = ($workday->lunch_hours) ? date('G:i', strtotime($workday->lunch_hours)) : '---';
@@ -362,14 +370,29 @@ class TimesheetController extends Controller
             // Get the workdays in the month
             $inputs = $request->all();
 
-            // Get all holidays
+            // Get all holidays in the month
             $holidays = Holiday::where('month', (isset($inputs['month'])) ? $inputs['month'] : Carbon::now()->month)->get();
             $data['holidays'] = $holidays;
 
+            // Get the overtime
+            $overtime = Overtime::where('user_id', Auth::user()->id)->get()->first();
+            $data['overtime'] = $overtime;
+
             // Get the workdays in the month
-            $month = Timesheet::where(DB::raw('MONTH(workday)'), (isset($inputs['month'])) ? $inputs['month'] : Carbon::now()->month)
-                ->where(DB::raw('YEAR(workday)'), (isset($inputs['year'])) ? $inputs['year'] : Carbon::now()->year)->where('user_id', $id)->get();
+            $month = Timesheet::where(DB::raw('MONTH(workday)'), (isset($inputs['month']) ? $inputs['month'] : Carbon::now()->month))
+                ->where(DB::raw('YEAR(workday)'), (isset($inputs['year']) ? $inputs['year'] : Carbon::now()->year))->where('user_id', $id)->get();
             $data['month'] = $month;
+
+            // Get total hour month
+            $total_month_hours = GeneralController::getTotalMonthHours((isset($inputs['month']) ? $inputs['month'] : Carbon::now()->month), (isset($inputs['year']) ? $inputs['year'] : Carbon::now()->year), $month);
+            $data['total_month_hours'] = $total_month_hours;
+
+            // Set date and get month
+            $month_name = ucwords(Carbon::create((isset($inputs['year']) ? $inputs['year'] : Carbon::now()->year), (isset($inputs['month']) ? $inputs['month'] : Carbon::now()->month), 1)->formatLocalized('%B %Y'));
+            $data['$month_name'] = utf8_encode($month_name);
+
+            $data['actual_month'] = (isset($inputs['month'])) ? $inputs['month'] : Carbon::now()->month;
+            $data['year'] = (isset($inputs['year'])) ? $inputs['year'] : Carbon::now()->year;
 
             // Return the timesheets view.
             return view('timesheet.show')->with('data', $data);

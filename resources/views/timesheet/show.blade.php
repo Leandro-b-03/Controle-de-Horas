@@ -40,17 +40,18 @@
         </div>
         <div class="box-body">
           <div class="left-tables pull-left">
+            <a class="title-href pull-right" href="{!! URL::to('timesheets/' . Auth::user()->id . '/') !!}"><span class="fa fa-calendar-o"></span> {!! Lang::get('timesheets.actual_month') !!}</a>
             <table id="month-table-header" class="table table-responsive table-hover table-border table-striped table-bordered">
               <thead>
                 <tr>
                   <td class="arrow">
-                    <button class="btn btn-default">‹</button>
+                    <button id="previous" class="btn btn-default">‹</button>
                   </td>
                   <th class="month">
-                    Janeiro 2016
+                    {!! $data['$month_name'] !!}
                   </th>
                   <td class="arrow">
-                    <button class="btn btn-default">›</button>
+                    <button id="next" class="btn btn-default">›</button>
                   </td>
                 </tr>
               </thead>
@@ -80,24 +81,28 @@
             </thead>
             <tbody>
               <tr>
-                <th>Total de horas mínima a ser cumprida:</th>
-                <td>160:10:00</td>
+                <th>{!! Lang::get('timesheets.title-total_hours') !!}</th>
+                <td>{!! $data['total_month_hours']['month_hours'] !!}</td>
               </tr>
               <tr>
-                <th>Total de horas trabalhadas mês:</th>
-                <td>170:20:00</td>
+                <th>{!! Lang::get('timesheets.title-total_work_month') !!}</th>
+                <td>{!! $data['total_month_hours']['work_month_hours'] !!}</td>
               </tr>
               <tr>
-                <th>Total de horas crédito mês:</th>
-                <td>10:10:00</td>
+                <th>{!! Lang::get('timesheets.title-total_credit') !!}</th>
+                <td>{!! $data['total_month_hours']['time_credit'] !!}</td>
               </tr>
               <tr>
-                <th>Total de horas débito mês:</th>
+                <th>{!! Lang::get('timesheets.title-total_debit') !!}</th>
+                <td>{!! $data['total_month_hours']['time_debit'] !!}</td>
+              </tr>
+              <tr>
+                <th>{!! Lang::get('timesheets.title-total_loitered') !!}</th>
                 <td>00:00:00</td>
               </tr>
               <tr>
-                <th>Total de horas crédito/débito:</th>
-                <td>28:45:00</td>
+                <th>{!! Lang::get('timesheets.title-total_credit_debit') !!}</th>
+                <td>{!! $data['overtime']->hours !!}</td>
               </tr>
             </tbody>
           </table>
@@ -123,7 +128,7 @@
               @if ($data['month'])
               @foreach ($data['month'] as $workday)
               <tr>
-                <td><a type="button" data-id="{!! $workday->id !!}" class="btn btn-primary btn-xs tasks-day" data-toggle="modal" data-target="#md-timeline">{!! \Carbon\Carbon::createFromFormat('Y-m-d', $workday->workday)->format('m/d/Y') !!}</td>
+                <td><a type="button" data-id="{!! $workday->id !!}" class="btn btn-primary btn-xs tasks-day" data-toggle="modal" data-target="#md-timeline">{!! \Carbon\Carbon::createFromFormat('Y-m-d', $workday->workday)->format('d/m/Y') !!}</td>
                 <td>{!! html_entity_decode(GeneralHelper::getWeekDay($workday->workday)) !!}</td>
                 <td>{!! $workday->start !!}</td>
                 <td>{!! $workday->lunch_start !!}</td>
@@ -139,7 +144,7 @@
           </table>
         </div><!-- /.box-body -->
       <div class="box-footer">
-      Footer
+      <a class="btn btn-danger" href="{!! URL::to('timesheets') !!}">{!! Lang::get('general.back') !!}</a>
       </div><!-- /.box-footer-->
     </div><!-- /.box -->
 
@@ -176,18 +181,46 @@
       $(document).ajaxStart(function() { Pace.restart(); });
 
       $('.tasks-day').click(function() {
-          var data = {};
-          data.id = $(this).data('id');
+        var data = {};
+        data.id = $(this).data('id');
 
-          $.ajax({
-            url: '/general/getTasksDay',
-            data: data,
-            type: "GET",
-            success: function(data) {
-              $('#timeline').html('');
-              $('#timeline').html($(data));
-            }
-          });
+        $.ajax({
+          url: '/general/getTasksDay',
+          data: data,
+          type: "GET",
+          success: function(data) {
+            $('#timeline').html('');
+            $('#timeline').html($(data));
+          }
         });
+      });
+
+      $('#next').click(function() {
+        var month = parseInt("{!! $data['actual_month'] !!}");
+        var year = parseInt("{!! $data['year'] !!}");
+
+        if (month == 12) {
+          month = 1;
+          year++;
+        }
+        else
+          month++;
+
+        window.location.href = '?month=' + month + '&year=' + year;
+      });
+
+      $('#previous').click(function() {
+        var month = parseInt("{!! $data['actual_month'] !!}");
+        var year = parseInt("{!! $data['year'] !!}");
+
+        if (month == 1) {
+          month = 12;
+          year--;
+        }
+        else
+          month--;
+
+        window.location.href = '?month=' + month + '&year=' + year;
+      });
     </script>
 @endsection

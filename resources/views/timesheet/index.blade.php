@@ -94,12 +94,14 @@
           <h3 class="box-title">{!! Lang::get('general.timesheets') !!}</h3>
           <div class="box-tools pull-right">
             <button class="btn btn-box-tool" data-widget="collapse" data-toggle="tooltip" title="Collapse"><i class="fa fa-minus"></i></button>
-            <button class="btn btn-box-tool" data-widget="remove" data-toggle="tooltip" title="Remove"><i class="fa fa-times"></i></button>
         </div>
     </div>
     <div class="box-body">
-        <p id="lunch_time">{!! ($data['workday']->lunch_start != '00:00:00') ? Lang::get('timesheet.lunch-time') : Lang::get('timesheet.lunch') !!}</p>
-        <table id="tasks-table" class="table table-border">
+        <p id="lunch_time" class="pull-left">{!! ($data['workday']->lunch_start != '00:00:00') 
+          ? Lang::get('timesheets.lunch-time', ['start' => $data['workday']->lunch_start, 'end' => $data['workday']->lunch_end, 'hours' => $data['workday']->lunch_hours])
+          : Lang::get('timesheets.lunch') !!}</p>
+        <a class="btn btn-default pull-right"  href="{!! URL::to('timesheets/' . Auth::user()->id . '/') !!}">{!! Lang::get('timesheets.monthly') !!}</a>
+        <table id="tasks-table" class="table table-responsive table-hover table-border table-striped table-bordered">
             <thead>
                 <tr>
                     <th>{!! Lang::get('timesheets.title-project') !!}</th>
@@ -125,7 +127,7 @@
         </table>
     </div><!-- /.box-body -->
     <div class="box-footer">
-      Footer
+    {!! $data['tasks']->render() !!}
   </div><!-- /.box-footer-->
 </div><!-- /.box -->
 
@@ -247,7 +249,7 @@
             success: function(data) {
               var lunch = JSON.parse(data);
               
-              $('#lunch_time').html('Horario de saida: ' + lunch.lunch_start + '. Horario da volta: ' + lunch.lunch_end + '. Tempo total: ' + lunch.lunch_hours + '.');
+              $('#lunch_time').html('Horário de saida: ' + lunch.lunch_start + '. Horario da volta: ' + lunch.lunch_end + '. Tempo total: ' + lunch.lunch_hours + '.');
 
               $('#back').hide();
             }

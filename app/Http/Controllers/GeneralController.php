@@ -503,6 +503,87 @@ class GeneralController extends Controller {
         return true;
     }
 
+    /**
+     * Get Month Hours
+     *
+     * @return array
+     */
+    public static function getTotalMonthHours ($month, $year, $workdays)
+    {
+        $total_month_hours = array();
+
+        $date = '01/' . (isset($inputs['month']) ? $inputs['month'] : Carbon::now()->month) . '/' . (isset($inputs['year']) ? $inputs['year'] : Carbon::now()->year);
+        $date = Carbon::createFromFormat('d/m/Y', $date);
+
+        $total_month_in_hours = 0;
+
+        $days = intval(date("t", strtotime($date->toDateString())));
+
+        for ($i = 1; $i <= $days; $i++) {
+            $day_of_the_week = $date->dayOfWeek;
+
+            if ($day_of_the_week != 0 && $day_of_the_week != 6)
+                $total_month_in_hours++;
+
+            $date->addDay();
+        }
+
+        $total_month_in_hours = ($total_month_in_hours * 8) * 60;
+
+        $seconds = '00';
+        $hours = floor($total_month_in_hours / 60);
+        $minutes = ($total_month_in_hours % 60);
+        $month_hours = (($hours <= 9 ? "0" . $hours : $hours) . ":" . ($minutes <= 9 ? "0" . $minutes : $minutes)) . ":" . $seconds;
+
+        $total_month_hours['month_hours'] = $month_hours;
+
+        $total_work_month_in_hours = 0;
+
+        foreach ($workdays as $day) {
+            $day_in_minutes = 0;
+            list($hour, $minute) = explode(':', $day->hours);
+            $day_in_minutes += $hour * 60;
+            $day_in_minutes += $minute;
+
+            $nightly_in_minute = 0;
+            list($hour, $minute) = explode(':', $day->nightly_hours);
+            $nightly_in_minute += $hour * 60;
+            $nightly_in_minute += $minute;
+
+            $total_work_month_in_hours += $day_in_minutes + $nightly_in_minute;
+        }
+
+        $seconds = '00';
+        $hours = floor($total_work_month_in_hours / 60);
+        $minutes = ($total_work_month_in_hours % 60);
+        $work_month_hours = (($hours <= 9 ? "0" . $hours : $hours) . ":" . ($minutes <= 9 ? "0" . $minutes : $minutes)) . ":" . $seconds;
+
+        $total = 0;
+
+        $total_month_hours['work_month_hours'] = $work_month_hours;
+
+        if ($total_month_in_hours > $total_work_month_in_hours)
+            $total += $total_month_in_hours - $total_work_month_in_hours;
+        else
+            $total += $total_work_month_in_hours - $total_month_in_hours;
+
+        $seconds = '00';
+        $hours = floor($total / 60);
+        $minutes = ($total % 60);
+        $time = (($hours <= 9 ? "0" . $hours : $hours) . ":" . ($minutes <= 9 ? "0" . $minutes : $minutes)) . ":" . $seconds;
+
+        if ($total_month_in_hours > $total_work_month_in_hours){
+            $total_month_hours['time_debit'] = '- ' . $time;
+            $total_month_hours['time_credit'] = '00:00:00';
+        }
+        else {
+            $total_month_hours['time_credit'] = $time;
+            $total_month_hours['time_debit'] = '00:00:00';
+        }
+
+        return $total_month_hours;
+    }
+
     /* Routes */
 
     /**

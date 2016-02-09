@@ -53,7 +53,7 @@ class DashboardController extends Controller
                 $timesheet = array(
                     'user_id' => Auth::user()->getEloquent()->id,
                     'workday' => $today->toDateString(),
-                    'hours' => 0,
+                    'hours' => '00:00:00',
                     'start' => $today->toTimeString()
                 );
 

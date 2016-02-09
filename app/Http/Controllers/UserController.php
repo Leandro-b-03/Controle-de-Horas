@@ -26,7 +26,7 @@ class UserController extends Controller
     public function index()
     {
         // Get all the users
-        $users = User::All();
+        $users = User::paginate(20);
         $data['users'] = $users;
 
         // Return the users view.

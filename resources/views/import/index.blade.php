@@ -83,7 +83,7 @@
               </div>
             </div>
             <div class="box-body">
-              <table id="tasks-table" class="table table-border">
+              <table id="tasks-table" class="table table-responsive table-hover table-border table-striped table-bordered">
                 <thead>
                   <tr>
                     <th>{!! Lang::get('import.title-name') !!}</th>
@@ -109,7 +109,7 @@
               </table>
             </div><!-- /.box-body -->
             <div class="box-footer">
-            Footer
+            {!! $data['imports']->render() !!}
             </div><!-- /.box-footer-->
           </div><!-- /.box -->
         </div>

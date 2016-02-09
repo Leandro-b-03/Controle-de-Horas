@@ -418,3 +418,12 @@ table thead tr th.start, table thead tr th.end {
 	border-left: none;
 	border-right: none;
 }
+
+.title-href {
+	font-size: 12px;
+}
+
+.pagination {
+	margin: 0px;
+	float: right;
+}

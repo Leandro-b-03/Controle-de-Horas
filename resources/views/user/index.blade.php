@@ -77,8 +77,8 @@
         {!! Form::close() !!}
     </div><!-- /.box-body -->
     <div class="box-footer">
-      Footer
-  </div><!-- /.box-footer-->
+    {!! $data['users']->render() !!}
+    </div><!-- /.box-footer-->
 </div><!-- /.box -->
 @endsection
 

@@ -32,6 +32,10 @@ return [
     'new'                           => '<i class="fa fa-plus"></i> Novo cliente',
     'delete'                        => '<i class="fa fa-remove"></i> Deletar cliente(s)',
     'no-task'                       => 'Selecione uma tarefa',
+    'actual_month'                  => 'Mês atual',
+    'lunch'                         => 'Ainda não há horário de almoço',
+    'lunch-time'                    => 'Horário de saida: :start. Horario da volta: :end. Tempo total: :hours.',
+    'monthly'                       => 'Mensal',
 
     // Table
     'title-day'                     => 'Dia',
@@ -43,6 +47,12 @@ return [
     'title-task'                    => 'Tarefa',
     'title-lunch'                   => 'Almo&ccedil;o',
     'title-nightly'                 => 'Noturno',
+    'title-total_hours'             => 'Total de horas mínima a ser cumprida:',
+    'title-total_work_month'         => 'Total de horas trabalhadas mês:',
+    'title-total_credit'            => 'Total de horas crédito mês:',
+    'title-total_debit'             => 'Total de horas débito mês:',
+    'title-total_loitered'          => 'Total de horas ocioso mês:',
+    'title-total_credit_debit'      => 'Total de horas crédito/débito:',
     'day'                           => 'Dia',
     'lunch_start'                   => 'Almo&ccedil;o',
     'lunch_end'                     => 'Almo&ccedil;o',
