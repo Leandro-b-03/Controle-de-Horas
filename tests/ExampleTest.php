@@ -15,4 +15,4 @@ class ExampleTest extends TestCase
     {
         $this->visit('/')->see('SVLabs');
     }
-}*/
+}
