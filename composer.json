@@ -48,11 +48,6 @@
             "app/Helpers/GeneralHelper.php"
         ]
     },
-    "autoload-dev": {
-        "classmap": [
-            "tests/TestCase.php"
-        ]
-    },
     "scripts": {
         "post-install-cmd": [
             "php artisan clear-compiled",
