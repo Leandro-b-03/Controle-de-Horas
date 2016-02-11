@@ -74,19 +74,27 @@ class TimesheetController extends Controller
 
         $data['workday'] = $workday;
 
+        // Get the actual task
         $timesheet_task = TimesheetTask::where('timesheet_id', $workday->id)->where('end', null)->get()->first();
         $data['timesheet_task'] = $timesheet_task;
 
+        // Get the Openproject's user id
         $user_id = UserOpenProject::where('login', 'LIKE', Auth::user()->getEloquent()->username . '@%')->orWhere('mail', 'LIKE', Auth::user()->getEloquent()->username . '@%')->get()->first()->id;
 
+        // Get all the Projects that the user is assigned off
         $user_projects = Member::select('project_id')->where('user_id', $user_id)->get()->toArray();
 
+        // Get all the projects infos
         $projects = Project::whereIn('status', [1, 7])->whereIn('id', $user_projects)->get();
         $data['projects'] = $projects;
 
         // Get all the tasks do today;
         $tasks = TimesheetTask::where('timesheet_id', $workday->id)->orderBy('id', 'DESC')->paginate(20);
         $data['tasks'] = $tasks;
+
+        // Get the info if the day is off
+        $info = GeneralController::getInfo($workday);
+        $data['info'] = $info;
 
         // Return the timesheets view.
         return view('timesheet.index')->with('data', $data);
@@ -150,7 +158,7 @@ class TimesheetController extends Controller
                     return response()->json(array('error' => Lang::get('general.error')));
                 }
             } else if (isset($inputs['finish']) || isset($inputs['pause']) || isset($inputs['fail'])) {
-                $timesheet_task = TimesheetTask::where('timesheet_id', $workday->id)->where('end', null)->get()->first();
+                $timesheet_task = TimesheetTask::where('timesheet_id', $workday->id)->where('end', '00:00:00')->get()->first();
                 $timesheet_task->end = $today->toTimeString();
 
                 $seconds = '00';
@@ -216,7 +224,7 @@ class TimesheetController extends Controller
                     DB::rollback();
                     return response()->json(array('error' => Lang::get('general.error')));
                 }
-            } else if ($inputs['lunch']) {
+            } else if (isset($inputs['lunch'])) {
                 if ($inputs['start_lunch']) {
                     if ($workday->lunch_start == '00:00:00') {
                         $workday->lunch_start = $today->toTimeString();
@@ -261,7 +269,14 @@ class TimesheetController extends Controller
 
                 $start = new Carbon($workday->start);
 
+                $lunch_in_minute = 0;
+                list($hour, $minute) = explode(':', $workday->lunch_hours);
+                $lunch_in_minute += $hour * 60;
+                $lunch_in_minute += $minute;
+
                 $diffTime = $start->diffInMinutes(new Carbon($workday->end));
+
+                $diffTime -= $lunch_in_minute;
 
                 $seconds = '00';
 
@@ -270,6 +285,8 @@ class TimesheetController extends Controller
                 $time = (($hours <= 9 ? "0" . $hours : $hours) . ":" . ($minutes <= 9 ? "0" . $minutes : $minutes)) . ":" . $seconds;
                 
                 $workday->hours = $time;
+
+                $workday->status = "P";
 
                 if ($workday->save()) {
                     DB::commit();

@@ -32,7 +32,7 @@ class DataImportController extends Controller
     public function index()
     {
         // Get all the imports done
-        $imports = Import::paginate(20);
+        $imports = Import::orderBy('created_at', 'desc')->paginate(20);
         $data['imports'] = $imports;
 
         // Return the imports view.

@@ -37,6 +37,7 @@
         </div>
         <!-- /.box-header -->
         <div class="box-body">
+            @if ($data['workday']->end == '00:00:00')
             <div id="start_settings" class="col-xs-6 {!! !isset($data['timesheet_task']) ? '' : 'invisible' !!}">
                 <div class="form-group col-xs-2 custom_a">
                     <a id="start" class="btn btn-success play"><span class="fa fa-play-circle-o"></span> {!! Lang::get('timesheets.start') !!}</a>
@@ -85,6 +86,38 @@
                 <p id="task-info">{!! isset($data['timesheet_task']) ? $data['timesheet_task']->getTask()->getResults()->description : Lang::get('timesheets.no-task') !!}</p>
               </div>
             </div>
+            @else
+            <div class="col-xs-6">
+              <div class="callout callout-success">
+                <h4>{!! Lang::get('general.info') !!}</h4>
+                <div class="col-xs-6">
+                  <p>
+                    <label>{!! Lang::get('timesheets.started') . ':' !!} </label> {!! $data['workday']->start !!}
+                    <br />
+                    <label>{!! Lang::get('timesheets.lunch_started') . ':' !!} </label> {!! $data['workday']->lunch_start !!}
+                    <br />
+                    <label>{!! Lang::get('timesheets.lunch_ended') . ':' !!} </label> {!! $data['workday']->lunch_end !!}
+                    <br />
+                    <label>{!! Lang::get('timesheets.lunch_total') . ':' !!} </label> {!! $data['workday']->lunch_hours !!}
+                    <br />
+                    <label>{!! Lang::get('timesheets.ended') . ':' !!} </label> {!! $data['workday']->end !!}
+                    <br />
+                    <label>{!! Lang::get('timesheets.total_day') . ':' !!} </label> {!! $data['workday']->hours !!}
+                  </p>
+                </div>
+                <div class="col-xs-6">
+                  <p>
+                    <label>{!! Lang::get('timesheets.hours_to_achieve') . ':' !!} </label> {!! $data['info']['hours_day'] !!}
+                    <br />
+                    <label>{!! Lang::get('timesheets.hours_credit') . ':' !!} </label> {!! $data['info']['time_credit'] !!}
+                    <br />
+                    <label>{!! Lang::get('timesheets.hours_debit') . ':' !!} </label> {!! $data['info']['time_debit'] !!}
+                  </p>
+                </div>
+                <hr class="clearfix" />
+              </div>
+            </div>
+            @endif
         </div>
       <!-- /.box-body -->
       </div>
@@ -99,8 +132,7 @@
     <div class="box-body">
         <p id="lunch_time" class="pull-left">{!! ($data['workday']->lunch_start != '00:00:00') 
           ? Lang::get('timesheets.lunch-time', ['start' => $data['workday']->lunch_start, 'end' => $data['workday']->lunch_end, 'hours' => $data['workday']->lunch_hours])
-          : Lang::get('timesheets.lunch') !!}</p>
-        <a class="btn btn-default pull-right"  href="{!! URL::to('timesheets/' . Auth::user()->id . '/') !!}">{!! Lang::get('timesheets.monthly') !!}</a>
+          : Lang::get('timesheets.lunch') !!}</p>s
         <table id="tasks-table" class="table table-responsive table-hover table-border table-striped table-bordered">
             <thead>
                 <tr>
@@ -127,7 +159,8 @@
         </table>
     </div><!-- /.box-body -->
     <div class="box-footer">
-    {!! $data['tasks']->render() !!}
+      <a class="btn btn-default pull-left"  href="{!! URL::to('timesheets/' . Auth::user()->id . '/') !!}">{!! Lang::get('timesheets.monthly') !!}</a>
+      {!! $data['tasks']->render() !!}
   </div><!-- /.box-footer-->
 </div><!-- /.box -->
 
@@ -158,7 +191,7 @@
             data: data,
             type: "POST",
             success: function(data) {
-              var task = JSON.parse(data);
+              var task = data
               $('#start_settings').addClass('invisible');
               $('#finish_settings').removeClass('invisible');
 
@@ -175,7 +208,6 @@
         $('#end').click(function() {
           var data = {};
 
-          data.start = false;
           data.end = true;
 
           $.ajax({
@@ -183,16 +215,9 @@
             data: data,
             type: "POST",
             success: function(data) {
-              var task = JSON.parse(data);
-              $('#start_settings').addClass('invisible');
-              $('#finish_settings').removeClass('invisible');
+              var task = data
 
-              $('#project-name').html($('#projects option:selected').text());
-              $('#task-subject').html($('#tasks option:selected').text());
-              
-              var line = generateLine(task);
-
-              $('#tasks-table tbody').prepend($(line));
+              window.location.href = '/timesheets';
             }
           });
         });
@@ -247,7 +272,7 @@
             data: data,
             type: "POST",
             success: function(data) {
-              var lunch = JSON.parse(data);
+              var lunch = data
               
               $('#lunch_time').html('Horário de saida: ' + lunch.lunch_start + '. Horario da volta: ' + lunch.lunch_end + '. Tempo total: ' + lunch.lunch_hours + '.');
 
@@ -266,7 +291,7 @@
             data: data,
             type: "POST",
             success: function(data) {
-              var task = JSON.parse(data);
+              var task = data
               $('#start_settings').removeClass('invisible');
               $('#finish_settings').addClass('invisible');
 
@@ -341,7 +366,7 @@
             data: {id: id},
             type: "GET",
             success: function(data) {
-              var tasks = JSON.parse(data);
+              var tasks = data
 
               _tasks = tasks;
 

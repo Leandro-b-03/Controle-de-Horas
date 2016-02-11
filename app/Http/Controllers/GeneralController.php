@@ -248,7 +248,11 @@ class GeneralController extends Controller {
     {
         $project_id = $request->all();
 
-        $tasks = DB::connection('openproject')->table('work_packages')->where('project_id', $project_id['id'])->whereIn('status_id', [1, 12, 14])->whereIn('type_id', [1, 7])->get();
+        $tasks = DB::connection('openproject')->table('work_packages')->whereExists(function ($query) {
+            $query->select(DB::raw(1))
+                  ->from('work_packages')
+                  ->whereRaw('work_packages.parent_id != work_packages.id');
+        })->where('project_id', $project_id['id'])->get();
         
         return response()->json($tasks);
     }
@@ -286,8 +290,6 @@ class GeneralController extends Controller {
         $settings = UserSetting::where('user_id', Auth::user()->getEloquent()->id)->get()->first();
 
         $data = [];
-
-        d($settings);
         
         if ($settings) {
             foreach($inputs as $input => $value) {
@@ -303,7 +305,6 @@ class GeneralController extends Controller {
             }
         } else {
             $inputs['user_id'] = Auth::user()->getEloquent()->id;
-            d($inputs);
             if (UserSetting::create( $inputs )) {
                 $data['success'] = true;
                 $data['message'] = 'salvo';
@@ -582,6 +583,44 @@ class GeneralController extends Controller {
         }
 
         return $total_month_hours;
+    }
+
+    /**
+     * Get Month Hours
+     *
+     * @return array
+     */
+    public static function getInfo ($workday) {
+        $info = array();
+
+        $hours_day = 480;
+        $info['hours_day'] = '08:00:00';
+
+        $day_in_minutes = 0;
+        list($hour, $minute) = explode(':', $workday->hours);
+        $day_in_minutes += $hour * 60;
+        $day_in_minutes += $minute;
+
+        if ($hours_day > $day_in_minutes)
+           $day_in_minutes = $hours_day - $day_in_minutes;
+        else
+            $day_in_minutes -= $hours_day;
+
+        $seconds = '00';
+        $hours = floor($day_in_minutes / 60);
+        $minutes = ($day_in_minutes % 60);
+        $time = (($hours <= 9 ? "0" . $hours : $hours) . ":" . ($minutes <= 9 ? "0" . $minutes : $minutes)) . ":" . $seconds;
+
+        if ($hours_day > $day_in_minutes){
+            $info['time_debit'] = '- ' . $time;
+            $info['time_credit'] = '00:00:00';
+        }
+        else {
+            $info['time_credit'] = $time;
+            $info['time_debit'] = '00:00:00';
+        }
+
+        return $info;
     }
 
     /* Routes */

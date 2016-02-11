@@ -27,9 +27,7 @@ class LunchTime
 
                 $diffTime = $lunch_time->diffInMinutes($today);
 
-                $hour = $diffTime / 60;
-
-                if ($timesheet && ($hour < 1))
+                if ($timesheet && ($diffTime < 11))
                 {
                     if ($request->ajax())
                     {

@@ -463,7 +463,12 @@
     @section('scripts')
     @show
     <script>
+      $(document).ajaxStart(function() { Pace.restart(); });
     	var settings = {!! Auth::user()->getEloquent()->settings()->getResults() ? "$.parseJSON('" . Auth::user()->getEloquent()->settings()->getResults() . "')" : '{}' !!};
+
+      if (settings == {}) {
+        salveSettings();
+      }
 
       $.ajaxSetup({
           headers: {
@@ -472,23 +477,6 @@
       });
 
       var user = $.parseJSON('{!! Auth::user()->getEloquent() !!}');
-
-      // var dataTableLang = [];
-
-      // dataTableLang.processing = "{!! Lang::get('general.dataTable-processing') !!}"
-      // dataTableLang.search = "{!! Lang::get('general.dataTable-search') !!}"
-      // dataTableLang.lengthMenu = "{!! Lang::get('general.dataTable-lengthMenu') !!}"
-      // dataTableLang.info = "{!! Lang::get('general.dataTable-info') !!}"
-      // dataTableLang.infoEmpty = "{!! Lang::get('general.dataTable-infoEmpty') !!}"
-      // dataTableLang.infoFiltered = "{!! Lang::get('general.dataTable-infoFiltered') !!}"
-      // dataTableLang.infoPostFix = "{!! Lang::get('general.dataTable-infoPostFix') !!}"
-      // dataTableLang.loadingRecords = "{!! Lang::get('general.dataTable-loadingRecords') !!}"
-      // dataTableLang.zeroRecords = "{!! Lang::get('general.dataTable-zeroRecords') !!}"
-      // dataTableLang.emptyTable = "{!! Lang::get('general.dataTable-emptyTable') !!}"
-      // dataTableLang.paginate_first = "{!! Lang::get('general.dataTable-paginate_first') !!}"
-      // dataTableLang.paginate_previous = "{!! Lang::get('general.dataTable-paginate_previous') !!}"
-      // dataTableLang.paginate_next = "{!! Lang::get('general.dataTable-paginate_next') !!}"
-      // dataTableLang.paginate_last = "{!! Lang::get('general.dataTable-paginate_last') !!}"
     </script>
     <!-- Custom PusherChatWidget.js -->
     {!! Html::script("library/adminLTE/custom/CustomPusherChatWidget.js") !!}

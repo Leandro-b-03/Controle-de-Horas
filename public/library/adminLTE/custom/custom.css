@@ -427,3 +427,7 @@ table thead tr th.start, table thead tr th.end {
 	margin: 0px;
 	float: right;
 }
+
+.clearfix {
+	clear: both;
+}

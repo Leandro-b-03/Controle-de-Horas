@@ -35,7 +35,7 @@ class LockscreenController extends Controller
             $lunch_time->addHours(1);
             $data['lunch_time'] = $lunch_time;
 
-            if ($timesheet && ($hour < 1)) {
+            if ($timesheet && ($diffTime < 11)) {
                 // Return the lockscreen view.
                 return view('lockscreen.index')->with('data', $data);
             } else {

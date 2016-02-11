@@ -386,7 +386,7 @@
         data: settings,
         type: "GET",
         success: function(data) {
-          var settings = JSON.parse(data);
+          var settings = data;
 
           if (settings.error) {
             alert(error);
