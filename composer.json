@@ -27,7 +27,8 @@
         "alexpechkarev/google-geocoder": "dev-master",
         "doctrine/dbal": "^2.6@dev",
         "dsdevbe/ldap-connector": "3.*",
-        "maatwebsite/excel": "^2.1"
+        "maatwebsite/excel": "^2.1",
+        "symfony/dom-crawler": "^3.0"
     },
     "require-dev": {
         "fzaninotto/faker": "~1.4",
