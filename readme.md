@@ -27,7 +27,7 @@ Sooner.
 ## Based on
 Framework - Laravel 5.1
 
-Theme - AdminLTE 2.1
+Theme - AdminLTE 2.3.2
 
 ## Contributing
 
