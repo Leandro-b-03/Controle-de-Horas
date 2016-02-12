@@ -1,6 +1,6 @@
 ## Controle de Horas (Timesheet)
 
-[![Build Status](https://travis-ci.org/Leandro-b-03/Controle-de-Horas.svg?branch=master)](https://travis-ci.org/Leandro-b-03/Controle-de-Horas)
+[![Build Status](https://travis-ci.org/Leandro-b-03/Controle-de-Horas.svg?branch=dev)](https://travis-ci.org/Leandro-b-03/Controle-de-Horas)
 [![Build Status](https://codeship.com/projects/498e4060-4457-0133-88ec-02bca624b00e/status?branch=Dev)](https://codeship.com/projects/498e4060-4457-0133-88ec-02bca624b00e/status?branch=Dev)
 
 Web app for timesheet user control, the app improve the monitoring of all user, made it easy to management, alocate and resource distribution. The app runs over Laravel framework
