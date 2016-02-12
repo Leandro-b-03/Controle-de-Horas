@@ -111,21 +111,17 @@ class GroupPermissionController extends Controller
                     // equivalent to $owner->perms()->sync(array($createPost->id, $editUser->id));
                     if ($role->attachPermissions($permissions) == null) {
                         DB::commit();
-            die(d(1));
                         return redirect('group-permissions')->with('return', GeneralController::createMessage('success', Lang::get('general.' . $this->controller_name), 'create'));
                     } else {
                         DB::rollback();
-            die(d(2));
                         return redirect('group-permissions/create')->withInput()->with('return', GeneralController::createMessage('failed', Lang::get('general.' . $this->controller_name), 'create'));
                     }
                 } catch (Exception $e) {
                     DB::rollback();
-            die(d(3));
                     return redirect('group-permissions/create')->withInput()->with('return', GeneralController::createMessage('failed', Lang::get('general.' . $this->controller_name), 'create-failed'));
                 }
             } else {
                 DB::rollback();
-            die(d(4));
                 return redirect('group-permissions/create')->withInput()->with('return', GeneralController::createMessage('failed', Lang::get('general.' . $this->controller_name), 'create-failed'));
             }
         } catch (Exception $e) {

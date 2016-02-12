@@ -37,7 +37,7 @@
         </div>
         <!-- /.box-header -->
         <div class="box-body">
-            @if ($data['workday']->end == '00:00:00')
+            @if ($data['workday']->end == '00:00:00' || ($data['workday']->nightly_start != '00:00:00' && $data['workday']->nightly_end == '00:00:00'))
             <div id="start_settings" class="col-xs-6 {!! !isset($data['timesheet_task']) ? '' : 'invisible' !!}">
                 <div class="form-group col-xs-2 custom_a">
                     <a id="start" class="btn btn-success play"><span class="fa fa-play-circle-o"></span> {!! Lang::get('timesheets.start') !!}</a>
@@ -47,7 +47,7 @@
                     @if ($data['workday']->lunch_start != '00:00:00' && $data['workday']->lunch_end == '00:00:00')
                     <a id="back" class="btn btn-primary play"><span class="fa fa-cutlery"></span> {!! Lang::get('timesheets.lunch_end') !!}</a>
                     @endif
-                    <a id="end" class="btn btn-warning play"><span class="fa fa-stop-circle-o"></span> {!! Lang::get('timesheets.end') !!}</a>
+                    <a id="end" class="btn btn-warning play"><span class="fa fa-stop-circle-o"></span> {!! Lang::get('timesheets.' .  ($data['workday']->nightly_start != '00:00:00:' ? 'end' : 'nightly_end')) !!}</a>
                 </div>
                 <div class="form-group col-xs-8">
                     <label for="projects">{!! Lang::get('general.projects') !!}</label>
@@ -117,6 +117,13 @@
                 <hr class="clearfix" />
               </div>
             </div>
+            @if (Auth::user()->can('TimesheetController@overttime-special'))
+            <div class="col-xs-6">
+              <h4>Você tem permissão para fazer hora-extra</h4>
+              <p>Seu gestor aprovou ou aprovará suas horas extrar, para iniciar clique no botão abaixo</p>
+              <a id="nightly" class="btn btn-success">{!! Lang::get('timesheets.start') !!}</a>
+            </div>
+            @endif
             @endif
         </div>
       <!-- /.box-body -->
@@ -175,7 +182,7 @@
     {!! Html::script("library/adminLTE/plugins/jquery-stopwatch/jquery.stopwatch.js") !!}
 
     <script type="text/javascript" charset="utf-8" async defer>
-        // var timesheet = {!! (isset($data['timesheet_today']) ? 'JSON.parse(\'' . $data['timesheet_today'] . '\')' : '{}') !!};
+        var workday = {!! $data['workday'] !!};
 
         $('#timer').stopwatch().stopwatch('start');
 
@@ -208,7 +215,29 @@
         $('#end').click(function() {
           var data = {};
 
-          data.end = true;
+          if (workday.nightly_start == "00:00:00")
+            data.end = true;
+          else
+            data.nightly = true;
+            data.nightly_end = true
+
+          $.ajax({
+            url: '/timesheets',
+            data: data,
+            type: "POST",
+            success: function(data) {
+              var task = data
+
+              window.location.href = '/timesheets';
+            }
+          });
+        });
+
+        $('#nightly').click(function() {
+          var data = {};
+
+          data.nightly = true;
+          data.nightly_start = true;
 
           $.ajax({
             url: '/timesheets',

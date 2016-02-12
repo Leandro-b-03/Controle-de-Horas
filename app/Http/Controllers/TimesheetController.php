@@ -264,7 +264,7 @@ class TimesheetController extends Controller
                         }
                     }
                 }
-            } else if ($inputs['end'] == 'true') {
+            } else if (isset($inputs['end'])) {
                 $workday->end = $today->toTimeString();
 
                 $start = new Carbon($workday->start);
@@ -294,6 +294,40 @@ class TimesheetController extends Controller
                 } else {
                     DB::rollback();
                     return response()->json(array('error' => Lang::get('general.error')));
+                }
+            } else if (isset($inputs['nightly'])) {
+                if (isset($inputs['nightly_start'])) {
+                    $workday->nightly_start = $today->toTimeString();
+
+                    if ($workday->save()) {
+                        DB::commit();
+                        return response()->json($this->lunch($workday));
+                    } else {
+                        DB::rollback();
+                        return response()->json(array('error' => Lang::get('general.error')));
+                    }
+                } else if (isset($inputs['nightly_end'])) {
+                    $workday->nightly_end = $today->toTimeString();
+
+                    $start = new Carbon($workday->nightly_start);
+
+                    $diffTime = $start->diffInMinutes(new Carbon($workday->nightly_end));
+
+                    $seconds = '00';
+
+                    $hours = floor($diffTime / 60);
+                    $minutes = ($diffTime % 60);
+                    $time = (($hours <= 9 ? "0" . $hours : $hours) . ":" . ($minutes <= 9 ? "0" . $minutes : $minutes)) . ":" . $seconds;
+
+                    $workday->nightly_hours = $time;
+
+                    if ($workday->save()) {
+                        DB::commit();
+                        return response()->json($this->lunch($workday));
+                    } else {
+                        DB::rollback();
+                        return response()->json(array('error' => Lang::get('general.error')));
+                    }
                 }
             }
         } catch (Exception $e) {

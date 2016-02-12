@@ -23,6 +23,8 @@ return [
     'error-name'                    => 'Nome do grupo inv&aacute;lido',
     'error-display_name'            => 'Nome de exibi&ccedil;&atilde;o do grupo inv&aacute;lido',
     'error-description'             => 'Descri&ccedil;&atilde;o inv&aacute;lida, a descri&ccedil;&atilde;o precisa ter pelo menos 10 caract&eacute;res',
+    'special'                       => 'Permissões especiais',
+    'overtime_manager'              => 'Extra sem Gestor',
 
     // Controller
     'create-new'                    => 'Criar novo ',

@@ -58,6 +58,7 @@ return [
     'lunch_end'                     => 'Almo&ccedil;o',
     'start'                         => 'Iniciar',
     'end'                           => 'Fechar dia',
+    'nightly_end'                   => 'Fechar extra',
     'finish'                        => 'Terminar',
     'pause'                         => 'Pausar',
     'fail'                          => 'Falha',

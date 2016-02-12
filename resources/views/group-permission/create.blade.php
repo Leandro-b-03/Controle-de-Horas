@@ -105,6 +105,21 @@
                       </tr>
                       @endforeach
                     </tbody>
+                    <thead>
+                      <tr>
+                        <th>{!! Lang::get('general.page') !!}</th>
+                        <th colspan="4">{!! Lang::get('group-permissions.special') !!}</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td> {!! Lang::get('general.TimesheetController') !!}</td>
+                        <th colspan="2">{!! Lang::get('group-permissions.overtime_manager') !!}</th>
+                        <td colspan="2"><div class="btn-group btn-toggle">
+                            <input type="checkbox" class="permission-check" name="permission[TimesheetController][natura-special]" {!! (isset($data['role']) ? ($data['role']->perms()->findName('TimesheetController@natura-special')->get()->count() != 0 ? 'checked' : '') : (isset($permissions['TimesheetController']['natura-special']) ? 'checked' : '')) !!}>
+                          </div></td>
+                      </tr>
+                    </tbody>
                     {{-- <tfooter>
                       <tr>
                       <td colspan="5"><a id="select-all" class="btn btn-primary">{!! Lang::get('general.select-all') !!}</a> <a class="btn btn-primary">{!! Lang::get('general.deselect-all') !!}</a></td>
