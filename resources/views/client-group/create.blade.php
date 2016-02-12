@@ -54,12 +54,12 @@
             @if (Request::is('client-groups/create'))
             {!! Form::open(array('route' => 'client-groups.store')) !!}
             @else
-            {!! Form::open(array('route' => [ 'client-groups.update', $data['client']->id ], 'method' => 'PUT')) !!}
+            {!! Form::open(array('route' => [ 'client-groups.update', $data['client_group']->id ], 'method' => 'PUT')) !!}
             @endif
               <div class="box-body">
                 <div class="form-group col-xs-5">
                   <label for="name">{!! Lang::get('client-groups.label-name') !!}</label>
-                  <input type="text" class="form-control" name="name" id="name"  value="{!! (isset($data['client']) ? $data['client']->name : (Request::old('name') ? Request::old('name') : '')) !!}" placeholder="{!! Lang::get('client-groups.ph-name') !!}" data-validation="length" data-validation-length="3-12" data-validation-error-msg="{!! Lang::get('client-groups.error-name') !!}" required>
+                  <input type="text" class="form-control" name="name" id="name"  value="{!! (isset($data['client_group']) ? $data['client_group']->name : (Request::old('name') ? Request::old('name') : '')) !!}" placeholder="{!! Lang::get('client-groups.ph-name') !!}" data-validation="length" data-validation-length="3-12" data-validation-error-msg="{!! Lang::get('client-groups.error-name') !!}" required>
                 </div>
                 <div class="form-group col-xs-4">
                   <label for="client_id">{!! Lang::get('general.clients') !!}</label>
@@ -67,7 +67,7 @@
                     <option value="">{!! Lang::get('general.select') !!}</option>
                     @if($data['clients'] != null)
                     @foreach ($data['clients'] as $client)
-                    <option value="{!! $client->id !!}" {!! (isset($data['proposal']) ? ($data['proposal']->client()->getResults()->id == $client->id ? 'selected="selected"' : "") : "") !!}>{!! $client->name !!}</option>
+                    <option value="{!! $client->id !!}" {!! (isset($data['client_group']) ? ($data['client_group']->client_id == $client->id ? 'selected="selected"' : "") : "") !!}>{!! $client->name !!}</option>
                     @endforeach
                     @endif
                   </select>
@@ -77,7 +77,7 @@
                 </div>
                 <div class="form-group col-xs-7">
                   <label for="description">{!! Lang::get('client-groups.label-description') . ' (<span id="description-maxlength">255</span>) ' . Lang::get('general.char_left') !!}</label>
-                  <textarea class="form-control" name="description" id="description" placeholder="{!! Lang::get('client-groups.ph-description') !!}" data-validation="length" data-validation-length="10-255" data-validation-error-msg="{!! Lang::get('client-groups.error-description') !!}">{!! (isset($data['project']) ? $data['project']->description : (Request::old('description') ? Request::old('description') : '')) !!}</textarea>
+                  <textarea class="form-control" name="description" id="description" placeholder="{!! Lang::get('client-groups.ph-description') !!}" data-validation="length" data-validation-length="10-255" data-validation-error-msg="{!! Lang::get('client-groups.error-description') !!}">{!! (isset($data['client_group']) ? $data['client_group']->description : (Request::old('description') ? Request::old('description') : '')) !!}</textarea>
                 </div>
               </div><!-- /.box-body -->
               <div class="box-footer">

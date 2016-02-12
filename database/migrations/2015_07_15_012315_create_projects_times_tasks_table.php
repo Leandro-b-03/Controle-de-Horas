@@ -14,12 +14,13 @@ class CreateProjectsTimesTasksTable extends Migration
     {
         Schema::create('projects_times_tasks', function (Blueprint $table) {
             $table->increments('id');
+            $table->integer('project_id')->unsigned();
             $table->integer('project_time_id')->unsigned();
             $table->string('name');
             $table->string('description');
-            $table->json('teams');
             $table->timestamps();
 
+            $table->foreign('project_id')->references('id')->on('projects')->onUpdate('cascade')->onDelete('cascade');
             $table->foreign('project_time_id')->references('id')->on('projects_times')->onUpdate('cascade')->onDelete('cascade');
         });
     }

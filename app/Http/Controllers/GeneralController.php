@@ -2,17 +2,24 @@
 
 use DB;
 use URL;
+use Auth;
 use Lang;
 use Mail;
 use App\User;
 use App\Team;
+use App\Task;
 use App\Proposal;
 use PusherManager;
+use App\Timesheet;
 use Carbon\Carbon;
+use App\ClientGroup;
 use App\ProjectTime;
+use App\UserSetting;
 use App\ProposalType;
 use App\Http\Requests;
+use App\TimesheetTask;
 use App\ProposalVersion;
+use App\UserLocalization;
 use App\UserNotification;
 use Illuminate\Http\Request;
 
@@ -67,10 +74,18 @@ class GeneralController extends Controller {
         // Get the data receive from ajax.
         $inputs = $request->all();
 
-        $proposal = Proposal::find($inputs['id']);
-        
+        $name = "-";
 
-        return response()->json($data);
+        $proposal = Proposal::find($inputs['id']);
+        $proposal_version = ProposalVersion::find($proposal->id)->where('active', 1)->first();
+        $name .= $proposal->client()->getResults()->name;
+        $name .= "-" . $proposal->type()->getResults()->name;
+        $name .= "-" . $proposal->clientGroup()->getResults()->name;
+        $name .= "-" . $proposal->name;
+        $name .= "-" . Carbon::now()->format('m/y');
+        $name .= " " . $proposal_version->version;
+
+        return strtoupper($name);
     }
 
     public function verifyEmailJSON(Request $request)
@@ -209,6 +224,136 @@ class GeneralController extends Controller {
         return response()->json($projects_times);
     }
 
+    /**
+     * Generates an array with parameters to client groups
+     *
+     * @return Json with client groups
+     */
+    public function getClientGroup(Request $request)
+    {
+        $id = $request->get('id');
+
+        $client_group = ClientGroup::where('client_id', $id)->get();
+
+        return response()->json($client_group);
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param  int  $request
+     * @return Response
+     */
+    public function getTasks(Request $request)
+    {
+        $project_id = $request->all();
+
+        $tasks = DB::connection('openproject')->table('work_packages')->whereExists(function ($query) {
+            $query->select(DB::raw(1))
+                  ->from('work_packages')
+                  ->whereRaw('work_packages.parent_id != work_packages.id');
+        })->where('project_id', $project_id['id'])->get();
+        
+        return response()->json($tasks);
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  int  $request
+     * @
+     */
+    public function getTasksDay(Request $request) {
+        // Get all the inputs
+        $inputs = $request->all();
+
+        // Get all the task on that day or the day
+        $workday = Timesheet::find($inputs['id']);
+        $data['workday'] = $workday;
+
+        // Get all the task on that day or the day
+        $tasks = TimesheetTask::where('timesheet_id', $inputs['id'])->get();
+        $data['tasks'] = $tasks;
+
+        return view('general.timeline')->with('data', $data);
+    }
+
+    /**
+     * Save the user settings
+     *
+     * @return Json with message true or false
+     */
+    public function saveSettings(Request $request)
+    {
+        $inputs = $request->all();
+
+        $settings = UserSetting::where('user_id', Auth::user()->getEloquent()->id)->get()->first();
+
+        $data = [];
+        
+        if ($settings) {
+            foreach($inputs as $input => $value) {
+                $settings->{$input} = $value;
+            }
+
+            if ($settings->save()) {
+                $data['success'] = true;
+                $data['message'] = 'salvo';
+            } else {
+                $data['error'] = true;
+                $data['message'] = 'não salvo';
+            }
+        } else {
+            $inputs['user_id'] = Auth::user()->getEloquent()->id;
+            if (UserSetting::create( $inputs )) {
+                $data['success'] = true;
+                $data['message'] = 'salvo';
+            } else {
+                $data['error'] = true;
+                $data['message'] = 'não salvo';
+            }
+        }
+
+        return response()->json($data);
+    }
+
+    /**
+     * Save the user position
+     *
+     * @return Json with message true or false
+     */
+    public function saveLocalization(Request $request)
+    {
+        $inputs = $request->all();
+
+        $localization = UserLocalization::where('user_id', Auth::user()->getEloquent()->id)->orderBy('created_at', 'desc')->get()->first();
+
+        $data = [];
+        
+        if ($localization) {
+            if (substr($localization->latitude, 0, 7) != substr($inputs['latitude'], 0, 7)
+                && substr($localization->longitude, 0, 7) != substr($inputs['longitude'], 0, 7)) {
+                if (UserLocalization::create ($inputs)) {
+                    $data['success'] = true;
+                    $data['message'] = 'salvo';
+                } else {
+                    $data['error'] = true;
+                    $data['message'] = 'não salvo';
+                }
+            }
+        } else {
+            if (UserLocalization::create ($inputs)) {
+                $data['success'] = true;
+                $data['message'] = 'salvo';
+            } else {
+                $data['error'] = true;
+                $data['message'] = 'não salvo';
+            }
+        }
+
+        return response()->json($data);
+    }
+
     /* Statics Functions */
 
     /**
@@ -323,7 +468,7 @@ class GeneralController extends Controller {
         if (!UserNotification::create($notification)) {
             $notification_fail['message'] = Lang::get('general.failed-notification');
             $notification_fail['faicon'] = 'times';
-            PusherManager::trigger('presence-user-' . Auth::user()->id, 'new_notification', $notification);
+            PusherManager::trigger('presence-user-' . Auth::user()->getEloquent()->id, 'new_notification', $notification);
         }
     }
 
@@ -357,6 +502,125 @@ class GeneralController extends Controller {
         }
 
         return true;
+    }
+
+    /**
+     * Get Month Hours
+     *
+     * @return array
+     */
+    public static function getTotalMonthHours ($month, $year, $workdays)
+    {
+        $total_month_hours = array();
+
+        $date = '01/' . (isset($inputs['month']) ? $inputs['month'] : Carbon::now()->month) . '/' . (isset($inputs['year']) ? $inputs['year'] : Carbon::now()->year);
+        $date = Carbon::createFromFormat('d/m/Y', $date);
+
+        $total_month_in_hours = 0;
+
+        $days = intval(date("t", strtotime($date->toDateString())));
+
+        for ($i = 1; $i <= $days; $i++) {
+            $day_of_the_week = $date->dayOfWeek;
+
+            if ($day_of_the_week != 0 && $day_of_the_week != 6)
+                $total_month_in_hours++;
+
+            $date->addDay();
+        }
+
+        $total_month_in_hours = ($total_month_in_hours * 8) * 60;
+
+        $seconds = '00';
+        $hours = floor($total_month_in_hours / 60);
+        $minutes = ($total_month_in_hours % 60);
+        $month_hours = (($hours <= 9 ? "0" . $hours : $hours) . ":" . ($minutes <= 9 ? "0" . $minutes : $minutes)) . ":" . $seconds;
+
+        $total_month_hours['month_hours'] = $month_hours;
+
+        $total_work_month_in_hours = 0;
+
+        foreach ($workdays as $day) {
+            $day_in_minutes = 0;
+            list($hour, $minute) = explode(':', $day->hours);
+            $day_in_minutes += $hour * 60;
+            $day_in_minutes += $minute;
+
+            $nightly_in_minute = 0;
+            list($hour, $minute) = explode(':', $day->nightly_hours);
+            $nightly_in_minute += $hour * 60;
+            $nightly_in_minute += $minute;
+
+            $total_work_month_in_hours += $day_in_minutes + $nightly_in_minute;
+        }
+
+        $seconds = '00';
+        $hours = floor($total_work_month_in_hours / 60);
+        $minutes = ($total_work_month_in_hours % 60);
+        $work_month_hours = (($hours <= 9 ? "0" . $hours : $hours) . ":" . ($minutes <= 9 ? "0" . $minutes : $minutes)) . ":" . $seconds;
+
+        $total = 0;
+
+        $total_month_hours['work_month_hours'] = $work_month_hours;
+
+        if ($total_month_in_hours > $total_work_month_in_hours)
+            $total += $total_month_in_hours - $total_work_month_in_hours;
+        else
+            $total += $total_work_month_in_hours - $total_month_in_hours;
+
+        $seconds = '00';
+        $hours = floor($total / 60);
+        $minutes = ($total % 60);
+        $time = (($hours <= 9 ? "0" . $hours : $hours) . ":" . ($minutes <= 9 ? "0" . $minutes : $minutes)) . ":" . $seconds;
+
+        if ($total_month_in_hours > $total_work_month_in_hours){
+            $total_month_hours['time_debit'] = '- ' . $time;
+            $total_month_hours['time_credit'] = '00:00:00';
+        }
+        else {
+            $total_month_hours['time_credit'] = $time;
+            $total_month_hours['time_debit'] = '00:00:00';
+        }
+
+        return $total_month_hours;
+    }
+
+    /**
+     * Get Month Hours
+     *
+     * @return array
+     */
+    public static function getInfo ($workday) {
+        $info = array();
+
+        $hours_day = 480;
+        $info['hours_day'] = '08:00:00';
+
+        $day_in_minutes = 0;
+        list($hour, $minute) = explode(':', $workday->hours);
+        $day_in_minutes += $hour * 60;
+        $day_in_minutes += $minute;
+
+        if ($hours_day > $day_in_minutes)
+           $day_in_minutes = $hours_day - $day_in_minutes;
+        else
+            $day_in_minutes -= $hours_day;
+
+        $seconds = '00';
+        $hours = floor($day_in_minutes / 60);
+        $minutes = ($day_in_minutes % 60);
+        $time = (($hours <= 9 ? "0" . $hours : $hours) . ":" . ($minutes <= 9 ? "0" . $minutes : $minutes)) . ":" . $seconds;
+
+        if ($hours_day > $day_in_minutes){
+            $info['time_debit'] = '- ' . $time;
+            $info['time_credit'] = '00:00:00';
+        }
+        else {
+            $info['time_credit'] = $time;
+            $info['time_debit'] = '00:00:00';
+        }
+
+        return $info;
     }
 
     /* Routes */

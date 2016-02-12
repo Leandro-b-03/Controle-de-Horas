@@ -18,8 +18,6 @@
 @stop
 
 @section('content')
-          
-        
         <!-- Content Header (Page header) -->
         <section class="content-header">
           <h1>
@@ -200,7 +198,7 @@
                         <!-- Map will be created here -->
                         {{-- <div id="world-map-markers" style="height: 325px;"></div> --}}
                         {{-- <div id="map"></div> --}}
-                        <iframe class="map" id="map" frameborder="0" style="border:0" src="https://www.google.com/maps/embed/v1/place?q={!! isset($data['location']['postal_code']) ? $data['location']['postal_code'] : str_replace(',', '.', $data['location']['lat']) . ',' . str_replace(',', '.', $data['location']['lon']) !!}&key=AIzaSyCp3jpbdeS8Ccf5zvqQ5lOFQFTeP3FGero" allowfullscreen></iframe> 
+                        <iframe class="map" id="map" frameborder="0" style="border:0" src="" allowfullscreen></iframe> 
                       </div>
                     </div><!-- /.col -->
                     <div class="col-md-3 col-sm-4">
@@ -249,7 +247,13 @@
                         <li>
                           <img src="{!! URL::to($new_user->photo) !!}" alt="{!! $new_user->first_name . ' ' . $new_user->last_name !!}">
                           <a class="users-list-name" href="{!! URL::to('profile/' . $new_user->id) !!}">{!! $new_user->first_name !!}</a>
-                          <span class="users-list-date">{!! date('d/m/Y', strtotime($new_user->created_at)) !!}</span>
+                          @if($new_user->created_at->isToday())
+                          <span class="users-list-date">{!! Lang::get('general.date-today') !!}</span>
+                          @elseif($new_user->created_at->isYesterday())
+                          <span class="users-list-date">{!! Lang::get('general.date-yesterday') !!}</span>
+                          @else
+                          <span class="users-list-date">{!! $new_user->created_at->format('d M'); !!}</span>
+                          @endif
                         </li>
                         @endforeach
                       </ul><!-- /.users-list -->
@@ -275,55 +279,27 @@
                     <table class="table no-margin">
                       <thead>
                         <tr>
-                          <th>Order ID</th>
+                          <th>{!! Lang::get('general.tasks') !!}</th>
                           <th>Item</th>
-                          <th>Status</th>
+                          <th>{!! Lang::get('general.status') !!}</th>
                           <th>Popularity</th>
                         </tr>
                       </thead>
                       <tbody>
+                        @if (isset($data['tasks']))
+                        @foreach ($data['tasks'] as $task)
                         <tr>
-                          <td><a href="pages/examples/invoice.html">OR9842</a></td>
-                          <td>Call of Duty IV</td>
-                          <td><span class="label label-success">Shipped</span></td>
-                          <td><div class="sparkbar" data-color="#00a65a" data-height="20">90,80,90,-70,61,-83,63</div></td>
+                          <td></td>
+                          <td></td>
+                          <td></td>
+                          <td></td>
                         </tr>
+                        @endforeach
+                        @else
                         <tr>
-                          <td><a href="pages/examples/invoice.html">OR1848</a></td>
-                          <td>Samsung Smart TV</td>
-                          <td><span class="label label-warning">Pending</span></td>
-                          <td><div class="sparkbar" data-color="#f39c12" data-height="20">90,80,-90,70,61,-83,68</div></td>
+                          <td colspan="4">{!! Lang::get('general.dataTable-zeroRecords') !!}</td>
                         </tr>
-                        <tr>
-                          <td><a href="pages/examples/invoice.html">OR7429</a></td>
-                          <td>iPhone 6 Plus</td>
-                          <td><span class="label label-danger">Delivered</span></td>
-                          <td><div class="sparkbar" data-color="#f56954" data-height="20">90,-80,90,70,-61,83,63</div></td>
-                        </tr>
-                        <tr>
-                          <td><a href="pages/examples/invoice.html">OR7429</a></td>
-                          <td>Samsung Smart TV</td>
-                          <td><span class="label label-info">Processing</span></td>
-                          <td><div class="sparkbar" data-color="#00c0ef" data-height="20">90,80,-90,70,-61,83,63</div></td>
-                        </tr>
-                        <tr>
-                          <td><a href="pages/examples/invoice.html">OR1848</a></td>
-                          <td>Samsung Smart TV</td>
-                          <td><span class="label label-warning">Pending</span></td>
-                          <td><div class="sparkbar" data-color="#f39c12" data-height="20">90,80,-90,70,61,-83,68</div></td>
-                        </tr>
-                        <tr>
-                          <td><a href="pages/examples/invoice.html">OR7429</a></td>
-                          <td>iPhone 6 Plus</td>
-                          <td><span class="label label-danger">Delivered</span></td>
-                          <td><div class="sparkbar" data-color="#f56954" data-height="20">90,-80,90,70,-61,83,63</div></td>
-                        </tr>
-                        <tr>
-                          <td><a href="pages/examples/invoice.html">OR9842</a></td>
-                          <td>Call of Duty IV</td>
-                          <td><span class="label label-success">Shipped</span></td>
-                          <td><div class="sparkbar" data-color="#00a65a" data-height="20">90,80,90,-70,61,-83,63</div></td>
-                        </tr>
+                        @endif
                       </tbody>
                     </table>
                   </div><!-- /.table-responsive -->
@@ -347,45 +323,6 @@
                   </div>
                   <span class="progress-description">
                     50% Increase in 30 Days
-                  </span>
-                </div><!-- /.info-box-content -->
-              </div><!-- /.info-box -->
-              <div class="info-box bg-green">
-                <span class="info-box-icon"><i class="ion ion-ios-heart-outline"></i></span>
-                <div class="info-box-content">
-                  <span class="info-box-text">Mentions</span>
-                  <span class="info-box-number">92,050</span>
-                  <div class="progress">
-                    <div class="progress-bar" style="width: 20%"></div>
-                  </div>
-                  <span class="progress-description">
-                    20% Increase in 30 Days
-                  </span>
-                </div><!-- /.info-box-content -->
-              </div><!-- /.info-box -->
-              <div class="info-box bg-red">
-                <span class="info-box-icon"><i class="ion ion-ios-cloud-download-outline"></i></span>
-                <div class="info-box-content">
-                  <span class="info-box-text">Downloads</span>
-                  <span class="info-box-number">114,381</span>
-                  <div class="progress">
-                    <div class="progress-bar" style="width: 70%"></div>
-                  </div>
-                  <span class="progress-description">
-                    70% Increase in 30 Days
-                  </span>
-                </div><!-- /.info-box-content -->
-              </div><!-- /.info-box -->
-              <div class="info-box bg-aqua">
-                <span class="info-box-icon"><i class="ion-ios-chatbubble-outline"></i></span>
-                <div class="info-box-content">
-                  <span class="info-box-text">Direct Messages</span>
-                  <span class="info-box-number">163,921</span>
-                  <div class="progress">
-                    <div class="progress-bar" style="width: 40%"></div>
-                  </div>
-                  <span class="progress-description">
-                    40% Increase in 30 Days
                   </span>
                 </div><!-- /.info-box-content -->
               </div><!-- /.info-box -->
@@ -445,7 +382,7 @@
                         <span class="project-icon fa fa-suitcase"></span>
                       </div>
                       <div class="product-info">
-                        <a href="javascript::;" class="product-title">{!! $new_project->name !!} <span class="label label-warning pull-right">{!! date('d/m/Y', strtotime($new_project->created_at)) !!}</span></a>
+                        <a href="javascript::;" class="product-title">{!! $new_project->name !!} <span class="label label-warning pull-right">{!! date('d/m/Y', strtotime($new_project->created_on)) !!}</span></a>
                         <span class="product-description">
                           {!! $new_project->description !!}
                         </span>
@@ -461,8 +398,6 @@
               </div><!-- /.box -->
             </div><!-- /.col -->
           </div><!-- /.row -->
-        </section><!-- /.content -->
-      </div><!-- /.content-wrapper -->
 @endsection
 
 @section('scripts')
@@ -506,6 +441,37 @@
     {!! Html::script("library/adminLTE/custom/CustomPusherChatWidgetDashboard.js") !!}
 
     <script>
+      window.onload = function() {
+        var startPos;
+        var coord;
+        var geoOptions = {
+          enableHighAccuracy: true
+        }
+
+        var geoSuccess = function(position) {
+          startPos = position;
+
+          console.log(position);
+
+          coord = 'https://www.google.com/maps/embed/v1/place?q=' + startPos.coords.latitude + ',' + startPos.coords.longitude + '&key=AIzaSyCp3jpbdeS8Ccf5zvqQ5lOFQFTeP3FGero';
+
+          savePosition(startPos.coords.latitude, startPos.coords.longitude);
+
+          $('#map').attr('src', coord);
+        };
+
+        var geoError = function(error) {
+          console.log('Error occurred. Error code: ' + error.code);
+          // error.code can be:
+          //   0: unknown error
+          //   1: permission denied
+          //   2: position unavailable (error response from location provider)
+          //   3: timed out
+        };
+
+        navigator.geolocation.getCurrentPosition(geoSuccess, geoError, geoOptions);
+      };
+
       $(function() {
         var chatWidget = new PusherChatWidgetDashboard(pusher, {
         channelName: 'presence-chat',

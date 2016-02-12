@@ -10,8 +10,8 @@
         "laravel/elixir": "^1.0@dev",
         "illuminate/html": "^5.0@dev",
         "raveren/kint": "^1.0@dev",
-        "laravelcollective/html": "dev-master",
-        "zizaco/entrust": "dev-master",
+        "laravelcollective/html": "5.1.*",
+        "zizaco/entrust": "^1.5",
         "vinkla/pusher": "~1.0",
         "guzzle/guzzle": "^3.9@dev",
         "barryvdh/laravel-debugbar": "^2.0@dev",
@@ -24,7 +24,12 @@
         "laravel/socialite": "^3.0@dev",
         "torann/geoip": "^0.2.0@dev",
         "laravel/envoy": "~1.0",
-        "alexpechkarev/google-geocoder": "dev-master"
+        "alexpechkarev/google-geocoder": "dev-master",
+        "doctrine/dbal": "^2.6@dev",
+        "dsdevbe/ldap-connector": "3.*",
+        "maatwebsite/excel": "^2.1",
+        "symfony/dom-crawler": "2.7.*",
+        "orchestra/testbench": "3.1"
     },
     "require-dev": {
         "fzaninotto/faker": "~1.4",
@@ -39,11 +44,9 @@
         ],
         "psr-4": {
             "App\\": "app/"
-        }
-    },
-    "autoload-dev": {
-        "classmap": [
-            "tests/TestCase.php"
+        },
+        "files": [
+            "app/Helpers/GeneralHelper.php"
         ]
     },
     "scripts": {

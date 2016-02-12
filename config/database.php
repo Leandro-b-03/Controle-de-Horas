@@ -64,6 +64,18 @@ return [
             'strict'    => false,
         ],
 
+        'openproject' => [
+            'driver'    => 'mysql',
+            'host'      => env('DB_HOST', env('APP_ENV') == 'local_nat' ? 'localhost' : '192.168.80.59'),
+            'database'  => env('DB_DATABASE', 'openproject'),
+            'username'  => env('DB_USERNAME', env('APP_ENV') == 'local_nat' ? 'root' : 'openproject'),
+            'password'  => env('DB_PASSWORD', env('APP_ENV') == 'local_nat' ? '' : '123'),
+            'charset'   => 'utf8',
+            'collation' => 'utf8_unicode_ci',
+            'prefix'    => '',
+            'strict'    => false,
+        ],
+
         'pgsql' => [
             'driver'   => 'pgsql',
             'host'     => env('DB_HOST', 'localhost'),

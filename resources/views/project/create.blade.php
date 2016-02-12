@@ -61,7 +61,11 @@
               <div class="box-body">
                 <div class="form-group col-xs-4">
                   <label for="name">{!! Lang::get('projects.label-name') !!}</label>
-                  <input type="text" class="form-control" name="name" id="name"  value="{!! (isset($data['project']) ? $data['project']->name : (Request::old('name') ? Request::old('name') : '')) !!}" placeholder="{!! Lang::get('projects.ph-name') !!}" data-validation="length" data-validation-length="3-25" data-validation-error-msg="{!! Lang::get('projects.error-name') !!}" required>
+                  <div class="input-group">
+                    <input type="text" class="form-control" name="name" id="name"  value="{!! (isset($data['project']) ? $data['project']->name : (Request::old('name') ? Request::old('name') : '')) !!}" placeholder="{!! Lang::get('projects.ph-name') !!}" data-validation="length" data-validation-length="3-25" data-validation-error-msg="{!! Lang::get('projects.error-name') !!}" required>
+                    <input id="name_complement" name="name_complement" type="hidden" value="{!! (isset($data['project']) ? $data['project']->name_complement : (Request::old('name_complement') ? Request::old('name_complement') : 'PROJETO')) !!}">
+                    <span id="name_complement_e" class="input-group-addon">{!! (isset($data['project']) ? $data['project']->name_complement : (Request::old('name_complement') ? Request::old('name_complement') : 'PROJETO')) !!}</span>
+                  </div>
                 </div>
                 <div class="form-group col-xs-4">
                   <label for="user_id">{!! Lang::get('projects.label-manager') !!}</label>
@@ -194,17 +198,25 @@
           return html;
       }
 
+      if($('#proposal_id').val() != '') {
+        getName($('#proposal_id').val())
+      }
+
       $('#proposal_id').on('change', function() {
-          $.ajax({
-            url: '/general/projectName',
-            data: {id: $(this).val()},
-            type: "GET",
-            success: function(data) {
-              data = JSON.parse(data);
-              $('#name').val(data.name);
-            }
-          });
+        getName($(this).val())
       });
+
+      function getName(id) {
+        $.ajax({
+          url: '/general/projectName',
+          data: {id: id},
+          type: "GET",
+          success: function(name) {
+            $('#name_complement_e').html(name);
+            $('#name_complement').val(name);
+          }
+        });
+      };
 
       $(document).on('input', '.project-time td .budget', function() {
         var total_budget = 0;

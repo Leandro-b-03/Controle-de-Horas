@@ -178,7 +178,7 @@ class ProjectController extends Controller
 
         try {
             foreach($inputs as $input => $value) {
-                if($project->{$input} || $input == 'schedule_time')
+                if($project->{$input} || $input == 'schedule_time' || $input == 'name_complement')
                     $project->{$input} = $value;
             }
 

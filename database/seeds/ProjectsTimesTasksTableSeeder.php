@@ -11,18 +11,18 @@ class ProjectsTimesTasksTableSeeder extends Seeder {
 	 */
 	public function run()
 	{
-		DB::table('projects_times_tasks')->delete();
+		\DB::table('projects_times_tasks')->delete();
         
-		DB::table('projects_times_tasks')->insert(array (
+		\DB::table('projects_times_tasks')->insert(array (
 			0 => 
 			array (
 				'id' => 1,
-				'project_time_id' => 10,
-				'name' => 'Testar Frente',
+				'project_time_id' => 1,
+				'name' => 'Pagina de login',
 				'description' => '',
-				'teams' => '["1","2","4","3"]',
-				'created_at' => '2015-08-05 19:47:33',
-				'updated_at' => '2015-08-05 19:47:33',
+				'teams' => '["2","3"]',
+				'created_at' => '2015-08-31 10:54:32',
+				'updated_at' => '2015-08-31 10:54:32',
 			),
 		));
 	}

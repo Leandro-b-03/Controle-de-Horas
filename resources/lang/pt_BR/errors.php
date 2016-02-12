@@ -18,4 +18,10 @@ return [
     '403'                           => '403 Sem Permiss&atilde;o de acesso',
     'description'                   => 'Oops! Parece que voc&ecirc; n&atilde;o pode visualizar essa p&aacute;gina',
     'info'                          => 'Voc&ecirc; não possui permiss&atilde;o para ver esta p&aacute;gina. Entretanto, voc&ecirc; pode <a href=' . URL::to('/') . '>retornar para a dashboard</a> ou tentar usar a busca abaixo.',
+
+    // Error 404
+    '404-g'                         => '404',
+    '404'                           => '404 P&aacute;gina n&atilde;o encontrada',
+    'description'                   => 'Oops! P&aacute;gina n&atilde;o encontrada',
+    'info'                          => 'N&atilde;o encontramos a p&aacute;gina que voc&ecirc; procura. Entretanto, voc&ecirc; pode <a href=' . URL::to('/') . '>retornar para a dashboard</a> ou tentar usar a busca abaixo.',
 ];

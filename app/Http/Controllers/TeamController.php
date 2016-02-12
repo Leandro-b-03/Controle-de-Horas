@@ -86,8 +86,8 @@ class TeamController extends Controller
 
                         $notification['user_id'] = $user_id;
 
-                        if ($user_id == Auth::user()->id) {
-                            if ($user_id == Auth::user()->id && $user_id == $team->user_id) {
+                        if ($user_id == Auth::user()->getEloquent()->id) {
+                            if ($user_id == Auth::user()->getEloquent()->id && $user_id == $team->user_id) {
                                 $notification['message'] = Lang::get('teams.include-create_lider', ['team' => $team->name]);
                             } else {
                                 $notification['message'] = Lang::get('teams.include-create', ['team' => $team->name]);
@@ -195,8 +195,8 @@ class TeamController extends Controller
 
                     $notification['user_id'] = $user_id;
 
-                    if ($user_id == Auth::user()->id) {
-                        if ($user_id == Auth::user()->id && $user_id == $team->user_id) {
+                    if ($user_id == Auth::user()->getEloquent()->id) {
+                        if ($user_id == Auth::user()->getEloquent()->id && $user_id == $team->user_id) {
                             $notification['message'] = Lang::get('teams.include-alter_lider', ['team' => $team->name]);
                         } else {
                             $notification['message'] = Lang::get('teams.include-alter', ['team' => $team->name]);

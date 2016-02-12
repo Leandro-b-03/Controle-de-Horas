@@ -4,10 +4,14 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 
+use DB;
+use Auth;
 use GeoIP;
 use Geocoder;
 use App\User;
 use App\Project;
+use App\Timesheet;
+use Carbon\Carbon;
 use PusherManager;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
@@ -21,17 +25,48 @@ class DashboardController extends Controller
      */
     public function index()
     {
+        if (Auth::user()->getEloquent() == null) {
+            return redirect()->to('register');
+        }
+
         // GeoIP
         $location = GeoIP::getLocation();
         $data['location'] = $location;
 
         // New Users
-        $new_users = User::orderBy('created_at')->take(8)->get();
+        $new_users = User::orderBy('created_at', 'desc')->take(8)->get();
         $data['new_users'] = $new_users;
 
         // New Projects
-        $new_projects = Project::orderBy('created_at')->take(8)->get();
+        $new_projects = Project::where('status', 1)->orderBy('created_on', 'desc')->take(8)->get();
         $data['new_projects'] = $new_projects;
+
+        $today = new Carbon();
+
+        // Get the workday
+        $workday = Timesheet::where('user_id', Auth::user()->getEloquent()->id)->where('workday', $today->toDateString())->orderBy('workday', 'desc')->get()->first();
+
+        try {
+            DB::beginTransaction();
+
+            if (!$workday) {
+                $timesheet = array(
+                    'user_id' => Auth::user()->getEloquent()->id,
+                    'workday' => $today->toDateString(),
+                    'hours' => '00:00:00',
+                    'start' => $today->toTimeString()
+                );
+
+                $timesheet = Timesheet::create($timesheet);
+
+                if ($timesheet) {
+                    DB::commit();
+                }
+            }
+        } catch (Exception $e) {
+            DB::rollback();
+            $data['error'] =  Lang::get('general.error-day');
+        }
 
         // Return the dashboard view.
         return view('dashboard.index')->with('data', $data);

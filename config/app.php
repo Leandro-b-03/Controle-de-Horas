@@ -1,7 +1,7 @@
 <?php
 header('Content-Type: text/html; charset=utf-8');
 setlocale(LC_ALL, "pt_BR", "pt_BR.iso-8859-1", "pt_BR.utf-8", "portuguese");
-setlocale(LC_TIME, 'ptb', 'pt_BR', 'portuguese-brazil', 'bra', 'brazil', 'pt_BR.utf-8', 'pt_BR.iso-8859-1', 'br');
+setlocale(LC_TIME, 'ptb', 'pt_BR', 'portuguese-brazil', 'bra', 'brazil', 'pt_BR.utf-8', 'pt_BR.iso-8859-1', 'br', 'portuguese');
 
 return [
 
@@ -16,7 +16,7 @@ return [
     |
     */
 
-    'debug' => env('APP_DEBUG'),
+    'debug' => env('APP_DEBUG', true),
 
     /*
     |--------------------------------------------------------------------------
@@ -113,7 +113,7 @@ return [
     |
     */
 
-    'app_version' => '0.15 - Beta',
+    'app_version' => 'v1.0',
 
     /*
     |--------------------------------------------------------------------------
@@ -180,6 +180,8 @@ return [
         Laravel\Socialite\SocialiteServiceProvider::class,
         Torann\GeoIP\GeoIPServiceProvider::class,
         Alexpechkarev\GoogleGeocoder\GoogleGeocoderServiceProvider::class,
+        Dsdevbe\LdapConnector\LdapConnectorServiceProvider::class,
+        Maatwebsite\Excel\ExcelServiceProvider::class,
 
         /*
          * Personalization Services Providers...
@@ -256,6 +258,10 @@ return [
         'Socialite'     => Laravel\Socialite\Facades\Socialite::class,
         'GeoIP'         => Torann\GeoIP\GeoIPFacade::class,
         'Geocoder'      => Alexpechkarev\GoogleGeocoder\GoogleGeocoderServiceProvider::class,
+        'Excel'         => Maatwebsite\Excel\Facades\Excel::class,
+        'role'          => Zizaco\Entrust\Middleware\EntrustRole::class,
+        'permission'    => Zizaco\Entrust\Middleware\EntrustPermission::class,
+        'ability'       => Zizaco\Entrust\Middleware\EntrustAbility::class,
 
     ],
 

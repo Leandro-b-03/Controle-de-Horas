@@ -21,7 +21,7 @@ class PusherController extends Controller
     {
         $post = $request->all();
 
-        $json = json_decode(PusherManager::presence_auth($post["channel_name"], $post["socket_id"], Auth::user()->id, array('name' => Auth::user()->first_name)));
+        $json = json_decode(PusherManager::presence_auth($post["channel_name"], $post["socket_id"], Auth::user()->getEloquent()->id, array('name' => Auth::user()->getEloquent()->first_name)));
 
         return response()->json($json);
     }

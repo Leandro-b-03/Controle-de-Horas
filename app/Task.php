@@ -5,32 +5,23 @@ use Illuminate\Database\Eloquent\Model;
 class Task extends Model
 {
     /**
+     * The database connection used by the model.
+     *
+     * @var string
+     */
+    protected $connection = 'openproject';
+
+    /**
 	 * The database table used by the model.
 	 *
 	 * @var string
 	 */
-	protected $table = 'projects_times_tasks';
-
-	/**
-	 * The attributes that are mass assignable.
-	 *
-	 * @var array
-	 */
-	protected $fillable = ['name', 'project_time_id', 'description', 'teams'];
+	protected $table = 'work_packages';
 
     /**
-     * Get the user record associated with the project_time.
+     * The attributes that are mass assignable.
+     *
+     * @var array
      */
-    public function projects_times()
-    {
-        return $this->belongsTo('App\ProjectTime', 'project_time_id');
-    }
-
-    /**
-     * Get the user record associated with the project.
-     */
-    public function project()
-    {
-        return $this->belongsTo('App\Project', 'project_id');
-    }
+    protected $fillable = ['type_id', 'project_id', 'subject', 'description', 'status_id', 'assigned_to_id', 'parent_id', 'root_id', 'lft', 'rgt', 'position'];
 }

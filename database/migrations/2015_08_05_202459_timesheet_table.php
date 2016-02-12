@@ -19,9 +19,12 @@ class TimesheetTable extends Migration
             $table->time('start');
             $table->time('lunch_start');
             $table->time('lunch_end');
-            $table->decimal('lunch_hours', 2, 2);
+            $table->string('lunch_hours', 4, 2);
             $table->time('end');
-            $table->decimal('hours', 2, 2);
+            $table->string('hours', 4, 2);
+            $table->time('nightly_start');
+            $table->time('nightly_end');
+            $table->string('nightly_hours', 4, 2);
             $table->enum('status', ['W', 'F', 'P', 'N'])->default('N');
             $table->timestamps();
 

@@ -46,7 +46,7 @@
           <!-- general form elements -->
           <div class="box box-primary">
             <div class="box-header">
-              @if (Request::is('group-permissions/create'))
+              @if (Request::is('proposals/create'))
               <h3 class="box-title">{!! Lang::get('general.create'); !!}</h3>
               @else
               <h3 class="box-title">{!! Lang::get('general.edit'); !!}</h3>
@@ -69,11 +69,11 @@
                 </div>
                 <div class="form-group col-xs-4">
                   <label for="client_id">{!! Lang::get('general.clients') !!}</label>
-                  <select name="client_id" class="form-control" data-validation="required" data-validation-error-msg="{!! Lang::get('proposals.error-clients') !!}" required>
+                  <select id="client_id" name="client_id" class="form-control" data-validation="required" data-validation-error-msg="{!! Lang::get('proposals.error-clients') !!}" required>
                     <option value="">{!! Lang::get('general.select') !!}</option>
-                    @if($data['clients'] != null)
+                    @if(isset($data['clients']))
                     @foreach ($data['clients'] as $client)
-                    <option value="{!! $client->id !!}" {!! (isset($data['proposal']) ? ($data['proposal']->client()->getResults()->id == $client->id ? 'selected="selected"' : "") : "") !!}>{!! $client->name !!}</option>
+                    <option value="{!! $client->id !!}" {!! (isset($data['proposal']) ? ($data['proposal']->client_id == $client->id ? 'selected="selected"' : "") : "") !!}>{!! $client->name !!}</option>
                     @endforeach
                     @endif
                   </select>
@@ -82,10 +82,21 @@
                   <hr />
                 </div>
                 <div class="form-group col-xs-3">
-                  <label for="proposal_type_id">{!! Lang::get('proposals.label-type') !!}</label>
-                  <select name="proposal_type_id" class="form-control" data-validation="required" data-validation-error-msg="{!! Lang::get('proposals.error-clients') !!}" required>
+                  <label for="client_group_id">{!! Lang::get('proposals.label-client_group') !!}</label>
+                  <select id="client_group_id" name="client_group_id" class="form-control select2" style="width: 100%;" data-validation="required" data-validation-error-msg="{!! Lang::get('proposals.error-clients_group') !!}" {!! (Request::is('proposals/create') ? 'disabled="disabled"' : '') !!} required>
                     <option value="">{!! Lang::get('general.select') !!}</option>
-                    @if($data['types'] != null)
+                    @if(isset($data['client_groups']))
+                    @foreach ($data['client_groups'] as $client_group)
+                    <option value="{!! $client_group->id !!}" {!! (isset($data['proposal']) ? ($data['proposal']->client_group_id == $client_group->id ? 'selected="selected"' : "") : "") !!}>{!! $client_group->name !!}</option>
+                    @endforeach
+                    @endif
+                  </select>
+                </div>
+                <div class="form-group col-xs-3">
+                  <label for="proposal_type_id">{!! Lang::get('proposals.label-type') !!}</label>
+                  <select name="proposal_type_id" class="form-control select2" style="width: 100%;" data-validation="required" data-validation-error-msg="{!! Lang::get('proposals.error-clients') !!}" required>
+                    <option value="">{!! Lang::get('general.select') !!}</option>
+                    @if(isset($data['types']))
                     @foreach ($data['types'] as $type)
                     <option value="{!! $type->id !!}" {!! (isset($data['proposal']) ? ($data['proposal']->type()->getResults()->id == $type->id ? 'selected="selected"' : "") : "") !!}>{!! $type->name !!}</option>
                     @endforeach
@@ -96,14 +107,14 @@
                   <label for="version_id">{!! Lang::get('proposals.label-version') !!}</label>
                   <select id="version_id" name="version_id" class="form-control" data-validation="required" data-validation-error-msg="{!! Lang::get('proposals.error-clients') !!}" required>
                     <option value="new">{!! Lang::get('proposals.ph-new_version') !!}</option>
-                    @if($data['versions'] != null)
+                    @if(isset($data['versions']))
                     @foreach ($data['versions'] as $version)
                     <option value="{!! $version->id !!}" {!! ($version->active ? 'selected="selected"' : "") !!}>{!! $version->version !!}</option>
                     @endforeach
                     @endif
                   </select>
                 </div>
-                <div class="form-group col-xs-5">
+                <div class="form-group col-xs-4">
                   <label>{!! Lang::get('proposals.label-status') !!}</label>
                   <div class="checkbox">
                     <label class="label-checkbox-fix"><input type="checkbox" disabled="disabled"> {!! Lang::get('proposals.label-send') !!}</label>
@@ -121,14 +132,14 @@
                   <label for="proposal">{!! Lang::get('proposals.label-proposal') !!}</label>
                   <textarea name="proposal" id="proposal" rows="10" placeholder="{!! Lang::get('proposals.ph-proposal') !!}" data-validation-error-msg="{!! Lang::get('proposals.error-proposal') !!}" required>{!! (isset($data['versions']) ? $data['versions']->where('active', 1)->first()->proposal : (Request::old('proposal') ? Request::old('proposal') : '')) !!}</textarea>
                 </div>
-                <input type="hidden" name="user_id" id="user_id" value="{!! (isset($data['proposal']) ? $data['proposal']->user_id : (Request::old('user_id') ? Request::old('user_id') : Auth::user()->id)) !!}">
+                <input type="hidden" name="user_id" id="user_id" value="{!! (isset($data['proposal']) ? $data['proposal']->user_id : (Request::old('user_id') ? Request::old('user_id') : Auth::user()->getEloquent()->id)) !!}">
               </div><!-- /.box-body -->
               <div class="box-footer">
                 <button type="submit" class="btn btn-primary">{!! Lang::get('general.save') !!}</button>
                 <a href="{!! URL::to('proposals') !!}" class="btn btn-danger">{!! Lang::get('general.back') !!}</a>
               </div>
             {!! Form::close() !!}
-            @if($data['versions'] != null)
+            @if(isset($data['versions']))
             @foreach ($data['versions'] as $version)
             <input type="hidden" id="{!! $version->version !!}" value="{!! htmlspecialchars($version->proposal) !!}" />
             @endforeach
@@ -168,14 +179,50 @@
         ckeditor.setData($('#' + $('#version_id option:selected').text()).val());
       });
 
-      function throwMessage(data) {
-          html = '<div class="alert alert-' + data.class + ' alert-dismissable">';
-          html += '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>';
-          html += '<h4>    <i class="icon fa fa-' + data.faicon + '"></i> ' + data.status + '</h4>';
-          html += data.message;
-          html += '</div>';
+      if ($('#client_id').val() != '') {
+        getClientGroup($('#client_id').val());
+      }
 
-          return html;
+      $("#client_id").on('select2:select', function() {
+        getClientGroup($(this).val())
+      });
+
+      function getClientGroup(id) {
+        $.ajax({
+          url: '/general/getClientGroup',
+          data: {id: id},
+          type: "GET",
+          success: function(data) {
+            var client_groups = JSON.parse(data);
+
+            if (client_groups.length > 0) {
+              $('#client_group_id').prop( "disabled", false );
+              $('#client_group_id').find('option[value!=""]').remove();
+
+              var options = [];
+
+              $.each(client_groups, function(i, client_group) {
+                options.push('<option value="' + client_group.id + '">' + client_group.name + '</select>');
+                return;
+              });
+
+              $('#client_group_id').append(options);
+            } else {
+              $('#client_group_id').prop( "disabled", true ).val($("#target option:first").val());
+              $('#client_group_id').find('option[value!=""]').remove();
+            }
+          }
+        });
+      }
+
+      function throwMessage(data) {
+        html = '<div class="alert alert-' + data.class + ' alert-dismissable">';
+        html += '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>';
+        html += '<h4>    <i class="icon fa fa-' + data.faicon + '"></i> ' + data.status + '</h4>';
+        html += data.message;
+        html += '</div>';
+
+        return html;
       }
     </script>
 @endsection
