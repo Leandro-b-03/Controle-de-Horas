@@ -542,6 +542,7 @@ class DataImportController extends Controller
                                                 
                                                 if ($import->save())
                                                     DB::commit();
+                                                
                                                 return redirect('import')->withInput()->with('return', GeneralController::createMessage('failed', Lang::get('general.' . $this->controller_name), 'create-failed'));
                                             }
                                         }

@@ -66,6 +66,7 @@
                 </div>
             </div>
             <div id="finish_settings" class="col-xs-6 {!! isset($data['timesheet_task']) ? '' : 'invisible' !!}">
+                @if ($data['timesheet_task']->getProject()->getResults()->status == 1)
                 <div class="form-group col-xs-2 custom_a">
                     <a id="fail" class="btn btn-danger play"><span class="fa fa-ban"></span> {!! Lang::get('timesheets.fail') !!}</a>
                     <a id="pause" class="btn btn-warning play"><span class="fa fa-pause-circle-o"></span> {!! Lang::get('timesheets.pause') !!}</a>
@@ -79,6 +80,12 @@
                     <label for="tasks">{!! Lang::get('general.tasks') !!}</label>
                     <p id="task-subject">{!! isset($data['timesheet_task']) ? $data['timesheet_task']->getTask()->getResults()->subject : "" !!}</p>
                 </div>
+                @else
+                <div class="form-group col-xs-8">
+                    <label for="tasks">{!! Lang::get('general.tasks') !!}</label>
+                    <p id="task-subject">{!! isset($data['timesheet_task']) ? $data['timesheet_task']->getTask()->getResults()->subject : "" !!}</p>
+                </div>
+                @endif
             </div>
             <div class="col-xs-6">
               <div class="callout callout-success custom-callout">
