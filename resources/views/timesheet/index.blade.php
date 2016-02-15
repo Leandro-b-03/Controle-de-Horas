@@ -255,20 +255,26 @@
             type: "POST",
             success: function(data) {
               var task = data
-              $('#start_settings').addClass('invisible');
-              $('#finish_settings').removeClass('invisible');
-
-              $('#project-name').html($('#projects option:selected').text());
-              $('#task-subject').html($('#tasks option:selected').text());
-
-              if (data.type_id == 1) 
-                $('#task-menu').removeClass('invisible');
-              else
-                $('#front-menu').removeClass('invisible');
               
-              var line = generateLine(task);
+              if (!task.error) {
+                $('#start_settings').addClass('invisible');
+                $('#finish_settings').removeClass('invisible');
 
-              $('#tasks-table tbody').prepend($(line));
+                $('#project-name').html($('#projects option:selected').text());
+                $('#task-subject').html($('#tasks option:selected').text());
+
+                if (data.type_id == 1) 
+                  $('#task-menu').removeClass('invisible');
+                else
+                  $('#front-menu').removeClass('invisible');
+                
+                var line = generateLine(task);
+
+                $('#tasks-table tbody').prepend($(line));
+              } else {
+                data = { class: 'danger', faicon: 'ban', status: "{!! Lang::get('general.failed') !!}", message: data.error };
+                throwMessage(data);
+              }
             }
           });
         });
@@ -288,9 +294,14 @@
             data: data,
             type: "POST",
             success: function(data) {
-              var task = data;
+                var task = data;
 
-              window.location.href = '/timesheets';
+              if (!task.error) {
+                window.location.href = '/timesheets';
+              } else {
+                data = { class: 'danger', faicon: 'ban', status: "{!! Lang::get('general.failed') !!}", message: data.error };
+                throwMessage(data);
+              }
             }
           });
         });
@@ -306,9 +317,14 @@
             data: data,
             type: "POST",
             success: function(data) {
-              var task = data;
+                var task = data;
 
-              window.location.href = '/timesheets';
+              if (!task.error) {
+                window.location.href = '/timesheets';
+              } else {
+                data = { class: 'danger', faicon: 'ban', status: "{!! Lang::get('general.failed') !!}", message: data.error };
+                throwMessage(data);
+              }
             }
           });
         });
@@ -368,10 +384,15 @@
             type: "POST",
             success: function(data) {
               var lunch = data;
-              
-              $('#lunch_time').html('Horário de saida: ' + lunch.lunch_start + '. Horario da volta: ' + lunch.lunch_end + '. Tempo total: ' + lunch.lunch_hours + '.');
 
-              $('#back').hide();
+              if (!lunch.error) {
+                $('#lunch_time').html('Horário de saida: ' + lunch.lunch_start + '. Horario da volta: ' + lunch.lunch_end + '. Tempo total: ' + lunch.lunch_hours + '.');
+
+                $('#back').hide();
+              } else {
+                data = { class: 'danger', faicon: 'ban', status: "{!! Lang::get('general.failed') !!}", message: data.error };
+                throwMessage(data);
+              }
             }
           });
 
@@ -387,29 +408,35 @@
             type: "POST",
             success: function(data) {
               var task = data;
-              $('#finished').modal('hide');
 
-              $('#start_settings').removeClass('invisible');
-              $('#finish_settings').addClass('invisible');
+              if (!task.error) {
+                $('#finished').modal('hide');
 
-              $('#projects').select2();
-              $('#tasks').select2({
-                templateResult: getIcon
-              });
-              
-              $('#task-menu').addClass('invisible');
-              $('#front-menu').addClass('invisible');
+                $('#start_settings').removeClass('invisible');
+                $('#finish_settings').addClass('invisible');
 
-              $('#ok').val(0);
-              $('#nok').val(0);
-              $('#impacted').val(0);
-              $('#cancelled').val(0);
+                $('#projects').select2();
+                $('#tasks').select2({
+                  templateResult: getIcon
+                });
+                
+                $('#task-menu').addClass('invisible');
+                $('#front-menu').addClass('invisible');
 
-              var line = generateLine(task);
+                $('#ok').val(0);
+                $('#nok').val(0);
+                $('#impacted').val(0);
+                $('#cancelled').val(0);
 
-              $('#tasks-table tbody tr:first').remove();
+                var line = generateLine(task);
 
-              $('#tasks-table tbody').prepend($(line));
+                $('#tasks-table tbody tr:first').remove();
+
+                $('#tasks-table tbody').prepend($(line));
+              } else {
+                data = { class: 'danger', faicon: 'ban', status: "{!! Lang::get('general.failed') !!}", message: data.error };
+                throwMessage(data);
+              }
             }
           });
         }
@@ -508,6 +535,16 @@
             '<span><span class="fa ' + ($(task.element).data('type') == 1 ? 'fa-file' : 'fa-exclamation-triangle ') + '"></span> ' + task.text + '</span>'
           );
           return $task;
+        };
+
+        function throwMessage(data) {
+            html = '<div class="alert alert-' + data.class + ' alert-dismissable">';
+            html += '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>';
+            html += '<h4>    <i class="icon fa fa-' + data.faicon + '"></i> ' + data.status + '</h4>';
+            html += data.message;
+            html += '</div>';
+
+            return html;
         };
     </script>
 @endsection

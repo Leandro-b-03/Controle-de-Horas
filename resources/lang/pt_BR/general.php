@@ -127,6 +127,7 @@ return [
     'failed-password'               => 'Senhas não coecidem',
     'failed-fields'                 => 'Campos com valores errados e/ou inv&aacute;lidos',
     'failed-notification'           => 'Usu&aacute;rio n&atilde;o recebeu a notifica&ccedil;&atilde;o',
+    'error'                         => 'Houve um erro ao processar a requisição',
 
     // Sentences with variable :string
     'member-since'                  => 'Membro desde :month-year',
