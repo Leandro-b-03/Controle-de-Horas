@@ -77,7 +77,7 @@ class TimesheetController extends Controller
         $data['workday'] = $workday;
 
         // Get the actual task
-        $timesheet_task = TimesheetTask::where('timesheet_id', $workday->id)->where('end', null)->get()->first();
+        $timesheet_task = TimesheetTask::where('timesheet_id', $workday->id)->whereIn('end', [null, '00:00:00'])->get()->first();
         $data['timesheet_task'] = $timesheet_task;
 
         // Get the Openproject's user id
@@ -147,7 +147,7 @@ class TimesheetController extends Controller
 
                     $user_open_project = UserOpenProject::where('login', 'LIKE', Auth::user()->getEloquent()->username . '@%')->orWhere('mail', 'LIKE', Auth::user()->getEloquent()->username . '@%')->get()->first();
 
-                    if ($work_package->type == 1)
+                    if ($work_package->type_id == 1)
                         $work_package->status_id = 10;
                     else {
                         $custom_fields = CustomField::where('customized_id', $work_package->id)->whereIn('custom_field_id', [38, 39, 40])->get();
@@ -235,6 +235,8 @@ class TimesheetController extends Controller
                 $time = (($hours <= 9 ? "0" . $hours : $hours) . ":" . $minutes) . ":" . $seconds;
 
                 $user_open_project = UserOpenProject::where('login', 'LIKE', Auth::user()->getEloquent()->username . '@%')->orWhere('mail', 'LIKE', Auth::user()->getEloquent()->username . '@%')->get()->first();
+
+                $work_package = Task::find($timesheet_task->work_package_id);
 
                 $time_entry = array(
                     'project_id' => $timesheet_task->project_id,

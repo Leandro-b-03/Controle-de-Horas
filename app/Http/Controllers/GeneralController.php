@@ -248,10 +248,10 @@ class GeneralController extends Controller {
     {
         $project_id = $request->all();
 
-        $tasks = DB::connection('openproject')->table('work_packages')->whereExists(function ($query) {
+        $tasks = DB::connection('openproject')->table('work_packages AS wp1')->whereNotExists(function ($query) {
             $query->select(DB::raw(1))
-                  ->from('work_packages')
-                  ->whereRaw('work_packages.parent_id != work_packages.id');
+                  ->from('work_packages AS wp2')
+                  ->whereRaw('wp2.parent_id = wp1.id');
         })->where('project_id', $project_id['id'])->get();
         
         return response()->json($tasks);
