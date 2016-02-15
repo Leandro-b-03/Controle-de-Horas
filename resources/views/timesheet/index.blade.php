@@ -5,6 +5,8 @@
 @stop
 
 @section('style')
+    <!-- jQuery-Form-Validator -->
+    {!! Html::style("library/adminLTE/plugins/jQuery-Form-Validator/form-validator/theme-default.min.css") !!}
 @stop
 
 @section('content')
@@ -66,10 +68,13 @@
                 </div>
             </div>
             <div id="finish_settings" class="col-xs-6 {!! isset($data['timesheet_task']) ? '' : 'invisible' !!}">
-                <div class="form-group col-xs-2 custom_a">
+                <div id="task-menu" class="form-group col-xs-2 custom_a {!! isset($data['timesheet_task']) ? ($data['timesheet_task']->getProject()->getResults()->type_id == 1 ? '' : 'invisible' ) : 'invisible' !!}">
                     <a id="fail" class="btn btn-danger play"><span class="fa fa-ban"></span> {!! Lang::get('timesheets.fail') !!}</a>
                     <a id="pause" class="btn btn-warning play"><span class="fa fa-pause-circle-o"></span> {!! Lang::get('timesheets.pause') !!}</a>
                     <a id="finish" class="btn btn-success play"><span class="fa fa-stop-circle-o"></span> {!! Lang::get('timesheets.finish') !!}</a>
+                </div>
+                <div id="front-menu" class="form-group col-xs-2 custom_a {!! isset($data['timesheet_task']) ? ($data['timesheet_task']->getProject()->getResults()->type_id != 1 ? '' : 'invisible' ) : 'invisible' !!}">
+                    <a id="finish-modal" class="btn btn-success play" data-toggle="modal" data-target="#finished"><span class="fa fa-stop-circle-o"></span> {!! Lang::get('timesheets.finish') !!}</a>
                 </div>
                 <div class="form-group col-xs-8">
                     <label for="projects">{!! Lang::get('general.projects') !!}</label>
@@ -157,7 +162,7 @@
                     <td>{!! $task->getProject()->getResults()->name !!}</td>
                     <td>{!! $task->getTask()->getResults()->subject !!}</td>
                     <td>{!! date('G:i a', strtotime($task->start)) !!}</td>
-                    <td>{!! ($task->end == null) ? '---' : date('G:i a', strtotime($task->end)) !!}</td>
+                    <td>{!! ($task->end == null || $task->end == '00:00:00') ? '---' : date('G:i a', strtotime($task->end)) !!}</td>
                     <td>{!! ($task->hours == null) ? '---' : date('G:i', strtotime($task->hours)) !!}</td>
                 </tr>
                 @endforeach
@@ -169,8 +174,45 @@
       <a class="btn btn-default pull-left"  href="{!! URL::to('timesheets/' . Auth::user()->id . '/') !!}">{!! Lang::get('timesheets.monthly') !!}</a>
       {!! $data['tasks']->render() !!}
   </div><!-- /.box-footer-->
+  <!-- Modal -->
+  <div class="modal fade" id="finished" tabindex="-1" role="dialog" aria-labelledby="{!! Lang::get('general.tasks') !!}">
+    <div class="modal-dialog modal-lg" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="{!! Lang::get('general.back') !!}"><span aria-hidden="true">&times;</span></button>
+          <h4 class="modal-title" id="{!! Lang::get('general.tasks') !!}">{!! Lang::get('timesheets.task') !!}</h4>
+        </div>
+        <div class="modal-body fixed">
+          <div id="tasks-quantity">
+            <div id="messages">
+            </div>
+            <!-- The form -->
+            <div class="form-group col-xs-2">
+              <label for="name">{!! Lang::get('timesheets.ok') !!}</label>
+              <input type="number" class="form-control" name="ok" id="ok"  value="0" data-mask="999" data-validation="length" data-validation-length="1-40" data-validation-regexp="^\[1-9]{2}\" data-validation-error-msg="{!! Lang::get('timesheets.error-ok') !!}" required>
+            </div>
+            <div class="form-group col-xs-2">
+              <label for="name">{!! Lang::get('timesheets.nok') !!}</label>
+              <input type="number" class="form-control" name="nok" id="nok"  value="0" data-mask="999" data-validation="length" data-validation-length="1-40" data-validation-regexp="^\[1-9]{2}\" data-validation-error-msg="{!! Lang::get('timesheets.error-nok') !!}" required>
+            </div>
+            <div class="form-group col-xs-2">
+              <label for="name">{!! Lang::get('timesheets.impacted') !!}</label>
+              <input type="number" class="form-control" name="impacted" id="impacted"  value="0" data-mask="999" data-validation="length" data-validation-length="1-40" data-validation-regexp="^\[1-9]{2}\" data-validation-error-msg="{!! Lang::get('timesheets.error-impacted') !!}" required>
+            </div>
+            <div class="form-group col-xs-2">
+              <label for="name">{!! Lang::get('timesheets.cancelled') !!}</label>
+              <input type="number" class="form-control" name="cancelled" id="cancelled"  value="0" data-mask="999" data-validation="length" data-validation-length="1-40" data-validation-regexp="^\[1-9]{2}\" data-validation-error-msg="{!! Lang::get('timesheets.error-cancelled') !!}" required>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-danger" data-dismiss="modal">{!! Lang::get('general.back') !!}</button>
+          <a id="finish" class="btn btn-success"><span class="fa fa-stop-circle-o"></span> {!! Lang::get('timesheets.finish') !!}</a>
+        </div>
+      </div>
+    </div>
+  </div>
 </div><!-- /.box -->
-
 @endsection
 
 @section('scripts')
@@ -180,9 +222,23 @@
     {!! Html::script("library/adminLTE/plugins/fastclick/fastclick.min.js") !!}
     <!-- Stopwacth -->
     {!! Html::script("library/adminLTE/plugins/jquery-stopwatch/jquery.stopwatch.js") !!}
+    <!-- jQuery-Form-Validator -->
+    {!! Html::script("library/adminLTE/plugins/jQuery-Form-Validator/form-validator/jquery.form-validator.min.js") !!}
 
     <script type="text/javascript" charset="utf-8" async defer>
         var workday = {!! $data['workday'] !!};
+        
+        $.validate();
+
+        $('form').submit(function(e) {
+          if ($(this).find('.has-error').length > 0) {
+            e.preventDefault();
+            var data = {class:'danger', faicon:'ban', status:"{!! Lang::get('general.failed') !!}", message:"{!! html_entity_decode(Lang::get('general.failed-fields')) !!}"};
+              $('#messages').html(throwMessage(data));
+          } else {
+            return;
+          }
+        });
 
         $('#timer').stopwatch().stopwatch('start');
 
@@ -199,15 +255,26 @@
             type: "POST",
             success: function(data) {
               var task = data
-              $('#start_settings').addClass('invisible');
-              $('#finish_settings').removeClass('invisible');
-
-              $('#project-name').html($('#projects option:selected').text());
-              $('#task-subject').html($('#tasks option:selected').text());
               
-              var line = generateLine(task);
+              if (!task.error) {
+                $('#start_settings').addClass('invisible');
+                $('#finish_settings').removeClass('invisible');
 
-              $('#tasks-table tbody').prepend($(line));
+                $('#project-name').html($('#projects option:selected').text());
+                $('#task-subject').html($('#tasks option:selected').text());
+
+                if (data.type_id == 1) 
+                  $('#task-menu').removeClass('invisible');
+                else
+                  $('#front-menu').removeClass('invisible');
+                
+                var line = generateLine(task);
+
+                $('#tasks-table tbody').prepend($(line));
+              } else {
+                data = { class: 'danger', faicon: 'ban', status: "{!! Lang::get('general.failed') !!}", message: data.error };
+                throwMessage(data);
+              }
             }
           });
         });
@@ -217,18 +284,24 @@
 
           if (workday.nightly_start == "00:00:00")
             data.end = true;
-          else
+          else {
             data.nightly = true;
             data.nightly_end = true
+          }
 
           $.ajax({
             url: '/timesheets',
             data: data,
             type: "POST",
             success: function(data) {
-              var task = data
+                var task = data;
 
-              window.location.href = '/timesheets';
+              if (!task.error) {
+                window.location.href = '/timesheets';
+              } else {
+                data = { class: 'danger', faicon: 'ban', status: "{!! Lang::get('general.failed') !!}", message: data.error };
+                throwMessage(data);
+              }
             }
           });
         });
@@ -244,9 +317,14 @@
             data: data,
             type: "POST",
             success: function(data) {
-              var task = data
+                var task = data;
 
-              window.location.href = '/timesheets';
+              if (!task.error) {
+                window.location.href = '/timesheets';
+              } else {
+                data = { class: 'danger', faicon: 'ban', status: "{!! Lang::get('general.failed') !!}", message: data.error };
+                throwMessage(data);
+              }
             }
           });
         });
@@ -285,10 +363,14 @@
           endTask(data);
         });
 
-        $('#finish').click(function() {
+        $(document).on("click", "#finish", function(event) {
           var data = {};
 
           data.finish = true;
+          data.ok = $('#ok').val();
+          data.nok = $('#nok').val();
+          data.impacted = $('#impacted').val();
+          data.cancelled = $('#cancelled').val();
 
           endTask(data);
         });
@@ -301,11 +383,16 @@
             data: data,
             type: "POST",
             success: function(data) {
-              var lunch = data
-              
-              $('#lunch_time').html('Horário de saida: ' + lunch.lunch_start + '. Horario da volta: ' + lunch.lunch_end + '. Tempo total: ' + lunch.lunch_hours + '.');
+              var lunch = data;
 
-              $('#back').hide();
+              if (!lunch.error) {
+                $('#lunch_time').html('Horário de saida: ' + lunch.lunch_start + '. Horario da volta: ' + lunch.lunch_end + '. Tempo total: ' + lunch.lunch_hours + '.');
+
+                $('#back').hide();
+              } else {
+                data = { class: 'danger', faicon: 'ban', status: "{!! Lang::get('general.failed') !!}", message: data.error };
+                throwMessage(data);
+              }
             }
           });
 
@@ -314,26 +401,42 @@
           }
         }
 
-        function endTask(data) {
+        function endTask (data) {
           $.ajax({
             url: '/timesheets',
             data: data,
             type: "POST",
             success: function(data) {
-              var task = data
-              $('#start_settings').removeClass('invisible');
-              $('#finish_settings').addClass('invisible');
+              var task = data;
 
-              $('#projects').select2();
-              $('#tasks').select2({
-                templateResult: getIcon
-              });
+              if (!task.error) {
+                $('#finished').modal('hide');
 
-              var line = generateLine(task);
+                $('#start_settings').removeClass('invisible');
+                $('#finish_settings').addClass('invisible');
 
-              $('#tasks-table tbody tr:first').remove();
+                $('#projects').select2();
+                $('#tasks').select2({
+                  templateResult: getIcon
+                });
+                
+                $('#task-menu').addClass('invisible');
+                $('#front-menu').addClass('invisible');
 
-              $('#tasks-table tbody').prepend($(line));
+                $('#ok').val(0);
+                $('#nok').val(0);
+                $('#impacted').val(0);
+                $('#cancelled').val(0);
+
+                var line = generateLine(task);
+
+                $('#tasks-table tbody tr:first').remove();
+
+                $('#tasks-table tbody').prepend($(line));
+              } else {
+                data = { class: 'danger', faicon: 'ban', status: "{!! Lang::get('general.failed') !!}", message: data.error };
+                throwMessage(data);
+              }
             }
           });
         }
@@ -352,7 +455,7 @@
           html +=     task.start;
           html +=   '</td>';
           html +=   '<td>';
-          html +=     (task.end == null ? '---' : task.end) ;
+          html +=     (task.end == null || task.end == '00:00:00' ? '---' : task.end) ;
           html +=   '</td>';
           html +=   '<td>';
           html +=     (task.hours == null ? '---' : task.hours) ;
@@ -364,8 +467,12 @@
         var _tasks = {};
 
         $('#projects').on('change', function() {
-            getCycle($(this).val())
+          getCycle($(this).val())
         });
+
+        if ($('#projects').val() != '') {
+          getCycle($('#projects').val());
+        }
 
         $('#tasks').on('change', function() {
             var id = $(this).val();
@@ -428,6 +535,16 @@
             '<span><span class="fa ' + ($(task.element).data('type') == 1 ? 'fa-file' : 'fa-exclamation-triangle ') + '"></span> ' + task.text + '</span>'
           );
           return $task;
+        };
+
+        function throwMessage(data) {
+            html = '<div class="alert alert-' + data.class + ' alert-dismissable">';
+            html += '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>';
+            html += '<h4>    <i class="icon fa fa-' + data.faicon + '"></i> ' + data.status + '</h4>';
+            html += data.message;
+            html += '</div>';
+
+            return html;
         };
     </script>
 @endsection
