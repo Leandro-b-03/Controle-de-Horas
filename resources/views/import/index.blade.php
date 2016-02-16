@@ -67,6 +67,15 @@
                   <input type="hidden" id="xlsx" name="xlsx" value="source/">
                   {{-- <input type="file" class="form-control" name="name" id="name"  value="" placeholder="{!! Lang::get('import.ph-name') !!}" data-validation="length" data-validation-length="3-40" data-validation-error-msg="{!! Lang::get('import.error-name') !!}" required> --}}
                 </div>
+                <div class="form-group col-xs-4">
+                  <label for="user_id">{!! Lang::get('general.users') !!}</label>
+                  <select name="user_id" class="form-control" data-validation="required" required>
+                    <option value="">{!! Lang::get('general.select') !!}</option>
+                    @foreach ($data['users'] as $user)
+                    <option value="{!! $user->id !!}">{!! $user->first_name . ' ' . $user->last_name !!}</option>
+                    @endforeach
+                  </select>
+                </div>
               </div><!-- /.box-body -->
               <div class="box-footer">
                 <button type="submit" class="btn btn-primary">{!! Lang::get('general.import') !!}</button>

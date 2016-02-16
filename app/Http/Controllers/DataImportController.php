@@ -9,6 +9,7 @@ use Auth;
 use Lang;
 use Excel;
 use App\Task;
+use App\User;
 use App\Import;
 use App\Project;
 use App\Holiday;
@@ -34,6 +35,10 @@ class DataImportController extends Controller
         // Get all the imports done
         $imports = Import::orderBy('created_at', 'desc')->paginate(20);
         $data['imports'] = $imports;
+
+        // Get all the users
+        $users = User::all();
+        $data['users'] = $users;
 
         // Return the imports view.
         return view('import.index')->with('data', $data);
@@ -81,6 +86,8 @@ class DataImportController extends Controller
         if ($import) {
             DB::commit();
         }
+
+        $this->user_id = $inputs['user_id'];
 
         if ($inputs['type'] == 'WP') {
             try {
@@ -410,13 +417,13 @@ class DataImportController extends Controller
                         foreach ($sheet as $row) {
                             if ($row->first() != null) {
                                 if ($row['entrada'] || $row['almoco_entrada']) {
-                                    $workday = Timesheet::where('user_id', Auth::user()->getEloquent()->id)->where('workday', $row['data']->toDateString())->orderBy('workday', 'desc')->get()->first();
+                                    $workday = Timesheet::where('user_id', $this->user_id)->where('workday', $row['data']->toDateString())->orderBy('workday', 'desc')->get()->first();
                                     if (!$workday) {
                                         $workday = array();
 
                                         if ($row['saida'] && $row['entrada']) {
                                             $workday = array (
-                                                'user_id' => Auth::user()->id,
+                                                'user_id' => $this->user_id,
                                                 'workday' => ($row['data'] != null) ? $row['data']->toDateString() : null,
                                                 'start' => ($row['entrada'] != null) ? $row['entrada']->toTimeString() : null,
                                                 'lunch_start' => ($row['almoco_saida'] != null) ? $row['almoco_saida']->toTimeString() : '00:00:00',
@@ -431,7 +438,7 @@ class DataImportController extends Controller
                                             );
                                         } else if ($row['almoco_saida'] && $row['almoco_entrada'] == null) {
                                             $workday = array (
-                                                'user_id' => Auth::user()->id,
+                                                'user_id' => $this->user_id,
                                                 'workday' => ($row['data'] != null) ? $row['data']->toDateString() : null,
                                                 'start' => ($row['entrada'] != null) ? $row['entrada']->toTimeString() : null,
                                                 'lunch_start' => '00:00:00',
@@ -445,7 +452,7 @@ class DataImportController extends Controller
                                             );
                                         } else if ($row['almoco_entrada']) {
                                             $workday = array (
-                                                'user_id' => Auth::user()->id,
+                                                'user_id' => $this->user_id,
                                                 'workday' => ($row['data'] != null) ? $row['data']->toDateString() : null,
                                                 'start' => ($row['almoco_entrada'] != null) ? $row['almoco_entrada']->toTimeString() : null,
                                                 'lunch_start' => '00:00:00',
@@ -524,11 +531,11 @@ class DataImportController extends Controller
                                             }
                                         }
 
-                                        $overtime = Overtime::where('user_id', Auth::user()->id)->get()->first();
+                                        $overtime = Overtime::where('user_id', $this->user_id)->get()->first();
 
                                         if (!$overtime) {
                                             $overtime = array (
-                                                'user_id' => Auth::user()->id,
+                                                'user_id' => $this->user_id,
                                                 'hours'   => '00:00:00'
                                             );
 
