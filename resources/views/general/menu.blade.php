@@ -95,7 +95,7 @@
     </ul>
   </li>
   @endif
-  @if(Entrust::can(['UserController@index', 'TeamController@index', 'GroupPermissionController@index']))
+  <!-- @if(Entrust::can(['UserController@index', 'TeamController@index', 'GroupPermissionController@index']))
   <li class="treeview {!! ((Request::is('main/*') || Request::is('main')) || (Request::is('modules/*') || Request::is('modules')) || (Request::is('misc/*') || Request::is('misc')) ? 'active' : '') !!}">
     <a href="#">
       <i class="fa fa-cog"></i> <span>{!! Lang::get('general.system') !!}</span>
@@ -123,5 +123,5 @@
       @endif
     </ul>
   </li>
-  @endif
+  @endif -->
 </ul>
