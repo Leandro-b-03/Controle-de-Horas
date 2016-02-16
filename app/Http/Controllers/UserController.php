@@ -61,9 +61,9 @@ class UserController extends Controller
     {
         DB::beginTransaction();
 
-        $input = $request->all();
+        $inputs = $request->all();
 
-        $input['role'] = 1;
+        $inputs['role'] = isset($inputs['role']) ? $inputs['role'] : 4;
         
         try {
             // Validation of the fields
@@ -80,17 +80,17 @@ class UserController extends Controller
 
             $confirmation_code = str_random(30);
 
-            $input['confirmation_code'] = $confirmation_code;
+            $inputs['confirmation_code'] = $confirmation_code;
 
-            if ($input['password'] == $input['password_confirmation']) {
+            if ($inputs['password'] == $inputs['password_confirmation']) {
                 if($validator) {
-                    $input['birthday'] = date('Y-m-d', strtotime(str_replace('/', '-', $input['birthday'])));
-                    $input['password'] = bcrypt($input['password']);
+                    $inputs['birthday'] = date('Y-m-d', strtotime(str_replace('/', '-', $inputs['birthday'])));
+                    $inputs['password'] = bcrypt($inputs['password']);
 
-                    $user = User::create( $input );
+                    $user = User::create( $inputs );
 
                     if ($user) {
-                        $user->attachRole(Role::find($input['role']));
+                        $user->attachRole(Role::find($inputs['role']));
 
                         $settings = array(
                             'user_id' => $user->id,
@@ -206,7 +206,7 @@ class UserController extends Controller
         // Get user with param $id
         $user = User::find($id);
 
-        // Get all the input from update.
+        // Get all the inputs from update.
         $inputs = $request->all();
 
         try {
@@ -234,7 +234,7 @@ class UserController extends Controller
 
             foreach($inputs as $input => $value) {
                 if ($user->{$input} || in_array($input, $fillable))
-                    if ($input != 'password' && $value != 'n')
+                    if ($inputs != 'password' && $value != 'n')
                         $user->{$input} = $value;
             }
 
@@ -261,10 +261,10 @@ class UserController extends Controller
     {
         DB::beginTransaction();
 
-        // Get all the input data received.
-        $input = $request->all();
+        // Get all the inputs data received.
+        $inputs = $request->all();
 
-        $ids = explode(',', $input['id']);
+        $ids = explode(',', $inputs['id']);
 
         try {
             if (User::destroy($ids)) {
