@@ -63,14 +63,16 @@ class User extends Model implements Authenticatable
         $user = DBUser::where('username', $attributes['username'])->get()->first();
         $this->_authIdentifier = $attributes['username'];
         // $this->_authPassword = (isset($attributes['password'])) ? $attributes['password'] : null;
-        $this->_eloquent = $user;
-        $this->attributes = $user->attributes;
-        $this->original = $user->original;
-        $this->relations = $user->relations;
-        $this->hidden = $user->hidden;
-        $this->visible = $user->visible;
-        $this->appends = $user->appends;
-        $this->id = $user->id;
+        if ($user) {
+            $this->_eloquent = $user;
+            $this->attributes = $user->attributes;
+            $this->original = $user->original;
+            $this->relations = $user->relations;
+            $this->hidden = $user->hidden;
+            $this->visible = $user->visible;
+            $this->appends = $user->appends;
+            $this->id = $user->id;
+        }
     }
 
     /**

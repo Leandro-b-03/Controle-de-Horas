@@ -141,14 +141,6 @@
                 <div class="form-group col-xs-6">
                   <hr />
                 </div>
-                <div class="form-group col-xs-6">
-                  <label for="password_confirmation">{!! Lang::get('users.label-password') !!}</label>
-                  <input type="password" class="form-control" name="password_confirmation" id="password_confirmation"  value="" placeholder="{!! Lang::get('users.ph-password') !!}" {!! (Request::is('users/create') ? 'required' : 'data-validation-optional="true"') !!} data-validation="length strength" data-validation-length="min8" data-validation-error-msg="{!! Lang::get('users.error-password') !!}">
-                </div>
-                <div class="form-group col-xs-6">
-                  <label for="confirm_password">{!! Lang::get('users.label-confirm_password') !!}</label>
-                  <input type="password" class="form-control" name="password" id="password"  value="" placeholder="{!! Lang::get('users.ph-confirm_password') !!}" {!! (Request::is('users/create') ? 'required' : 'data-validation-optional="true"') !!} data-validation="confirmation" data-validation-strength="2" data-validation-error-msg="{!! Lang::get('users.error-confirm_password') !!}">
-                </div>
               </div><!-- /.box-body -->
               <div class="box-footer">
                 <button type="submit" class="btn btn-primary">{!! Lang::get('general.save') !!}</button>
