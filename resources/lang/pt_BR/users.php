@@ -76,5 +76,8 @@ return [
     'table-email'                   => 'E-mail',
     'table-phone'                   => 'Telefone',
     'table-created_at'              => 'Colaborador desde',
-    'table-group-permission'        => 'Pertence ao grupo de'
+    'table-group-permission'        => 'Pertence ao grupo de',
+
+    //Messages
+    'welcome'                       => 'Seja muito bem vindo ao Timesheet!',
 ];

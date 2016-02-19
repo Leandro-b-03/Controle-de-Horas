@@ -287,7 +287,7 @@ class GeneralController extends Controller {
     {
         $inputs = $request->all();
 
-        $settings = UserSetting::where('user_id', Auth::user()->getEloquent()->id)->get()->first();
+        $settings = UserSetting::where('user_id', Auth::user()->id)->get()->first();
 
         $data = [];
         
@@ -304,7 +304,7 @@ class GeneralController extends Controller {
                 $data['message'] = 'não salvo';
             }
         } else {
-            $inputs['user_id'] = Auth::user()->getEloquent()->id;
+            $inputs['user_id'] = Auth::user()->id;
             if (UserSetting::create( $inputs )) {
                 $data['success'] = true;
                 $data['message'] = 'salvo';
@@ -326,7 +326,7 @@ class GeneralController extends Controller {
     {
         $inputs = $request->all();
 
-        $localization = UserLocalization::where('user_id', Auth::user()->getEloquent()->id)->orderBy('created_at', 'desc')->get()->first();
+        $localization = UserLocalization::where('user_id', Auth::user()->id)->orderBy('created_at', 'desc')->get()->first();
 
         $data = [];
         
@@ -468,7 +468,7 @@ class GeneralController extends Controller {
         if (!UserNotification::create($notification)) {
             $notification_fail['message'] = Lang::get('general.failed-notification');
             $notification_fail['faicon'] = 'times';
-            PusherManager::trigger('presence-user-' . Auth::user()->getEloquent()->id, 'new_notification', $notification);
+            PusherManager::trigger('presence-user-' . Auth::user()->id, 'new_notification', $notification);
         }
     }
 

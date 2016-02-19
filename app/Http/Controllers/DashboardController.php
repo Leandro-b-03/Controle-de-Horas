@@ -4,16 +4,20 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 
+use App;
 use DB;
 use Auth;
 use GeoIP;
 use Geocoder;
 use App\User;
+use App\Member;
 use App\Project;
 use App\Timesheet;
 use Carbon\Carbon;
 use PusherManager;
+use App\TimesheetTask;
 use App\Http\Requests;
+use App\UserOpenProject;
 use App\Http\Controllers\Controller;
 
 class DashboardController extends Controller
@@ -67,6 +71,20 @@ class DashboardController extends Controller
             DB::rollback();
             $data['error'] =  Lang::get('general.error-day');
         }
+
+        // Get the Openproject's user id
+        $user_id = UserOpenProject::where('login', 'LIKE', Auth::user()->getEloquent()->username . '@%')->orWhere('mail', 'LIKE', Auth::user()->getEloquent()->username . '@%')->get()->first()->id;
+
+        // Get all the Projects that the user is assigned off
+        $user_projects = Member::select('project_id')->where('user_id', $user_id)->get()->toArray();
+
+        // Get all task
+        $tasks = DB::connection('openproject')->table('work_packages AS wp1')->whereNotExists(function ($query) {
+            $query->select(DB::raw(1))
+                  ->from('work_packages AS wp2')
+                  ->whereRaw('wp2.parent_id = wp1.id');
+        })->whereIn('project_id', $user_projects)->get();
+        $data['tasks'] = $tasks;
 
         // Return the dashboard view.
         return view('dashboard.index')->with('data', $data);

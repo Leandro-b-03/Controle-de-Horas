@@ -34,10 +34,6 @@ Route::group(['middleware' => 'auth'], function () {
 
         Route::get('dashboard', 'DashboardController@index');
 
-        Route::post('pusher/auth', 'PusherController@auth');
-
-        Route::post('pusher/chat', 'PusherController@chat');
-
         Route::get('autocomplete/users', 'GeneralController@getUserAutocomplete');
 
         Route::get('autocomplete/team', 'GeneralController@getTeamAutocomplete');
@@ -47,10 +43,6 @@ Route::group(['middleware' => 'auth'], function () {
         Route::get('general/createMessageJSON', 'GeneralController@createMessageJSON');
 
         Route::get('general/projectName', 'GeneralController@projectNameJSON');
-
-        Route::post('general/verifyEmailJSON', 'GeneralController@verifyEmailJSON');
-
-        Route::post('general/verifyCPFJSON', 'GeneralController@verifyCPFJSON');
 
         Route::get('general/getUser', 'GeneralController@getUser');
 
@@ -65,6 +57,14 @@ Route::group(['middleware' => 'auth'], function () {
         Route::get('general/getTasks', 'GeneralController@getTasks');
 
         Route::get('general/getTasksDay', 'GeneralController@getTasksDay');
+
+        Route::post('pusher/auth', 'PusherController@auth');
+
+        Route::post('pusher/chat', 'PusherController@chat');
+
+        Route::post('general/verifyEmailJSON', 'GeneralController@verifyEmailJSON');
+
+        Route::post('general/verifyCPFJSON', 'GeneralController@verifyCPFJSON');
         
         Route::get('register', function() {
             if (\Auth::user()->getEloquent() == null)
@@ -105,12 +105,6 @@ Route::group(['middleware' => 'auth'], function () {
         Entrust::routeNeedsPermission('client-groups/*/edit', 'ClientGroupController@edit');
         Entrust::routeNeedsPermission('client-groups/delete', 'ClientGroupController@delete');
 
-        Route::resource('users', 'UserController');
-        Entrust::routeNeedsPermission('users', 'UserController@index');
-        Entrust::routeNeedsPermission('users/create', 'UserController@create');
-        Entrust::routeNeedsPermission('users/*/edit', 'UserController@edit');
-        Entrust::routeNeedsPermission('users/delete', 'UserController@delete');
-
         Route::resource('timesheets', 'TimesheetController');
         Entrust::routeNeedsPermission('timesheets', 'TimesheetController@index');
         Entrust::routeNeedsPermission('timesheets/create', 'TimesheetController@create');
@@ -135,6 +129,12 @@ Route::group(['middleware' => 'auth'], function () {
         Entrust::routeNeedsPermission('import/*/edit', 'DataImportController@edit');
         Entrust::routeNeedsPermission('import/delete', 'DataImportController@delete');
     });
+
+    Route::resource('users', 'UserController');
+    //Entrust::routeNeedsPermission('users', 'UserController@index');
+    //Entrust::routeNeedsPermission('users/create', 'UserController@create');
+    //Entrust::routeNeedsPermission('users/*/edit', 'UserController@edit');
+    //Entrust::routeNeedsPermission('users/delete', 'UserController@delete');
 });
 
 Route::group(['middleware' => 'guest'], function () {

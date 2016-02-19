@@ -260,7 +260,7 @@ $get_params = http_build_query($get_params);
 	</style><![endif]-->
 	<script src="js/plugins.js"></script>
 	<script src="js/jPlayer/jquery.jplayer/jquery.jplayer.js"></script>
-	<script src="js/modernizr.custom.js"></script>
+	<!-- <script src="js/modernizr.custom.js"></script> -->
 	<?php
 	if ($aviary_active){
 	if (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443) { ?>
