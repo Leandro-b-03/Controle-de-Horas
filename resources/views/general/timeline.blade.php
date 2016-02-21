@@ -23,7 +23,7 @@
     <i class="fa fa-tasks bg-blue"></i>
 
     <div class="timeline-item">
-      <span class="time"><i class="fa fa-clock-o"></i> {!! GeneralHelper::withoutSeconds($task->start) !!}</span>
+      <span class="time"><i class="fa fa-clock-o"></i> {!! GeneralHelper::withoutSeconds($task->start) . ' - ' . GeneralHelper::withoutSeconds($task->end) !!}</span>
 
       <h3 class="timeline-header">{!! $task->getTask()->first()->subject !!}</h3>
 

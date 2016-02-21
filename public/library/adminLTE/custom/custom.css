@@ -354,7 +354,7 @@ table thead tr th.start, table thead tr th.end {
 }
 
 .custom-callout {
-	height: 130px;
+	min-height: 130px;
 }
 
 .invisible {

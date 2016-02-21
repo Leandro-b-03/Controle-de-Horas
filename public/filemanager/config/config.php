@@ -151,6 +151,8 @@ $config = array(
 	'convert_spaces'                          => false,
 	//convert all spaces on files name and folders name this value
 	'replace_with'                            => "_",
+	//convert to lowercase the files and folders name
+	'lower_case'                              => false,
 
 	// -1: There is no lazy loading at all, 0: Always lazy-load images, 0+: The minimum number of the files in a directory
 	// when lazy loading should be turned on.

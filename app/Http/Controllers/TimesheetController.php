@@ -12,6 +12,7 @@ use DB;
 use Auth;
 use Lang;
 use Calendar;
+use App\User;
 use App\Task;
 use App\Member;
 use App\Journal;
@@ -77,7 +78,7 @@ class TimesheetController extends Controller
         $data['workday'] = $workday;
 
         // Get the actual task
-        $timesheet_task = TimesheetTask::where('timesheet_id', $workday->id)->whereIn('end', [null, '00:00:00'])->get()->first();
+        $timesheet_task = TimesheetTask::where('timesheet_id', $workday->id)->where('end', '00:00:00')->get()->first();
         $data['timesheet_task'] = $timesheet_task;
 
         // Get the Openproject's user id
@@ -209,8 +210,10 @@ class TimesheetController extends Controller
                     if ($work_package->save()) {
                         DB::commit();
                         $this->journal($inputs['task_id'], 'WorkPackage', 'work_packages');
+
+                        $this->notify($inputs, $timesheet_task->project_id);
                         
-                        return response()->json($this->line($timesheet_task));
+                        return response()->json($this->line($timesheet_task, $work_package->type_id));
                     } else {
                         DB::rollback();
                         return response()->json(array('error' => Lang::get('general.error')));
@@ -266,7 +269,7 @@ class TimesheetController extends Controller
                 if ($timesheet_task->save()) {
                     DB::commit();
 
-                    if ($work_package->status_id == 1) {
+                    if ($work_package->type_id == 1) {
                         $status = 11;
 
                         if (isset($inputs['pause']))
@@ -275,7 +278,6 @@ class TimesheetController extends Controller
                         if (isset($inputs['fail']))
                             $status = 12;
 
-                        $work_package = Task::find($timesheet_task->work_package_id);
                         $work_package->status_id = $status;
                     } else {
                         $custom_fields = CustomField::where('customized_id', $work_package->id)->where('custom_field_id', 39)->get();
@@ -369,8 +371,10 @@ class TimesheetController extends Controller
                     if ($work_package->save()) {
                         DB::commit();
                         $this->journal($timesheet_task->work_package_id, 'WorkPackage', 'work_packages');
-                        
-                        return response()->json($this->line($timesheet_task));
+
+                        $this->notify($inputs, $timesheet_task->project_id);
+
+                        return response()->json($this->line($timesheet_task, $work_package->type_id));
                     } else {
                         DB::rollback();
                         return response()->json(array('error' => Lang::get('general.error')));
@@ -491,17 +495,29 @@ class TimesheetController extends Controller
         }
     }
 
-    public function line($timesheet_task)
+    /**
+     * Make an array to pass as json for html
+     *
+     * @param array $timesheet
+     * @param int $type
+     */
+    public function line($timesheet_task, $type)
     {
         $timesheet_task->project    = $timesheet_task->getProject()->getResults()->name;
         $timesheet_task->task       = $timesheet_task->getTask()->getResults()->subject;
         $timesheet_task->start      = date("G:i a", strtotime($timesheet_task->start));
         $timesheet_task->end        = ($timesheet_task->end) ? date("G:i a", strtotime($timesheet_task->end)) : '---';
         $timesheet_task->hours      = ($timesheet_task->hours) ? date('G:i', strtotime($timesheet_task->hours)) : '---';
+        $timesheet_task->type_id    = $type;
 
         return $timesheet_task;
     }
 
+    /**
+     * Make an array to pass as json for html
+     *
+     * @param array $workday
+     */
     public function lunch($workday)
     {
         $workday->lunch_start      = date("G:i a", strtotime($workday->lunch_start));
@@ -511,7 +527,43 @@ class TimesheetController extends Controller
         return $workday;
     }
 
-    public function journal($task_id, $type, $activity_type) {
+
+    /**
+     * Make a notification for the task done
+     *
+     * @param array $inputs
+     * @param int $project_id
+     */
+    public function notify($inputs, $project_id)
+    {
+        // Get the responsible for the project
+        $project = Project::findOrFail($project_id);
+
+        // Get the op user
+        $user_open_project = UserOpenProject::findOrFail($project->responsible_id);
+
+        // Get the user in the ts
+        $user = User::where('email', $user_open_project->mail)->get()->first();
+
+        if ($project->responsible_id && $user) {
+            $notification = array(
+                'user_id' => $user->id,
+                'faicon'  => isset($inputs['start']) ? 'play-circle' : 'check-circle',
+                'message' => isset($inputs['start']) ? 
+                    Lang::get('timesheets.tasks-start', ['name' => Auth::user()->firstname . ' ' . Auth::user()->lastname]) :
+                    isset($inputs['finish']) || isset($inputs['pause']) || isset($inputs['fail']) ?
+                    Lang::get('timesheets.tasks-done_1', ['name' => Auth::user()->firstname . ' ' . Auth::user()->lastname]) :
+                    Lang::get('timesheets.tasks-done_2', ['name' => Auth::user()->firstname . ' ' . Auth::user()->lastname, 'ok' => $inputs['ok'],
+                        'nok' => $inputs['nok'], 'impacted' => $inputs['impacted'], 'cancelled' => $inputs['cancelled']])
+
+            );
+
+            GeneralController::createNotification($user->id, $notification);
+        }
+    }
+
+    public function journal($task_id, $type, $activity_type)
+    {
         $task = Task::find($task_id);
 
         $user_id = UserOpenProject::where('login', 'LIKE', Auth::user()->getEloquent()->username . '@%')->orWhere('mail', 'LIKE', Auth::user()->getEloquent()->username . '@%')->get()->first()->id;
