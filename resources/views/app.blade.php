@@ -129,7 +129,7 @@
                   <span class="label label-danger tasks-count">9</span>
                 </a>
                 <ul class="dropdown-menu">
-                  <li class="header">You have 9 tasks</li>
+                  <li class="header">Você tem 0 Tarefas criticas</li>
                   <li>
                     <!-- inner menu: contains the actual data -->
                     <ul class="menu">
