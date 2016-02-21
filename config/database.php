@@ -1,5 +1,7 @@
 <?php
 
+use App;
+
 return [
 
     /*
@@ -54,7 +56,7 @@ return [
 
         'mysql' => [
             'driver'    => 'mysql',
-            'host'      => env('DB_HOST', env('APP_ENV') == 'local' ? 'localhost' : '192.168.80.59'),
+            'host'      => env('DB_HOST', \App::environment('local') ? 'localhost' : '192.168.80.59'),
             'database'  => env('DB_DATABASE', \App::environment('staging') ? 'controle_horas_hm' : 'controle_horas'),
             'username'  => env('DB_USERNAME', \App::environment('local', 'staging') ? (\App::environment('staging') ? 'timesheet_hm' : 'root') : 'timesheet'),
             'password'  => env('DB_PASSWORD', \App::environment('local', 'staging') ? (\App::environment('staging') ? '102030' : '') : '9DKPUZlYTq'),
