@@ -272,7 +272,7 @@ class GeneralController extends Controller {
         $data['workday'] = $workday;
 
         // Get all the task on that day or the day
-        $tasks = TimesheetTask::where('timesheet_id', $inputs['id'])->get();
+        $tasks = TimesheetTask::where('timesheet_id', $inputs['id'])->orderBy('id', 'DESC')->get();
         $data['tasks'] = $tasks;
 
         return view('general.timeline')->with('data', $data);

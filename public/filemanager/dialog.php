@@ -199,6 +199,14 @@ $return_relative_url = isset($_GET['relative_url']) && $_GET['relative_url'] == 
 
 if (!isset($_GET['type'])) $_GET['type'] = 0;
 
+
+if (isset($_GET['lang']))
+{
+	$lang = strip_tags($_GET['lang']);
+	$_SESSION['RF']['language'] = $lang;
+	$_SESSION['RF']['language_file'] = 'lang/' . $lang . '.php';
+}
+
 if (isset($_GET['editor']))
 {
 	$editor = strip_tags($_GET['editor']);
@@ -260,7 +268,7 @@ $get_params = http_build_query($get_params);
 	</style><![endif]-->
 	<script src="js/plugins.js"></script>
 	<script src="js/jPlayer/jquery.jplayer/jquery.jplayer.js"></script>
-	<!-- <script src="js/modernizr.custom.js"></script> -->
+	<script src="js/modernizr.custom.js"></script>
 	<?php
 	if ($aviary_active){
 	if (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443) { ?>
@@ -282,6 +290,7 @@ $get_params = http_build_query($get_params);
 	    Dropzone.options.rfmDropzone = {
 		    dictInvalidFileType: "<?php echo trans('Error_extension');?>",
 		    dictFileTooBig: "<?php echo trans('Error_Upload'); ?>",
+		    dictDefaultMessage: "<?php echo trans('Upload_message'); ?>",
 		    dictResponseError: "SERVER ERROR",
 		    paramName: "file", // The name that will be used to transfer the file
 		    maxFilesize: <?php echo $MaxSizeUpload; ?>, // MB
@@ -403,13 +412,15 @@ $get_params = http_build_query($get_params);
 	<input type="hidden" id="transliteration" value="<?php echo $transliteration?"true":"false"; ?>" />
 	<input type="hidden" id="convert_spaces" value="<?php echo $convert_spaces?"true":"false"; ?>" />
     <input type="hidden" id="replace_with" value="<?php echo $convert_spaces? $replace_with : ""; ?>" />
+    <input type="hidden" id="lower_case" value="<?php echo $lower_case?"true":"false"; ?>" />
 <?php if($upload_files){ ?>
 <!-- uploader div start -->
 <div class="uploader">
     <div class="text-center">
     	<button class="btn btn-inverse close-uploader"><i class="icon-backward icon-white"></i> <?php echo trans('Return_Files_List')?></button>
     </div>
-	<div class="space10"></div><div class="space10"></div>
+	<div class="space10"></div>
+	<div class="space10"></div>
 	<div class="tabbable upload-tabbable"> <!-- Only required for left/right tabs -->
 		<?php if($java_upload){ ?>
 	    <ul class="nav nav-tabs">
@@ -423,21 +434,21 @@ $get_params = http_build_query($get_params);
 				    <input type="hidden" name="path" value="<?php echo $cur_path?>"/>
 				    <input type="hidden" name="path_thumb" value="<?php echo $thumbs_path.$subdir?>"/>
 				    <div class="fallback">
-					<h3><?php echo  trans('Upload_file')?>:</h3><br/>
-					<input name="file" type="file" />
-					<input type="hidden" name="fldr" value="<?php echo $subdir; ?>"/>
-					<input type="hidden" name="view" value="<?php echo $view; ?>"/>
-					<input type="hidden" name="type" value="<?php echo $type_param; ?>"/>
-					<input type="hidden" name="field_id" value="<?php echo $field_id; ?>"/>
-          <input type="hidden" name="relative_url" value="<?php echo $return_relative_url; ?>"/>
-					<input type="hidden" name="popup" value="<?php echo $popup; ?>"/>
-					<input type="hidden" name="lang" value="<?php echo $lang; ?>"/>
-					<input type="hidden" name="filter" value="<?php echo $filter; ?>"/>
-					<input type="submit" name="submit" value="<?php echo trans('OK')?>" />
+						<h3><?php echo  trans('Upload_file')?>:</h3><br/>
+						<input name="file" type="file" />
+						<input type="hidden" name="fldr" value="<?php echo $subdir; ?>"/>
+						<input type="hidden" name="view" value="<?php echo $view; ?>"/>
+						<input type="hidden" name="type" value="<?php echo $type_param; ?>"/>
+						<input type="hidden" name="field_id" value="<?php echo $field_id; ?>"/>
+	          <input type="hidden" name="relative_url" value="<?php echo $return_relative_url; ?>"/>
+						<input type="hidden" name="popup" value="<?php echo $popup; ?>"/>
+						<input type="hidden" name="lang" value="<?php echo $lang; ?>"/>
+						<input type="hidden" name="filter" value="<?php echo $filter; ?>"/>
+						<input type="submit" name="submit" value="<?php echo trans('OK')?>" />
 				    </div>
 				</form>
-			</div>
-		    <div class="upload-help"><?php echo trans('Upload_base_help'); ?></div>
+				<div class="upload-help"><?php echo trans('Upload_base_help'); ?></div>
+		    
 			<?php if($java_upload){ ?>
 			</div>
 			<div class="tab-pane" id="tab2">
@@ -991,6 +1002,13 @@ $files=array_merge(array($prev_folder),array($current_folder),$sorted);
         	});
         </script>
     <?php } ?>
+    <script>
+	    var ua = navigator.userAgent.toLowerCase();
+		var isAndroid = ua.indexOf("android") > -1; //&& ua.indexOf("mobile");
+		if(isAndroid) {
+	    	$('li').draggable({ disabled: true });
+	    }
+    </script>
 </body>
 </html>
 <?php }

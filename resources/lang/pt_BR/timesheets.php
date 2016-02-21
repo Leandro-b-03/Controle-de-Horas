@@ -78,4 +78,9 @@ return [
     'hours_to_achieve'              => 'Horas dia',
     'hours_credit'                  => 'Crédito de horas',
     'hours_debit'                   => 'Débito de horas',
+
+    // Tasks
+    'tasks-start'                   => 'O colaborador :name começou uma nova atividade.',
+    'tasks-done_1'                  => 'O colaborador :name terminou uma nova atividade.',
+    'tasks-done_2'                  => 'O colaborador :name terminou uma nova atividade com :ok OK, :nok NOK, :impacted Impactados e :cancelled Cancelados.',
 ];

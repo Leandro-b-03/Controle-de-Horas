@@ -68,12 +68,12 @@
                 </div>
             </div>
             <div id="finish_settings" class="col-xs-6 {!! isset($data['timesheet_task']) ? '' : 'invisible' !!}">
-                <div id="task-menu" class="form-group col-xs-2 custom_a {!! isset($data['timesheet_task']) ? ($data['timesheet_task']->getProject()->getResults()->type_id == 1 ? '' : 'invisible' ) : 'invisible' !!}">
+                <div id="task-menu" class="form-group col-xs-2 custom_a {!! isset($data['timesheet_task']) ? ($data['timesheet_task']->getTask()->getResults()->type_id == 1 ? '' : 'invisible' ) : 'invisible' !!}">
                     <a id="fail" class="btn btn-danger play"><span class="fa fa-ban"></span> {!! Lang::get('timesheets.fail') !!}</a>
                     <a id="pause" class="btn btn-warning play"><span class="fa fa-pause-circle-o"></span> {!! Lang::get('timesheets.pause') !!}</a>
                     <a id="finish" class="btn btn-success play"><span class="fa fa-stop-circle-o"></span> {!! Lang::get('timesheets.finish') !!}</a>
                 </div>
-                <div id="front-menu" class="form-group col-xs-2 custom_a {!! isset($data['timesheet_task']) ? ($data['timesheet_task']->getProject()->getResults()->type_id != 1 ? '' : 'invisible' ) : 'invisible' !!}">
+                <div id="front-menu" class="form-group col-xs-2 custom_a {!! isset($data['timesheet_task']) ? ($data['timesheet_task']->getTask()->getResults()->type_id != 1 ? '' : 'invisible' ) : 'invisible' !!}">
                     <a id="finish-modal" class="btn btn-success play" data-toggle="modal" data-target="#finished"><span class="fa fa-stop-circle-o"></span> {!! Lang::get('timesheets.finish') !!}</a>
                 </div>
                 <div class="form-group col-xs-8">
@@ -88,7 +88,8 @@
             <div class="col-xs-6">
               <div class="callout callout-success custom-callout">
                 <h4>{!! Lang::get('general.info') !!}</h4>
-                <p id="task-info">{!! isset($data['timesheet_task']) ? $data['timesheet_task']->getTask()->getResults()->description : Lang::get('timesheets.no-task') !!}</p>
+                <p id="task-info-subject">{!! isset($data['timesheet_task']) ? $data['timesheet_task']->getTask()->getResults()->subject : "" !!}</p>
+                <p id="task-info-description">{!! isset($data['timesheet_task']) ? $data['timesheet_task']->getTask()->getResults()->description : Lang::get('timesheets.no-task') !!}</p>
               </div>
             </div>
             @else
@@ -480,10 +481,11 @@
 
             $.each(_tasks, function(i, task) {
               if (task.id == id) {
+                $('#task-info-subject').html(task.subject);
                 if (task.description != null || task.description != "") 
-                  $('#task-info').html(task.description);
+                  $('#task-info-description').html(task.description);
                 else
-                  $('#task-info').html('Tarefa sem descrição');
+                  $('#task-info-description').html('Tarefa sem descrição');
 
                 found++;
                 return;

@@ -55,7 +55,7 @@ return [
         'mysql' => [
             'driver'    => 'mysql',
             'host'      => env('DB_HOST', env('APP_ENV') == 'local' ? 'localhost' : '192.168.80.59'),
-            'database'  => env('DB_DATABASE', 'controle_horas'),
+            'database'  => env('DB_DATABASE', App::environment('staging') ? 'controle_horas_hm' : 'controle_horas'),
             'username'  => env('DB_USERNAME', App::environment('local', 'staging') ? (App::environment('staging') ? 'timesheet_hm' : 'root') : 'timesheet'),
             'password'  => env('DB_PASSWORD', App::environment('local', 'staging') ? (App::environment('staging') ? '102030' : '') : '9DKPUZlYTq'),
             'charset'   => 'utf8',
@@ -67,7 +67,7 @@ return [
         'openproject' => [
             'driver'    => 'mysql',
             'host'      => env('DB_HOST', '192.168.80.59'),
-            'database'  => env('DB_DATABASE', 'openproject'),
+            'database'  => env('DB_DATABASE', App::environment('local', 'staging') ? 'openproject_hm' : 'openproject'),
             'username'  => env('DB_USERNAME', App::environment('local', 'staging') ? 'openproject_hm' : 'openproject'),
             'password'  => env('DB_PASSWORD', App::environment('local', 'staging') ? '102030' : '123'),
             'charset'   => 'utf8',
