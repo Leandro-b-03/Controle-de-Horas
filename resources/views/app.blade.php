@@ -75,14 +75,14 @@
               <li class="dropdown messages-menu">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                   <i class="fa fa-envelope-o"></i>
-                  <span class="label label-success message-count">4</span>
+                  <span class="label label-success message-count">0</span>
                 </a>
                 <ul class="dropdown-menu">
-                  <li class="header">You have 4 messages</li>
+                  <li class="header">Você tem 0 mensagens</li>
                   <li>
                     <!-- inner menu: contains the actual data -->
                     <ul class="menu">
-                      <li><!-- start message -->
+                      <!-- <li>< ! - - start message - - >
                         <a href="#">
                           <div class="pull-left">
                             <img src="{!! (Auth::user()->getEloquent() ? URL::to(Auth::user()->getEloquent()->photo) : '') !!}" class="img-circle" alt="User Image"/>
@@ -93,7 +93,7 @@
                           </h4>
                           <p>Why not buy a new awesome theme?</p>
                         </a>
-                      </li><!-- end message -->
+                      </li> --><!-- end message -->
                     </ul>
                   </li>
                   <li class="footer"><a href="#">{!! Lang::get('general.all-messages') !!}</a></li>
@@ -126,14 +126,14 @@
               <li class="dropdown tasks-menu">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                   <i class="fa fa-flag-o"></i>
-                  <span class="label label-danger tasks-count">9</span>
+                  <span class="label label-danger tasks-count">0</span>
                 </a>
                 <ul class="dropdown-menu">
-                  <li class="header">Você tem 0 Tarefas criticas</li>
+                  <li class="header">Você tem 0 Tarefas</li>
                   <li>
                     <!-- inner menu: contains the actual data -->
                     <ul class="menu">
-                      <li><!-- Task item -->
+                      <!-- <li><!-- Task item - -  >
                         <a href="#">
                           <h3>
                             Design some buttons
@@ -145,7 +145,7 @@
                             </div>
                           </div>
                         </a>
-                      </li><!-- end task item -->
+                      </li> --><!-- end task item -->
                     </ul>
                   </li>
                   <li class="footer">
