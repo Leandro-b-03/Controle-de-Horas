@@ -28,6 +28,7 @@ return [
     'email'                         => 'E-mail',
     'email-used'                    => 'E-mail j&aacute; utilizado',
     'cpf-used'                      => 'CPF j&aacute; utilizado',
+    'cpf-wrong'                     => 'CPF utilizado não é v&aacute;lido',
     'success'                       => 'Sucesso',
     'status'                        => 'Status',
     'fail'                          => 'Falha',
@@ -49,7 +50,7 @@ return [
     'add'                           => 'Adicionar',
     'add-icon'                      => '<i class="fa fa-plus"></i> Adicionar',
     'char_left'                     => 'caract&eacute;res restantes',
-    'info'                          => 'Informação',
+    'info'                          => 'Informa&ccedil;ão',
     'total'                         => 'Total',
 
     // Menu & Controller
@@ -65,9 +66,11 @@ return [
     'users'                         => 'Colaboradores',
     'users-list'                    => 'Lista de colaboradores',
     'group-permissions'             => 'Permiss&otilde;es de grupo',
-    'lockscreen'                    => 'Hor&aacute;rio de almoço',
+    'lockscreen'                    => 'Hor&aacute;rio de almo&ccedil;o',
     'import'                        => 'Importar',
+    'system'                        => 'Sistema',
     'register'                      => 'Registrar',
+    'settings'                      => 'Configura&ccedil;&otilde;es',
     'DashboardController'           => 'Dashboard',
     'TaskController'                => 'Tarefas',
     'ProjectController'             => 'Projetos',
@@ -79,8 +82,9 @@ return [
     'UserController'                => 'Colaboradores',
     'GroupPermissionController'     => 'Permiss&otilde;es de grupo',
     'MessagesController'            => 'Mensagens',
-    'LockscreenController'          => 'Hor&aacute;rio de almoço',
+    'LockscreenController'          => 'Hor&aacute;rio de almo&ccedil;o',
     'DataImportController'          => 'Importar',
+    'SettingsController'            => 'Configura&ccedil;&otilde;es',
 
     // Data Tables
     'dataTable-processing'          => 'Carregando...',
@@ -127,15 +131,15 @@ return [
     'failed-password'               => 'Senhas não coecidem',
     'failed-fields'                 => 'Campos com valores errados e/ou inv&aacute;lidos',
     'failed-notification'           => 'Usu&aacute;rio n&atilde;o recebeu a notifica&ccedil;&atilde;o',
-    'error'                         => 'Houve um erro ao processar a requisição',
+    'error'                         => 'Houve um erro ao processar a requisi&ccedil;ão',
 
     // Sentences with variable :string
     'member-since'                  => 'Membro desde :month-year',
     'navbar-message'                => '{0}Voc&ecirc; não possui mensagens|{1}Voc&ecirc; tem :count mensagens|[2,Inf]Voc&ecirc; tem :count mensagens',
-    'navbar-notification'           => '{0}Voc&ecirc; não possui notificações|{1}Voc&ecirc; tem :count notifica&ccedil;&atilde;o|[2,Inf]Voc&ecirc; tem :count notificações',
+    'navbar-notification'           => '{0}Voc&ecirc; não possui notifica&ccedil;&atilde;es|{1}Voc&ecirc; tem :count notifica&ccedil;&atilde;o|[2,Inf]Voc&ecirc; tem :count notifica&ccedil;&atilde;es',
     'navbar-tasks'                  => '{0}Voc&ecirc; não possui tarefas|{1}Voc&ecirc; tem :count notifica&ccedil;&atilde;o|[2,Inf]Voc&ecirc; tem :count tarefas',
     'all-messages'                  => 'Ver todas as mensagens',
-    'all-notifications'             => 'Ver todas notificações',
+    'all-notifications'             => 'Ver todas notifica&ccedil;&atilde;es',
     'all-tasks'                     => 'Ver todas as tarefas',
     'copyright'                     => '<b>Copyright &copy; ' . date('Y') . ' <a target="_blank" href="http://www.svlabs.com.br" class="text-black">SVLabs</a></b>. Todos os direitos reservados',
 

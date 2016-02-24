@@ -112,6 +112,12 @@ class GeneralController extends Controller {
         return response()->json($response);
     }
 
+    /**
+     *
+     * Verify the CPF
+     * $request Request
+     * return $response json
+     */
     public function verifyCPFJSON(Request $request)
     {
         // Get the data receive from ajax.
@@ -120,20 +126,76 @@ class GeneralController extends Controller {
         // Get user by e-mail
         $user = User::where('cpf', $inputs['cpf'])->get();
 
+        // Let only numbers in the cpf
+        $cpf = preg_replace('/\D/', '', $inputs['cpf']);
+
         $response = [];
-        
-        if ($user->count() > 0) {
+
+        if (strlen($cpf) != 11) {
             $response = array(
                 'valid' => false,
-                'message' => Lang::get('general.cpf-used')
+                'message' => Lang::get('general.cpf-wrong')
+            );
+        } else if ($cpf == '00000000000' || $cpf == '11111111111' || $cpf == '22222222222' ||
+                   $cpf == '33333333333' || $cpf == '44444444444' || $cpf == '55555555555' ||
+                   $cpf == '66666666666' || $cpf == '77777777777' || $cpf == '88888888888' ||
+                   $cpf == '99999999999') {
+            $response = array(
+                'valid' => false,
+                'message' => Lang::get('general.cpf-wrong')
             );
         } else {
-            $response = array(
-                'valid' => true
-            );
+            $digitos = substr($cpf, 0, 9);
+            $new_cpf = $this->calcCPF($digitos);
+        
+            $new_cpf = $this->calcCPF($new_cpf, 11);
+            
+            if ( $new_cpf !== $cpf ) {
+                $response = array(
+                    'valid' => false,
+                    'message' => Lang::get('general.cpf-wrong')
+                );
+            } else if ($user->count() > 0) {
+                $response = array(
+                    'valid' => false,
+                    'message' => Lang::get('general.cpf-used')
+                );
+            } else {
+                $response = array(
+                    'valid' => true
+                );
+            }
         }
 
         return response()->json($response);
+    }
+
+    /**
+     * Multiply digits times positions
+     *
+     * @param string $digits
+     * @param int $positions
+     * @param int $sum_digits
+     * @return int
+     */
+    public function calcCPF( $digits, $positions = 10, $sum_digits = 0 )
+    {
+        for ( $i = 0; $i < strlen( $digits ); $i++  ) {
+            $sum_digits += ( $digits[$i] * $positions );
+            $positions--;
+        }
+
+        $sum_digits = $sum_digits % 11;
+ 
+        if ( $sum_digits < 2 ) {
+            $sum_digits = 0;
+        } else {
+            $sum_digits = 11 - $sum_digits;
+        }
+
+        $cpf = $digits . $sum_digits;
+
+        return $cpf;
     }
 
     /**

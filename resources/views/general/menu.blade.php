@@ -95,24 +95,24 @@
     </ul>
   </li>
   @endif
-  <!-- @if(Entrust::can(['UserController@index', 'TeamController@index', 'GroupPermissionController@index']))
-  <li class="treeview {!! ((Request::is('main/*') || Request::is('main')) || (Request::is('modules/*') || Request::is('modules')) || (Request::is('misc/*') || Request::is('misc')) ? 'active' : '') !!}">
+  @if(Entrust::can(['SettingsController@index', 'TeamController@index', 'GroupPermissionController@index']))
+  <li class="treeview {!! ((Request::is('settings/*') || Request::is('settings')) || (Request::is('modules/*') || Request::is('modules')) || (Request::is('misc/*') || Request::is('misc')) ? 'active' : '') !!}">
     <a href="#">
       <i class="fa fa-cog"></i> <span>{!! Lang::get('general.system') !!}</span>
       <i class="fa fa-angle-left pull-right"></i>
     </a>
     <ul class="treeview-menu">
-      @if(Entrust::can(['UserController@index']))
-      <li {!! ((Request::is('main/*') || Request::is('main')) ? 'class="active"' : '') !!}>
-        <a href="{!! URL::to('main') !!}"><i class="fa fa-server"></i> {!! Lang::get('general.main') !!}</a>
+      @if(Entrust::can(['SettingsController@index']))
+      <li {!! ((Request::is('settings/*') || Request::is('settings')) ? 'class="active"' : '') !!}>
+        <a href="{!! URL::to('settings') !!}"><i class="fa fa-server"></i> {!! Lang::get('general.settings') !!}</a>
       </li>
       @endif
-      @if(Entrust::can(['GroupPermissionController@index']))
+      @if(Entrust::can(['@index']))
       <li {!! ((Request::is('modules/*') || Request::is('modules')) ? 'class="active"' : '') !!}>
         <a href="{!! URL::to('modules') !!}"><i class="fa fa-bolt"></i> {!! Lang::get('general.modules') !!}</a>
       </li>
       @endif
-      @if(Entrust::can(['TeamController@index']))
+      @if(Entrust::can(['@index']))
       <li {!! ((Request::is('misc/*') || Request::is('misc')) ? 'class="active"' : '') !!}>
         <a href="#"><i class="fa fa-cloud"></i> {!! Lang::get('general.misc') !!} <i class="fa fa-angle-left pull-right"></i></a>
         <ul class="treeview-menu">
@@ -123,5 +123,5 @@
       @endif
     </ul>
   </li>
-  @endif -->
+  @endif
 </ul>

@@ -1,5 +1,6 @@
 <?php namespace App\Http\Middleware;
 
+use Log;
 use Closure;
 use Illuminate\Contracts\Auth\Guard;
 
@@ -32,6 +33,8 @@ class Authenticate {
 	 */
 	public function handle($request, Closure $next)
 	{
+		Log::info($request);
+		
 		if ($this->auth->guest())
 		{
 			if ($request->ajax())
@@ -40,7 +43,14 @@ class Authenticate {
 			}
 			else
 			{
-				return redirect()->guest('auth/login');
+				/**
+	             * This is to protect the entire app, except login form, 
+	             * to avoid loop
+	             */
+				Log::info($request);
+	            if ($request->path() != 'auth/login') {
+	                return redirect()->guest('auth/login');
+	            }
 			}
 		}
 

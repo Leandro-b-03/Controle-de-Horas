@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 
 use DB;
+use Log;
 use Lang;
 use App\User;
 use App\Role;
@@ -45,7 +46,6 @@ class UserController extends Controller
 
         // Get all Roles
         $roles = Role::all();
-
         $data['roles'] = $roles;
 
         // Return the user view.
@@ -210,6 +210,16 @@ class UserController extends Controller
         $inputs = $request->all();
 
         try {
+            $inputs['birthday'] = date('Y-m-d', strtotime(str_replace('/', '-', $inputs['birthday'])));
+
+            $fillable = $user->getFillable([]);
+
+            foreach($inputs as $input => $value) {
+                if ($user->{$input} || in_array($input, $fillable))
+                    if ($inputs != 'password')
+                        $user->{$input} = $value;
+            }
+
             // Attach role to the user
             $role = Role::find($inputs['role']);
             
@@ -217,35 +227,18 @@ class UserController extends Controller
             
             $user->attachRole($role);
 
-            $inputs['birthday'] = date('Y-m-d', strtotime(str_replace('/', '-', $inputs['birthday'])));
-            
-            // if ($inputs['password'] != ''){
-            //     if ($inputs['password'] == $inputs['password_confirmation']) {
-            //         $inputs['password'] = bcrypt($inputs['password']);
-            //     } else {
-            //         DB::rollback();
-            //         return redirect('users/' . $id . '/edit')->withInput()->with('return', GeneralController::createMessage('failed', Lang::get('general.' . $this->controller_name), 'password'));
-            //     }
-            // } else {
-            //     $inputs['password'] = 'n';
-            // }
-
-            $fillable = $user->getFillable([]);
-
-            foreach($inputs as $input => $value) {
-                if ($user->{$input} || in_array($input, $fillable))
-                    // if ($inputs != 'password' && $value != 'n')
-                    $user->{$input} = $value;
-            }
-
-            if ($user->save()) {
+            if ($user->saveOrFail()) {
                 DB::commit();
                 return redirect('users')->with('return', GeneralController::createMessage('success', Lang::get('general.' . $this->controller_name), 'update'));
             } else {
+                Log::error($user);
+
                 DB::rollback();
                 return redirect('users/' . $id . '/edit')->withInput()->with('return', GeneralController::createMessage('failed', Lang::get('general.' . $this->controller_name), 'update'));
             }
         } catch (Exception $e) {
+            Log::error($e);
+
             DB::rollback();
             return redirect('users/' . $id . '/edit')->withInput()->with('return', GeneralController::createMessage('failed', Lang::get('general.' . $this->controller_name), 'update'));
         }
