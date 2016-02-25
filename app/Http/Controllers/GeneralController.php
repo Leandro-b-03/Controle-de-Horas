@@ -314,7 +314,7 @@ class GeneralController extends Controller {
             $query->select(DB::raw(1))
                   ->from('work_packages AS wp2')
                   ->whereRaw('wp2.parent_id = wp1.id');
-        })->where('project_id', $project_id['id'])->get();
+        })->where('project_id', $project_id['id'])->where('status_id', '!=', 11)->get();
         
         return response()->json($tasks);
     }
