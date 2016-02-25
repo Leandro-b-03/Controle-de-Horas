@@ -468,11 +468,20 @@
         var _tasks = {};
 
         $('#projects').on('change', function() {
-          getCycle($(this).val())
+          console.log ($('#projects').val())
+          if ($('#projects').val() != '')
+            getCycle($(this).val())
+          else {
+            $('#tasks').prop( "disabled", true ).val($("#target option:first").val());
+            $('#tasks').find('option[value!=""]').remove();
+          }
         });
 
-        if ($('#projects').val() != '') {
+        if ($('#projects').val() != '' && $('#projects').val() != '-- Selecione --') {
           getCycle($('#projects').val());
+        } else {
+          $('#tasks').prop( "disabled", true ).val($("#target option:first").val());
+          $('#tasks').find('option[value!=""]').remove();
         }
 
         $('#tasks').on('change', function() {

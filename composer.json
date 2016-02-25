@@ -11,7 +11,7 @@
         "illuminate/html": "^5.0@dev",
         "raveren/kint": "^1.0@dev",
         "laravelcollective/html": "5.1.*",
-        "zizaco/entrust": "^1.5",
+        "zizaco/entrust": "dev-laravel-5",
         "vinkla/pusher": "~1.0",
         "guzzle/guzzle": "^3.9@dev",
         "barryvdh/laravel-debugbar": "^2.0@dev",
@@ -29,7 +29,8 @@
         "dsdevbe/ldap-connector": "3.*",
         "maatwebsite/excel": "^2.1",
         "symfony/dom-crawler": "2.7.*",
-        "orchestra/testbench": "3.1"
+        "orchestra/testbench": "3.1",
+        "intervention/image": "^2.3"
     },
     "require-dev": {
         "fzaninotto/faker": "~1.4",

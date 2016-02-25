@@ -128,6 +128,12 @@ Route::group(['middleware' => 'auth'], function () {
         Entrust::routeNeedsPermission('import/create', 'DataImportController@create');
         Entrust::routeNeedsPermission('import/*/edit', 'DataImportController@edit');
         Entrust::routeNeedsPermission('import/delete', 'DataImportController@delete');
+
+        Route::resource('settings', 'SettingsController');
+        Entrust::routeNeedsPermission('settings', 'SettingsController@index');
+        Entrust::routeNeedsPermission('settings/create', 'SettingsController@create');
+        Entrust::routeNeedsPermission('settings/*/edit', 'SettingsController@edit');
+        Entrust::routeNeedsPermission('settings/delete', 'SettingsController@delete');
     });
 
     Route::resource('users', 'UserController');

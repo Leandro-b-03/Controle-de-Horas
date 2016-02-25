@@ -93,7 +93,7 @@
                 </div>
                 <div class="form-group col-xs-4">
                   <label for="rg">{!! Lang::get('users.label-rg') !!}</label>
-                  <input type="rg" class="form-control input-mask" data-mask="99.999.999-*" name="rg" id="rg"  value="{!! (isset($data['user']) ? $data['user']->rg : (Request::old('rg') ? Request::old('rg') : '')) !!}" placeholder="{!! Lang::get('users.ph-rg') !!}" data-validation="custom" data-validation-regexp="^[0-9]{2}\.[0-9]{3}\.[0-9]{3}-[X0-9]$" data-validation-error-msg="{!! Lang::get('users.error-rg') !!}" required>
+                  <input type="rg" class="form-control input-mask" data-mask="99999999?**" name="rg" id="rg"  value="{!! (isset($data['user']) ? $data['user']->rg : (Request::old('rg') ? Request::old('rg') : '')) !!}" placeholder="{!! Lang::get('users.ph-rg') !!}" data-validation="custom" data-validation-error-msg="{!! Lang::get('users.error-rg') !!}" required>
                 </div>
                 <div class="form-group col-xs-4{!! Request::is('users/create') ? '' : ' has-success' !!}">
                   <label for="cpf">{!! Lang::get('users.label-cpf') !!}</label>
