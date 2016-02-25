@@ -398,7 +398,7 @@
           });
 
           if (redirect) {
-              window.location = "http://timesheet.localhost.com/lock";
+              window.location = "/lock";
           }
         }
 
