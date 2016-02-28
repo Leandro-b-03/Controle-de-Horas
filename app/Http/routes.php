@@ -143,6 +143,8 @@ Route::group(['middleware' => 'auth'], function () {
     //Entrust::routeNeedsPermission('users/delete', 'UserController@delete');
 });
 
+Route::get('{slug}', []);
+
 Route::group(['middleware' => 'guest'], function () {
     Redirect::to('/');
 });
