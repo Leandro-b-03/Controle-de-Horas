@@ -1,5 +1,7 @@
 <?php
 
+use Aws\Laravel\AwsServiceProvider;
+
 return [
 
     /*
@@ -14,11 +16,10 @@ return [
     | http://docs.aws.amazon.com/aws-sdk-php/v3/guide/guide/configuration.html
     |
     */
-    'credentials' => [
-        'key'    => env('AKIAIETXGEOQ6Y26M6SQ'),
-        'secret' => env('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'),
-    ],
-    'region' => env('AWS_REGION', 'us-west-2'),
-    'version' => 'latest',
 
+    'region' => env('AWS_REGION', 'us-east-1'),
+    'version' => 'latest',
+    'ua_append' => [
+        'L5MOD/' . AwsServiceProvider::VERSION,
+    ],
 ];

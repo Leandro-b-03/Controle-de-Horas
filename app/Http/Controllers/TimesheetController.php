@@ -224,6 +224,8 @@ class TimesheetController extends Controller
                 }
             } else if (isset($inputs['finish']) || isset($inputs['pause']) || isset($inputs['fail'])) {
                 $timesheet_task = TimesheetTask::where('timesheet_id', $workday->id)->where('end', '00:00:00')->get()->first();
+
+                $today = Carbon::now();
                 $timesheet_task->end = $today->toTimeString();
 
                 $seconds = '00';

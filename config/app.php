@@ -1,7 +1,4 @@
 <?php
-header('Content-Type: text/html; charset=utf-8');
-setlocale(LC_ALL, "pt_BR", "pt_BR.iso-8859-1", "pt_BR.utf-8", "portuguese");
-setlocale(LC_TIME, 'ptb', 'pt_BR', 'portuguese-brazil', 'bra', 'brazil', 'pt_BR.utf-8', 'pt_BR.iso-8859-1', 'br', 'portuguese');
 
 return [
 
@@ -171,6 +168,7 @@ return [
         /*
          * Custom Services Providers...
          */
+        Arcanedev\LogViewer\LogViewerServiceProvider::class,
         Collective\Html\HtmlServiceProvider::class,
         Cviebrock\EloquentSluggable\SluggableServiceProvider::class,
         Vinkla\Pusher\PusherServiceProvider::class,

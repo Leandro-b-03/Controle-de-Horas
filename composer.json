@@ -30,7 +30,8 @@
         "maatwebsite/excel": "^2.1",
         "symfony/dom-crawler": "2.7.*",
         "orchestra/testbench": "3.1",
-        "intervention/image": "^2.3"
+        "intervention/image": "^2.3",
+        "arcanedev/log-viewer": "^3.0"
     },
     "require-dev": {
         "fzaninotto/faker": "~1.4",
