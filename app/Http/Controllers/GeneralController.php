@@ -5,6 +5,7 @@ use URL;
 use Auth;
 use Lang;
 use Mail;
+// use Image;
 use App\User;
 use App\Team;
 use App\Task;
@@ -22,6 +23,7 @@ use App\ProposalVersion;
 use App\UserLocalization;
 use App\UserNotification;
 use Illuminate\Http\Request;
+use Intervention\Image\Facades\Image as Image;
 
 class GeneralController extends Controller {
 
@@ -386,8 +388,10 @@ class GeneralController extends Controller {
      */
     public function saveLocalization(Request $request)
     {
+        // Get all the inputs
         $inputs = $request->all();
 
+        // Get if the actual user position on the database
         $localization = UserLocalization::where('user_id', Auth::user()->id)->orderBy('created_at', 'desc')->get()->first();
 
         $data = [];
@@ -414,6 +418,50 @@ class GeneralController extends Controller {
         }
 
         return response()->json($data);
+    }
+
+
+    /**
+     * Save the user photos
+     *
+     * @return string iwht an image
+     */
+    public function saveImages(Request $request) {
+        // Get all the inputs
+        $inputs = $request->all();
+
+        $destinationPath = public_path() . '/images/avatar/upload/';
+
+        $file = str_replace('data:image/png;base64,', '', $inputs['image']);
+        $img = str_replace(' ', '+', $file);
+        $data = base64_decode($img);
+        $filename = date('ymdhis') . '_croppedImage' . ".png";
+
+        $returnData = '/images/avatar/upload/normal/' . $filename;
+        $file = $destinationPath . 'normal/' . $filename;
+
+        // Save photo normal
+        $success = file_put_contents($file, $data);
+
+        $image = Image::make($returnData);
+
+        // Save photo 500x500
+        $image500x500 = $image->resize(500, 500)->save($destinationPath . '500x500/' . $filename);
+
+        // Save photo 240x240
+        $image240x240 = $image->resize(240, 240)->save($destinationPath . '240x240/' . $filename);
+
+        // Save photo 100x100
+        $image100x100 = $image->resize(100, 100)->save($destinationPath . '100x100/' . $filename);
+
+        if ($image500x500)
+            return $image500x500;
+        else {
+            return array(
+                'valid' => false,
+                'message' => Lang::get('general.cpf-wrong')
+            );
+        }
     }
 
     /* Statics Functions */
