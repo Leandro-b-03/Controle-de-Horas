@@ -17,9 +17,9 @@ class TimesheetTasksTable extends Migration
             $table->integer('timesheet_id')->unsigned();
             $table->integer('project_id');
             $table->integer('work_package_id');
-            $table->decimal('hours', 2, 2);
-            $table->time('start');
-            $table->time('end');
+            $table->string('hours')->default('00:00:00');
+            $table->time('start')->default('00:00:00');
+            $table->time('end')->default('00:00:00');
             $table->timestamps();
 
             $table->foreign('timesheet_id')->references('id')->on('timesheets')->onUpdate('cascade')->onDelete('cascade');

@@ -136,16 +136,79 @@ if (navigator.geolocation) {
   console.log('Geolocation is not supported for this Browser/OS version yet.');
 }
 
-function responsive_filemanager_callback(field_id){
+function responsive_filemanager_callback(field_id) {
   var url = $('#'+field_id).val();
   var url_web = location.origin;
-  $('#'+field_id).val(url.replace(url_web, ''));
 
   if ($('#file-name').length > 0) {
+    $('#'+field_id).val(url.replace(url_web, ''));
+
     $('#file-name').val(url.replace(url_web, ''));
   }
   
-  $('#image').attr('src', url.replace('../', '/'));
+  if (field_id == 'photo') {
+    $('#crop-image').attr('src', url.replace('../', '/'));
+    setTimeout(function() {
+      $('#md-crop').modal('show');
+
+      cropStart($('#crop-image'));
+    }, 1000);
+    // $('#image').attr('src', url.replace('../', '/'));
+  }
+}
+
+// function to start the crop
+function cropStart(image) {
+  setTimeout(function() {
+    image.cropper({
+      aspectRatio: 1,
+      preview: '.avatar-preview',
+      crop: function (e) {
+        var json = [
+          '{"x":' + e.x,
+          '"y":' + e.y,
+          '"height":' + e.height,
+          '"width":' + e.width,
+          '"rotate":' + e.rotate + '}'
+        ].join();
+      },
+      dragend: function(data) {
+        originalData = image.cropper("getCroppedCanvas");
+        console.log(originalData.toDataURL());
+      }
+    });
+  }, 100);
+
+  $('.avatar-btns button').each(function () {
+    console.log($(this));
+    $(this).click(function (e) {
+        data = $(e.target).data();
+        image.cropper(data.method, data.option);
+    });
+  }).tooltip({
+    placement: 'bottom'
+  });
+
+  $('.avatar-save').click(function() {
+    var data = {};
+    originalData = image.cropper("getCroppedCanvas");
+    data.image = originalData.toDataURL();
+
+    console.log(data);
+
+    $.ajax({
+      url: '/general/saveImages',
+      data: data,
+      type: "POST",
+      success: function(data) {
+        var lunch = data;
+
+        console.log(data);
+                
+        $('#image').attr('src', data);
+      }
+    });
+  });
 }
 
 //subscribe to our private channel

@@ -53,7 +53,7 @@ Route::group(['middleware' => 'auth'], function () {
         Route::get('general/saveSettings', 'GeneralController@saveSettings');
 
         Route::get('general/saveLocalization', 'GeneralController@saveLocalization');
-        
+            
         Route::get('general/getTasks', 'GeneralController@getTasks');
 
         Route::get('general/getTasksDay', 'GeneralController@getTasksDay');
@@ -65,6 +65,8 @@ Route::group(['middleware' => 'auth'], function () {
         Route::post('general/verifyEmailJSON', 'GeneralController@verifyEmailJSON');
 
         Route::post('general/verifyCPFJSON', 'GeneralController@verifyCPFJSON');
+        
+        Route::post('general/saveImages', 'GeneralController@saveImages');
         
         Route::get('register', function() {
             if (\Auth::user()->getEloquent() == null)
@@ -142,8 +144,6 @@ Route::group(['middleware' => 'auth'], function () {
     //Entrust::routeNeedsPermission('users/*/edit', 'UserController@edit');
     //Entrust::routeNeedsPermission('users/delete', 'UserController@delete');
 });
-
-Route::get('{slug}', []);
 
 Route::group(['middleware' => 'guest'], function () {
     Redirect::to('/');

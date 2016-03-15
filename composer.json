@@ -1,12 +1,13 @@
 {
-    "name": "laravel/laravel",
-    "description": "The Laravel Framework.",
-    "keywords": ["framework", "laravel"],
+    "name": "Leandro-b-03/Controle-de-Horas",
+    "description": "The timesheet do all",
+    "keywords": ["timesheet", "laravel"],
     "license": "MIT",
     "type": "project",
     "require": {
         "php": ">=5.5.9",
         "laravel/framework": "5.1.*",
+        "intervention/image": "^2.3",
         "laravel/elixir": "^1.0@dev",
         "illuminate/html": "^5.0@dev",
         "raveren/kint": "^1.0@dev",
@@ -30,8 +31,7 @@
         "maatwebsite/excel": "^2.1",
         "symfony/dom-crawler": "2.7.*",
         "orchestra/testbench": "3.1",
-        "intervention/image": "^2.3",
-        "arcanedev/log-viewer": "^3.0"
+        "arcanedev/log-viewer": "^3.7"
     },
     "require-dev": {
         "fzaninotto/faker": "~1.4",
