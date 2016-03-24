@@ -616,20 +616,36 @@ class TimesheetController extends Controller
      */
     public function notify($inputs, $project_id)
     {
-        // Get the responsible for the project
-        $project = Project::findOrFail($project_id);
+        try {
+            // Get the responsible for the project
+            $project = Project::findOrFail($project_id);
 
-        // Get the op user
-        $user_open_project = UserOpenProject::findOrFail($project->responsible_id);
+            // Get the op user
+            $user_open_project = UserOpenProject::findOrFail($project->responsible_id);
 
-        // Get the user in the ts
-        $user = User::where('email', $user_open_project->mail)->get()->first();
+            // Get the user in the ts
+            $user = User::where('email', $user_open_project->mail)->get()->first();
 
-        if ($project->responsible_id && $user) {
+            if ($project->responsible_id && $user) {
+                $notification = array(
+                    'user_id' => $user->id,
+                    'faicon'  => isset($inputs['start']) ? 'play-circle' : 'check-circle',
+                    'message' => isset($inputs['start']) ? 
+                        Lang::get('timesheets.tasks-start', ['name' => Auth::user()->firstname . ' ' . Auth::user()->lastname]) :
+                        isset($inputs['finish']) || isset($inputs['pause']) || isset($inputs['fail']) ?
+                        Lang::get('timesheets.tasks-done_1', ['name' => Auth::user()->firstname . ' ' . Auth::user()->lastname]) :
+                        Lang::get('timesheets.tasks-done_2', ['name' => Auth::user()->firstname . ' ' . Auth::user()->lastname, 'ok' => $inputs['ok'],
+                            'nok' => $inputs['nok'], 'impacted' => $inputs['impacted'], 'cancelled' => $inputs['cancelled']])
+
+                );
+
+                GeneralController::createNotification($user->id, $notification);
+            } 
+        } catch (Exception $e) {
             $notification = array(
                 'user_id' => $user->id,
-                'faicon'  => isset($inputs['start']) ? 'play-circle' : 'check-circle',
-                'message' => isset($inputs['start']) ? 
+                'faicon'  => 'error',
+                'message' => 'Erro ao enviar a notificação' ? 
                     Lang::get('timesheets.tasks-start', ['name' => Auth::user()->firstname . ' ' . Auth::user()->lastname]) :
                     isset($inputs['finish']) || isset($inputs['pause']) || isset($inputs['fail']) ?
                     Lang::get('timesheets.tasks-done_1', ['name' => Auth::user()->firstname . ' ' . Auth::user()->lastname]) :
