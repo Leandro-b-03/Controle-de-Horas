@@ -38,6 +38,8 @@ return [
     'away'                          => 'Ausente',
     'busy'                          => 'Ocupado',
     'page'                          => 'P&aacute;gina',
+    'open'                          => 'Abrir',
+    'close'                         => 'Fechar',
     'save'                          => 'Salvar',
     'back'                          => 'Voltar',
     'back-icon'                     => '<i class="fa fa-remove"></i> Voltar',

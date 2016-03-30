@@ -61,7 +61,7 @@ class GroupPermissionController extends Controller
             $role->display_name = $input['display_name']; // optional
             $role->description  = $input['description']; // optional
             
-            if ($role->save() == null) {
+            if ($role->save()) {
                 $permissions = array();
                 foreach ($input['permission'] as $controller => $permission_controller) {
                     foreach ($permission_controller as $permission => $on) {
@@ -183,7 +183,7 @@ class GroupPermissionController extends Controller
 
             $role->detachPermissions($all_permissions);
             
-            if ($role->save() == null) {
+            if ($role->save()) {
                 $permissions = array();
                 foreach ($input['permission'] as $controller => $permission_controller) {
                     foreach ($permission_controller as $permission => $on) {
@@ -236,17 +236,17 @@ class GroupPermissionController extends Controller
                         return redirect('group-permissions')->with('return', GeneralController::createMessage('success', Lang::get('general.' . $this->controller_name), 'update'));
                     } else {
                         DB::rollback();
-            die(d(1));
+                        die(d(1));
                         return redirect('group-permissions/' . $id .'/edit')->withInput()->with('return', GeneralController::createMessage('failed', Lang::get('general.' . $this->controller_name), 'update'));
                     }
                 } catch (Exception $e) {
                     DB::rollback();
-            die(d(2));
+                     die(d(2));
                     return redirect('group-permissions/' . $id .'/edit')->withInput()->with('return', GeneralController::createMessage('failed', Lang::get('general.' . $this->controller_name), 'update-failed'));
                 }
             } else {
                 DB::rollback();
-            die(d(3));
+                 die(d(3));
                 return redirect('group-permissions/' . $id .'/edit')->withInput()->with('return', GeneralController::createMessage('failed', Lang::get('general.' . $this->controller_name), 'update-failed'));
             }
         } catch (Exception $e) {

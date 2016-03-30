@@ -539,3 +539,46 @@ table thead tr th.start, table thead tr th.end {
   filter: alpha(opacity=75);
   z-index: 20140628;
 }
+
+#notification-panel {
+	width: 100%;
+	min-height: 400px;
+}
+
+#notification-panel ul {
+	border-right: thin solid #f4f4f4;
+	padding: 0px;
+	/*max-height: 400px;*/
+	/*overflow-y: scroll;*/
+}
+
+#notification-panel .notification-inverse {
+	overflow: hidden;
+    width: auto;
+}
+
+#notification-panel ul li {
+	list-style-type: none;
+	padding: 0px;
+	font-size: 14px;
+	box-sizing: border-box;
+}
+
+#notification-panel ul li a {
+	display: block;
+	white-space: nowrap;
+	border-bottom: 1px solid #f4f4f4 !important;
+	color: #444444 !important;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	padding: 10px;
+}
+
+#notification-panel ul li:last-child a {
+	border-bottom: none!important;
+}
+
+#notification-panel ul li a:hover {
+    background: #f4f4f4;
+    text-decoration: none;
+}

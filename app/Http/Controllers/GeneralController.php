@@ -1,4 +1,10 @@
-<?php namespace App\Http\Controllers;
+<?php
+
+namespace App\Http\Controllers;
+
+setlocale(LC_TIME, "Portuguese");
+setlocale(LC_TIME, "Brazil");
+setlocale(LC_TIME, 'ptb', 'pt_BR', 'portuguese-brazil', 'bra', 'brazil', 'pt_BR.utf-8', 'pt_BR.iso-8859-1', 'br', 'portuguese');
 
 use DB;
 use URL;
@@ -340,6 +346,23 @@ class GeneralController extends Controller {
         $data['tasks'] = $tasks;
 
         return view('general.timeline')->with('data', $data);
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  int  $request
+     * @
+     */
+    public function getAllNotifications(Request $request) {
+        // Get all the inputs
+        $inputs = $request->all();
+
+        // Get all the task on that day or the day
+        $notifications = UserNotification::where('user_id', Auth::user()->id)->orderBy('created_at', 'desc')->get();
+        $data['notifications'] = $notifications;
+
+        return view('general.notification')->with('data', $data);
     }
 
     /**

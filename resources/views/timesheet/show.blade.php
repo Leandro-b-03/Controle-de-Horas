@@ -181,6 +181,7 @@
       $('.tasks-day').click(function() {
         var data = {};
         data.id = $(this).data('id');
+        $('#timeline').html('');
 
         $.ajax({
           url: '/general/getTasksDay',
