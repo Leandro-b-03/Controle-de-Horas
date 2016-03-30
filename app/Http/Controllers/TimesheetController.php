@@ -651,8 +651,6 @@ class TimesheetController extends Controller
 
                 );
 
-                d($notification);
-
                 GeneralController::createNotification($user->id, $notification);
             } 
         } catch (Exception $e) {
