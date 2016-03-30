@@ -314,3 +314,18 @@ titleCounter(false);
     debug: false
   });
 });*/
+
+$('#notification').click(function() {
+  var data = {};
+  $('#notify-content').html('');
+
+  $.ajax({
+    url: '/general/getAllNotifications',
+    data: data,
+    type: "GET",
+    success: function(data) {
+      $('#notify-content').html('');
+      $('#notify-content').html($(data));
+    }
+  });
+});

@@ -58,6 +58,8 @@ Route::group(['middleware' => 'auth'], function () {
 
         Route::get('general/getTasksDay', 'GeneralController@getTasksDay');
 
+        Route::get('general/getAllNotifications', 'GeneralController@getAllNotifications');
+
         Route::post('pusher/auth', 'PusherController@auth');
 
         Route::post('pusher/chat', 'PusherController@chat');
