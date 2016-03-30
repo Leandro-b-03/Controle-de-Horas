@@ -463,19 +463,23 @@ class GeneralController extends Controller {
         $returnData = '/images/avatar/upload/normal/' . $filename;
         $file = $destinationPath . 'normal/' . $filename;
 
+        if (!is_dir($destinationPath)) {
+            $result = File::makeDirectory($destinationPath, 0775, true);
+        }
+
         // Save photo normal
         $success = file_put_contents($file, $data);
 
         $image = Image::make($returnData);
 
         // Save photo 500x500
-        $image500x500 = $image->resize(500, 500)->save($destinationPath . '500x500/' . $filename);
+        $image500x500 = Image::make($returnData)->resize(500, 500)->save($destinationPath . '500x500/' . $filename);
 
         // Save photo 240x240
-        $image240x240 = $image->resize(240, 240)->save($destinationPath . '240x240/' . $filename);
+        $image240x240 = Image::make($returnData)->resize(240, 240)->save($destinationPath . '240x240/' . $filename);
 
         // Save photo 100x100
-        $image100x100 = $image->resize(100, 100)->save($destinationPath . '100x100/' . $filename);
+        $image100x100 = Image::make($returnData)->resize(100, 100)->save($destinationPath . '100x100/' . $filename);
 
         if ($image500x500)
             return $image500x500;

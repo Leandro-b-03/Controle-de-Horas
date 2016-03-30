@@ -13,7 +13,7 @@ return [
      |  Supported locales :
      |    'auto', 'ar', 'de', 'en', 'es', 'fr', 'hy', 'it', 'nl', 'pl', 'pt-BR', 'ro', 'ru', 'sv', 'tr', 'zh-TW', 'zh'
      */
-    'locale'        => 'pt-BR',
+    'locale'        => 'auto',
 
     /* ------------------------------------------------------------------------------------------------
      |  Route settings
