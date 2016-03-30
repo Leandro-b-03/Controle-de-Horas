@@ -191,6 +191,7 @@ return [
          * Automation Services Providers...
          */
         Orangehill\Iseed\IseedServiceProvider::class,
+        // L5Swagger\L5SwaggerServiceProvider::class,
 
         /*
          * My Services Providers...

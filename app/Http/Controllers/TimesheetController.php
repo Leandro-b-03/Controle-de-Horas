@@ -621,7 +621,7 @@ class TimesheetController extends Controller
             $project = Project::findOrFail($project_id);
 
             // Get the op user
-            $user_open_project = UserOpenProject::findOrFail($project->responsible_id);
+            $user_open_project = UserOpenProject::find($project->responsible_id);
 
             // Get the user in the ts
             $user = User::where('email', $user_open_project->mail)->get()->first();
@@ -629,21 +629,21 @@ class TimesheetController extends Controller
             Log::info($user_open_project);
             Log::info($user);
 
-            $message = '';
+            if ($project->responsible_id && $user) {
+                $message = '';
 
-            if (isset($inputs['start'])) {
-                $message = Lang::get('timesheets.tasks-start', ['name' => Auth::user()->first_name . ' ' . Auth::user()->last_name]);
-            } else {
-                if (isset($inputs['finish']) || isset($inputs['pause']) || isset($inputs['fail'])) {
-                    if ($inputs['ok'] == null && $inputs['ok'] == '' && !isset($inputs['ok'])) {
-                        $message = Lang::get('timesheets.tasks-done_1', ['name' => Auth::user()->first_name . ' ' . Auth::user()->last_name]);
-                    } else {
-                        $message = Lang::get('timesheets.tasks-done_2', ['name' => Auth::user()->first_name . ' ' . Auth::user()->last_name, 'ok' => $inputs['ok'], 'nok' => $inputs['nok'], 'impacted' => $inputs['impacted'], 'cancelled' => $inputs['cancelled']]);
+                if (isset($inputs['start'])) {
+                    $message = Lang::get('timesheets.tasks-start', ['name' => Auth::user()->first_name . ' ' . Auth::user()->last_name]);
+                } else {
+                    if (isset($inputs['finish']) || isset($inputs['pause']) || isset($inputs['fail'])) {
+                        if (!isset($inputs['ok'])) {
+                            $message = Lang::get('timesheets.tasks-done_1', ['name' => Auth::user()->first_name . ' ' . Auth::user()->last_name]);
+                        } else {
+                            $message = Lang::get('timesheets.tasks-done_2', ['name' => Auth::user()->first_name . ' ' . Auth::user()->last_name, 'ok' => $inputs['ok'], 'nok' => $inputs['nok'], 'impacted' => $inputs['impacted'], 'cancelled' => $inputs['cancelled']]);
+                        }
                     }
                 }
-            }
 
-            if ($project->responsible_id && $user) {
                 $notification = array(
                     'user_id' => $user->id,
                     'faicon'  => isset($inputs['start']) ? 'play-circle' : 'check-circle',
@@ -651,10 +651,17 @@ class TimesheetController extends Controller
 
                 );
 
-                d($notification);
-
                 GeneralController::createNotification($user->id, $notification);
-            } 
+            } else {
+                $notification = array(
+                    'user_id' => Auth::user()->id,
+                    'faicon'  => 'error',
+                    'message' => 'Erro ao enviar a notificação'
+
+                );
+
+                GeneralController::createNotification(Auth::user()->id, $notification);
+            }
         } catch (Exception $e) {
             $notification = array(
                 'user_id' => Auth::user()->id,
