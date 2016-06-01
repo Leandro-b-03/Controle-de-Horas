@@ -126,11 +126,6 @@ return [
     'providers' => [
 
         /*
-         * Development Service Providers...
-         */
-        Barryvdh\Debugbar\ServiceProvider::class,
-
-        /*
          * Laravel Framework Service Providers...
          */
         Illuminate\Foundation\Providers\ArtisanServiceProvider::class,
@@ -166,9 +161,15 @@ return [
         App\Providers\RouteServiceProvider::class,
 
         /*
-         * Custom Services Providers...
+         * Development Service Providers...
          */
         Arcanedev\LogViewer\LogViewerServiceProvider::class,
+        Arcanedev\LogViewer\LogViewerServiceProvider::class,
+        // Barryvdh\Debugbar\ServiceProvider::class,
+
+        /*
+         * Custom Services Providers...
+         */
         Collective\Html\HtmlServiceProvider::class,
         Cviebrock\EloquentSluggable\SluggableServiceProvider::class,
         Vinkla\Pusher\PusherServiceProvider::class,
