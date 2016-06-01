@@ -66,7 +66,7 @@ $config = array(
 	| with start and final /
 	|
 	*/
-	'upload_dir' => '../uploads/users/photos/',
+	'upload_dir' => '../uploads/users/',
 
 	/*
 	|--------------------------------------------------------------------------
@@ -76,7 +76,7 @@ $config = array(
 	| with final /
 	|
 	*/
-	'current_path' => '../uploads/users/photos/',
+	'current_path' => '../uploads/users/',
 
 	/*
 	|--------------------------------------------------------------------------
@@ -151,6 +151,8 @@ $config = array(
 	'convert_spaces'                          => false,
 	//convert all spaces on files name and folders name this value
 	'replace_with'                            => "_",
+	//convert to lowercase the files and folders name
+	'lower_case'                              => false,
 
 	// -1: There is no lazy loading at all, 0: Always lazy-load images, 0+: The minimum number of the files in a directory
 	// when lazy loading should be turned on.
@@ -259,7 +261,10 @@ $config = array(
 	 *******************/
 	'aviary_active'                           => true,
 	'aviary_apiKey'                           => "f109e8bea3306aac",
-	'aviary_secret'                           => "ed96dc8705b250a6",
+	'aviary_language'                         => "pt_BR",
+	'aviary_theme'                            => "light",
+	'aviary_tools'                            => "all",
+	'aviary_maxSize'                          => "1400",
 	// Add or modify the Aviary options below as needed - they will be json encoded when added to the configuration so arrays can be utilized as needed
 
 	//The filter and sorter are managed through both javascript and php scripts because if you have a lot of
@@ -278,7 +283,7 @@ $config = array(
 	/*******************
 	 * JAVA upload
 	 *******************/
-	'java_upload'                             => true,
+	'java_upload'                             => false,
 	'JAVAMaxSizeUpload'                       => 200, //Gb
 
 
@@ -316,9 +321,9 @@ $config = array(
 	// The image creation path is always relative so if i'm inside source/test/test1 and I upload an image, the path start from here
 	//
 	'relative_image_creation'                 => false, //activate or not the creation of one or more image resized with relative path from upload folder
-	'relative_path_from_current_pos'          => array( 'thumb/', 'thumb/' ), //relative path of the image folder from the current position on upload folder
-	'relative_image_creation_name_to_prepend' => array( '', 'test_' ), //name to prepend on filename
-	'relative_image_creation_name_to_append'  => array( '_test', '' ), //name to append on filename
+	'relative_path_from_current_pos'          => array( './', './' ), //relative path of the image folder from the current position on upload folder
+	'relative_image_creation_name_to_prepend' => array( '', '' ), //name to prepend on filename
+	'relative_image_creation_name_to_append'  => array( '_thumb', '_thumb1' ), //name to append on filename
 	'relative_image_creation_width'           => array( 300, 400 ), //width of image (you can leave empty if you set height)
 	'relative_image_creation_height'          => array( 200, '' ), //height of image (you can leave empty if you set width)
 	/*
@@ -351,10 +356,10 @@ return array_merge(
 		// For a list of options see: https://developers.aviary.com/docs/web/setup-guide#constructor-config
 		'aviary_defaults_config' => array(
 			'apiKey'     => $config['aviary_apiKey'],
-			'apiVersion' => 3,
-			'language'   => 'en',
-			'theme'      => 'light',
-			'tools'      => 'all'
+			'language'   => $config['aviary_language'],
+			'theme'      => $config['aviary_theme'],
+			'tools'      => $config['aviary_tools'],
+			'maxSize'    => $config['aviary_maxSize']
 		),
 	)
 );

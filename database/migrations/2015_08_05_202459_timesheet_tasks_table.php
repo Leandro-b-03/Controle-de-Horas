@@ -15,14 +15,14 @@ class TimesheetTasksTable extends Migration
         Schema::create('timesheets_tasks', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('timesheet_id')->unsigned();
-            $table->integer('project_time_task_id')->unsigned();
-            $table->decimal('hours', 2, 2);
-            $table->time('start');
-            $table->time('end');
+            $table->integer('project_id');
+            $table->integer('work_package_id');
+            $table->string('hours')->default('00:00:00');
+            $table->time('start')->default('00:00:00');
+            $table->time('end')->default('00:00:00');
             $table->timestamps();
 
             $table->foreign('timesheet_id')->references('id')->on('timesheets')->onUpdate('cascade')->onDelete('cascade');
-            $table->foreign('project_time_task_id')->references('id')->on('projects_times_tasks')->onUpdate('cascade')->onDelete('cascade');
         });
     }
 

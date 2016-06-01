@@ -17,6 +17,7 @@ class CreateProjectsTable extends Migration
             $table->integer('user_id')->unsigned();
             $table->integer('proposal_id')->unsigned();
             $table->string('name');
+            $table->string('name_complement');
             $table->decimal('budget', 9, 2);
             $table->integer('schedule_time');
             $table->string('description');

@@ -28,7 +28,9 @@ return [
     'email'                         => 'E-mail',
     'email-used'                    => 'E-mail j&aacute; utilizado',
     'cpf-used'                      => 'CPF j&aacute; utilizado',
+    'cpf-wrong'                     => 'CPF utilizado não é v&aacute;lido',
     'success'                       => 'Sucesso',
+    'status'                        => 'Status',
     'fail'                          => 'Falha',
     'failed'                        => 'Falhou',
     'online'                        => 'Online',
@@ -36,6 +38,8 @@ return [
     'away'                          => 'Ausente',
     'busy'                          => 'Ocupado',
     'page'                          => 'P&aacute;gina',
+    'open'                          => 'Abrir',
+    'close'                         => 'Fechar',
     'save'                          => 'Salvar',
     'back'                          => 'Voltar',
     'back-icon'                     => '<i class="fa fa-remove"></i> Voltar',
@@ -48,6 +52,8 @@ return [
     'add'                           => 'Adicionar',
     'add-icon'                      => '<i class="fa fa-plus"></i> Adicionar',
     'char_left'                     => 'caract&eacute;res restantes',
+    'info'                          => 'Informa&ccedil;ão',
+    'total'                         => 'Total',
 
     // Menu & Controller
     'nav-menu'                      => 'Menu de navega&ccedil;&atilde;o',
@@ -57,23 +63,30 @@ return [
     'proposals'                     => 'Propostas',
     'timesheets'                    => 'Timesheets',
     'clients'                       => 'Clientes',
-    'client-groups'                 => 'Cliente Segmentos',
+    'client-groups'                 => 'Segmento de clientes',
     'teams'                         => 'Equipes',
     'users'                         => 'Colaboradores',
     'users-list'                    => 'Lista de colaboradores',
     'group-permissions'             => 'Permiss&otilde;es de grupo',
+    'lockscreen'                    => 'Hor&aacute;rio de almo&ccedil;o',
+    'import'                        => 'Importar',
+    'system'                        => 'Sistema',
+    'register'                      => 'Registrar',
+    'settings'                      => 'Configura&ccedil;&otilde;es',
     'DashboardController'           => 'Dashboard',
     'TaskController'                => 'Tarefas',
     'ProjectController'             => 'Projetos',
     'ProposalController'            => 'Propostas',
     'TimesheetController'           => 'Timesheets',
     'ClientController'              => 'Clientes',
-    'ClientGroupController'         => 'Cliente Segmentos',
+    'ClientGroupController'         => 'Segmento de clientes',
     'TeamController'                => 'Equipes',
     'UserController'                => 'Colaboradores',
     'GroupPermissionController'     => 'Permiss&otilde;es de grupo',
     'MessagesController'            => 'Mensagens',
-    ''                              => '',
+    'LockscreenController'          => 'Hor&aacute;rio de almo&ccedil;o',
+    'DataImportController'          => 'Importar',
+    'SettingsController'            => 'Configura&ccedil;&otilde;es',
 
     // Data Tables
     'dataTable-processing'          => 'Carregando...',
@@ -120,16 +133,17 @@ return [
     'failed-password'               => 'Senhas não coecidem',
     'failed-fields'                 => 'Campos com valores errados e/ou inv&aacute;lidos',
     'failed-notification'           => 'Usu&aacute;rio n&atilde;o recebeu a notifica&ccedil;&atilde;o',
+    'error'                         => 'Houve um erro ao processar a requisi&ccedil;ão',
 
     // Sentences with variable :string
     'member-since'                  => 'Membro desde :month-year',
     'navbar-message'                => '{0}Voc&ecirc; não possui mensagens|{1}Voc&ecirc; tem :count mensagens|[2,Inf]Voc&ecirc; tem :count mensagens',
-    'navbar-notification'           => '{0}Voc&ecirc; não possui notificações|{1}Voc&ecirc; tem :count notifica&ccedil;&atilde;o|[2,Inf]Voc&ecirc; tem :count notificações',
+    'navbar-notification'           => '{0}Voc&ecirc; não possui notifica&ccedil;&atilde;es|{1}Voc&ecirc; tem :count notifica&ccedil;&atilde;o|[2,Inf]Voc&ecirc; tem :count notifica&ccedil;&atilde;es',
     'navbar-tasks'                  => '{0}Voc&ecirc; não possui tarefas|{1}Voc&ecirc; tem :count notifica&ccedil;&atilde;o|[2,Inf]Voc&ecirc; tem :count tarefas',
     'all-messages'                  => 'Ver todas as mensagens',
-    'all-notifications'             => 'Ver todas notificações',
+    'all-notifications'             => 'Ver todas notifica&ccedil;&atilde;es',
     'all-tasks'                     => 'Ver todas as tarefas',
-    ''                              => '',
+    'copyright'                     => '<b>Copyright &copy; ' . date('Y') . ' <a target="_blank" href="http://www.svlabs.com.br" class="text-black">SVLabs</a></b>. Todos os direitos reservados',
 
     // Chat
     'chat-send'                     => 'Enviar',
@@ -147,5 +161,9 @@ return [
     ''                              => '',
     ''                              => '',
     ''                              => '',
+
+    // Date
+    'date-today'                    => 'Hoje',
+    'date-yesterday'                => 'Ontem',
 
 ];

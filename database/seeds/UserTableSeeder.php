@@ -55,12 +55,16 @@ class UserTableSeeder extends Seeder
         $admin->description     = 'Godless Admin can do anything, literally anything';
         $admin->save();
 
+        $manager                = new Role;
+        $manager->name          = 'Gerente';
+        $manager->display_name  = 'Gerente';
+        $manager->description   = 'Gerente de projetos';
+        $manager->save();
+
         $god_mode = new Permission;
         $god_mode->name         = 'god-mode';
         $god_mode->display_name = 'Modo faz tudo';
         $god_mode->save();
-
-        $admin->perms()->sync(array($god_mode->id));
 
         // $user = User::where('username', '=', 'Admin')->first();
         // $user->attachRole($admin);

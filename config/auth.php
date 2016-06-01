@@ -16,7 +16,7 @@ return [
     |
     */
 
-    'driver' => 'eloquent',
+    'driver' => 'ldap',
 
     /*
     |--------------------------------------------------------------------------
@@ -59,6 +59,7 @@ return [
     |
     */
 
+    // 'username' => 'UserPrincipalName',
     'password' => [
         'email' => 'emails.password',
         'table' => 'password_resets',

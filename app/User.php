@@ -2,7 +2,6 @@
 
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
-use Cmgmyr\Messenger\Traits\Messagable;
 use Zizaco\Entrust\Traits\EntrustUserTrait;
 use Illuminate\Auth\Passwords\CanResetPassword;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
@@ -39,7 +38,23 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
      */
     public function getNotifications()
     {
-        return $this->hasMany('App\UserNotification', 'user_id');
+        return $this->hasMany('App\UserNotification');
+    }
+
+    /**
+     * Get the getNotifications record associated with the project.
+     */
+    public function getEloquent()
+    {
+        return $this;
+    }
+
+    /**
+     * Get the user settings...
+     */
+	public function settings()
+    {
+        return $this->hasOne('App\UserSetting');
     }
 
     /**

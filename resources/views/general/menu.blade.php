@@ -12,7 +12,14 @@
     </a>
   </li>
   @endif
-  @if(Entrust::can(['ProposalController@index', 'ProjectController@index', 'TaskController@index']))
+  @if(Entrust::can(['DataImportController@index']))
+  <li {!! ((Request::is('import/*') || Request::is('import')) ? 'class="active"' : '') !!}>
+    <a href="{!! URL::to('import') !!}">
+      <i class="fa fa-upload"></i> <span>{!! Lang::get('general.import') !!}</span></i>
+    </a>
+  </li>
+  @endif
+  <!-- @if(Entrust::can(['ProposalController@index', 'ProjectController@index', 'TaskController@index']))
   <li class="treeview {!! ((Request::is('projects/*') || Request::is('projects')) || (Request::is('tasks/*') || Request::is('tasks')) || (Request::is('proposals/*') || Request::is('proposals')) ? 'active' : '') !!}">
     <a href="#">
       <i class="fa fa-suitcase"></i> <span>{!! Lang::get('general.projects') !!}</span>
@@ -62,7 +69,7 @@
       @endif
     </ul>
   </li>
-  @endif
+  @endif -->
   @if(Entrust::can(['UserController@index', 'TeamController@index', 'GroupPermissionController@index']))
   <li class="treeview {!! ((Request::is('users/*') || Request::is('users')) || (Request::is('group-permissions/*') || Request::is('group-permissions')) || (Request::is('teams/*') || Request::is('teams')) ? 'active' : '') !!}">
     <a href="#">
@@ -80,34 +87,38 @@
         <a href="{!! URL::to('group-permissions') !!}"><i class="fa fa-shield"></i> {!! Lang::get('general.group-permissions') !!}</a>
       </li>
       @endif
-      @if(Entrust::can(['TeamController@index']))
+      <!-- @if(Entrust::can(['TeamController@index']))
       <li {!! ((Request::is('teams/*') || Request::is('teams')) ? 'class="active"' : '') !!}>
         <a href="{!! URL::to('teams') !!}"><i class="fa fa-group"></i> {!! Lang::get('general.teams') !!}</a>
       </li>
-      @endif
+      @endif -->
     </ul>
   </li>
   @endif
-  @if(Entrust::can(['UserController@index', 'TeamController@index', 'GroupPermissionController@index']))
-  <li class="treeview {!! ((Request::is('users/*') || Request::is('users')) || (Request::is('group-permissions/*') || Request::is('group-permissions')) || (Request::is('teams/*') || Request::is('teams')) ? 'active' : '') !!}">
+  @if(Entrust::can(['SettingsController@index', 'TeamController@index', 'GroupPermissionController@index']))
+  <li class="treeview {!! ((Request::is('settings/*') || Request::is('settings')) || (Request::is('modules/*') || Request::is('modules')) || (Request::is('misc/*') || Request::is('misc')) ? 'active' : '') !!}">
     <a href="#">
       <i class="fa fa-cog"></i> <span>{!! Lang::get('general.system') !!}</span>
       <i class="fa fa-angle-left pull-right"></i>
     </a>
     <ul class="treeview-menu">
-      @if(Entrust::can(['UserController@index']))
-      <li {!! ((Request::is('users/*') || Request::is('users')) ? 'class="active"' : '') !!}>
-        <a href="{!! URL::to('users') !!}"><i class="fa fa-server"></i> {!! Lang::get('general.main') !!}</a>
+      @if(Entrust::can(['SettingsController@index']))
+      <li {!! ((Request::is('settings/*') || Request::is('settings')) ? 'class="active"' : '') !!}>
+        <a href="{!! URL::to('settings') !!}"><i class="fa fa-server"></i> {!! Lang::get('general.settings') !!}</a>
       </li>
       @endif
-      @if(Entrust::can(['GroupPermissionController@index']))
-      <li {!! ((Request::is('group-permissions/*') || Request::is('group-permissions')) ? 'class="active"' : '') !!}>
-        <a href="{!! URL::to('group-permissions') !!}"><i class="fa fa-bolt"></i> {!! Lang::get('general.modules') !!}</a>
+      @if(Entrust::can(['@index']))
+      <li {!! ((Request::is('modules/*') || Request::is('modules')) ? 'class="active"' : '') !!}>
+        <a href="{!! URL::to('modules') !!}"><i class="fa fa-bolt"></i> {!! Lang::get('general.modules') !!}</a>
       </li>
       @endif
-      @if(Entrust::can(['TeamController@index']))
-      <li {!! ((Request::is('teams/*') || Request::is('teams')) ? 'class="active"' : '') !!}>
-        <a href="{!! URL::to('teams') !!}"><i class="fa fa-cloud"></i> {!! Lang::get('general.teams') !!}</a>
+      @if(Entrust::can(['@index']))
+      <li {!! ((Request::is('misc/*') || Request::is('misc')) ? 'class="active"' : '') !!}>
+        <a href="#"><i class="fa fa-cloud"></i> {!! Lang::get('general.misc') !!} <i class="fa fa-angle-left pull-right"></i></a>
+        <ul class="treeview-menu">
+          <li><a href="#"><i class="fa fa-circle-o"></i> Level Three</a></li>
+          <li><a href="#"><i class="fa fa-circle-o"></i> Level Three</a></li>
+        </ul>
       </li>
       @endif
     </ul>

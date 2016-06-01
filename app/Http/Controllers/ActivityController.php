@@ -52,7 +52,7 @@ class ActivityController
           'published'   => $this->date,
           'type'        => $this->type,
           'actor'       => array(
-            'id'            => Auth::user()->id,
+            'id'            => Auth::user()->getEloquent()->id,
             'displayName'   => $this->display_name,
             'objectType'    => 'person',
             'image'         => $this->image

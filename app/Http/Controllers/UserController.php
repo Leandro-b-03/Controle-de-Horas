@@ -5,9 +5,11 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 
 use DB;
+use Log;
 use Lang;
 use App\User;
 use App\Role;
+use App\UserSetting;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
@@ -25,7 +27,7 @@ class UserController extends Controller
     public function index()
     {
         // Get all the users
-        $users = User::All();
+        $users = User::paginate(20);
         $data['users'] = $users;
 
         // Return the users view.
@@ -44,7 +46,6 @@ class UserController extends Controller
 
         // Get all Roles
         $roles = Role::all();
-
         $data['roles'] = $roles;
 
         // Return the user view.
@@ -60,13 +61,15 @@ class UserController extends Controller
     {
         DB::beginTransaction();
 
-        $input = $request->all();
+        $inputs = $request->all();
+
+        $inputs['role'] = isset($inputs['role']) ? $inputs['role'] : 4;
         
         try {
             // Validation of the fields
             $validator = Validator::make(
                 [
-                    $input
+                    $inputs
                 ],
                 [
                     'name' => 'required',
@@ -77,37 +80,78 @@ class UserController extends Controller
 
             $confirmation_code = str_random(30);
 
-            $input['confirmation_code'] = $confirmation_code;
+            $inputs['confirmation_code'] = $confirmation_code;
 
-            if ($input['password'] == $input['password_confirmation']) {
-                if($validator) {
-                    $input['birthday'] = date('Y-m-d', strtotime(str_replace('/', '-', $input['birthday'])));
-                    $input['password'] = bcrypt($input['password']);
+            if($validator) {
+                $inputs['birthday'] = date('Y-m-d', strtotime(str_replace('/', '-', $inputs['birthday'])));
+                $inputs['password'] = bcrypt($confirmation_code);
 
-                    $user = User::create( $input );
+                $user = User::create( $inputs );
 
-                    if ($user) {
-                        $user->attachRole(Role::find($input['role']));
-                        GeneralController::mail($user, 'signup');                        
-                        DB::commit();
-                        return redirect('users')->with('return', GeneralController::createMessage('success', Lang::get('general.' . $this->controller_name), 'create'));
+                if ($user) {
+                    $user->attachRole(Role::find($inputs['role']));
+
+                    $settings = array(
+                        'user_id' => $user->id,
+                        'skin' => 'skin-yellow',
+                        'boxed' => 'false',
+                        'sidebar_toggle' => 'false',
+                        'right_sidebar_slide' => 'control-sidebar-open',
+                        'right_sidebar_white' => 'true'
+                    );
+
+                    $settings = UserSetting::create( $settings );
+
+                    if (!$settings)  {
+                        DB::rollback();
+                        if ($request->is('register')) {
+                            return redirect('register')->withInput()->with('return', GeneralController::createMessage('failed', Lang::get('general.' . $this->controller_name), 'create'));
+                        } else {
+                            return redirect('users/create')->withInput()->with('return', GeneralController::createMessage('failed', Lang::get('general.' . $this->controller_name), 'create'));
+                        }
+                    }
+
+                    $notification = array(
+                        'user_id' => $user->id,
+                        'faicon'  => 'plus-circle',
+                        'message' => Lang::get('users.welcome'),
+                    );
+
+                    GeneralController::createNotification($user->id, $notification);
+
+                    // GeneralController::mail($user, 'signup');                        
+                    DB::commit();
+                    if ($request->is('register')) {
+                        return redirect('register')->with('return', GeneralController::createMessage('success', Lang::get('general.' . $this->controller_name), 'create'));
                     } else {
-                    DB::rollback();
-                        return redirect('users/create')->withInput()->with('return', GeneralController::createMessage('failed', Lang::get('general.' . $this->controller_name), 'create'));
+                        return redirect('users')->with('return', GeneralController::createMessage('success', Lang::get('general.' . $this->controller_name), 'create'));
                     }
                 } else {
                     DB::rollback();
+                    if ($request->is('register')) {
+                        return redirect('register')->withInput()->with('return', GeneralController::createMessage('failed', Lang::get('general.' . $this->controller_name), 'create'));
+                    } else {
+                        return redirect('users/create')->withInput()->with('return', GeneralController::createMessage('failed', Lang::get('general.' . $this->controller_name), 'create'));
+                    }
+                }
+            } else {
+                DB::rollback();
+                if ($request->is('register')) {
+                    return redirect('register')->withInput()->with('return', GeneralController::createMessage('failed', Lang::get('general.' . $this->controller_name), 'create-failed'));
+                } else {
                     return redirect('users/create')->withInput()->with('return', GeneralController::createMessage('failed', Lang::get('general.' . $this->controller_name), 'create-failed'));
                 }
-             } else {
-                DB::rollback();
-                return redirect('users/create')->withInput()->with('return', GeneralController::createMessage('failed', Lang::get('general.' . $this->controller_name), 'password'));
             }
         } catch (Exeption $e) {
             DB::rollback();
-            return redirect('users/create')->withInput()->with('return', GeneralController::createMessage('failed', Lang::get('general.' . $this->controller_name), 'create-failed'));
+            if ($request->is('register')) {
+                return redirect('register')->withInput()->with('return', GeneralController::createMessage('failed', Lang::get('general.' . $this->controller_name), 'create-failed'));
+            } else {
+                return redirect('users/create')->withInput()->with('return', GeneralController::createMessage('failed', Lang::get('general.' . $this->controller_name), 'create-failed'));
+            }
         }
     }
+
 
     /**
      * Display the specified resource.
@@ -162,10 +206,20 @@ class UserController extends Controller
         // Get user with param $id
         $user = User::find($id);
 
-        // Get all the input from update.
+        // Get all the inputs from update.
         $inputs = $request->all();
 
         try {
+            $inputs['birthday'] = date('Y-m-d', strtotime(str_replace('/', '-', $inputs['birthday'])));
+
+            $fillable = $user->getFillable([]);
+
+            foreach($inputs as $input => $value) {
+                if ($user->{$input} || in_array($input, $fillable))
+                    if ($inputs != 'password')
+                        $user->{$input} = $value;
+            }
+
             // Attach role to the user
             $role = Role::find($inputs['role']);
             
@@ -173,35 +227,18 @@ class UserController extends Controller
             
             $user->attachRole($role);
 
-            $inputs['birthday'] = date('Y-m-d', strtotime(str_replace('/', '-', $inputs['birthday'])));
-            
-            if ($inputs['password'] != ''){
-                if ($inputs['password'] == $inputs['password_confirmation']) {
-                    $inputs['password'] = bcrypt($inputs['password']);
-                } else {
-                    DB::rollback();
-                    return redirect('users/' . $id . '/edit')->withInput()->with('return', GeneralController::createMessage('failed', Lang::get('general.' . $this->controller_name), 'password'));
-                }
-            } else {
-                $inputs['password'] = 'n';
-            }
-
-            $fillable = $user->getFillable([]);
-
-            foreach($inputs as $input => $value) {
-                if ($user->{$input} || in_array($input, $fillable))
-                    if ($input != 'password' && $value != 'n')
-                        $user->{$input} = $value;
-            }
-
-            if ($user->save()) {
+            if ($user->saveOrFail()) {
                 DB::commit();
                 return redirect('users')->with('return', GeneralController::createMessage('success', Lang::get('general.' . $this->controller_name), 'update'));
             } else {
+                Log::error($user);
+
                 DB::rollback();
                 return redirect('users/' . $id . '/edit')->withInput()->with('return', GeneralController::createMessage('failed', Lang::get('general.' . $this->controller_name), 'update'));
             }
         } catch (Exception $e) {
+            Log::error($e);
+
             DB::rollback();
             return redirect('users/' . $id . '/edit')->withInput()->with('return', GeneralController::createMessage('failed', Lang::get('general.' . $this->controller_name), 'update'));
         }
@@ -217,10 +254,10 @@ class UserController extends Controller
     {
         DB::beginTransaction();
 
-        // Get all the input data received.
-        $input = $request->all();
+        // Get all the inputs data received.
+        $inputs = $request->all();
 
-        $ids = explode(',', $input['id']);
+        $ids = explode(',', $inputs['id']);
 
         try {
             if (User::destroy($ids)) {

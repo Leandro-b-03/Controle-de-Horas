@@ -28,10 +28,13 @@
       </div><!-- /.login-logo -->
       <div class="login-box-body">
         <p class="login-box-msg">Faça login para entrar no dashboard</p>
+        @if ($errors->count() >= 1)
+        <p class="login-box-msg danger">Login inválido, tente novamente!</p>
+        @endif
         <form method="POST" action="/auth/login">
 		      {!! csrf_field() !!}
           <div class="form-group has-feedback">
-            <input name="email" type="email" class="form-control" placeholder="Email"/>
+            <input name="username" type="text" class="form-control" placeholder="Email"/>
             <span class="glyphicon glyphicon-envelope form-control-feedback"></span>
           </div>
           <div class="form-group has-feedback">

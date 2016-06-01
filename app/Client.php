@@ -17,4 +17,12 @@ class Client extends Model
 	 * @var array
 	 */
 	protected $fillable = ['name', 'responsible', 'email', 'phone'];
+
+    /**
+     * Get the client group record associated with the client.
+     */
+    public function type()
+    {
+        return $this->hasMany('App\ClientGroup');
+    }
 }

@@ -16,7 +16,7 @@ class Timesheet extends Model
 	 *
 	 * @var array
 	 */
-	protected $fillable = ['user_id', 'workday', 'hours', 'start', 'end', 'status'];
+	protected $fillable = ['user_id', 'workday', 'hours', 'start', 'end', 'lunch_hours', 'lunch_start', 'lunch_end', 'nightly_hours', 'nightly_start', 'nightly_end', 'status'];
 
     /**
      * Get the all workdays with the date...

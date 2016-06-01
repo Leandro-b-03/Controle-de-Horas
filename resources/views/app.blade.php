@@ -11,11 +11,13 @@
     <!-- Bootstrap 3.3.4 -->
     {!! Html::style("library/adminLTE/bootstrap/css/bootstrap.min.css") !!}
     <!-- Font Awesome Icons -->
-    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css" rel="stylesheet" type="text/css" />
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css" rel="stylesheet" type="text/css" />
     <!-- Ionicons -->
     <link href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css" rel="stylesheet" type="text/css" />
-    <!-- Theme style -->
-    {!! Html::style("library/adminLTE/dist/css/AdminLTE.min.css") !!}
+    <!-- Select2 -->
+    {!! Html::style("library/adminLTE/plugins/select2/select2.min.css") !!}
+    <!-- PNotify -->
+    {!! Html::style("library/adminLTE/plugins/pnotify/src/pnotify.custom.min.css") !!}
     <!-- AdminLTE Skins. Choose a skin from the css/skins 
          folder instead of downloading all of them to reduce the load. -->
     {!! Html::style("library/adminLTE/dist/css/skins/_all-skins.min.css") !!}
@@ -23,9 +25,16 @@
     <!-- iCheck -->
     {!! Html::style("library/adminLTE/plugins/iCheck/square/yellow.css") !!}
     {!! Html::style("library/adminLTE/plugins/iCheck/flat/yellow.css") !!}
+    <!-- Theme style -->
+    {!! Html::style("library/adminLTE/dist/css/AdminLTE.min.css") !!}
+    <!-- AdminLTE Skins. Choose a skin from the css/skins
+         folder instead of downloading all of them to reduce the load. -->
+    {!! Html::style("library/adminLTE/dist/css/skins/_all-skins.min.css") !!}
+    <!-- Pace style -->
+    {!! Html::style("library/adminLTE/plugins/pace/pace.min.css") !!}
 
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
-    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!-- WARNING: Respond.js does not work if you view the page via file:// -->
     <!--[if lt IE 9]>
         <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
         <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
@@ -35,7 +44,11 @@
     <!-- Custom style -->
     {!! Html::style("library/adminLTE/custom/custom.css") !!}
   </head>
-  <body class="skin-yellow sidebar-mini">
+  @if(Auth::user()->getEloquent()->settings()->getResults())
+  <body class="hold-transition {!! Auth::user()->getEloquent()->settings()->getResults()->skin ? Auth::user()->getEloquent()->settings()->getResults()->skin : 'skin-yellow' !!} {!! Auth::user()->getEloquent()->settings()->getResults()->boxed ? Auth::user()->getEloquent()->settings()->getResults()->boxed : '' !!} {!! Auth::user()->getEloquent()->settings()->getResults()->sidebar_toggle ? Auth::user()->getEloquent()->settings()->getResults()->sidebar_toggle : '' !!} sidebar-mini">
+  @else
+  <body class="hold-transition skin-yellow sidebar-mini">
+  @endif
     <!-- Site wrapper -->
     <div class="wrapper">
       <div class="notification"></div>
@@ -62,17 +75,17 @@
               <li class="dropdown messages-menu">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                   <i class="fa fa-envelope-o"></i>
-                  <span class="label label-success message-count">4</span>
+                  <span class="label label-success message-count">0</span>
                 </a>
                 <ul class="dropdown-menu">
-                  <li class="header">You have 4 messages</li>
+                  <li class="header">Você tem 0 mensagens</li>
                   <li>
                     <!-- inner menu: contains the actual data -->
                     <ul class="menu">
-                      <li><!-- start message -->
+                      <!-- <li>< ! - - start message - - >
                         <a href="#">
                           <div class="pull-left">
-                            <img src="{!! URL::to(Auth::user()->photo) !!}" class="img-circle" alt="User Image"/>
+                            <img src="{!! (Auth::user()->getEloquent() ? URL::to(Auth::user()->getEloquent()->photo) : '') !!}" class="img-circle" alt="User Image"/>
                           </div>
                           <h4>
                             Support Team
@@ -80,7 +93,7 @@
                           </h4>
                           <p>Why not buy a new awesome theme?</p>
                         </a>
-                      </li><!-- end message -->
+                      </li> --><!-- end message -->
                     </ul>
                   </li>
                   <li class="footer"><a href="#">{!! Lang::get('general.all-messages') !!}</a></li>
@@ -90,14 +103,14 @@
               <li class="dropdown notifications-menu">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                   <i class="fa fa-bell-o"></i>
-                  <span class="label label-warning notification-count">{!! Auth::user()->getNotifications()->unseen()->get()->count() != 0 ? Auth::user()->getNotifications()->unseen()->get()->count() : '' !!}</span>
+                  <span class="label label-warning notification-count">{!! Auth::user()->getEloquent()->getNotifications()->unseen()->get()->count() != 0 ? Auth::user()->getEloquent()->getNotifications()->unseen()->get()->count() : '' !!}</span>
                 </a>
                 <ul class="dropdown-menu">
-                  <li class="header">{!! Lang::choice('general.navbar-notification', Auth::user()->getNotifications()->unseen()->get()->count(), ['count' => Auth::user()->getNotifications()->unseen()->get()->count() ]) !!}</li>
+                  <li class="header">{!! Lang::choice('general.navbar-notification', Auth::user()->getEloquent()->getNotifications()->unseen()->get()->count(), ['count' => Auth::user()->getEloquent()->getNotifications()->unseen()->get()->count() ]) !!}</li>
                   <li>
                     <!-- inner menu: contains the actual data -->
                     <ul class="menu">
-                      @foreach (Auth::user()->getNotifications()->orderBy('created_at', 'desc')->get() as $notification)
+                      @foreach (Auth::user()->getEloquent()->getNotifications()->orderBy('created_at', 'desc')->get() as $notification)
                       <li>
                         <a href="{!! $notification->href !!}">
                           <i class="fa fa-{!! $notification->faicon !!} text-aqua"></i> {!! $notification->message !!}
@@ -106,21 +119,21 @@
                       @endforeach
                     </ul>
                   </li>
-                  <li class="footer"><a href="#">{!! Lang::get('general.all-notifications') !!}</a></li>
+                  <li class="footer"><a href="#" id="notification" data-toggle="modal" data-target="#notify">{!! Lang::get('general.all-notifications') !!}</a></li>
                 </ul>
               </li>
               <!-- Tasks: style can be found in dropdown.less -->
               <li class="dropdown tasks-menu">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                   <i class="fa fa-flag-o"></i>
-                  <span class="label label-danger tasks-count">9</span>
+                  <span class="label label-danger tasks-count">0</span>
                 </a>
                 <ul class="dropdown-menu">
-                  <li class="header">You have 9 tasks</li>
+                  <li class="header">Você tem 0 Tarefas</li>
                   <li>
                     <!-- inner menu: contains the actual data -->
                     <ul class="menu">
-                      <li><!-- Task item -->
+                      <!-- <li><!-- Task item - -  >
                         <a href="#">
                           <h3>
                             Design some buttons
@@ -132,7 +145,7 @@
                             </div>
                           </div>
                         </a>
-                      </li><!-- end task item -->
+                      </li> --><!-- end task item -->
                     </ul>
                   </li>
                   <li class="footer">
@@ -143,16 +156,16 @@
               <!-- User Account: style can be found in dropdown.less -->
               <li class="dropdown user user-menu">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                  <img src="{!! URL::to(Auth::user()->photo) !!}" class="user-image" alt="User Image"/>
-                  <span class="hidden-xs">{!! Auth::user()->first_name !!} {!! Auth::user()->last_name !!}</span>
+                  <img src="{!! (Auth::user()->getEloquent() ? URL::to(Auth::user()->getEloquent()->photo) : '') !!}" class="user-image" alt="User Image"/>
+                  <span class="hidden-xs">{!! Auth::user()->getEloquent()->first_name !!} {!! Auth::user()->getEloquent()->last_name !!}</span>
                 </a>
                 <ul class="dropdown-menu">
                   <!-- User image -->
                   <li class="user-header">
-                    <img src="{!! URL::to(Auth::user()->photo) !!}" class="img-circle" alt="User Image" />
+                    <img src="{!! (Auth::user()->getEloquent() ? URL::to(Auth::user()->getEloquent()->photo) : '') !!}" class="img-circle" alt="{!! Auth::user()->getEloquent()->first_name !!} {!! Auth::user()->getEloquent()->last_name !!}" />
                     <p>
-                      {!! Auth::user()->first_name !!} {!! Auth::user()->last_name !!} - Web Developer
-                      <small>{!! Lang::get('general.member-since', ['month-year' => date('F \d\e Y', strtotime(Auth::user()->created_at))]) !!}</small>
+                      {!! Auth::user()->getEloquent()->first_name !!} {!! Auth::user()->getEloquent()->last_name !!} - Web Developer
+                      <small>{!! Lang::get('general.member-since', ['month-year' => date('F \d\e Y', strtotime(Auth::user()->getEloquent()->created_at))]) !!}</small>
                     </p>
                   </li>
                   <!-- Menu Body -->
@@ -170,7 +183,7 @@
                   <!-- Menu Footer-->
                   <li class="user-footer">
                     <div class="pull-left">
-                      <a href="{!! URL::to('profile/' . Auth::user()->id) !!}" class="btn btn-default btn-flat">Profile</a>
+                      <a href="{!! URL::to('profile/' . Auth::user()->getEloquent()->id) !!}" class="btn btn-default btn-flat">Profile</a>
                     </div>
                     <div class="pull-right">
                       <a href="{!! URL::to('auth/logout') !!}" class="btn btn-danger btn-flat">Sair da Sessão</a>
@@ -196,10 +209,10 @@
           <!-- Sidebar user panel -->
           <div class="user-panel">
             <div class="pull-left image">
-              <img src="{!! URL::to(Auth::user()->photo) !!}" class="img-circle" alt="User Image" />
+              <img src="{!! (Auth::user()->getEloquent() ? URL::to(Auth::user()->getEloquent()->photo) : '') !!}" class="img-circle" alt="User Image" />
             </div>
             <div class="pull-left info">
-              <p>{!! Auth::user()->first_name !!} {!! Auth::user()->last_name !!}</p>
+              <p>{!! Auth::user()->getEloquent()->first_name !!} {!! Auth::user()->getEloquent()->last_name !!}</p>
 
               <a href="#"><i class="fa fa-circle text-success"></i> Online</a>
             </div>
@@ -232,11 +245,15 @@
             <div class="modal-dialog">
               <div class="modal-content">
                 <div class="modal-header">
-                  <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="{!! Lang::get('general.close') !!}"><span aria-hidden="true">&times;</span></button>
                   <h4 class="modal-title">Gerenciador de arquivos</h4>
                 </div>
                 <div class="modal-body">
+                  @if (Request::is('import'))
+                  <iframe id="filemanager-iframe" src="{{ URL::to('/') }}/filemanager/dialog.php?type=2&field_id=xlsx"></iframe>
+                  @else
                   <iframe id="filemanager-iframe" src="{{ URL::to('/') }}/filemanager/dialog.php?type=1&field_id=photo"></iframe>
+                  @endif
                 </div>
               </div><!-- /.modal-content -->
             </div><!-- /.modal-dialog -->
@@ -249,11 +266,11 @@
         <div class="pull-right hidden-xs">
           <b>Versão</b> {!! Config::get('app.app_version') !!}
         </div>
-        <strong>Copyright &copy; 2015 <a href="http://www.svlabs.com.br">SVLabs</a>.</strong> Todos os direitos reservados.
+        {!! Lang::get('general.copyright') !!}
       </footer>
       
-<!-- Control Sidebar -->
-      <aside class="control-sidebar control-sidebar-dark">
+			<!-- Control Sidebar -->
+      <aside class="control-sidebar control-sidebar-{!! (Auth::user()->getEloquent()->settings()->getResults() ? (Auth::user()->getEloquent()->settings()->getResults()->right_sidebar_white == 'true' ? 'light' : 'dark') : 'dark') !!}">
         <!-- Create the tabs -->
         <ul class="nav nav-tabs nav-justified control-sidebar-tabs">
           <li><a href="#control-sidebar-home-tab" data-toggle="tab"><i class="fa fa-home"></i></a></li>
@@ -420,6 +437,25 @@
       @show
     </div><!-- ./wrapper -->
 
+    <!-- Modal -->
+    <div class="modal fade" id="notify" tabindex="-1" role="dialog" aria-labelledby="notify">
+      <div class="modal-lg modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="{!! Lang::get('general.close') !!}"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title" id="notify">Notificações</h4>
+          </div>
+          <div class="modal-body">
+            <div id="notify-content">
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">{!! Lang::get('general.close') !!}</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- jQuery 2.1.4 -->
     {!! Html::script("library/adminLTE/plugins/jQuery/jQuery-2.1.4.min.js") !!}
     <!-- Pusher -->
@@ -427,51 +463,47 @@
 
     <!-- Bootstrap 3.3.2 JS -->
     {!! Html::script("library/adminLTE/bootstrap/js/bootstrap.min.js") !!}
-    <!-- SlimScroll -->
-    {!! Html::script("library/adminLTE/plugins/slimScroll/jquery.slimscroll.min.js") !!}
+    <!-- PACE -->
+    {!! Html::script("library/adminLTE/plugins/pace/pace.min.js") !!}
     <!-- FastClick -->
     {!! Html::script("library/adminLTE/plugins/fastclick/fastclick.min.js") !!}
+    <!-- AdminLTE App -->
+    {!! Html::script("library/adminLTE/dist/js/app.min.js") !!}
+    <!-- SlimScroll -->
+    {!! Html::script("library/adminLTE/plugins/slimScroll/jquery.slimscroll.min.js") !!}
     <!-- iCheck -->
     {!! Html::script("library/adminLTE/plugins/iCheck/icheck.min.js") !!}
+    <!-- Select2 -->
+    {!! Html::script("library/adminLTE/plugins/select2/select2.full.min.js") !!}
+    <!-- PNotify -->
+    {!! Html::script("library/adminLTE/plugins/pnotify/src/pnotify.custom.min.js") !!}
     <!-- jQuery-Play-sound -->
     {!! Html::script("library/adminLTE/plugins/jquery-play-sound/jquery.playSound.js") !!}
-    <!-- Dashboard -->
-    {!! Html::script("library/adminLTE/dist/js/demo.js") !!}
     @section('scripts')
     @show
     <script>
+      $(document).ajaxStart(function() { Pace.restart(); });
+    	var settings = {!! Auth::user()->getEloquent()->settings()->getResults() ? "$.parseJSON('" . Auth::user()->getEloquent()->settings()->getResults() . "')" : '{}' !!};
+
+      if (settings == {}) {
+        salveSettings();
+      }
+
       $.ajaxSetup({
           headers: {
               'X-CSRF-TOKEN':'{!! csrf_token() !!}'
           }
       });
 
-      var user = $.parseJSON('{!! json_encode(Auth::user()); !!}');
-
-      var pusher = new Pusher('2a865cce883db16362c7');
-
-      var dataTableLang = [];
-
-      dataTableLang.processing = "{!! Lang::get('general.dataTable-processing') !!}"
-      dataTableLang.search = "{!! Lang::get('general.dataTable-search') !!}"
-      dataTableLang.lengthMenu = "{!! Lang::get('general.dataTable-lengthMenu') !!}"
-      dataTableLang.info = "{!! Lang::get('general.dataTable-info') !!}"
-      dataTableLang.infoEmpty = "{!! Lang::get('general.dataTable-infoEmpty') !!}"
-      dataTableLang.infoFiltered = "{!! Lang::get('general.dataTable-infoFiltered') !!}"
-      dataTableLang.infoPostFix = "{!! Lang::get('general.dataTable-infoPostFix') !!}"
-      dataTableLang.loadingRecords = "{!! Lang::get('general.dataTable-loadingRecords') !!}"
-      dataTableLang.zeroRecords = "{!! Lang::get('general.dataTable-zeroRecords') !!}"
-      dataTableLang.emptyTable = "{!! Lang::get('general.dataTable-emptyTable') !!}"
-      dataTableLang.paginate_first = "{!! Lang::get('general.dataTable-paginate_first') !!}"
-      dataTableLang.paginate_previous = "{!! Lang::get('general.dataTable-paginate_previous') !!}"
-      dataTableLang.paginate_next = "{!! Lang::get('general.dataTable-paginate_next') !!}"
-      dataTableLang.paginate_last = "{!! Lang::get('general.dataTable-paginate_last') !!}"
+      var user = $.parseJSON('{!! Auth::user()->getEloquent() !!}');
     </script>
     <!-- Custom PusherChatWidget.js -->
     {!! Html::script("library/adminLTE/custom/CustomPusherChatWidget.js") !!}
+    <!-- Dashboard -->
+    <!-- {!! Html::script("library/adminLTE/dist/js/close.js") !!} -->
+    <!-- Dashboard -->
+    {!! Html::script("library/adminLTE/custom/demo.js") !!}
     <!-- Custom script -->
     {!! Html::script("library/adminLTE/custom/custom.js") !!}
-    <!-- AdminLTE App -->
-    {!! Html::script("library/adminLTE/dist/js/app.min.js") !!}
   </body>
 </html>

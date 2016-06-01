@@ -1,20 +1,35 @@
-<?php namespace App\Http\Controllers;
+<?php
+
+namespace App\Http\Controllers;
+
+setlocale(LC_TIME, "Portuguese");
+setlocale(LC_TIME, "Brazil");
+setlocale(LC_TIME, 'ptb', 'pt_BR', 'portuguese-brazil', 'bra', 'brazil', 'pt_BR.utf-8', 'pt_BR.iso-8859-1', 'br', 'portuguese');
 
 use DB;
 use URL;
+use Auth;
 use Lang;
 use Mail;
+// use Image;
 use App\User;
 use App\Team;
+use App\Task;
 use App\Proposal;
 use PusherManager;
+use App\Timesheet;
 use Carbon\Carbon;
+use App\ClientGroup;
 use App\ProjectTime;
+use App\UserSetting;
 use App\ProposalType;
 use App\Http\Requests;
+use App\TimesheetTask;
 use App\ProposalVersion;
+use App\UserLocalization;
 use App\UserNotification;
 use Illuminate\Http\Request;
+use Intervention\Image\Facades\Image as Image;
 
 class GeneralController extends Controller {
 
@@ -67,10 +82,18 @@ class GeneralController extends Controller {
         // Get the data receive from ajax.
         $inputs = $request->all();
 
-        $proposal = Proposal::find($inputs['id']);
-        
+        $name = "-";
 
-        return response()->json($data);
+        $proposal = Proposal::find($inputs['id']);
+        $proposal_version = ProposalVersion::find($proposal->id)->where('active', 1)->first();
+        $name .= $proposal->client()->getResults()->name;
+        $name .= "-" . $proposal->type()->getResults()->name;
+        $name .= "-" . $proposal->clientGroup()->getResults()->name;
+        $name .= "-" . $proposal->name;
+        $name .= "-" . Carbon::now()->format('m/y');
+        $name .= " " . $proposal_version->version;
+
+        return strtoupper($name);
     }
 
     public function verifyEmailJSON(Request $request)
@@ -97,6 +120,12 @@ class GeneralController extends Controller {
         return response()->json($response);
     }
 
+    /**
+     *
+     * Verify the CPF
+     * $request Request
+     * return $response json
+     */
     public function verifyCPFJSON(Request $request)
     {
         // Get the data receive from ajax.
@@ -105,20 +134,76 @@ class GeneralController extends Controller {
         // Get user by e-mail
         $user = User::where('cpf', $inputs['cpf'])->get();
 
+        // Let only numbers in the cpf
+        $cpf = preg_replace('/\D/', '', $inputs['cpf']);
+
         $response = [];
-        
-        if ($user->count() > 0) {
+
+        if (strlen($cpf) != 11) {
             $response = array(
                 'valid' => false,
-                'message' => Lang::get('general.cpf-used')
+                'message' => Lang::get('general.cpf-wrong')
+            );
+        } else if ($cpf == '00000000000' || $cpf == '11111111111' || $cpf == '22222222222' ||
+                   $cpf == '33333333333' || $cpf == '44444444444' || $cpf == '55555555555' ||
+                   $cpf == '66666666666' || $cpf == '77777777777' || $cpf == '88888888888' ||
+                   $cpf == '99999999999') {
+            $response = array(
+                'valid' => false,
+                'message' => Lang::get('general.cpf-wrong')
             );
         } else {
-            $response = array(
-                'valid' => true
-            );
+            $digitos = substr($cpf, 0, 9);
+            $new_cpf = $this->calcCPF($digitos);
+        
+            $new_cpf = $this->calcCPF($new_cpf, 11);
+            
+            if ( $new_cpf !== $cpf ) {
+                $response = array(
+                    'valid' => false,
+                    'message' => Lang::get('general.cpf-wrong')
+                );
+            } else if ($user->count() > 0) {
+                $response = array(
+                    'valid' => false,
+                    'message' => Lang::get('general.cpf-used')
+                );
+            } else {
+                $response = array(
+                    'valid' => true
+                );
+            }
         }
 
         return response()->json($response);
+    }
+
+    /**
+     * Multiply digits times positions
+     *
+     * @param string $digits
+     * @param int $positions
+     * @param int $sum_digits
+     * @return int
+     */
+    public function calcCPF( $digits, $positions = 10, $sum_digits = 0 )
+    {
+        for ( $i = 0; $i < strlen( $digits ); $i++  ) {
+            $sum_digits += ( $digits[$i] * $positions );
+            $positions--;
+        }
+
+        $sum_digits = $sum_digits % 11;
+ 
+        if ( $sum_digits < 2 ) {
+            $sum_digits = 0;
+        } else {
+            $sum_digits = 11 - $sum_digits;
+        }
+
+        $cpf = $digits . $sum_digits;
+
+        return $cpf;
     }
 
     /**
@@ -207,6 +292,203 @@ class GeneralController extends Controller {
         $projects_times = ProjectTime::where('project_id', $id)->get();
 
         return response()->json($projects_times);
+    }
+
+    /**
+     * Generates an array with parameters to client groups
+     *
+     * @return Json with client groups
+     */
+    public function getClientGroup(Request $request)
+    {
+        $id = $request->get('id');
+
+        $client_group = ClientGroup::where('client_id', $id)->get();
+
+        return response()->json($client_group);
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param  int  $request
+     * @return Response
+     */
+    public function getTasks(Request $request)
+    {
+        $project_id = $request->all();
+
+        $tasks = DB::connection('openproject')->table('work_packages AS wp1')->whereNotExists(function ($query) {
+            $query->select(DB::raw(1))
+                  ->from('work_packages AS wp2')
+                  ->whereRaw('wp2.parent_id = wp1.id');
+        })->where('project_id', $project_id['id'])->where('status_id', '!=', 11)->get();
+        
+        return response()->json($tasks);
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  int  $request
+     * @
+     */
+    public function getTasksDay(Request $request) {
+        // Get all the inputs
+        $inputs = $request->all();
+
+        // Get all the task on that day or the day
+        $workday = Timesheet::find($inputs['id']);
+        $data['workday'] = $workday;
+
+        // Get all the task on that day or the day
+        $tasks = TimesheetTask::where('timesheet_id', $inputs['id'])->orderBy('id', 'DESC')->get();
+        $data['tasks'] = $tasks;
+
+        return view('general.timeline')->with('data', $data);
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  int  $request
+     * @
+     */
+    public function getAllNotifications(Request $request) {
+        // Get all the inputs
+        $inputs = $request->all();
+
+        // Get all the task on that day or the day
+        $notifications = UserNotification::where('user_id', Auth::user()->id)->orderBy('created_at', 'desc')->get();
+        $data['notifications'] = $notifications;
+
+        return view('general.notification')->with('data', $data);
+    }
+
+    /**
+     * Save the user settings
+     *
+     * @return Json with message true or false
+     */
+    public function saveSettings(Request $request)
+    {
+        $inputs = $request->all();
+
+        $settings = UserSetting::where('user_id', Auth::user()->id)->get()->first();
+
+        $data = [];
+        
+        if ($settings) {
+            foreach($inputs as $input => $value) {
+                $settings->{$input} = $value;
+            }
+
+            if ($settings->save()) {
+                $data['success'] = true;
+                $data['message'] = 'salvo';
+            } else {
+                $data['error'] = true;
+                $data['message'] = 'não salvo';
+            }
+        } else {
+            $inputs['user_id'] = Auth::user()->id;
+            if (UserSetting::create( $inputs )) {
+                $data['success'] = true;
+                $data['message'] = 'salvo';
+            } else {
+                $data['error'] = true;
+                $data['message'] = 'não salvo';
+            }
+        }
+
+        return response()->json($data);
+    }
+
+    /**
+     * Save the user position
+     *
+     * @return Json with message true or false
+     */
+    public function saveLocalization(Request $request)
+    {
+        // Get all the inputs
+        $inputs = $request->all();
+
+        // Get if the actual user position on the database
+        $localization = UserLocalization::where('user_id', Auth::user()->id)->orderBy('created_at', 'desc')->get()->first();
+
+        $data = [];
+        
+        if ($localization) {
+            if (substr($localization->latitude, 0, 7) != substr($inputs['latitude'], 0, 7)
+                && substr($localization->longitude, 0, 7) != substr($inputs['longitude'], 0, 7)) {
+                if (UserLocalization::create ($inputs)) {
+                    $data['success'] = true;
+                    $data['message'] = 'salvo';
+                } else {
+                    $data['error'] = true;
+                    $data['message'] = 'não salvo';
+                }
+            }
+        } else {
+            if (UserLocalization::create ($inputs)) {
+                $data['success'] = true;
+                $data['message'] = 'salvo';
+            } else {
+                $data['error'] = true;
+                $data['message'] = 'não salvo';
+            }
+        }
+
+        return response()->json($data);
+    }
+
+
+    /**
+     * Save the user photos
+     *
+     * @return string iwht an image
+     */
+    public function saveImages(Request $request) {
+        // Get all the inputs
+        $inputs = $request->all();
+
+        $destinationPath = public_path() . '/images/avatar/upload/';
+
+        $file = str_replace('data:image/png;base64,', '', $inputs['image']);
+        $img = str_replace(' ', '+', $file);
+        $data = base64_decode($img);
+        $filename = date('ymdhis') . '_croppedImage' . ".png";
+
+        $returnData = '/images/avatar/upload/normal/' . $filename;
+        $file = $destinationPath . 'normal/' . $filename;
+
+        if (!is_dir($destinationPath)) {
+            $result = File::makeDirectory($destinationPath, 0775, true);
+        }
+
+        // Save photo normal
+        $success = file_put_contents($file, $data);
+
+        $image = Image::make($returnData);
+
+        // Save photo 500x500
+        $image500x500 = Image::make($returnData)->resize(500, 500)->save($destinationPath . '500x500/' . $filename);
+
+        // Save photo 240x240
+        $image240x240 = Image::make($returnData)->resize(240, 240)->save($destinationPath . '240x240/' . $filename);
+
+        // Save photo 100x100
+        $image100x100 = Image::make($returnData)->resize(100, 100)->save($destinationPath . '100x100/' . $filename);
+
+        if ($image500x500)
+            return $image500x500;
+        else {
+            return array(
+                'valid' => false,
+                'message' => Lang::get('general.cpf-wrong')
+            );
+        }
     }
 
     /* Statics Functions */
@@ -357,6 +639,125 @@ class GeneralController extends Controller {
         }
 
         return true;
+    }
+
+    /**
+     * Get Month Hours
+     *
+     * @return array
+     */
+    public static function getTotalMonthHours ($month, $year, $workdays)
+    {
+        $total_month_hours = array();
+
+        $date = '01/' . (isset($inputs['month']) ? $inputs['month'] : Carbon::now()->month) . '/' . (isset($inputs['year']) ? $inputs['year'] : Carbon::now()->year);
+        $date = Carbon::createFromFormat('d/m/Y', $date);
+
+        $total_month_in_hours = 0;
+
+        $days = intval(date("t", strtotime($date->toDateString())));
+
+        for ($i = 1; $i <= $days; $i++) {
+            $day_of_the_week = $date->dayOfWeek;
+
+            if ($day_of_the_week != 0 && $day_of_the_week != 6)
+                $total_month_in_hours++;
+
+            $date->addDay();
+        }
+
+        $total_month_in_hours = ($total_month_in_hours * 8) * 60;
+
+        $seconds = '00';
+        $hours = floor($total_month_in_hours / 60);
+        $minutes = ($total_month_in_hours % 60);
+        $month_hours = (($hours <= 9 ? "0" . $hours : $hours) . ":" . ($minutes <= 9 ? "0" . $minutes : $minutes)) . ":" . $seconds;
+
+        $total_month_hours['month_hours'] = $month_hours;
+
+        $total_work_month_in_hours = 0;
+
+        foreach ($workdays as $day) {
+            $day_in_minutes = 0;
+            list($hour, $minute) = explode(':', $day->hours);
+            $day_in_minutes += $hour * 60;
+            $day_in_minutes += $minute;
+
+            $nightly_in_minute = 0;
+            list($hour, $minute) = explode(':', $day->nightly_hours);
+            $nightly_in_minute += $hour * 60;
+            $nightly_in_minute += $minute;
+
+            $total_work_month_in_hours += $day_in_minutes + $nightly_in_minute;
+        }
+
+        $seconds = '00';
+        $hours = floor($total_work_month_in_hours / 60);
+        $minutes = ($total_work_month_in_hours % 60);
+        $work_month_hours = (($hours <= 9 ? "0" . $hours : $hours) . ":" . ($minutes <= 9 ? "0" . $minutes : $minutes)) . ":" . $seconds;
+
+        $total = 0;
+
+        $total_month_hours['work_month_hours'] = $work_month_hours;
+
+        if ($total_month_in_hours > $total_work_month_in_hours)
+            $total += $total_month_in_hours - $total_work_month_in_hours;
+        else
+            $total += $total_work_month_in_hours - $total_month_in_hours;
+
+        $seconds = '00';
+        $hours = floor($total / 60);
+        $minutes = ($total % 60);
+        $time = (($hours <= 9 ? "0" . $hours : $hours) . ":" . ($minutes <= 9 ? "0" . $minutes : $minutes)) . ":" . $seconds;
+
+        if ($total_month_in_hours > $total_work_month_in_hours){
+            $total_month_hours['time_debit'] = '- ' . $time;
+            $total_month_hours['time_credit'] = '00:00:00';
+        }
+        else {
+            $total_month_hours['time_credit'] = $time;
+            $total_month_hours['time_debit'] = '00:00:00';
+        }
+
+        return $total_month_hours;
+    }
+
+    /**
+     * Get Month Hours
+     *
+     * @return array
+     */
+    public static function getInfo ($workday) {
+        $info = array();
+
+        $hours_day = 480;
+        $info['hours_day'] = '08:00:00';
+
+        $day_in_minutes = 0;
+        list($hour, $minute) = explode(':', $workday->hours);
+        $day_in_minutes += $hour * 60;
+        $day_in_minutes += $minute;
+
+        if ($hours_day > $day_in_minutes)
+           $day_in_minutes = $hours_day - $day_in_minutes;
+        else
+            $day_in_minutes -= $hours_day;
+
+        $seconds = '00';
+        $hours = floor($day_in_minutes / 60);
+        $minutes = ($day_in_minutes % 60);
+        $time = (($hours <= 9 ? "0" . $hours : $hours) . ":" . ($minutes <= 9 ? "0" . $minutes : $minutes)) . ":" . $seconds;
+
+        if ($hours_day > $day_in_minutes){
+            $info['time_debit'] = '- ' . $time;
+            $info['time_credit'] = '00:00:00';
+        }
+        else {
+            $info['time_credit'] = $time;
+            $info['time_debit'] = '00:00:00';
+        }
+
+        return $info;
     }
 
     /* Routes */

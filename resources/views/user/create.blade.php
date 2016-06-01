@@ -11,6 +11,8 @@
     {!! Html::style("library/adminLTE/plugins/datepicker/datepicker3.css") !!}
     <!-- jQuery-Form-Validator -->
     {!! Html::style("library/adminLTE/plugins/jQuery-Form-Validator/form-validator/theme-default.min.css") !!}
+    <!-- Cropper -->
+    {!! Html::style("library/adminLTE/plugins/cropper/dist/cropper.min.css") !!}
 @stop
 
 @section('content')
@@ -93,7 +95,7 @@
                 </div>
                 <div class="form-group col-xs-4">
                   <label for="rg">{!! Lang::get('users.label-rg') !!}</label>
-                  <input type="rg" class="form-control input-mask" data-mask="99.999.999-*" name="rg" id="rg"  value="{!! (isset($data['user']) ? $data['user']->rg : (Request::old('rg') ? Request::old('rg') : '')) !!}" placeholder="{!! Lang::get('users.ph-rg') !!}" data-validation="custom" data-validation-regexp="^[0-9]{2}\.[0-9]{3}\.[0-9]{3}-[X0-9]$" data-validation-error-msg="{!! Lang::get('users.error-rg') !!}" required>
+                  <input type="rg" class="form-control input-mask" data-mask="99999999?**" name="rg" id="rg"  value="{!! (isset($data['user']) ? $data['user']->rg : (Request::old('rg') ? Request::old('rg') : '')) !!}" placeholder="{!! Lang::get('users.ph-rg') !!}" data-validation="custom" data-validation-error-msg="{!! Lang::get('users.error-rg') !!}" required>
                 </div>
                 <div class="form-group col-xs-4{!! Request::is('users/create') ? '' : ' has-success' !!}">
                   <label for="cpf">{!! Lang::get('users.label-cpf') !!}</label>
@@ -141,14 +143,6 @@
                 <div class="form-group col-xs-6">
                   <hr />
                 </div>
-                <div class="form-group col-xs-6">
-                  <label for="password_confirmation">{!! Lang::get('users.label-password') !!}</label>
-                  <input type="password" class="form-control" name="password_confirmation" id="password_confirmation"  value="" placeholder="{!! Lang::get('users.ph-password') !!}" {!! (Request::is('users/create') ? 'required' : 'data-validation-optional="true"') !!} data-validation="length strength" data-validation-length="min8" data-validation-error-msg="{!! Lang::get('users.error-password') !!}">
-                </div>
-                <div class="form-group col-xs-6">
-                  <label for="confirm_password">{!! Lang::get('users.label-confirm_password') !!}</label>
-                  <input type="password" class="form-control" name="password" id="password"  value="" placeholder="{!! Lang::get('users.ph-confirm_password') !!}" {!! (Request::is('users/create') ? 'required' : 'data-validation-optional="true"') !!} data-validation="confirmation" data-validation-strength="2" data-validation-error-msg="{!! Lang::get('users.error-confirm_password') !!}">
-                </div>
               </div><!-- /.box-body -->
               <div class="box-footer">
                 <button type="submit" class="btn btn-primary">{!! Lang::get('general.save') !!}</button>
@@ -159,6 +153,124 @@
         </div>
       </div>
     </section>
+    <!-- Cropping modal -->
+    <div class="modal fade" id="md-crop" aria-hidden="true" aria-labelledby="avatar-modal-label" role="dialog" tabindex="-1">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+            <h4 class="modal-title" id="avatar-modal-label">Change Avatar</h4>
+          </div>
+          <div class="modal-body">
+            <div class="avatar-body">
+
+            <input type="hidden" class="avatar-input" name="" value="">
+              <!-- Upload image and data -->
+              <!-- <div class="avatar-upload">
+                <input type="hidden" class="avatar-src" name="avatar_src">
+                <input type="hidden" class="avatar-data" name="avatar_data">
+                <label for="avatarInput">Local upload</label>
+                <input type="file" class="avatar-input" id="avatarInput" name="avatar_file">
+              </div> -->
+
+              <!-- Crop and preview -->
+              <div class="row">
+                <div class="col-md-9">
+                  <div class="avatar-wrapper">
+                    <img id="crop-image" src="" alt="">
+                  </div>
+                </div>
+                <div class="col-md-3">
+                  <div class="avatar-preview preview-lg"></div>
+                  <div class="avatar-preview preview-md"></div>
+                  <div class="avatar-preview preview-sm"></div>
+                </div>
+              </div>
+
+              <div class="row avatar-btns">
+                <div class="col-md-9">
+                  <div class="btn-group">
+                    <button type="button" class="btn btn-primary" data-method="setDragMode" data-option="move" title="Move">
+                      <span data-original-title="$().cropper(&quot;setDragMode&quot;, &quot;move&quot;)" class="docs-tooltip" data-toggle="tooltip" title="">
+                        <span class="fa fa-arrows"></span>
+                      </span>
+                    </button>
+                    <button type="button" class="btn btn-primary" data-method="setDragMode" data-option="crop" title="Crop">
+                      <span data-original-title="$().cropper(&quot;setDragMode&quot;, &quot;crop&quot;)" class="docs-tooltip" data-toggle="tooltip" title="">
+                        <span class="fa fa-crop"></span>
+                      </span>
+                    </button>
+                  </div>
+
+                  <div class="btn-group">
+                    <button type="button" class="btn btn-primary" data-method="zoom" data-option="0.1" title="Zoom In">
+                      <span data-original-title="$().cropper(&quot;zoom&quot;, 0.1)" class="docs-tooltip" data-toggle="tooltip" title="">
+                        <span class="fa fa-search-plus"></span>
+                      </span>
+                    </button>
+                    <button type="button" class="btn btn-primary" data-method="zoom" data-option="-0.1" title="Zoom Out">
+                      <span data-original-title="$().cropper(&quot;zoom&quot;, -0.1)" class="docs-tooltip" data-toggle="tooltip" title="">
+                        <span class="fa fa-search-minus"></span>
+                      </span>
+                    </button>
+                  </div>
+
+                  <div class="btn-group">
+                    <button type="button" class="btn btn-primary" data-method="rotate" data-option="-90" title="Rotate -90 degrees">Rotate Left</button>
+                    <button type="button" class="btn btn-primary" data-method="rotate" data-option="90" title="Rotate 90 degrees">Rotate Right</button>
+                  </div>
+
+                  <div class="btn-group">
+                    <button type="button" class="btn btn-primary" data-method="rotate" data-option="-45" title="Rotate Left">
+                      <span data-original-title="$().cropper(&quot;rotate&quot;, -45)" class="docs-tooltip" data-toggle="tooltip" title="">
+                        <span class="fa fa-rotate-left"></span>
+                      </span>
+                    </button>
+                    <button type="button" class="btn btn-primary" data-method="rotate" data-option="45" title="Rotate Right">
+                      <span data-original-title="$().cropper(&quot;rotate&quot;, 45)" class="docs-tooltip" data-toggle="tooltip" title="">
+                        <span class="fa fa-rotate-right"></span>
+                      </span>
+                    </button>
+                  </div>
+
+                  <div class="btn-group">
+                    <button type="button" class="btn btn-primary" data-method="scaleX" data-option="-1" title="Flip Horizontal">
+                      <span data-original-title="$().cropper(&quot;scaleX&quot;, -1)" class="docs-tooltip" data-toggle="tooltip" title="">
+                        <span class="fa fa-arrows-h"></span>
+                      </span>
+                    </button>
+                    <button type="button" class="btn btn-primary" data-method="scaleY" data-option="-1" title="Flip Vertical">
+                      <span data-original-title="$().cropper(&quot;scaleY&quot;, -1)" class="docs-tooltip" data-toggle="tooltip" title="">
+                        <span class="fa fa-arrows-v"></span>
+                      </span>
+                    </button>
+                  </div>
+
+                  <div class="btn-group">
+                    <button type="button" class="btn btn-primary" data-method="crop" title="Crop">
+                      <span data-original-title="$().cropper(&quot;crop&quot;)" class="docs-tooltip" data-toggle="tooltip" title="">
+                        <span class="fa fa-check"></span>
+                      </span>
+                    </button>
+                    <button type="button" class="btn btn-primary" data-method="clear" title="Clear">
+                      <span data-original-title="$().cropper(&quot;clear&quot;)" class="docs-tooltip" data-toggle="tooltip" title="">
+                        <span class="fa fa-remove"></span>
+                      </span>
+                    </button>
+                  </div>
+                </div>
+                <div class="col-md-3">
+                  <a type="submit" class="btn btn-primary btn-block avatar-save">Done</a>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          </div> -->
+        </div>
+      </div>
+    </div><!-- /.modal -->
 @endsection
 
 @section('scripts')
@@ -168,6 +280,10 @@
     {!! Html::script("library/adminLTE/plugins/datepicker/bootstrap-datepicker.js") !!}
     <!-- jQuery-Form-Validator -->
     {!! Html::script("library/adminLTE/plugins/jQuery-Form-Validator/form-validator/jquery.form-validator.min.js") !!}
+    <!-- Cropper -->
+    {!! Html::script("library/adminLTE/plugins/cropper/dist/cropper.min.js") !!}
+    <!-- Cropper custom class to events -->
+    {!! Html::script("library/adminLTE/custom/custom-cropper.js") !!}
 
     <script>
       $.validate({
@@ -185,6 +301,7 @@
           $('input[name="password_confirmation"]').displayPasswordStrength(optionalConfig);
         }
       });
+
       $('form').submit(function(e) {
         if ($(this).find('.has-error').length > 0) {
           e.preventDefault();

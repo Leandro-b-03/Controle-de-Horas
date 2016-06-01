@@ -27,11 +27,27 @@ class UserTeam extends Model
     }
 
     /**
+     * Get the user record associated with the project.
+     */
+    public function team()
+    {
+        return $this->belongsTo('App\Team', 'team_id');
+    }
+
+    /**
      * Get the all users in team with the string...
      */
-	public function scopegetUsersTeam($query, $id)
+    public function scopegetUsersTeam($query, $team_id)
     {
-        return $query->where('team_id', $id);
+        return $query->where('team_id', $team_id);
+    }
+
+    /**
+     * Get the all users in team with the string...
+     */
+    public function scopegetTeams($query, $user_id)
+    {
+        return $query->select('team_id')->where('user_id', $user_id);
     }
 
 }

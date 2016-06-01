@@ -1,7 +1,4 @@
 <?php
-header('Content-Type: text/html; charset=utf-8');
-setlocale(LC_ALL, "pt_BR", "pt_BR.iso-8859-1", "pt_BR.utf-8", "portuguese");
-setlocale(LC_TIME, 'ptb', 'pt_BR', 'portuguese-brazil', 'bra', 'brazil', 'pt_BR.utf-8', 'pt_BR.iso-8859-1', 'br');
 
 return [
 
@@ -16,7 +13,7 @@ return [
     |
     */
 
-    'debug' => env('APP_DEBUG'),
+    'debug' => env('APP_DEBUG', true),
 
     /*
     |--------------------------------------------------------------------------
@@ -113,7 +110,7 @@ return [
     |
     */
 
-    'app_version' => '0.15 - Beta',
+    'app_version' => 'v1.0',
 
     /*
     |--------------------------------------------------------------------------
@@ -131,7 +128,7 @@ return [
         /*
          * Development Service Providers...
          */
-        Barryvdh\Debugbar\ServiceProvider::class,
+        // Barryvdh\Debugbar\ServiceProvider::class,
 
         /*
          * Laravel Framework Service Providers...
@@ -168,6 +165,8 @@ return [
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
 
+        Arcanedev\LogViewer\LogViewerServiceProvider::class,
+
         /*
          * Custom Services Providers...
          */
@@ -175,11 +174,13 @@ return [
         Cviebrock\EloquentSluggable\SluggableServiceProvider::class,
         Vinkla\Pusher\PusherServiceProvider::class,
         Zizaco\Entrust\EntrustServiceProvider::class,
-        // Intervention\Image\ImageServiceProvider::class,
+        Intervention\Image\ImageServiceProvider::class,
         MaddHatter\LaravelFullcalendar\ServiceProvider::class,
         Laravel\Socialite\SocialiteServiceProvider::class,
         Torann\GeoIP\GeoIPServiceProvider::class,
         Alexpechkarev\GoogleGeocoder\GoogleGeocoderServiceProvider::class,
+        Dsdevbe\LdapConnector\LdapConnectorServiceProvider::class,
+        Maatwebsite\Excel\ExcelServiceProvider::class,
 
         /*
          * Personalization Services Providers...
@@ -190,11 +191,12 @@ return [
          * Automation Services Providers...
          */
         Orangehill\Iseed\IseedServiceProvider::class,
+        // L5Swagger\L5SwaggerServiceProvider::class,
 
         /*
          * My Services Providers...
          */
-        App\Providers\HelperServiceProvider::class,
+        // App\Providers\HelperServiceProvider::class,
 
     ],
 
@@ -250,12 +252,16 @@ return [
         'HTML1'         => Illuminate\Html\HtmlFacade::class,
         'Entrust'       => Zizaco\Entrust\EntrustFacade::class,
         'PusherManager' => Vinkla\Pusher\Facades\Pusher::class,
-        //'Image'         => Intervention\Image\Facades\Image::class,
+        'Image'         => Intervention\Image\Facades\Image::class,
         'AWS'           => Aws\Laravel\AwsFacade::class,
         'Calendar'      => MaddHatter\LaravelFullcalendar\Facades\Calendar::class,
         'Socialite'     => Laravel\Socialite\Facades\Socialite::class,
         'GeoIP'         => Torann\GeoIP\GeoIPFacade::class,
         'Geocoder'      => Alexpechkarev\GoogleGeocoder\GoogleGeocoderServiceProvider::class,
+        'Excel'         => Maatwebsite\Excel\Facades\Excel::class,
+        'role'          => Zizaco\Entrust\Middleware\EntrustRole::class,
+        'permission'    => Zizaco\Entrust\Middleware\EntrustPermission::class,
+        'ability'       => Zizaco\Entrust\Middleware\EntrustAbility::class,
 
     ],
 
