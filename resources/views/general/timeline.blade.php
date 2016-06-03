@@ -1,4 +1,4 @@
-<h1>{!! strftime('%d de %B de %Y', strtotime($data['workday']->workday)) !!} </h1>
+<h1>{!! utf8_encode(strftime('%d de %B de %Y', strtotime($data['workday']->workday))) !!} </h1>
 <ul class="timeline timeline-inverse">
   {{--*/ $project_id = null /*--}}
   {{--*/ $change = 1 /*--}}

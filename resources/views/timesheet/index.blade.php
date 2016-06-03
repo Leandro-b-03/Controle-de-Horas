@@ -40,14 +40,11 @@
         <!-- /.box-header -->
         <div class="box-body">
             @if ($data['workday']->end == '00:00:00' || ($data['workday']->nightly_start != '00:00:00' && $data['workday']->nightly_end == '00:00:00'))
-            <div id="start_settings" class="col-xs-6 {!! !isset($data['timesheet_task']) ? '' : 'invisible' !!}">
+            <div id="start_settings" class="col-xs-6 {!! !isset($data['timesheet_task']) ? '' : 'invisible' !!} {!! $data['workday']->lunch_start != '00:00:00' ? $data['workday']->lunch_end == '00:00:00' ? 'invisible' : '' : '' !!}">
                 <div class="form-group col-xs-2 custom_a">
                     <a id="start" class="btn btn-success play"><span class="fa fa-play-circle-o"></span> {!! Lang::get('timesheets.start') !!}</a>
                     @if ($data['workday']->lunch_start == '00:00:00')
                     <a id="lunch" class="btn btn-primary play"><span class="fa fa-cutlery"></span> {!! Lang::get('timesheets.lunch_start') !!}</a>
-                    @endif
-                    @if ($data['workday']->lunch_start != '00:00:00' && $data['workday']->lunch_end == '00:00:00')
-                    <a id="back" class="btn btn-primary play"><span class="fa fa-cutlery"></span> {!! Lang::get('timesheets.lunch_end') !!}</a>
                     @endif
                     <a id="end" class="btn btn-warning play"><span class="fa fa-stop-circle-o"></span> {!! Lang::get('timesheets.' .  ($data['workday']->nightly_start != '00:00:00:' ? 'end' : 'nightly_end')) !!}</a>
                 </div>
@@ -65,6 +62,11 @@
                     <select id="tasks" name="tasks" class="form-control" data-validation="required" required disabled="disabled">
                         <option value="">{!! Lang::get('general.select') !!}</option>
                     </select>
+                </div>
+            </div>
+            <div id="lunch_settings" class="col-xs-6 {!! !isset($data['timesheet_task']) ? '' : 'invisible' !!} {!! $data['workday']->lunch_end == '00:00:00' ? $data['workday']->lunch_start == '00:00:00' ? 'invisible' : '' : 'invisible' !!}">
+                <div class="form-group col-xs-2 custom_a">
+                    <a id="back" class="btn btn-primary play"><span class="fa fa-cutlery"></span> {!! Lang::get('timesheets.lunch_end') !!}</a>
                 </div>
             </div>
             <div id="finish_settings" class="col-xs-6 {!! isset($data['timesheet_task']) ? '' : 'invisible' !!}">
@@ -250,34 +252,49 @@
           data.project_id = $('#projects').val();
           data.task_id = $('#tasks').val();
 
-          $.ajax({
-            url: '/timesheets',
-            data: data,
-            type: "POST",
-            success: function(data) {
-              var task = data
-              
-              if (!task.error) {
-                $('#start_settings').addClass('invisible');
-                $('#finish_settings').removeClass('invisible');
-
-                $('#project-name').html($('#projects option:selected').text());
-                $('#task-subject').html($('#tasks option:selected').text());
-
-                if (data.type_id == 1) 
-                  $('#task-menu').removeClass('invisible');
-                else
-                  $('#front-menu').removeClass('invisible');
+          if ($('#tasks').val() != "") {
+            $.ajax({
+              url: '/timesheets',
+              data: data,
+              type: "POST",
+              success: function(data) {
+                var task = data
                 
-                var line = generateLine(task);
+                if (!task.error) {
+                  $('#start_settings').addClass('invisible');
+                  $('#finish_settings').removeClass('invisible');
 
-                $('#tasks-table tbody').prepend($(line));
-              } else {
-                data = { class: 'danger', faicon: 'ban', status: "{!! Lang::get('general.failed') !!}", message: data.error };
-                throwMessage(data);
+                  $('#project-name').html($('#projects option:selected').text());
+                  $('#task-subject').html($('#tasks option:selected').text());
+
+                  if (data.type_id == 1)
+                    $('#task-menu').removeClass('invisible');
+                  else
+                    $('#front-menu').removeClass('invisible');
+                  
+                  var line = generateLine(task);
+
+                  $('#tasks-table tbody').prepend($(line));
+                } else {
+                  data = { class: 'danger', faicon: 'ban', status: "{!! Lang::get('general.failed') !!}", message: data.error };
+                  throwMessage(data);
+                }
               }
-            }
-          });
+            });
+          } else {
+            var opts = {};
+
+            var stack = {"dir1":"down", "dir2":"right", "push":"top"};;
+
+            opts.title = "Oh Não";
+            opts.text = "Selecione uma tarefa por favor!";
+            opts.type = "error";
+            opts.stack = stack;
+            opts.cornerclass = 'ui-pnotify-sharp';
+            opts.addclass = 'translucent';
+
+            new PNotify(opts);
+          }
         });
 
         $('#end').click(function() {
@@ -387,9 +404,11 @@
               var lunch = data;
 
               if (!lunch.error) {
-                $('#lunch_time').html('Horário de saida: ' + lunch.lunch_start + '. Horario da volta: ' + lunch.lunch_end + '. Tempo total: ' + lunch.lunch_hours + '.');
+                /*$('#lunch_time').html('Horário de saida: ' + lunch.lunch_start + '. Horario da volta: ' + lunch.lunch_end + '. Tempo total: ' + lunch.lunch_hours + '.');
 
-                $('#back').hide();
+                $('#lunch_settings').addClass('invisible');
+                $('#start_settings').removeClass('invisible');*/
+                window.location.href = '/timesheets';
               } else {
                 data = { class: 'danger', faicon: 'ban', status: "{!! Lang::get('general.failed') !!}", message: data.error };
                 throwMessage(data);
@@ -513,23 +532,18 @@
             data: {id: id},
             type: "GET",
             success: function(data) {
-              var tasks = data
+              var html = data
 
-              _tasks = tasks;
+              _html = html;
 
-              if (tasks.length > 0) {
+              console.log(html != null && html != '');
+
+              if (html != null && html != '') {
                 $('#tasks').prop( "disabled", false );
                 $('#tasks').find('option[value!=""]').remove();
-
+                $('#tasks').find('optgroup').remove();
                 var options = [];
-
-                $.each(tasks, function(i, task) {
-                  options.push('<option value="' + task.id + '" data-type="' + task.type_id + '">' + task.subject + '</select>');
-                  return;
-                });
-
-
-                $('#tasks').append(options).select2({
+                $('#tasks').append(html).select2({
                   templateResult: getIcon
                 });
               } else {

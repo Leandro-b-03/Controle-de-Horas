@@ -2,6 +2,7 @@
 
 // namespace Helper\Services;
 
+use App\Overtime;
 use Carbon\Carbon;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\HTML;
@@ -66,5 +67,15 @@ class GeneralHelper {
                 return 'bg-red';
                 break;
         }
+    }
+
+    public static function getOvertime ($user_id) {
+        // Get the overtime
+        $overtime = Overtime::where('user_id', $user_id)->get()->first();
+
+        if ($overtime)
+            return $overtime->hours;
+        else
+            return '00:00:00';
     }
 }

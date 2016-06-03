@@ -1,10 +1,18 @@
-<?php namespace App\Http\Controllers;
+<?php
+
+namespace App\Http\Controllers;
+
+setlocale(LC_TIME, "Portuguese");
+setlocale(LC_TIME, "Brazil");
+setlocale(LC_TIME, 'ptb', 'pt_BR', 'portuguese-brazil', 'bra', 'brazil', 'pt_BR.utf-8', 'pt_BR.iso-8859-1', 'br', 'portuguese');
 
 use DB;
 use URL;
+use Log;
 use Auth;
 use Lang;
 use Mail;
+// use Image;
 use App\User;
 use App\Team;
 use App\Task;
@@ -22,6 +30,7 @@ use App\ProposalVersion;
 use App\UserLocalization;
 use App\UserNotification;
 use Illuminate\Http\Request;
+use Intervention\Image\Facades\Image as Image;
 
 class GeneralController extends Controller {
 
@@ -88,6 +97,11 @@ class GeneralController extends Controller {
         return strtoupper($name);
     }
 
+    /**
+     * Verify the yuser e-mail if exists in the database
+     *
+     * @return message OK/NOK object
+     */
     public function verifyEmailJSON(Request $request)
     {
         // Get the data receive from ajax.
@@ -310,13 +324,73 @@ class GeneralController extends Controller {
     {
         $project_id = $request->all();
 
-        $tasks = DB::connection('openproject')->table('work_packages AS wp1')->whereNotExists(function ($query) {
-            $query->select(DB::raw(1))
-                  ->from('work_packages AS wp2')
-                  ->whereRaw('wp2.parent_id = wp1.id');
-        })->where('project_id', $project_id['id'])->where('status_id', '!=', 11)->get();
+        $tasks = DB::connection('openproject')->select(DB::raw('select distinct *, node.id, node.description, node.type_id, node.status_id, node.subject, group_concat(parent.subject order by parent.lft separator \'/ \' ) as path, (count(parent.lft) - 1) AS depth, (select from_id from relations where node.id = from_id and relation_type = \'precedes\') as from_id, (select to_id from relations where node.id = to_id and relation_type = \'precedes\') as to_id from work_packages as node inner join work_packages as parent on node.lft between parent.lft and parent.rgt and parent.project_id = :project_id where not exists (select 1 from `work_packages` as `wp2` where wp2.parent_id = node.id) and node.project_id = :project_id_2 and node.type_id != 2 and node.status_id != 11 group by node.lft, node.subject order by node.lft, node.start_date, from_id, to_id'), array('project_id' => $project_id['id'], 'project_id_2' => $project_id['id']));
+
+        $order_tasks = array();
+
+        $html = '';
+        $parent = '';
+
+        foreach ($tasks as $task) {
+            Log::info($task->path);
+            $_parent = str_replace($task->subject, '', $task->path);
+            if ($_parent != $parent) {
+                $parent = $_parent;
+
+                if ($parent == '')
+                    $html .= '</optgroup>';
+
+                $number_parent = count(explode('/', $_parent));
+
+                if ($number_parent > 1) {
+                    $html .= '<optgroup label="' . $parent . '">';
+                    $html .= '<option value="' . $task->id . '" data-type="' . $task->type_id . '">' . $task->subject . '</option>';
+                    $parent_id[$task->parent_id] = array($task->parent_id, true);
+                }
+            } else {
+                $html .= '<option value="' . $task->id . '" data-type="' . $task->type_id . '">' . $task->subject . '</option>';
+            }
+        }
+
+        // if ($start) {
+        //     $html .= '</optgroup>';
+        // }
+
+        Log::info($tasks);
+        Log::info($html);
         
-        return response()->json($tasks);
+        return response()->json($html);
+    }
+
+    /**
+     * Verify how many parents the task have.
+     *
+     * @param  int  $request
+     * @return object array
+     */
+    protected function verifyParentTask($group_tasks, $parent_old, $task_id)
+    {
+        $_group_tasks = $group_tasks;
+
+        $parent = DB::connection('openproject')->table('work_packages')->find($parent_old->parent_id);
+
+        $parent_exists = false;
+
+        Log::info($parent->parent_id);
+
+        if ($parent->parent_id) {
+            $parent_exists = true;
+
+            $_group_tasks[$parent->parent_id][$parent->id][] = array('name' => $parent->subject);
+
+            $this->verifyParentTask($_group_tasks, $parent, $task_id);
+        } else {
+            $_group_tasks[$parent->root_id][] = array('name' => $parent->subject, 'task_id' => $task_id);
+
+            Log::info($_group_tasks);
+            
+            return $_group_tasks;
+        }
     }
 
     /**
@@ -325,7 +399,8 @@ class GeneralController extends Controller {
      * @param  int  $request
      * @
      */
-    public function getTasksDay(Request $request) {
+    public function getTasksDay(Request $request)
+    {
         // Get all the inputs
         $inputs = $request->all();
 
@@ -339,6 +414,148 @@ class GeneralController extends Controller {
 
         return view('general.timeline')->with('data', $data);
     }
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  int  $request
+     * @
+     */
+    public function getAllNotifications(Request $request)
+    {
+        // Get all the inputs
+        $inputs = $request->all();
+
+        // Get all the task on that day or the day
+        $notifications = UserNotification::where('user_id', Auth::user()->id)->orderBy('created_at', 'desc')->get();
+        $data['notifications'] = $notifications;
+
+        return view('general.notification')->with('data', $data);
+    }
+
+    /**
+     * Input the new line
+     *
+     * @return All time again
+     */
+    public function changeDay(Request $request)
+    {
+        $inputs = $request->all();
+
+        $start_explode = explode(':', $inputs['start']);
+        $lunch_start_explode = explode(':', $inputs['lunch_start']);
+        $lunch_end_explode = explode(':', $inputs['lunch_end']);
+        $end_explode = explode(':', $inputs['end']);
+        $nightly_start_explode = explode(':', $inputs['nightly_start']);
+        $nightly_end_explode = explode(':', $inputs['nightly_end']);
+
+        $start = Carbon::createFromTime($start_explode[0], $start_explode[1], (array_key_exists(2, $start_explode) ? $start_explode[2] : '00'));
+        $lunch_start = Carbon::createFromTime($lunch_start_explode[0], $lunch_start_explode[1], (array_key_exists(2, $lunch_start_explode) ? $lunch_start_explode[2] : '00'));
+        $lunch_end = Carbon::createFromTime($lunch_end_explode[0], $lunch_end_explode[1], (array_key_exists(2, $lunch_end_explode) ? $lunch_end_explode[2] : '00'));
+        $end = Carbon::createFromTime($end_explode[0], $end_explode[1], (array_key_exists(2, $end_explode) ? $end_explode[2] : '00'));
+        $nightly_start = Carbon::createFromTime($nightly_start_explode[0], $nightly_start_explode[1], (array_key_exists(2, $nightly_start_explode) ? $nightly_start_explode[2] : '00'));
+        $nightly_end = Carbon::createFromTime($nightly_end_explode[0], $nightly_end_explode[1], (array_key_exists(2, $nightly_end_explode) ? $nightly_end_explode[2] : '00'));
+
+        $seconds = '00';
+
+        $diffTime = $lunch_start->diffInMinutes(new Carbon($lunch_end));
+
+        $lunch_in_minute = $diffTime;
+
+        $hours = floor($diffTime / 60);
+        $minutes = ($diffTime % 60);
+        $tminutes = (float)($minutes / 60);
+        $lunch_time = (($hours <= 9 ? "0" . $hours : $hours) . ":" . ($minutes <= 9 ? "0" . $minutes : $minutes)) . ":" . $seconds;
+
+        $diffTime = $nightly_start->diffInMinutes(new Carbon($nightly_end));
+
+        $hours = floor($diffTime / 60);
+        $minutes = ($diffTime % 60);
+        $tminutes = (float)($minutes / 60);
+        $nightly_time = (($hours <= 9 ? "0" . $hours : $hours) . ":" . ($minutes <= 9 ? "0" . $minutes : $minutes)) . ":" . $seconds;
+
+        $diffTime = $start->diffInMinutes(new Carbon($end));
+
+        $diffTime -= $lunch_in_minute;
+
+        $hours = floor($diffTime / 60);
+        $minutes = ($diffTime % 60);
+        $tminutes = (float)($minutes / 60);
+        $day_time = (($hours <= 9 ? "0" . $hours : $hours) . ":" . ($minutes <= 9 ? "0" . $minutes : $minutes)) . ":" . $seconds;
+
+        try {
+            DB::beginTransaction();
+
+            if ($inputs['id'] == 'new'){
+                $day = Carbon::createFromFormat('d/m/Y', $inputs['date'])->toDateString();
+
+                $date = Timesheet::where('user_id', $inputs['user_id'])->where('workday', $day)->get();
+
+                Log::info($day);
+                Log::info($date);
+                Log::info(count($date));
+                
+                if (count($date) == 0) {
+                    $workday['user_id'] = $inputs['user_id'];
+                    $workday['workday'] = $day;
+                    $workday['start'] = $start->toTimeString();
+                    $workday['lunch_start'] = $lunch_start->toTimeString();
+                    $workday['lunch_end'] = $lunch_end->toTimeString();
+                    $workday['lunch_hours'] = $lunch_time;
+                    $workday['end'] = $end->toTimeString();
+                    $workday['hours'] = $day_time;
+                    $workday['nightly_start'] = $nightly_start->toTimeString();
+                    $workday['nightly_end'] = $nightly_end->toTimeString();
+                    $workday['nightly_hours'] = $nightly_time;
+
+                    Log::info($lunch_time);
+
+                    $workday = Timesheet::create( $workday );
+
+                    Log::info($workday);
+
+                    if ($workday) {
+                        DB::commit();
+                        return 'true';
+                    } else {
+                        Log::error('$workday->save(): Error trying to save the workday');
+                        DB::rollback();
+                        return 'false';
+                    }
+                } else {
+                    return 'false';
+                }
+            } else {
+                $workday = Timesheet::find($inputs['id']);
+
+                $workday->start = $start->toTimeString();
+                $workday->lunch_start = $lunch_start->toTimeString();
+                $workday->lunch_end = $lunch_end->toTimeString();
+                $workday->lunch_hours = $lunch_time;
+                $workday->end = $end->toTimeString();
+                $workday->hours = $day_time;
+                $workday->nightly_start = $nightly_start->toTimeString();
+                $workday->nightly_end = $nightly_end->toTimeString();
+                $workday->nightly_hours = $nightly_time;
+
+                Log::info($lunch_time);
+
+                if ($workday->save()) {
+                    DB::commit();
+                    return 'true';
+                } else {
+                    Log::error('$workday->save(): Error trying to save the workday');
+                    DB::rollback();
+                    return 'false';
+                }
+            }
+        } catch (Exception $e) {
+            Log::error($e);
+            DB::rollback();
+            return 'false';
+        }
+    }
+
 
     /**
      * Save the user settings
@@ -386,8 +603,10 @@ class GeneralController extends Controller {
      */
     public function saveLocalization(Request $request)
     {
+        // Get all the inputs
         $inputs = $request->all();
 
+        // Get if the actual user position on the database
         $localization = UserLocalization::where('user_id', Auth::user()->id)->orderBy('created_at', 'desc')->get()->first();
 
         $data = [];
@@ -414,6 +633,55 @@ class GeneralController extends Controller {
         }
 
         return response()->json($data);
+    }
+
+
+    /**
+     * Save the user photos
+     *
+     * @return string iwht an image
+     */
+    public function saveImages(Request $request)
+    {
+        // Get all the inputs
+        $inputs = $request->all();
+
+        $destinationPath = public_path() . '/images/avatar/upload/';
+
+        $file = str_replace('data:image/png;base64,', '', $inputs['image']);
+        $img = str_replace(' ', '+', $file);
+        $data = base64_decode($img);
+        $filename = date('ymdhis') . '_croppedImage' . ".png";
+
+        $returnData = '/images/avatar/upload/normal/' . $filename;
+        $file = $destinationPath . 'normal/' . $filename;
+
+        if (!is_dir($destinationPath)) {
+            $result = File::makeDirectory($destinationPath, 0775, true);
+        }
+
+        // Save photo normal
+        $success = file_put_contents($file, $data);
+
+        $image = Image::make($returnData);
+
+        // Save photo 500x500
+        $image500x500 = Image::make($returnData)->resize(500, 500)->save($destinationPath . '500x500/' . $filename);
+
+        // Save photo 240x240
+        $image240x240 = Image::make($returnData)->resize(240, 240)->save($destinationPath . '240x240/' . $filename);
+
+        // Save photo 100x100
+        $image100x100 = Image::make($returnData)->resize(100, 100)->save($destinationPath . '100x100/' . $filename);
+
+        if ($image500x500)
+            return $image500x500;
+        else {
+            return array(
+                'valid' => false,
+                'message' => Lang::get('general.cpf-wrong')
+            );
+        }
     }
 
     /* Statics Functions */
@@ -652,7 +920,8 @@ class GeneralController extends Controller {
      *
      * @return array
      */
-    public static function getInfo ($workday) {
+    public static function getInfo ($workday)
+    {
         $info = array();
 
         $hours_day = 480;

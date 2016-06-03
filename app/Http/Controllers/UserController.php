@@ -9,6 +9,10 @@ use Log;
 use Lang;
 use App\User;
 use App\Role;
+use App\Holiday;
+use App\Overtime;
+use App\Timesheet;
+use Carbon\Carbon;
 use App\UserSetting;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
@@ -152,7 +156,6 @@ class UserController extends Controller
         }
     }
 
-
     /**
      * Display the specified resource.
      *
@@ -167,6 +170,47 @@ class UserController extends Controller
 
         // Return the dashboard view.
         return view('user.profile')->with('data', $data);
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param  int  $id
+     * @return Response
+     */
+    public function timesheet($id, Request $request)
+    {
+        // Get the workdays in the month
+        $inputs = $request->all();
+
+        // Get all holidays in the month
+        $holidays = Holiday::where('month', (isset($inputs['month'])) ? $inputs['month'] : Carbon::now()->month)->get();
+        $data['holidays'] = $holidays;
+
+        // Get the overtime
+        $overtime = Overtime::where('user_id', $id)->get()->first();
+        $data['overtime'] = $overtime;
+
+        // Get the workdays in the month
+        $month = Timesheet::where(DB::raw('MONTH(workday)'), (isset($inputs['month']) ? $inputs['month'] : Carbon::now()->month))
+            ->where(DB::raw('YEAR(workday)'), (isset($inputs['year']) ? $inputs['year'] : Carbon::now()->year))->where('user_id', $id)->orderBy('workday')->get();
+        $data['month'] = $month;
+
+        // Get total hour month
+        $total_month_hours = GeneralController::getTotalMonthHours((isset($inputs['month']) ? $inputs['month'] : Carbon::now()->month), (isset($inputs['year']) ? $inputs['year'] : Carbon::now()->year), $month);
+        $data['total_month_hours'] = $total_month_hours;
+
+        // Set date and get month
+        $month_name = ucwords(Carbon::create((isset($inputs['year']) ? $inputs['year'] : Carbon::now()->year), (isset($inputs['month']) ? $inputs['month'] : Carbon::now()->month), 1)->formatLocalized('%B %Y'));
+        $data['$month_name'] = utf8_encode($month_name);
+
+        $data['actual_month'] = (isset($inputs['month'])) ? $inputs['month'] : Carbon::now()->month;
+        $data['year'] = (isset($inputs['year'])) ? $inputs['year'] : Carbon::now()->year;
+
+        $data['user_id'] = $id;
+
+        // Return the timesheets view.
+        return view('user.show')->with('data', $data);
     }
 
     /**

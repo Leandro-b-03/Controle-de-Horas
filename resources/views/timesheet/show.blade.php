@@ -102,7 +102,7 @@
               </tr>
               <tr>
                 <th>{!! Lang::get('timesheets.title-total_credit_debit') !!}</th>
-                <td>{!! $data['overtime']->hours !!}</td>
+                <td>{!! $data['overtime']->hours or '00:00:00' !!}</td>
               </tr>
             </tbody>
           </table>
@@ -181,6 +181,7 @@
       $('.tasks-day').click(function() {
         var data = {};
         data.id = $(this).data('id');
+        $('#timeline').html('');
 
         $.ajax({
           url: '/general/getTasksDay',

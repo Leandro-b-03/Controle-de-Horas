@@ -62,9 +62,8 @@
             </div>
             <div class="box-footer no-padding">
               <ul class="nav nav-stacked">
-                <li><a>{!! Lang::get('general.projects') !!} <span class="pull-right badge bg-blue">31</span></a></li>
-                <li><a>{!! Lang::get('general.tasks') !!} <span class="pull-right badge bg-aqua">5</span></a></li>
-                <li><a>Completed Projects <span class="pull-right badge bg-green">12</span></a></li>
+                <li><a>{!! Lang::get('general.hours') !!} <span class="pull-right badge bg-blue">{!! html_entity_decode(GeneralHelper::getOvertime($user->id)) !!}</span></a></li>
+                <li><a href="{!! URL::to('users/' . $user->id . '/timesheet') !!}">{!! Lang::get('general.timesheets') !!} <span class="pull-right badge bg-aqua">{!! Lang::get('general.edit') !!}</span></a></li>
                 <li><a href="{!! URL::to('users/' . $user->id . '/edit') !!}" class="btn">{!! Lang::get('general.edit') !!}</a></li>
               </ul>
             </div>

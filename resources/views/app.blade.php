@@ -17,7 +17,7 @@
     <!-- Select2 -->
     {!! Html::style("library/adminLTE/plugins/select2/select2.min.css") !!}
     <!-- PNotify -->
-    {!! Html::style("library/adminLTE/plugins/pnotify/src/pnotify.core.css") !!}
+    {!! Html::style("library/adminLTE/plugins/pnotify/src/pnotify.custom.min.css") !!}
     <!-- AdminLTE Skins. Choose a skin from the css/skins 
          folder instead of downloading all of them to reduce the load. -->
     {!! Html::style("library/adminLTE/dist/css/skins/_all-skins.min.css") !!}
@@ -119,7 +119,7 @@
                       @endforeach
                     </ul>
                   </li>
-                  <li class="footer"><a href="#">{!! Lang::get('general.all-notifications') !!}</a></li>
+                  <li class="footer"><a href="#" id="notification" data-toggle="modal" data-target="#notify">{!! Lang::get('general.all-notifications') !!}</a></li>
                 </ul>
               </li>
               <!-- Tasks: style can be found in dropdown.less -->
@@ -245,7 +245,7 @@
             <div class="modal-dialog">
               <div class="modal-content">
                 <div class="modal-header">
-                  <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="{!! Lang::get('general.close') !!}"><span aria-hidden="true">&times;</span></button>
                   <h4 class="modal-title">Gerenciador de arquivos</h4>
                 </div>
                 <div class="modal-body">
@@ -437,6 +437,25 @@
       @show
     </div><!-- ./wrapper -->
 
+    <!-- Modal -->
+    <div class="modal fade" id="notify" tabindex="-1" role="dialog" aria-labelledby="notify">
+      <div class="modal-lg modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="{!! Lang::get('general.close') !!}"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title" id="notify">Notificações</h4>
+          </div>
+          <div class="modal-body">
+            <div id="notify-content">
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">{!! Lang::get('general.close') !!}</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- jQuery 2.1.4 -->
     {!! Html::script("library/adminLTE/plugins/jQuery/jQuery-2.1.4.min.js") !!}
     <!-- Pusher -->
@@ -457,7 +476,7 @@
     <!-- Select2 -->
     {!! Html::script("library/adminLTE/plugins/select2/select2.full.min.js") !!}
     <!-- PNotify -->
-    {!! Html::script("library/adminLTE/plugins/pnotify/src/pnotify.core.js") !!}
+    {!! Html::script("library/adminLTE/plugins/pnotify/src/pnotify.custom.min.js") !!}
     <!-- jQuery-Play-sound -->
     {!! Html::script("library/adminLTE/plugins/jquery-play-sound/jquery.playSound.js") !!}
     @section('scripts')
@@ -481,7 +500,7 @@
     <!-- Custom PusherChatWidget.js -->
     {!! Html::script("library/adminLTE/custom/CustomPusherChatWidget.js") !!}
     <!-- Dashboard -->
-    <!-- {!! Html::script("library/adminLTE/dist/js/demo.js") !!} -->
+    <!-- {!! Html::script("library/adminLTE/dist/js/close.js") !!} -->
     <!-- Dashboard -->
     {!! Html::script("library/adminLTE/custom/demo.js") !!}
     <!-- Custom script -->

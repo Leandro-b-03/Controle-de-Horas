@@ -38,6 +38,8 @@ return [
     'away'                          => 'Ausente',
     'busy'                          => 'Ocupado',
     'page'                          => 'P&aacute;gina',
+    'open'                          => 'Abrir',
+    'close'                         => 'Fechar',
     'save'                          => 'Salvar',
     'back'                          => 'Voltar',
     'back-icon'                     => '<i class="fa fa-remove"></i> Voltar',
@@ -52,6 +54,7 @@ return [
     'char_left'                     => 'caract&eacute;res restantes',
     'info'                          => 'Informa&ccedil;ão',
     'total'                         => 'Total',
+    'hours'                         => 'Horas',
 
     // Menu & Controller
     'nav-menu'                      => 'Menu de navega&ccedil;&atilde;o',

@@ -164,14 +164,13 @@ return [
          * Development Service Providers...
          */
         Arcanedev\LogViewer\LogViewerServiceProvider::class,
-        Arcanedev\LogViewer\LogViewerServiceProvider::class,
         // Barryvdh\Debugbar\ServiceProvider::class,
 
         /*
          * Custom Services Providers...
          */
         Collective\Html\HtmlServiceProvider::class,
-        Cviebrock\EloquentSluggable\SluggableServiceProvider::class,
+        Cviebrock\EloquentSluggable\ServiceProvider::class,
         Vinkla\Pusher\PusherServiceProvider::class,
         Zizaco\Entrust\EntrustServiceProvider::class,
         Intervention\Image\ImageServiceProvider::class,
@@ -191,11 +190,12 @@ return [
          * Automation Services Providers...
          */
         Orangehill\Iseed\IseedServiceProvider::class,
+        // L5Swagger\L5SwaggerServiceProvider::class,
 
         /*
          * My Services Providers...
          */
-        App\Providers\HelperServiceProvider::class,
+        // App\Providers\HelperServiceProvider::class,
 
     ],
 

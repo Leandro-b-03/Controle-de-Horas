@@ -9,6 +9,7 @@ setlocale(LC_TIME, 'ptb', 'pt_BR', 'portuguese-brazil', 'bra', 'brazil', 'pt_BR.
 use Illuminate\Http\Request;
 
 use DB;
+use Log;
 use Auth;
 use Lang;
 use Calendar;
@@ -72,6 +73,9 @@ class TimesheetController extends Controller
             }
         } catch (Exception $e) {
             DB::rollback();
+            Log::error($e);
+            Log::error($workday);
+
             $data['error'] =  Lang::get('general.error-day');
         }
 
@@ -178,6 +182,10 @@ class TimesheetController extends Controller
                                 DB::commit();
                             } else {
                                 DB::rollback();
+                                Log::error($e);
+                                Log::error($work_package);
+                                Log::error($timesheet_task);
+
                                 return response()->json(array('error' => Lang::get('general.error')));
                             }
                         } else {
@@ -201,6 +209,11 @@ class TimesheetController extends Controller
                                     DB::commit();
                                 } else {
                                     DB::rollback();
+                                    Log::error($e);
+                                    Log::error($custom_field);
+                                    Log::error($work_package);
+                                    Log::error($timesheet_task);
+
                                     return response()->json(array('error' => Lang::get('general.error')));
                                 }
                             }
@@ -216,10 +229,18 @@ class TimesheetController extends Controller
                         return response()->json($this->line($timesheet_task, $work_package->type_id));
                     } else {
                         DB::rollback();
+                        Log::error($e);
+                        Log::error($work_package);
+                        Log::error($timesheet_task);
+
                         return response()->json(array('error' => Lang::get('general.error')));
                     }
                 } else {
                     DB::rollback();
+                    Log::error($e);
+                    Log::error($work_package);
+                    Log::error($timesheet_task);
+
                     return response()->json(array('error' => Lang::get('general.error')));
                 }
             } else if (isset($inputs['finish']) || isset($inputs['pause']) || isset($inputs['fail'])) {
@@ -237,7 +258,7 @@ class TimesheetController extends Controller
                 $hours = floor($diffTime / 60);
                 $minutes = ($diffTime % 60);
                 $tminutes = (float)($minutes / 60);
-                $time = (($hours <= 9 ? "0" . $hours : $hours) . ":" . $minutes) . ":" . $seconds;
+                $time = (($hours <= 9 ? "0" . $hours : $hours) . ":" . ($minutes <= 9 ? "0" . $minutes : $minutes)) . ":" . $seconds;
 
                 $user_open_project = UserOpenProject::where('login', 'LIKE', Auth::user()->getEloquent()->username . '@%')->orWhere('mail', 'LIKE', Auth::user()->getEloquent()->username . '@%')->get()->first();
 
@@ -263,6 +284,11 @@ class TimesheetController extends Controller
                     DB::commit();
                 } else {
                     DB::rollback();
+                    Log::error($e);
+                    Log::error($time_entry);
+                    Log::error($work_package);
+                    Log::error($timesheet_task);
+
                     return response()->json(array('error' => Lang::get('general.error')));
                 }
 
@@ -300,6 +326,11 @@ class TimesheetController extends Controller
                                 DB::commit();
                             } else {
                                 DB::rollback();
+                                Log::error($e);
+                                Log::error($custom_field);
+                                Log::error($work_package);
+                                Log::error($timesheet_task);
+
                                 return response()->json(array('error' => Lang::get('general.error')));
                             }
 
@@ -322,6 +353,11 @@ class TimesheetController extends Controller
                                 DB::commit();
                             } else {
                                 DB::rollback();
+                                Log::error($e);
+                                Log::error($custom_field);
+                                Log::error($work_package);
+                                Log::error($timesheet_task);
+
                                 return response()->json(array('error' => Lang::get('general.error')));
                             }
                         } else {
@@ -347,6 +383,11 @@ class TimesheetController extends Controller
                                     DB::commit();
                                 } else {
                                     DB::rollback();
+                                    Log::error($e);
+                                    Log::error($custom_field);
+                                    Log::error($work_package);
+                                    Log::error($timesheet_task);
+
                                     return response()->json(array('error' => Lang::get('general.error')));
                                 }
                             }
@@ -366,6 +407,11 @@ class TimesheetController extends Controller
                             DB::commit();
                         } else {
                             DB::rollback();
+                            Log::error($e);
+                            Log::error($use_cases);
+                            Log::error($work_package);
+                            Log::error($timesheet_task);
+
                             return response()->json(array('error' => Lang::get('general.error')));
                         }
                     }
@@ -379,10 +425,18 @@ class TimesheetController extends Controller
                         return response()->json($this->line($timesheet_task, $work_package->type_id));
                     } else {
                         DB::rollback();
+                        Log::error($e);
+                        Log::error($work_package);
+                        Log::error($timesheet_task);
+
                         return response()->json(array('error' => Lang::get('general.error')));
                     }
                 } else {
                     DB::rollback();
+                    Log::error($e);
+                    Log::error($work_package);
+                    Log::error($timesheet_task);
+
                     return response()->json(array('error' => Lang::get('general.error')));
                 }
             } else if (isset($inputs['lunch'])) {
@@ -395,6 +449,10 @@ class TimesheetController extends Controller
                             return response()->json($this->lunch($workday));
                         } else {
                             DB::rollback();
+                            Log::error($e);
+                            Log::error($work_package);
+                            Log::error($timesheet_task);
+
                             return response()->json(array('error' => Lang::get('general.error')));
                         }
                     }
@@ -421,6 +479,10 @@ class TimesheetController extends Controller
                             return response()->json($this->lunch($workday));
                         } else {
                             DB::rollback();
+                            Log::error($e);
+                            Log::error($work_package);
+                            Log::error($timesheet_task);
+
                             return response()->json(array('error' => Lang::get('general.error')));
                         }
                     }
@@ -454,6 +516,10 @@ class TimesheetController extends Controller
                     return response()->json($this->lunch($workday));
                 } else {
                     DB::rollback();
+                    Log::error($e);
+                    Log::error($work_package);
+                    Log::error($timesheet_task);
+
                     return response()->json(array('error' => Lang::get('general.error')));
                 }
             } else if (isset($inputs['nightly'])) {
@@ -465,6 +531,10 @@ class TimesheetController extends Controller
                         return response()->json($this->lunch($workday));
                     } else {
                         DB::rollback();
+                        Log::error($e);
+                        Log::error($work_package);
+                        Log::error($timesheet_task);
+
                         return response()->json(array('error' => Lang::get('general.error')));
                     }
                 } else if (isset($inputs['nightly_end'])) {
@@ -487,12 +557,20 @@ class TimesheetController extends Controller
                         return response()->json($this->lunch($workday));
                     } else {
                         DB::rollback();
+                        Log::error($e);
+                        Log::error($work_package);
+                        Log::error($timesheet_task);
+
                         return response()->json(array('error' => Lang::get('general.error')));
                     }
                 }
             }
         } catch (Exception $e) {
             DB::rollback();
+            Log::error($e);
+            Log::error($work_package);
+            Log::error($timesheet_task);
+
             return response()->json(array('error' => Lang::get('general.error')));
         }
     }
@@ -538,29 +616,72 @@ class TimesheetController extends Controller
      */
     public function notify($inputs, $project_id)
     {
-        // Get the responsible for the project
-        $project = Project::findOrFail($project_id);
+        try {
+            // Get the responsible for the project
+            $project = Project::findOrFail($project_id);
 
-        // Get the op user
-        $user_open_project = UserOpenProject::findOrFail($project->responsible_id);
+            // Get the op user
+            $user_open_project = UserOpenProject::find($project->responsible_id);
 
-        // Get the user in the ts
-        $user = User::where('email', $user_open_project->mail)->get()->first();
+            if ($user_open_project) {
+                // Get the user in the ts
+                $user = User::where('email', $user_open_project->mail)->get()->first();
 
-        if ($project->responsible_id && $user) {
+                Log::info($user_open_project);
+                Log::info($user);
+
+                if ($project->responsible_id && $user) {
+                    $message = '';
+
+                    if (isset($inputs['start'])) {
+                        $message = Lang::get('timesheets.tasks-start', ['name' => Auth::user()->first_name . ' ' . Auth::user()->last_name]);
+                    } else {
+                        if (isset($inputs['finish']) || isset($inputs['pause']) || isset($inputs['fail'])) {
+                            if (!isset($inputs['ok'])) {
+                                $message = Lang::get('timesheets.tasks-done_1', ['name' => Auth::user()->first_name . ' ' . Auth::user()->last_name]);
+                            } else {
+                                $message = Lang::get('timesheets.tasks-done_2', ['name' => Auth::user()->first_name . ' ' . Auth::user()->last_name, 'ok' => $inputs['ok'], 'nok' => $inputs['nok'], 'impacted' => $inputs['impacted'], 'cancelled' => $inputs['cancelled']]);
+                            }
+                        }
+                    }
+
+                    $notification = array(
+                        'user_id' => $user->id,
+                        'faicon'  => isset($inputs['start']) ? 'play-circle' : 'check-circle',
+                        'message' => $message
+
+                    );
+
+                    GeneralController::createNotification($user->id, $notification);
+                } else {
+                    $notification = array(
+                        'user_id' => Auth::user()->id,
+                        'faicon'  => 'error',
+                        'message' => 'Erro ao enviar a notificação'
+
+                    );
+
+                    GeneralController::createNotification(Auth::user()->id, $notification);
+                }
+            } else {
+                $notification = array(
+                    'user_id' => Auth::user()->id,
+                    'faicon'  => 'error',
+                    'message' => 'Erro ao enviar a notificação'
+
+                );
+
+                GeneralController::createNotification(Auth::user()->id, $notification);
+            }
+        } catch (Exception $e) {
             $notification = array(
-                'user_id' => $user->id,
-                'faicon'  => isset($inputs['start']) ? 'play-circle' : 'check-circle',
-                'message' => isset($inputs['start']) ? 
-                    Lang::get('timesheets.tasks-start', ['name' => Auth::user()->firstname . ' ' . Auth::user()->lastname]) :
-                    isset($inputs['finish']) || isset($inputs['pause']) || isset($inputs['fail']) ?
-                    Lang::get('timesheets.tasks-done_1', ['name' => Auth::user()->firstname . ' ' . Auth::user()->lastname]) :
-                    Lang::get('timesheets.tasks-done_2', ['name' => Auth::user()->firstname . ' ' . Auth::user()->lastname, 'ok' => $inputs['ok'],
-                        'nok' => $inputs['nok'], 'impacted' => $inputs['impacted'], 'cancelled' => $inputs['cancelled']])
+                'user_id' => Auth::user()->id,
+                'faicon'  => 'error',
+                'message' => 'Erro ao enviar a notificação'
 
             );
 
-            GeneralController::createNotification($user->id, $notification);
+            GeneralController::createNotification(Auth::user()->id, $notification);
         }
     }
 
@@ -598,22 +719,42 @@ class TimesheetController extends Controller
                             DB::commit();
                         } else {
                             DB::rollback();
+                            Log::error($e);
+                            Log::error($work_package);
+                            Log::error($timesheet_task);
+
                             return response()->json(array('error' => Lang::get('general.error')));
                         }
                     } else {
                         DB::rollback();
+                        Log::error($e);
+                        Log::error($work_package);
+                        Log::error($timesheet_task);
+
                         return response()->json(array('error' => Lang::get('general.error')));
                     }
                 } else {
                     DB::rollback();
+                    Log::error($e);
+                    Log::error($work_package);
+                    Log::error($timesheet_task);
+
                     return response()->json(array('error' => Lang::get('general.error')));
                 }*/
             } else {
                 DB::rollback();
+                Log::error($e);
+                Log::error($work_package);
+                Log::error($timesheet_task);
+
                 return response()->json(array('error' => Lang::get('general.error')));
             }
         } catch (Exception $e) {
             DB::rollback();
+            Log::error($e);
+            Log::error($work_package);
+            Log::error($timesheet_task);
+
             return response()->json(array('error' => Lang::get('general.error')));
         }
     }
@@ -640,7 +781,7 @@ class TimesheetController extends Controller
 
             // Get the workdays in the month
             $month = Timesheet::where(DB::raw('MONTH(workday)'), (isset($inputs['month']) ? $inputs['month'] : Carbon::now()->month))
-                ->where(DB::raw('YEAR(workday)'), (isset($inputs['year']) ? $inputs['year'] : Carbon::now()->year))->where('user_id', $id)->get();
+                ->where(DB::raw('YEAR(workday)'), (isset($inputs['year']) ? $inputs['year'] : Carbon::now()->year))->where('user_id', $id)->orderBy('workday')->get();
             $data['month'] = $month;
 
             // Get total hour month
@@ -709,10 +850,18 @@ class TimesheetController extends Controller
                 return redirect('timesheets')->with('return', GeneralController::createMessage('success', Lang::get('general.' . $this->controller_name), 'delete'));
             } else {
                 DB::rollback();
+                Log::error($e);
+                Log::error($work_package);
+                Log::error($timesheet_task);
+
                 return redirect('timesheets')->with('return', GeneralController::createMessage('failed', Lang::get('general.' . $this->controller_name), 'delete'));
             }
         } catch (Exception $e) {
             DB::rollback();
+            Log::error($e);
+            Log::error($work_package);
+            Log::error($timesheet_task);
+
             return redirect('timesheets')->with('return', GeneralController::createMessage('failed', Lang::get('general.' . $this->controller_name), 'delete'));
         }
     }
