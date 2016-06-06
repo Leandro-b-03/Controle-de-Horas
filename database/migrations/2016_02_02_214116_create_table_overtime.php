@@ -15,7 +15,7 @@ class CreateTableOvertime extends Migration
         Schema::create('overtime', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('user_id')->unsigned();
-            $table->string('hours', 4, 2)->default('00:00:00');;
+            $table->string('hours')->default('00:00:00');
             $table->timestamps();
 
             $table->foreign('user_id')->references('id')->on('users')->onUpdate('cascade')->onDelete('cascade');
