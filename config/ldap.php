@@ -5,7 +5,7 @@ return [
         'adldap' => [
             'account_suffix'     => '@svlabs.local',
             'domain_controllers' => [
-                'dc2.svlabs.local'
+                '192.168.80.65'
             ], // Load balancing domain controllers
             'base_dn' => 'DC=svlabs,DC=local',
             'admin_username' => 'timesheet', // 'timesheet', // This is required for session persistance in the application

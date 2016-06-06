@@ -532,23 +532,18 @@
             data: {id: id},
             type: "GET",
             success: function(data) {
-              var tasks = data
+              var html = data
 
-              _tasks = tasks;
+              _html = html;
 
-              if (tasks.length > 0) {
+              console.log(html != null && html != '');
+
+              if (html != null && html != '') {
                 $('#tasks').prop( "disabled", false );
                 $('#tasks').find('option[value!=""]').remove();
-
+                $('#tasks').find('optgroup').remove();
                 var options = [];
-
-                $.each(tasks, function(i, task) {
-                  options.push('<option value="' + task.id + '" data-type="' + task.type_id + '">' + task.subject + '</select>');
-                  return;
-                });
-
-
-                $('#tasks').append(options).select2({
+                $('#tasks').append(html).select2({
                   templateResult: getIcon
                 });
               } else {

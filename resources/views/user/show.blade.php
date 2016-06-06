@@ -5,6 +5,8 @@
 @stop
 
 @section('style')
+    <!-- Wickedpicker -->
+    {!! Html::style("library/adminLTE/plugins/ericjgagnon-wickedpicker/stylesheets/wickedpicker.css") !!}
 @stop
 
 @section('content')
@@ -116,6 +118,7 @@
                 <th rowspan="2">{!! Lang::get('timesheets.title-end') !!}</th>
                 <th colspan="2">{!! Lang::get('timesheets.title-nightly') !!}</th>
                 <th rowspan="2">{!! Lang::get('general.total') !!}</th>
+                <th rowspan="2"><a id="add-row" class="btn btn-warning pull-right">{!! Lang::get('timesheets.add-row') !!}</a></th>
               </tr>
               <tr>
                 <th>{!! Lang::get('timesheets.title-start') !!}</th>
@@ -137,6 +140,10 @@
                 <td>{!! $workday->nightly_start !!}</td>
                 <td>{!! $workday->nightly_end !!}</td>
                 <td>{!! GeneralHelper::getHoursTotal($workday->hours, $workday->nightly_hours) !!}</td>
+                <td>
+                  <a id="{!! $workday->id !!}" class="btn btn-primary pull-right edit-row">{!! Lang::get('general.edit') !!}</a>
+                  <a id="{!! $workday->id !!}" class="btn btn-success pull-right save-row hide">{!! Lang::get('general.save') !!}</a>
+                </td>
               </tr>
               @endforeach
               @endif
@@ -144,7 +151,7 @@
           </table>
         </div><!-- /.box-body -->
       <div class="box-footer">
-      <a class="btn btn-danger" href="{!! URL::to('timesheets') !!}">{!! Lang::get('general.back') !!}</a>
+      <a class="btn btn-danger" href="{!! URL::to('users') !!}">{!! Lang::get('general.back') !!}</a>
       </div><!-- /.box-footer-->
     </div><!-- /.box -->
 
@@ -167,6 +174,7 @@
         </div>
       </div>
     </div>
+    <input type="hidden" id="user_id" value="{!! $data['user_id'] !!}">
 @endsection
 
 @section('scripts')
@@ -176,8 +184,14 @@
     {!! Html::script("library/adminLTE/plugins/fastclick/fastclick.min.js") !!}
     <!-- Stopwacth -->
     {!! Html::script("library/adminLTE/plugins/jquery-stopwatch/jquery.stopwatch.js") !!}
+    <!-- Datepicker -->
+    {!! Html::script("library/adminLTE/plugins/datepicker/bootstrap-datepicker.js") !!}
+    <!-- Wickedpicker -->
+    {!! Html::script("library/adminLTE/plugins/ericjgagnon-wickedpicker/src/wickedpicker.js") !!}
 
     <script type="text/javascript" charset="utf-8" async defer>
+      $('.time').wickedpicker({twentyFour: true});
+      
       $('.tasks-day').click(function() {
         var data = {};
         data.id = $(this).data('id');
@@ -190,6 +204,110 @@
           success: function(data) {
             $('#timeline').html('');
             $('#timeline').html($(data));
+          }
+        });
+      });
+
+      $('#add-row').click(function() {
+        $(this).hide();
+        $('.edit-row').hide();
+
+        var date = $('<td>');
+        var day = $('<td>');
+        var start = $('<td>');
+        var lunch_start = $('<td>');
+        var lunch_end = $('<td>');
+        var end = $('<td>');
+        var nightly_start = $('<td>');
+        var nightly_end = $('<td>');
+        var total = $('<td>');
+        var edit = $('<td>');
+
+        date.html('<input id="date_new" class="form-control" type="text" id="date_new" value="' + $('.tasks-day:last').html() + '"/>');
+        start.html('<input class="form-control time" type="text" id="start_new" value="08:00"/>');
+        lunch_start.html('<input class="form-control time" type="text" id="lunch_start_new" value="12:00"/>');
+        lunch_end.html('<input class="form-control time" type="text" id="lunch_end_new" value="13:00"/>');
+        end.html('<input class="form-control time" type="text" id="send_new" value="17:00"/>');
+        nightly_start.html('<input class="form-control time" type="text" id="nightly_start_new" value="00:00"/>');
+        nightly_end.html('<input class="form-control time" type="text" id="nightly_end_new" value="00:00"/>');
+        edit.html('<a id="new" class="btn btn-success pull-right save-row">' + "{!! Lang::get('general.save') !!}" + '</a>');
+
+        var row = $('<tr>');
+
+        row.append(date);
+        row.append(day);
+        row.append(start);
+        row.append(lunch_start);
+        row.append(lunch_end);
+        row.append(end);
+        row.append(nightly_start);
+        row.append(nightly_end);
+        row.append(total);
+        row.append(edit);
+
+        date.find('#date_new').datepicker({ format: 'dd/mm/yyyy' });
+        row.find('.time').wickedpicker({twentyFour: true});
+
+        $('#month-table').append(row);
+      });
+
+      $('.edit-row').click(function() {
+        var par = $(this).parent().parent();
+        var start = par.children("td:nth-child(3)");
+        var lunch_start = par.children("td:nth-child(4)");
+        var lunch_end = par.children("td:nth-child(5)");
+        var end = par.children("td:nth-child(6)");
+        var nightly_start = par.children("td:nth-child(7)");
+        var nightly_end = par.children("td:nth-child(8)");
+
+        start.html('<input class="form-control time" type="text" id="start_' + $(this).attr('id') + '" value="' + start.html() + '"/>');
+        lunch_start.html('<input class="form-control time" type="text" id="lunch_start_' + $(this).attr('id') + '" value="' + lunch_start.html() + '"/>');
+        lunch_end.html('<input class="form-control time" type="text" id="lunch_end_' + $(this).attr('id') + '" value="' + lunch_end.html() + '"/>');
+        end.html('<input class="form-control time" type="text" id="send_' + $(this).attr('id') + '" value="' + end.html() + '"/>');
+        nightly_start.html('<input class="form-control time" type="text" id="nightly_start_' + $(this).attr('id') + '" value="' + nightly_start.html() + '"/>');
+        nightly_end.html('<input class="form-control time" type="text" id="nightly_end_' + $(this).attr('id') + '" value="' + nightly_end.html() + '"/>');
+      
+        $('.time').wickedpicker({twentyFour: true});
+
+        $('.edit-row').hide();
+        $(this).parent().find('.save-row').removeClass('hide');
+      });
+
+      $('table').on('click', '.save-row', function() {
+        var data = {
+          user_id: $('#user_id').val(),
+          id:  $(this).attr('id'),
+          date: $('#date_' + $(this).attr('id')).val(),
+          start: $('#start_' + $(this).attr('id')).val(),
+          lunch_start: $('#lunch_start_' + $(this).attr('id')).val(),
+          lunch_end: $('#lunch_end_' + $(this).attr('id')).val(),
+          end: $('#send_' + $(this).attr('id')).val(),
+          nightly_start: $('#nightly_start_' + $(this).attr('id')).val(),
+          nightly_end: $('#nightly_end_' + $(this).attr('id')).val(),
+        }
+
+        $(this).hide();
+
+        console.log(data);
+
+        $.ajax({
+          url: '/general/changeDay',
+          data: data,
+          type: "GET",
+          success: function(data) {
+            if (data == 'true') {
+              location.reload();
+            } else {
+              var html = '';
+
+              html += '<div class="alert alert-danger alert-dismissable">';
+              html += '  <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>';
+              html += '  <h4>    <i class="icon fa fa-error"></i> ' + "{!! Lang::get('general.failed') !!}" + '!</h4>';
+              html += "{!! Lang::get('general.error') !!}";
+              html += '</div>';
+
+              $('#message').append(html);
+            }
           }
         });
       });

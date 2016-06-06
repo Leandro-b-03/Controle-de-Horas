@@ -54,6 +54,7 @@ return [
     'char_left'                     => 'caract&eacute;res restantes',
     'info'                          => 'Informa&ccedil;ão',
     'total'                         => 'Total',
+    'hours'                         => 'Horas',
 
     // Menu & Controller
     'nav-menu'                      => 'Menu de navega&ccedil;&atilde;o',

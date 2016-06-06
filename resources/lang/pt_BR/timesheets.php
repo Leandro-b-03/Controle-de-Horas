@@ -78,6 +78,7 @@ return [
     'hours_to_achieve'              => 'Horas dia',
     'hours_credit'                  => 'Crédito de horas',
     'hours_debit'                   => 'Débito de horas',
+    'add-row'                       => 'Adicionar linha',
 
     // Tasks
     'tasks-start'                   => 'O colaborador :name começou uma nova atividade.',
