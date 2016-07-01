@@ -49,4 +49,22 @@ class Project extends Model
     //     return $this->belongsTo('App\Proposal', 'proposal_id');
     // }
 
+    /**
+     * Get the proposal record associated with the project.
+     */
+    public function custom_field()
+    {
+        return $this->hasMany('App\CustomField', 'customized_id');
+    }
+
+    /**
+     * Scope a query to get all the activities type.
+     *
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeActivities($query)
+    {
+        return $query->join('projects_types', 'projects_types.project_id', '=', 'projects.id')
+                     ->join('types', 'types.id', '=', 'projects_types.type_id');
+    }
 }

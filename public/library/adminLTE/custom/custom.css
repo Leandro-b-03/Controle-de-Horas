@@ -348,6 +348,10 @@ table thead tr th.start, table thead tr th.end {
 	padding: 25px 0px;
 }
 
+.select-box {
+	margin-left: 30px;
+}
+
 .play {
 	width: 120px;
 	margin-bottom: 10px;
@@ -367,7 +371,7 @@ table thead tr th.start, table thead tr th.end {
 }
 
 .register {
-	max-width: 60%;
+	max-width: 65%;
 }
 
 #month-table th {
@@ -375,7 +379,7 @@ table thead tr th.start, table thead tr th.end {
 }
 
 #month-table-total {
-	max-width: 25%;
+	max-width: 40%;
 	margin-bottom: 20px;
 }
 
@@ -581,4 +585,35 @@ table thead tr th.start, table thead tr th.end {
 #notification-panel ul li a:hover {
     background: #f4f4f4;
     text-decoration: none;
+}
+
+.sortable-list {
+  padding: 0px;
+  width: 100%;
+  min-height: 50px;
+  border: dashed thin
+}
+
+#tasks .sortable-list {
+  min-height: 100px;
+  overflow-x: hidden;
+}
+
+.sortable-list li {
+  margin: 5px !important;
+  list-style: none;
+  border: solid thin #DADBDC;
+  float: left;
+  cursor: move;
+}
+
+.sortable-list li {
+	z-index: 9999999;
+}
+
+.sortable-list hr {
+	clear: both;
+	border: medium none;
+	padding: 0px;
+	margin: 0px;
 }

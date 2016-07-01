@@ -19,20 +19,21 @@
     </a>
   </li>
   @endif
-  <!-- @if(Entrust::can(['ProposalController@index', 'ProjectController@index', 'TaskController@index']))
+
+  @if(Entrust::can(['ProposalController@index', 'ProjectController@index', 'TaskController@index']))
   <li class="treeview {!! ((Request::is('projects/*') || Request::is('projects')) || (Request::is('tasks/*') || Request::is('tasks')) || (Request::is('proposals/*') || Request::is('proposals')) ? 'active' : '') !!}">
     <a href="#">
       <i class="fa fa-suitcase"></i> <span>{!! Lang::get('general.projects') !!}</span>
       <i class="fa fa-angle-left pull-right"></i>
     </a>
     <ul class="treeview-menu">
-      @if(Entrust::can(['ProposalController@index']))
+      <!-- @if(Entrust::can(['ProposalController@index']))
       <li {!! ((Request::is('proposals/*') || Request::is('proposals')) ? 'class="active"' : '') !!}>
         <a href="{!! URL::to('proposals') !!}">
           <i class="fa fa-briefcase"></i> <span>{!! Lang::get('general.proposals') !!}</span></i>
         </a>
       </li>
-      @endif
+      @endif -->
       @if(Entrust::can(['ProjectController@index']))
       <li {!! ((Request::is('projects/*') || Request::is('projects')) ? 'class="active"' : '') !!}>
         <a href="{!! URL::to('projects') !!}">
@@ -40,17 +41,18 @@
         </a>
       </li>
       @endif
-      @if(Entrust::can(['TaskController@index']))
+      <!-- @if(Entrust::can(['TaskController@index']))
       <li {!! ((Request::is('tasks/*') || Request::is('tasks')) ? 'class="active"' : '') !!}>
         <a href="{!! URL::to('tasks') !!}">
           <i class="fa fa-tasks"></i> <span>{!! Lang::get('general.tasks') !!}</span></i>
         </a>
       </li>
-      @endif
+      @endif -->
     </ul>
   </li>
   @endif
-  @if(Entrust::can(['ClientController@index', 'ClientGroupController@index']))
+
+  <!-- @if(Entrust::can(['ClientController@index', 'ClientGroupController@index']))
   <li class="treeview {!! ((Request::is('clients/*') || Request::is('clients')) || (Request::is('client-groups/*') || Request::is('client-groups')) ? 'active' : '') !!}">
     <a href="#">
       <i class="fa fa-user-secret"></i> <span>{!! Lang::get('general.clients') !!}</span>
@@ -95,6 +97,7 @@
     </ul>
   </li>
   @endif
+  
   @if(Entrust::can(['SettingsController@index', 'TeamController@index', 'GroupPermissionController@index']))
   <li class="treeview {!! ((Request::is('settings/*') || Request::is('settings')) || (Request::is('modules/*') || Request::is('modules')) || (Request::is('misc/*') || Request::is('misc')) ? 'active' : '') !!}">
     <a href="#">

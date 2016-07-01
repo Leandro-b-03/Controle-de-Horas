@@ -177,7 +177,7 @@
               <div class="row">
                 <div class="col-md-9">
                   <div class="avatar-wrapper">
-                    <img id="crop-image" src="" alt="">
+                    <img id="" src="" alt="">
                   </div>
                 </div>
                 <div class="col-md-3">
@@ -213,11 +213,6 @@
                         <span class="fa fa-search-minus"></span>
                       </span>
                     </button>
-                  </div>
-
-                  <div class="btn-group">
-                    <button type="button" class="btn btn-primary" data-method="rotate" data-option="-90" title="Rotate -90 degrees">Rotate Left</button>
-                    <button type="button" class="btn btn-primary" data-method="rotate" data-option="90" title="Rotate 90 degrees">Rotate Right</button>
                   </div>
 
                   <div class="btn-group">

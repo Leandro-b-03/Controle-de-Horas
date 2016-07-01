@@ -627,9 +627,6 @@ class TimesheetController extends Controller
                 // Get the user in the ts
                 $user = User::where('email', $user_open_project->mail)->get()->first();
 
-                Log::info($user_open_project);
-                Log::info($user);
-
                 if ($project->responsible_id && $user) {
                     $message = '';
 
