@@ -67,7 +67,26 @@ class UserController extends Controller
 
         $inputs = $request->all();
 
-        $inputs['role'] = isset($inputs['role']) ? $inputs['role'] : 4;
+        $role = null;
+
+        if (!isset($inputs['role'])) {
+            $role_id = Role::where('name', 'Colaborador');
+
+            if (!$role) {
+                $role = new Role();
+                $role->name         = 'Colaborador';
+                $role->display_name = 'Colaborador'; // optional
+                $role->description  = 'Colaborador SVLabs'; // optional
+                $role->save();
+                $role->attachPermission(array('id' => 41, 'id' => 40, 'id' => 39, 'id' => 38, 'id' => 31, 'id' => 30, 'id' => 29, 'id' => 8));
+
+                $role_id = $role->id;
+            } else {
+                $role_id = $role->id;
+            }
+        } else {
+            $role_id = $inputs['role'];
+        }
         
         try {
             // Validation of the fields
@@ -93,7 +112,7 @@ class UserController extends Controller
                 $user = User::create( $inputs );
 
                 if ($user) {
-                    $user->attachRole(Role::find($inputs['role']));
+                    $user->attachRole(Role::find($role_id));
 
                     $settings = array(
                         'user_id' => $user->id,

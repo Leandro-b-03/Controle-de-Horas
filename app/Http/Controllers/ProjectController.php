@@ -5,13 +5,17 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 
 use DB;
+use Log;
 use Lang;
 use App\Role;
-use App\Client;
+// use App\Client;
 use App\Project;
-use App\Proposal;
+use App\CustomField;
 use App\ProjectTime;
+use App\Enumeration;
 use App\Http\Requests;
+use App\TaskPermission;
+use App\TaskPermissionJournal;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Controllers\GeneralController;
@@ -28,8 +32,10 @@ class ProjectController extends Controller
     public function index()
     {
         // Get all the projects
-        $projects = Project::All();
+        $projects = Project::orderBy('created_on', 'desc')->paginate(15);
         $data['projects'] = $projects;
+
+        Log::debug($projects->first()->custom_field()->where('custom_field_id', 33)->get());
 
         // d($projects->first()->proposal()->getResults()->client()->getResults()->name);
 
@@ -47,16 +53,16 @@ class ProjectController extends Controller
         $data = [];
 
         // Get all the managers users
-        $users = Role::find(2)->users()->get();
-        $data['users'] = $users;
+        // $users = Role::find(2)->users()->get();
+        $data['users'] = null;
 
         // Get all clients
-        $clients = Client::all();
-        $data['clients'] = $clients;
+        // $clients = Client::all();
+        $data['clients'] = null;
 
         // Get all proposals
-        $proposals = Proposal::all();
-        $data['proposals'] = $proposals;
+        // $proposals = Proposal::all();
+        $data['proposals'] = null;
 
         // Return the project view.
         return view('project.create')->with('data', $data);
@@ -70,44 +76,32 @@ class ProjectController extends Controller
     public function store(Request $request)
     {
         $inputs = $request->all();
-        
-        // Validation of the fields
-        $validator = Validator::make(
-            [
-                $inputs
-            ],
-            [
-                'name' => 'required'
-            ]
-        );
 
-        $projects_time = $inputs['project_time'];
+        Log::debug($inputs);
 
         try {
-            if($validator) {
-                $project = Project::create( $inputs );
-                
-                if ($project) {
-                    foreach ($projects_time as $project_time) {
-                        $project_time['cycle'] = $project_time['cycle'][0];
-                        $project_time['schedule_time'] = $project_time['schedule_time'][0];
-                        $project_time['budget'] = $project_time['budget'][0];
-                        $project_time['project_id'] = $project->id;
+            foreach ($inputs['columns'] as $column) {
+                $enumeration_id = $column[0];
+                Log::debug($enumeration_id);
+                Log::debug($column);
+                if (isset($column[1])) {
+                    foreach ($column[1] as $value) {
+                        $task_permissions = TaskPermission::where('work_package_id', $value)->first();
 
-                        if (!ProjectTime::create( $project_time )) {
+                        if ($task_permissions) {
+                            TaskPermissionJournal::create( array('work_package_id' => $task_permissions->work_package_id, 'enumeration_id' => $task_permissions->enumeration_id) );
+                            TaskPermission::where('work_package_id', $value)->delete();
+                        }
+
+                        $data = array('work_package_id' => $value, 'enumeration_id' => $enumeration_id);
+                        $task_permission = TaskPermission::create( $data );
+
+                        if (!$task_permission) {
                             DB::rollback();
                             return redirect('projects/create')->withInput()->with('return', GeneralController::createMessage('failed', Lang::get('general.' . $this->controller_name), 'create'));
                         }
                     }
-                    DB::commit();
-                    return redirect('projects')->with('return', GeneralController::createMessage('success', Lang::get('general.' . $this->controller_name), 'create'));
-                } else {
-                    DB::rollback();
-                    return redirect('projects/create')->withInput()->with('return', GeneralController::createMessage('failed', Lang::get('general.' . $this->controller_name), 'create'));
                 }
-            } else {
-                DB::rollback();
-                return redirect('projects/create')->withInput()->with('return', GeneralController::createMessage('failed', Lang::get('general.' . $this->controller_name), 'create-failed'));
             }
         } catch (Exception $e){
             DB::rollback();
@@ -138,21 +132,32 @@ class ProjectController extends Controller
         $project = Project::find($id);
         $data['project'] = $project;
 
-        // Retrive the project with param $id
-        $projects_times = ProjectTime::where('project_id', $id)->get();
-        $data['projects_times'] = $projects_times;
+        $tasks = DB::connection('openproject')->table('work_packages AS wp1')->whereNotExists(function ($query) {
+            $query->select(DB::raw(1))
+                  ->from('work_packages AS wp2')
+                  ->whereRaw('wp2.parent_id = wp1.id');
+        })->where('project_id', $id)->get();
+        // $data['tasks'] = $tasks;
 
-        // Get all the managers users
-        $users = Role::find(2)->users()->get();
-        $data['users'] = $users;
+        $activities = DB::connection('openproject')->table('enumerations AS en1')->whereNotExists(function ($query) use ($id) {
+            $query->select(DB::raw(1))
+                  ->from('enumerations AS en2')
+                  ->whereRaw('en2.parent_id = en1.id')
+                  ->where('en2.project_id', $id);
+        })->where('en1.type', 'TimeEntryActivity')->where('active', 1)->get();
+        $data['activities'] = $activities;
 
-        // Get all clients
-        $clients = Client::all();
-        $data['clients'] = $clients;
+        $tasks_permissions =  array();
 
-        // Get all proposals
-        $proposals = Proposal::all();
-        $data['proposals'] = $proposals;
+        foreach ($tasks as $task) {
+            $task_permission = TaskPermission::where('work_package_id', $task->id)->first();
+
+            $tasks_permissions[$task_permission->enumeration_id][] = $task;
+        }
+
+        Log::info($tasks_permissions);
+
+        $data['tasks_permissions'] = $tasks_permissions;
 
         // Return the dashboard view.
         return view('project.create')->with('data', $data);

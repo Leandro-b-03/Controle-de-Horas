@@ -44,8 +44,12 @@
     <!-- Custom style -->
     {!! Html::style("library/adminLTE/custom/custom.css") !!}
   </head>
+  @if(Auth::user())
   @if(Auth::user()->getEloquent()->settings()->getResults())
   <body class="hold-transition {!! Auth::user()->getEloquent()->settings()->getResults()->skin ? Auth::user()->getEloquent()->settings()->getResults()->skin : 'skin-yellow' !!} {!! Auth::user()->getEloquent()->settings()->getResults()->boxed ? Auth::user()->getEloquent()->settings()->getResults()->boxed : '' !!} {!! Auth::user()->getEloquent()->settings()->getResults()->sidebar_toggle ? Auth::user()->getEloquent()->settings()->getResults()->sidebar_toggle : '' !!} sidebar-mini">
+  @else
+  <body class="hold-transition skin-yellow sidebar-mini">
+  @endif
   @else
   <body class="hold-transition skin-yellow sidebar-mini">
   @endif
@@ -103,7 +107,7 @@
               <li class="dropdown notifications-menu">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                   <i class="fa fa-bell-o"></i>
-                  <span class="label label-warning notification-count">{!! Auth::user()->getEloquent()->getNotifications()->unseen()->get()->count() != 0 ? Auth::user()->getEloquent()->getNotifications()->unseen()->get()->count() : '' !!}</span>
+                  <span class="label label-warning notification-count">{!! Auth::user()->getEloquent()->getNotifications()->unseen()->get()->count() != 0 ? Auth::user()->getEloquent()->getNotifications()->unseen()->get()->count() : '0' !!}</span>
                 </a>
                 <ul class="dropdown-menu">
                   <li class="header">{!! Lang::choice('general.navbar-notification', Auth::user()->getEloquent()->getNotifications()->unseen()->get()->count(), ['count' => Auth::user()->getEloquent()->getNotifications()->unseen()->get()->count() ]) !!}</li>

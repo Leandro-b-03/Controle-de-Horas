@@ -42,22 +42,12 @@
         </div>
     </div>
     <div class="box-body">
-        <div class="pull-right">
-            <a href="{!! URL::to('projects/create') !!}" class="btn btn-primary">{!! Lang::get('projects.new') !!}</a>
-            <a id="delete" data-name="Cliente" class="btn btn-danger">{!! Lang::get('projects.delete') !!}</a>
-        </div>
-        <hr class="clearfix" />
         <table id="client-list" class="table table-bordered table-striped">
             <thead>
                 <tr>
-                    <th class="select-tr"><input type="checkbox" id="select_all" /></th>
                     <th>Nome</th>
                     <th>Descrição</th>
-                    <th>Cliente</th>
-                    <th>Proposta do projeto</th>
                     <th>Projeto criado em</th>
-                    <th>Horas programadas</th>
-                    <th>Horas restantes</th>
                     <th class="action-tr">{!! Lang::get('general.action') !!}</th>
                 </tr>
             </thead>
@@ -65,15 +55,22 @@
             <tbody>
                 @foreach($data['projects'] as $project)
                 <tr>
-                    <td><input type="checkbox" class="delete" data-value="{!! $project->id !!}" /></td>
-                    <td>{!! $project->name . $project->name_complement !!}</td>
+                    <td rowspan="2">{!! $project->name . $project->name_complement !!}</td>
                     <td>{!! $project->description !!}</td>
-                    <td>{!! $project->proposal()->getResults()->client()->getResults()->name !!}</td>
-                    <td>{!! $project->proposal()->getResults()->name !!}</td>
-                    <td>{!! date('d/m/Y', strtotime($project->created_at)) !!}</td>
-                    <td>{!! $project->schedule_time !!}</td>
-                    <td>{!! $project->time_spend !!}</td>
+                    <td>{!! date('d/m/Y', strtotime($project->created_on)) !!}</td>
                     <td><a href="{!! URL::to('projects/' . $project->id . '/edit') !!}" class="btn btn-primary">{!! Lang::get('general.edit') !!}</a></td>
+                </tr>
+                <tr>
+                    <td colspan="5">
+                        <strong>Horas programadas:</strong> {!! $project->custom_field()->where('custom_field_id', 33)->first()->value !!}
+                        <strong>Horas Execultadas:</strong> {!! $project->custom_field()->where('custom_field_id', 36)->first()->value or '0' !!}
+                        {!! d(($project->custom_field()->where('custom_field_id', 36)->first()->value or 1) / ($project->custom_field()->where('custom_field_id', 33)->first()->value or 1)) !!}
+                        <div class="progress">
+                            <div class="progress-bar progress-bar-primary progress-bar-striped" role="progressbar" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100" style="width: {!! ((int)$project->custom_field()->where('custom_field_id', 33)->first()->value / (int)($project->custom_field()->where('custom_field_id', 36)->first()->value or 1)) * 100 !!}%">
+                                <span class="sr-only">40% Complete (success)</span>
+                            </div>
+                        </div>
+                    </td>
                 </tr>
                 @endforeach
             </tbody>
@@ -81,7 +78,7 @@
         </table>
     </div><!-- /.box-body -->
     <div class="box-footer">
-      Footer
+      {!! $data['projects']->render() !!}
   </div><!-- /.box-footer-->
 </div><!-- /.box -->
 @endsection

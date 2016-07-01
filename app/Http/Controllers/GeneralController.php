@@ -12,6 +12,7 @@ use Log;
 use Auth;
 use Lang;
 use Mail;
+use File;
 // use Image;
 use App\User;
 use App\Team;
@@ -332,7 +333,6 @@ class GeneralController extends Controller {
         $parent = '';
 
         foreach ($tasks as $task) {
-            Log::info($task->path);
             $_parent = str_replace($task->subject, '', $task->path);
             if ($_parent != $parent) {
                 $parent = $_parent;
@@ -356,8 +356,6 @@ class GeneralController extends Controller {
         //     $html .= '</optgroup>';
         // }
 
-        Log::info($tasks);
-        Log::info($html);
         
         return response()->json($html);
     }
@@ -376,7 +374,6 @@ class GeneralController extends Controller {
 
         $parent_exists = false;
 
-        Log::info($parent->parent_id);
 
         if ($parent->parent_id) {
             $parent_exists = true;
@@ -387,7 +384,6 @@ class GeneralController extends Controller {
         } else {
             $_group_tasks[$parent->root_id][] = array('name' => $parent->subject, 'task_id' => $task_id);
 
-            Log::info($_group_tasks);
             
             return $_group_tasks;
         }
@@ -442,12 +438,12 @@ class GeneralController extends Controller {
     {
         $inputs = $request->all();
 
-        $start_explode = explode(':', $inputs['start']);
-        $lunch_start_explode = explode(':', $inputs['lunch_start']);
-        $lunch_end_explode = explode(':', $inputs['lunch_end']);
-        $end_explode = explode(':', $inputs['end']);
-        $nightly_start_explode = explode(':', $inputs['nightly_start']);
-        $nightly_end_explode = explode(':', $inputs['nightly_end']);
+        $start_explode = explode(':', str_replace(' ', '', $inputs['start']));
+        $lunch_start_explode = explode(':', str_replace(' ', '', $inputs['lunch_start']));
+        $lunch_end_explode = explode(':', str_replace(' ', '', $inputs['lunch_end']));
+        $end_explode = explode(':', str_replace(' ', '', $inputs['end']));
+        $nightly_start_explode = explode(':', str_replace(' ', '', $inputs['nightly_start']));
+        $nightly_end_explode = explode(':', str_replace(' ', '', $inputs['nightly_end']));
 
         $start = Carbon::createFromTime($start_explode[0], $start_explode[1], (array_key_exists(2, $start_explode) ? $start_explode[2] : '00'));
         $lunch_start = Carbon::createFromTime($lunch_start_explode[0], $lunch_start_explode[1], (array_key_exists(2, $lunch_start_explode) ? $lunch_start_explode[2] : '00'));
@@ -490,10 +486,6 @@ class GeneralController extends Controller {
                 $day = Carbon::createFromFormat('d/m/Y', $inputs['date'])->toDateString();
 
                 $date = Timesheet::where('user_id', $inputs['user_id'])->where('workday', $day)->get();
-
-                Log::info($day);
-                Log::info($date);
-                Log::info(count($date));
                 
                 if (count($date) == 0) {
                     $workday['user_id'] = $inputs['user_id'];
@@ -508,11 +500,7 @@ class GeneralController extends Controller {
                     $workday['nightly_end'] = $nightly_end->toTimeString();
                     $workday['nightly_hours'] = $nightly_time;
 
-                    Log::info($lunch_time);
-
                     $workday = Timesheet::create( $workday );
-
-                    Log::info($workday);
 
                     if ($workday) {
                         DB::commit();
@@ -538,7 +526,6 @@ class GeneralController extends Controller {
                 $workday->nightly_end = $nightly_end->toTimeString();
                 $workday->nightly_hours = $nightly_time;
 
-                Log::info($lunch_time);
 
                 if ($workday->save()) {
                     DB::commit();
@@ -653,11 +640,16 @@ class GeneralController extends Controller {
         $data = base64_decode($img);
         $filename = date('ymdhis') . '_croppedImage' . ".png";
 
-        $returnData = '/images/avatar/upload/normal/' . $filename;
+        $returnData = 'images/avatar/upload/normal/' . $filename;
         $file = $destinationPath . 'normal/' . $filename;
 
         if (!is_dir($destinationPath)) {
             $result = File::makeDirectory($destinationPath, 0775, true);
+
+            File::makeDirectory($destinationPath . 'normal', 0775, true);
+            File::makeDirectory($destinationPath . '500x500', 0775, true);
+            File::makeDirectory($destinationPath . '240x240', 0775, true);
+            File::makeDirectory($destinationPath . '100x100', 0775, true);
         }
 
         // Save photo normal
@@ -666,16 +658,16 @@ class GeneralController extends Controller {
         $image = Image::make($returnData);
 
         // Save photo 500x500
-        $image500x500 = Image::make($returnData)->resize(500, 500)->save($destinationPath . '500x500/' . $filename);
+        $image500x500 = $image->resize(500, 500)->save($destinationPath . '500x500/' . $filename);
 
         // Save photo 240x240
-        $image240x240 = Image::make($returnData)->resize(240, 240)->save($destinationPath . '240x240/' . $filename);
+        $image240x240 = $image->resize(240, 240)->save($destinationPath . '240x240/' . $filename);
 
         // Save photo 100x100
-        $image100x100 = Image::make($returnData)->resize(100, 100)->save($destinationPath . '100x100/' . $filename);
+        $image100x100 = $image->resize(100, 100)->save($destinationPath . '100x100/' . $filename);
 
         if ($image500x500)
-            return $image500x500;
+            return '../../' . str_replace('normal', '500x500', $returnData);
         else {
             return array(
                 'valid' => false,

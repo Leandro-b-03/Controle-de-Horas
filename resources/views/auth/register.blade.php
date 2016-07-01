@@ -26,6 +26,8 @@
     {!! Html::style("library/adminLTE/dist/css/AdminLTE.min.css") !!}
     <!-- Custom style -->
     {!! Html::style("library/adminLTE/custom/custom.css") !!}
+    <!-- Cropper -->
+    {!! Html::style("library/adminLTE/plugins/cropper/dist/cropper.min.css") !!}
 
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -153,6 +155,119 @@
 	        </div><!-- /.modal-content -->
 	      </div><!-- /.modal-dialog -->
 	    </div><!-- /.modal -->
+      <!-- Cropping modal -->
+      <div class="modal fade" id="md-crop" aria-hidden="true" aria-labelledby="avatar-modal-label" role="dialog" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+          <div class="modal-content">
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal">&times;</button>
+              <h4 class="modal-title" id="avatar-modal-label">Change Avatar</h4>
+            </div>
+            <div class="modal-body">
+              <div class="avatar-body">
+
+              <input type="hidden" class="avatar-input" name="" value="">
+                <!-- Upload image and data -->
+                <!-- <div class="avatar-upload">
+                  <input type="hidden" class="avatar-src" name="avatar_src">
+                  <input type="hidden" class="avatar-data" name="avatar_data">
+                  <label for="avatarInput">Local upload</label>
+                  <input type="file" class="avatar-input" id="avatarInput" name="avatar_file">
+                </div> -->
+
+                <!-- Crop and preview -->
+                <div class="row">
+                  <div class="col-md-9">
+                    <div class="avatar-wrapper">
+                      <img id="" src="" alt="">
+                    </div>
+                  </div>
+                  <div class="col-md-3">
+                    <div class="avatar-preview preview-lg"></div>
+                    <div class="avatar-preview preview-md"></div>
+                    <div class="avatar-preview preview-sm"></div>
+                  </div>
+                </div>
+
+                <div class="row avatar-btns">
+                  <div class="col-md-9">
+                    <div class="btn-group">
+                      <button type="button" class="btn btn-primary" data-method="setDragMode" data-option="move" title="Move">
+                        <span data-original-title="$().cropper(&quot;setDragMode&quot;, &quot;move&quot;)" class="docs-tooltip" data-toggle="tooltip" title="">
+                          <span class="fa fa-arrows"></span>
+                        </span>
+                      </button>
+                      <button type="button" class="btn btn-primary" data-method="setDragMode" data-option="crop" title="Crop">
+                        <span data-original-title="$().cropper(&quot;setDragMode&quot;, &quot;crop&quot;)" class="docs-tooltip" data-toggle="tooltip" title="">
+                          <span class="fa fa-crop"></span>
+                        </span>
+                      </button>
+                    </div>
+
+                    <div class="btn-group">
+                      <button type="button" class="btn btn-primary" data-method="zoom" data-option="0.1" title="Zoom In">
+                        <span data-original-title="$().cropper(&quot;zoom&quot;, 0.1)" class="docs-tooltip" data-toggle="tooltip" title="">
+                          <span class="fa fa-search-plus"></span>
+                        </span>
+                      </button>
+                      <button type="button" class="btn btn-primary" data-method="zoom" data-option="-0.1" title="Zoom Out">
+                        <span data-original-title="$().cropper(&quot;zoom&quot;, -0.1)" class="docs-tooltip" data-toggle="tooltip" title="">
+                          <span class="fa fa-search-minus"></span>
+                        </span>
+                      </button>
+                    </div>
+
+                    <div class="btn-group">
+                      <button type="button" class="btn btn-primary" data-method="rotate" data-option="-45" title="Rotate Left">
+                        <span data-original-title="$().cropper(&quot;rotate&quot;, -45)" class="docs-tooltip" data-toggle="tooltip" title="">
+                          <span class="fa fa-rotate-left"></span>
+                        </span>
+                      </button>
+                      <button type="button" class="btn btn-primary" data-method="rotate" data-option="45" title="Rotate Right">
+                        <span data-original-title="$().cropper(&quot;rotate&quot;, 45)" class="docs-tooltip" data-toggle="tooltip" title="">
+                          <span class="fa fa-rotate-right"></span>
+                        </span>
+                      </button>
+                    </div>
+
+                    <div class="btn-group">
+                      <button type="button" class="btn btn-primary" data-method="scaleX" data-option="-1" title="Flip Horizontal">
+                        <span data-original-title="$().cropper(&quot;scaleX&quot;, -1)" class="docs-tooltip" data-toggle="tooltip" title="">
+                          <span class="fa fa-arrows-h"></span>
+                        </span>
+                      </button>
+                      <button type="button" class="btn btn-primary" data-method="scaleY" data-option="-1" title="Flip Vertical">
+                        <span data-original-title="$().cropper(&quot;scaleY&quot;, -1)" class="docs-tooltip" data-toggle="tooltip" title="">
+                          <span class="fa fa-arrows-v"></span>
+                        </span>
+                      </button>
+                    </div>
+
+                    <div class="btn-group">
+                      <button type="button" class="btn btn-primary" data-method="crop" title="Crop">
+                        <span data-original-title="$().cropper(&quot;crop&quot;)" class="docs-tooltip" data-toggle="tooltip" title="">
+                          <span class="fa fa-check"></span>
+                        </span>
+                      </button>
+                      <button type="button" class="btn btn-primary" data-method="clear" title="Clear">
+                        <span data-original-title="$().cropper(&quot;clear&quot;)" class="docs-tooltip" data-toggle="tooltip" title="">
+                          <span class="fa fa-remove"></span>
+                        </span>
+                      </button>
+                    </div>
+                  </div>
+                  <div class="col-md-3">
+                    <a type="submit" class="btn btn-primary btn-block avatar-save">Done</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- <div class="modal-footer">
+              <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div> -->
+          </div>
+        </div>
+      </div><!-- /.modal -->
       <div class="lockscreen-footer text-center">
         {!! Lang::get('general.copyright') !!}
       </div>
@@ -176,6 +291,10 @@
     {!! Html::script("library/adminLTE/plugins/select2/select2.full.min.js") !!}
     <!-- PNotify -->
     {!! Html::script("library/adminLTE/plugins/pnotify/src/pnotify.core.js") !!}
+    <!-- Cropper -->
+    {!! Html::script("library/adminLTE/plugins/cropper/dist/cropper.min.js") !!}
+    <!-- Cropper custom class to events -->
+    {!! Html::script("library/adminLTE/custom/custom-cropper.js") !!}
 
     <script type="text/javascript">
     	$.ajaxSetup({
@@ -230,13 +349,85 @@
 	      });
 	    }
 
-			function responsive_filemanager_callback(field_id){
-			  var url = $('#'+field_id).val();
-			  var url_web = location.origin;
-			  $('#'+field_id).val(url.replace(url_web, ''));
-			  
-			  $('#image').attr('src', url.replace('../', '/'));
-			}
+      function responsive_filemanager_callback(field_id) {
+        var url = $('#'+field_id).val();
+        var url_web = location.origin;
+
+        if ($('#file-name').length > 0) {
+          $('#'+field_id).val(url.replace(url_web, ''));
+
+          $('#file-name').val(url.replace(url_web, ''));
+        }
+        
+        if (field_id == 'photo') {
+          $('.avatar-wrapper img').remove();
+          $('.avatar-wrapper .cropper-container').remove();
+          $('.avatar-wrapper').append($('<img>').attr('src', url.replace('../', '/')));
+          
+          setTimeout(function() {
+            cropStart($('.avatar-wrapper img'));
+            $('#md-crop').modal('show');
+          }, 1000);
+          // $('#image').attr('src', url.replace('../', '/'));
+        }
+      }
+
+      // function to start the crop
+      function cropStart(image) {
+        setTimeout(function() {
+          image.cropper({
+            aspectRatio: 1,
+            preview: '.avatar-preview',
+            crop: function (e) {
+              var json = [
+                '{"x":' + e.x,
+                '"y":' + e.y,
+                '"height":' + e.height,
+                '"width":' + e.width,
+                '"rotate":' + e.rotate + '}'
+              ].join();
+            },
+            dragend: function(data) {
+              originalData = image.cropper("getCroppedCanvas");
+              console.log(originalData.toDataURL());
+            }
+          });
+        }, 100);
+
+        $('.avatar-btns button').each(function () {
+          console.log($(this));
+          $(this).click(function (e) {
+              data = $(e.target).data();
+              image.cropper(data.method, data.option);
+          });
+        }).tooltip({
+          placement: 'bottom'
+        });
+
+        $('.avatar-save').one('click', function() {
+          var data = {};
+          originalData = image.cropper("getCroppedCanvas");
+          data.image = originalData.toDataURL();
+
+          console.log(data);
+
+          $.ajax({
+            url: '/general/saveImages',
+            data: data,
+            type: "POST",
+            success: function(data) {
+              console.log(data);
+              if (!data.error) {
+                $('#image').attr('src', data);
+                $('#photo').val(data);
+                $('#md-crop').modal('hide');
+              } else {
+
+              }
+            }
+          });
+        });
+      }
 
       function throwMessage(data) {
           html = '<div class="alert alert-' + data.class + ' alert-dismissable">';

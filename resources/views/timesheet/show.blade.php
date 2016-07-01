@@ -33,7 +33,7 @@
       <div class="box box-solid box-primary">
         <div class="box-header with-border">
           <i class="fa fa-calendar"></i>
-          <h3 class="box-title">Tarefa atual</h3>
+          <h3 class="box-title">{!! Lang::get('timesheets.monthly') !!}</h3>
           <div class="box-tools pull-right">
             <button class="btn btn-box-tool" data-widget="collapse" data-toggle="tooltip" title="Collapse"><i class="fa fa-minus"></i></button>
           </div>
