@@ -126,11 +126,6 @@ return [
     'providers' => [
 
         /*
-         * Development Service Providers...
-         */
-        // Barryvdh\Debugbar\ServiceProvider::class,
-
-        /*
          * Laravel Framework Service Providers...
          */
         Illuminate\Foundation\Providers\ArtisanServiceProvider::class,
@@ -156,7 +151,6 @@ return [
         Illuminate\Translation\TranslationServiceProvider::class,
         Illuminate\Validation\ValidationServiceProvider::class,
         Illuminate\View\ViewServiceProvider::class,
-        Illuminate\Html\HtmlServiceProvider::class,
 
         /*
          * Application Service Providers...
@@ -165,13 +159,17 @@ return [
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
 
+        /*
+         * Development Service Providers...
+         */
         Arcanedev\LogViewer\LogViewerServiceProvider::class,
+        // Barryvdh\Debugbar\ServiceProvider::class,
 
         /*
          * Custom Services Providers...
          */
         Collective\Html\HtmlServiceProvider::class,
-        Cviebrock\EloquentSluggable\SluggableServiceProvider::class,
+        Cviebrock\EloquentSluggable\ServiceProvider::class,
         Vinkla\Pusher\PusherServiceProvider::class,
         Zizaco\Entrust\EntrustServiceProvider::class,
         Intervention\Image\ImageServiceProvider::class,
@@ -181,6 +179,7 @@ return [
         Alexpechkarev\GoogleGeocoder\GoogleGeocoderServiceProvider::class,
         Dsdevbe\LdapConnector\LdapConnectorServiceProvider::class,
         Maatwebsite\Excel\ExcelServiceProvider::class,
+        Arcanedev\Settings\SettingsServiceProvider::class,
 
         /*
          * Personalization Services Providers...
@@ -248,8 +247,6 @@ return [
         'View'          => Illuminate\Support\Facades\View::class,
         'Form'          => Collective\Html\FormFacade::class,
         'Html'          => Collective\Html\HtmlFacade::class,
-        'Form1'         => Illuminate\Html\FormFacade::class,
-        'HTML1'         => Illuminate\Html\HtmlFacade::class,
         'Entrust'       => Zizaco\Entrust\EntrustFacade::class,
         'PusherManager' => Vinkla\Pusher\Facades\Pusher::class,
         'Image'         => Intervention\Image\Facades\Image::class,
@@ -262,6 +259,7 @@ return [
         'role'          => Zizaco\Entrust\Middleware\EntrustRole::class,
         'permission'    => Zizaco\Entrust\Middleware\EntrustPermission::class,
         'ability'       => Zizaco\Entrust\Middleware\EntrustAbility::class,
+        'Setting' => Arcanedev\Settings\Facades\Setting::class,
 
     ],
 

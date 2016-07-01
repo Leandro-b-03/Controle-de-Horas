@@ -38,9 +38,9 @@ return [
     'connections' => [
 
         'main' => [
-            'auth_key' => '2a865cce883db16362c7',
-            'secret' => 'b1b1ef3df48826f9adfd',
-            'app_id' => '129131',
+            'auth_key' => 'your-auth-key',
+            'secret' => 'your-secret',
+            'app_id' => 'your-app-id',
             'options' => [],
             'host' => null,
             'port' => null,
@@ -48,9 +48,9 @@ return [
         ],
 
         'alternative' => [
-            'auth_key' => 'f95817f904bf1495854d',
-            'secret' => '186ee1a201f36b0773f5',
-            'app_id' => '129131',
+            'auth_key' => 'your-auth-key',
+            'secret' => 'your-secret',
+            'app_id' => 'your-app-id',
             'options' => [],
             'host' => null,
             'port' => null,

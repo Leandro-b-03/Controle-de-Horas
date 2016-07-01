@@ -52,6 +52,8 @@ Route::group(['middleware' => 'auth'], function () {
 
         Route::get('general/saveSettings', 'GeneralController@saveSettings');
 
+        Route::get('general/changeDay', 'GeneralController@changeDay');
+
         Route::get('general/saveLocalization', 'GeneralController@saveLocalization');
             
         Route::get('general/getTasks', 'GeneralController@getTasks');
@@ -141,6 +143,7 @@ Route::group(['middleware' => 'auth'], function () {
     });
 
     Route::resource('users', 'UserController');
+    Route::get('users/{id}/timesheet', 'UserController@timesheet');
     //Entrust::routeNeedsPermission('users', 'UserController@index');
     //Entrust::routeNeedsPermission('users/create', 'UserController@create');
     //Entrust::routeNeedsPermission('users/*/edit', 'UserController@edit');

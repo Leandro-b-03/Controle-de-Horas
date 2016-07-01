@@ -9,7 +9,6 @@
         "laravel/framework": "5.1.*",
         "intervention/image": "^2.3",
         "laravel/elixir": "^1.0@dev",
-        "illuminate/html": "^5.0@dev",
         "raveren/kint": "^1.0@dev",
         "laravelcollective/html": "5.1.*",
         "zizaco/entrust": "dev-laravel-5",

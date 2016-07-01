@@ -48,7 +48,7 @@
                     @endif
                     <a id="end" class="btn btn-warning play"><span class="fa fa-stop-circle-o"></span> {!! Lang::get('timesheets.' .  ($data['workday']->nightly_start != '00:00:00:' ? 'end' : 'nightly_end')) !!}</a>
                 </div>
-                <div class="form-group col-xs-8">
+                <div class="form-group col-xs-8 select-box">
                     <label for="projects">{!! Lang::get('general.projects') !!}</label>
                     <select id="projects" name="projects" class="form-control" data-validation="required" required>
                         <option value="">{!! Lang::get('general.select') !!}</option>
@@ -57,7 +57,7 @@
                         @endforeach
                     </select>
                 </div>
-                <div class="form-group col-xs-8">
+                <div class="form-group col-xs-8 select-box">
                     <label for="tasks">{!! Lang::get('general.tasks') !!}</label>
                     <select id="tasks" name="tasks" class="form-control" data-validation="required" required disabled="disabled">
                         <option value="">{!! Lang::get('general.select') !!}</option>
@@ -532,23 +532,18 @@
             data: {id: id},
             type: "GET",
             success: function(data) {
-              var tasks = data
+              var html = data
 
-              _tasks = tasks;
+              _html = html;
 
-              if (tasks.length > 0) {
+              console.log(html != null && html != '');
+
+              if (html != null && html != '') {
                 $('#tasks').prop( "disabled", false );
                 $('#tasks').find('option[value!=""]').remove();
-
+                $('#tasks').find('optgroup').remove();
                 var options = [];
-
-                $.each(tasks, function(i, task) {
-                  options.push('<option value="' + task.id + '" data-type="' + task.type_id + '">' + task.subject + '</select>');
-                  return;
-                });
-
-
-                $('#tasks').append(options).select2({
+                $('#tasks').append(html).select2({
                   templateResult: getIcon
                 });
               } else {

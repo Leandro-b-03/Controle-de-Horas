@@ -83,7 +83,7 @@ class DashboardController extends Controller
             $query->select(DB::raw(1))
                   ->from('work_packages AS wp2')
                   ->whereRaw('wp2.parent_id = wp1.id');
-        })->whereIn('project_id', $user_projects)->get();
+        })->whereIn('project_id', $user_projects)->take(15)->get();
         $data['tasks'] = $tasks;
 
         // Return the dashboard view.

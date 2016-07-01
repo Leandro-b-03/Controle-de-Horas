@@ -258,7 +258,7 @@ class TimesheetController extends Controller
                 $hours = floor($diffTime / 60);
                 $minutes = ($diffTime % 60);
                 $tminutes = (float)($minutes / 60);
-                $time = (($hours <= 9 ? "0" . $hours : $hours) . ":" . $minutes) . ":" . $seconds;
+                $time = (($hours <= 9 ? "0" . $hours : $hours) . ":" . ($minutes <= 9 ? "0" . $minutes : $minutes)) . ":" . $seconds;
 
                 $user_open_project = UserOpenProject::where('login', 'LIKE', Auth::user()->getEloquent()->username . '@%')->orWhere('mail', 'LIKE', Auth::user()->getEloquent()->username . '@%')->get()->first();
 
@@ -627,9 +627,6 @@ class TimesheetController extends Controller
                 // Get the user in the ts
                 $user = User::where('email', $user_open_project->mail)->get()->first();
 
-                Log::info($user_open_project);
-                Log::info($user);
-
                 if ($project->responsible_id && $user) {
                     $message = '';
 
@@ -781,7 +778,7 @@ class TimesheetController extends Controller
 
             // Get the workdays in the month
             $month = Timesheet::where(DB::raw('MONTH(workday)'), (isset($inputs['month']) ? $inputs['month'] : Carbon::now()->month))
-                ->where(DB::raw('YEAR(workday)'), (isset($inputs['year']) ? $inputs['year'] : Carbon::now()->year))->where('user_id', $id)->get();
+                ->where(DB::raw('YEAR(workday)'), (isset($inputs['year']) ? $inputs['year'] : Carbon::now()->year))->where('user_id', $id)->orderBy('workday')->get();
             $data['month'] = $month;
 
             // Get total hour month

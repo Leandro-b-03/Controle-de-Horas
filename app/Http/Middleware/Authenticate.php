@@ -33,8 +33,6 @@ class Authenticate {
 	 */
 	public function handle($request, Closure $next)
 	{
-		Log::info($request);
-		
 		if ($this->auth->guest())
 		{
 			if ($request->ajax())
@@ -47,7 +45,6 @@ class Authenticate {
 	             * This is to protect the entire app, except login form, 
 	             * to avoid loop
 	             */
-				Log::info($request);
 	            if ($request->path() != 'auth/login') {
 	                return redirect()->guest('auth/login');
 	            }

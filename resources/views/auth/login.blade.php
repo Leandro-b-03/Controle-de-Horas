@@ -25,12 +25,12 @@
     <div class="login-box">
       <div class="login-logo">
         <a target="_blank" href="http://www.svlabs.com.br/"><b>SVL</b>abs</a>
+        @if ($errors->count() >= 1)
+        <div class="callout callout-danger lead">Login inválido, tente novamente!</div>
+        @endif
       </div><!-- /.login-logo -->
       <div class="login-box-body">
         <p class="login-box-msg">Faça login para entrar no dashboard</p>
-        @if ($errors->count() >= 1)
-        <p class="login-box-msg danger">Login inválido, tente novamente!</p>
-        @endif
         <form method="POST" action="/auth/login">
 		      {!! csrf_field() !!}
           <div class="form-group has-feedback">
