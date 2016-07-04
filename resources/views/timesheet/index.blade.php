@@ -230,7 +230,7 @@
 
     <script type="text/javascript" charset="utf-8" async defer>
         var workday = {!! $data['workday'] !!};
-        var task = {!! $data['timesheet_task'] !!};
+        var task = {!! isset($data['timesheet_task']) ? $data['timesheet_task'] : 0 !!};
         if (task)
           task.activity = {!! $data['activity'] !!};
         
