@@ -232,7 +232,7 @@
         var workday = {!! $data['workday'] !!};
         var task = {!! isset($data['timesheet_task']) ? $data['timesheet_task'] : 0 !!};
         if (task)
-          task.activity = {!! $data['activity'] !!};
+          task.activity = {!! isset($data['activity']) ? $data['activity'] : 0 !!};
         
         $.validate();
 
