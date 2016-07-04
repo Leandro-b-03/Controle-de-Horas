@@ -78,6 +78,9 @@ return [
     'table-created_at'              => 'Colaborador desde',
     'table-group-permission'        => 'Pertence ao grupo de',
 
-    //Messages
+    // Messages
     'welcome'                       => 'Seja muito bem vindo ao Timesheet!',
+
+    // Buttons
+    'edit-tasks'                    => 'Editar Tarefas',
 ];
