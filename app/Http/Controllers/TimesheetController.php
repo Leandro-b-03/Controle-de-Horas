@@ -30,6 +30,7 @@ use App\TaskJournal;
 use App\CustomField;
 use App\TimesheetTask;
 use App\Http\Requests;
+use App\TaskPermission;
 use App\UserOpenProject;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
@@ -84,6 +85,10 @@ class TimesheetController extends Controller
         // Get the actual task
         $timesheet_task = TimesheetTask::where('timesheet_id', $workday->id)->where('end', '00:00:00')->get()->first();
         $data['timesheet_task'] = $timesheet_task;
+
+        if ($timesheet_task) {
+            $data['activity'] = TaskPermission::where('work_package_id', $timesheet_task->work_package_id)->get()->first()->enumeration_id;
+        }
 
         // Get the Openproject's user id
         $user_id = UserOpenProject::where('login', 'LIKE', Auth::user()->getEloquent()->username . '@%')->orWhere('mail', 'LIKE', Auth::user()->getEloquent()->username . '@%')->get()->first()->id;
@@ -268,8 +273,9 @@ class TimesheetController extends Controller
                     'project_id' => $timesheet_task->project_id,
                     'user_id' => $user_open_project->id,
                     'work_package_id' => $timesheet_task->work_package_id,
-                    'hours' => (float)$hours + $tminutes,
-                    'activity_id' => 1,
+                    'hours' => (float) $hours + $tminutes,
+                    'comments' => 'Inserido pelo Timesheet',
+                    'activity_id' => $inputs['activity'],
                     'spent_on' => $start->toDateString(),
                     'tyear' => $start->year,
                     'tmonth' => $start->month,
@@ -282,6 +288,7 @@ class TimesheetController extends Controller
 
                 if ($timesheet_task->save()) {
                     DB::commit();
+                    Log::info($timesheet_task);
                 } else {
                     DB::rollback();
                     Log::error($e);

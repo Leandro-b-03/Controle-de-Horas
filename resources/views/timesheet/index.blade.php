@@ -78,11 +78,11 @@
                 <div id="front-menu" class="form-group col-xs-2 custom_a {!! isset($data['timesheet_task']) ? ($data['timesheet_task']->getTask()->getResults()->type_id != 1 ? '' : 'invisible' ) : 'invisible' !!}">
                     <a id="finish-modal" class="btn btn-success play" data-toggle="modal" data-target="#finished"><span class="fa fa-stop-circle-o"></span> {!! Lang::get('timesheets.finish') !!}</a>
                 </div>
-                <div class="form-group col-xs-8">
+                <div class="form-group col-xs-8 select-box">
                     <label for="projects">{!! Lang::get('general.projects') !!}</label>
                     <p id="project-name">{!! isset($data['timesheet_task']) ? $data['timesheet_task']->getProject()->getResults()->name : "" !!}</p>
                 </div>
-                <div class="form-group col-xs-8">
+                <div class="form-group col-xs-8 select-box">
                     <label for="tasks">{!! Lang::get('general.tasks') !!}</label>
                     <p id="task-subject">{!! isset($data['timesheet_task']) ? $data['timesheet_task']->getTask()->getResults()->subject : "" !!}</p>
                 </div>
@@ -230,6 +230,9 @@
 
     <script type="text/javascript" charset="utf-8" async defer>
         var workday = {!! $data['workday'] !!};
+        var task = {!! $data['timesheet_task'] !!};
+        if (task)
+          task.activity = {!! $data['activity'] !!};
         
         $.validate();
 
@@ -258,7 +261,8 @@
               data: data,
               type: "POST",
               success: function(data) {
-                var task = data
+                task = data;
+                task.activity = $('#tasks').select2().find(":selected").data("activity");
                 
                 if (!task.error) {
                   $('#start_settings').addClass('invisible');
@@ -369,6 +373,7 @@
           var data = {};
 
           data.pause = true;
+          data.activity = task.activity;
 
           endTask(data);
         });
@@ -377,6 +382,7 @@
           var data = {};
 
           data.fail = true;
+          data.activity = task.activity;
 
           endTask(data);
         });
@@ -389,6 +395,7 @@
           data.nok = $('#nok').val();
           data.impacted = $('#impacted').val();
           data.cancelled = $('#cancelled').val();
+          data.activity = task.activity;
 
           endTask(data);
         });
@@ -427,7 +434,7 @@
             data: data,
             type: "POST",
             success: function(data) {
-              var task = data;
+              task = data;
 
               if (!task.error) {
                 $('#finished').modal('hide');
@@ -453,6 +460,7 @@
                 $('#tasks-table tbody tr:first').remove();
 
                 $('#tasks-table tbody').prepend($(line));
+                task = null;
               } else {
                 data = { class: 'danger', faicon: 'ban', status: "{!! Lang::get('general.failed') !!}", message: data.error };
                 throwMessage(data);
