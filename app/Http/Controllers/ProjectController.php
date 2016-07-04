@@ -32,10 +32,12 @@ class ProjectController extends Controller
     public function index()
     {
         // Get all the projects
-        $projects = Project::orderBy('created_on', 'desc')->paginate(15);
+        $projects = Project::orderBy('created_on', 'desc')->whereNotExists(function ($query) {
+            $query->select(DB::raw(1))
+                  ->from('projects AS projects2')
+                  ->whereRaw('projects2.parent_id = projects.id');
+            })->paginate(15);
         $data['projects'] = $projects;
-
-        Log::debug($projects->first()->custom_field()->where('custom_field_id', 33)->get());
 
         // d($projects->first()->proposal()->getResults()->client()->getResults()->name);
 
