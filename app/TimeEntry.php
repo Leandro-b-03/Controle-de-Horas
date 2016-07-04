@@ -32,5 +32,5 @@ class TimeEntry extends Model
      *
      * @var array
      */
-    protected $fillable = ['project_id', 'user_id', 'work_package_id', 'hours', 'activity_id', 'spent_on', 'tyear', 'tmonth', 'tweek', 'created_on', 'updated_on'];
+    protected $fillable = ['project_id', 'user_id', 'work_package_id', 'hours', 'comments', 'activity_id', 'spent_on', 'tyear', 'tmonth', 'tweek', 'created_on', 'updated_on'];
 }

@@ -42,12 +42,13 @@
         </div>
     </div>
     <div class="box-body">
-        <table id="client-list" class="table table-bordered table-striped">
+        <table id="client-list" class="table table-responsive table-hover table-border table-striped table-bordered">
             <thead>
                 <tr>
                     <th>Nome</th>
                     <th>Descrição</th>
                     <th>Projeto criado em</th>
+                    <th>Progresso</th>
                     <th class="action-tr">{!! Lang::get('general.action') !!}</th>
                 </tr>
             </thead>
@@ -55,22 +56,17 @@
             <tbody>
                 @foreach($data['projects'] as $project)
                 <tr>
-                    <td rowspan="2">{!! $project->name . $project->name_complement !!}</td>
+                    <td>{!! $project->name . $project->name_complement !!}</td>
                     <td>{!! $project->description !!}</td>
                     <td>{!! date('d/m/Y', strtotime($project->created_on)) !!}</td>
-                    <td><a href="{!! URL::to('projects/' . $project->id . '/edit') !!}" class="btn btn-primary">{!! Lang::get('general.edit') !!}</a></td>
-                </tr>
-                <tr>
-                    <td colspan="5">
-                        <strong>Horas programadas:</strong> {!! $project->custom_field()->where('custom_field_id', 33)->first()->value !!}
-                        <strong>Horas Execultadas:</strong> {!! $project->custom_field()->where('custom_field_id', 36)->first()->value or '0' !!}
-                        {!! d(($project->custom_field()->where('custom_field_id', 36)->first()->value or 1) / ($project->custom_field()->where('custom_field_id', 33)->first()->value or 1)) !!}
-                        <div class="progress">
-                            <div class="progress-bar progress-bar-primary progress-bar-striped" role="progressbar" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100" style="width: {!! ((int)$project->custom_field()->where('custom_field_id', 33)->first()->value / (int)($project->custom_field()->where('custom_field_id', 36)->first()->value or 1)) * 100 !!}%">
-                                <span class="sr-only">40% Complete (success)</span>
-                            </div>
+                    <td>
+                        <p><strong>Horas programadas:</strong> {!! isset($project->custom_field()->where('custom_field_id', 33)->first()->value) && $project->custom_field()->where('custom_field_id', 33)->first()->value != "" ? $project->custom_field()->where('custom_field_id', 33)->first()->value : '0' !!}</p>
+                        <p><strong>Horas Execultadas:</strong> {!! isset($project->custom_field()->where('custom_field_id', 36)->first()->value) && $project->custom_field()->where('custom_field_id', 36)->first()->value != "" ? $project->custom_field()->where('custom_field_id', 36)->first()->value : '0' !!}</p>
+                        <div class="progress progress-striped">
+                            <div class="progress-bar" role="progressbar" data-transitiongoal="{!! isset($project->custom_field()->where('custom_field_id', 36)->first()->value) ? $project->custom_field()->where('custom_field_id', 36)->first()->value : 0 / (isset($project->custom_field()->where('custom_field_id', 33)->first()->value) && $project->custom_field()->where('custom_field_id', 33)->first()->value != 0 ? $project->custom_field()->where('custom_field_id', 33)->first()->value : 1) * 100 !!}"></div>
                         </div>
                     </td>
+                    <td><a href="{!! URL::to('projects/' . $project->id . '/edit') !!}" class="btn btn-primary">{!! Lang::get('general.edit') !!}</a></td>
                 </tr>
                 @endforeach
             </tbody>
@@ -91,4 +87,12 @@
     {!! Html::script("library/adminLTE/plugins/slimScroll/jquery.slimscroll.min.js") !!}
     <!-- FastClick -->
     {!! Html::script("library/adminLTE/plugins/fastclick/fastclick.min.js") !!}
+    <!-- Bootstrap-Progressbar -->
+    {!! Html::script("library/adminLTE/plugins/bootstrap-progressbar/bootstrap-progressbar.min.js") !!}
+
+    <script type="text/javascript">
+      $(document).ready(function() {
+        $('.progress .progress-bar').progressbar({display_text: 'fill'});
+      });
+    </script>
 @endsection

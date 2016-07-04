@@ -82,8 +82,6 @@ class ProjectController extends Controller
         try {
             foreach ($inputs['columns'] as $column) {
                 $enumeration_id = $column[0];
-                Log::debug($enumeration_id);
-                Log::debug($column);
                 if (isset($column[1])) {
                     foreach ($column[1] as $value) {
                         $task_permissions = TaskPermission::where('work_package_id', $value)->first();
@@ -136,7 +134,7 @@ class ProjectController extends Controller
             $query->select(DB::raw(1))
                   ->from('work_packages AS wp2')
                   ->whereRaw('wp2.parent_id = wp1.id');
-        })->where('project_id', $id)->get();
+        })->where('project_id', $id)->where('type_id', '!=', 2)->get();
         // $data['tasks'] = $tasks;
 
         $activities = DB::connection('openproject')->table('enumerations AS en1')->whereNotExists(function ($query) use ($id) {
@@ -151,11 +149,12 @@ class ProjectController extends Controller
 
         foreach ($tasks as $task) {
             $task_permission = TaskPermission::where('work_package_id', $task->id)->first();
-
-            $tasks_permissions[$task_permission->enumeration_id][] = $task;
+            
+            if ($task_permission)
+              $tasks_permissions[$task_permission->enumeration_id][] = $task;
+            else
+              $tasks_permissions[0][] = $task;
         }
-
-        Log::info($tasks_permissions);
 
         $data['tasks_permissions'] = $tasks_permissions;
 
