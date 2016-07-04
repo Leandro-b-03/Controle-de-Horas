@@ -85,9 +85,11 @@
                       </div><!-- /.box-header -->
                       <div class="box-body">
                         <ul class="sortable-list" id="{!! $activity->id !!}">
+                        @if (isset($data['tasks_permissions'][$activity->id]))
                         @foreach ($data['tasks_permissions'][$activity->id] as $task)
                           <li class="badge bg-green" id="{!! $task->id !!}">{!! $task->subject !!}</li>
                         @endforeach
+                        @endif
                           <hr class="clear">
                         </ul>
                       </div><!-- /.box-body -->

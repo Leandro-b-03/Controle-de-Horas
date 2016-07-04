@@ -27,6 +27,7 @@ use App\UserSetting;
 use App\ProposalType;
 use App\Http\Requests;
 use App\TimesheetTask;
+use App\TaskPermission;
 use App\ProposalVersion;
 use App\UserLocalization;
 use App\UserNotification;
@@ -333,29 +334,31 @@ class GeneralController extends Controller {
         $parent = '';
 
         foreach ($tasks as $task) {
-            $_parent = str_replace($task->subject, '', $task->path);
-            if ($_parent != $parent) {
-                $parent = $_parent;
+            $task_permission = TaskPermission::where('work_package_id', $task->id)->first();   
+            
+            if ($task_permission) {
+                Log::debug($task_permission->enumeration_id != 0);
+                if ($task_permission->enumeration_id != 0) {
+                    $_parent = str_replace($task->subject, '', $task->path);
+                    if ($_parent != $parent) {
+                        $parent = $_parent;
 
-                if ($parent == '')
-                    $html .= '</optgroup>';
+                        if ($parent == '')
+                            $html .= '</optgroup>';
 
-                $number_parent = count(explode('/', $_parent));
+                        $number_parent = count(explode('/', $_parent));
 
-                if ($number_parent > 1) {
-                    $html .= '<optgroup label="' . $parent . '">';
-                    $html .= '<option value="' . $task->id . '" data-type="' . $task->type_id . '">' . $task->subject . '</option>';
-                    $parent_id[$task->parent_id] = array($task->parent_id, true);
+                        if ($number_parent > 1) {
+                            $html .= '<optgroup label="' . $parent . '">';
+                            $html .= '<option value="' . $task->id . '" data-type="' . $task->type_id . '" data-activity="' . $task_permission->enumeration_id . '">' . $task->subject . '</option>';
+                            $parent_id[$task->parent_id] = array($task->parent_id, true);
+                        }
+                    } else {
+                        $html .= '<option value="' . $task->id . '" data-type="' . $task->type_id . '" data-type="' . $task->type_id . '" data-activity="' . $task_permission->enumeration_id . '">' . $task->subject . '</option>';
+                    }
                 }
-            } else {
-                $html .= '<option value="' . $task->id . '" data-type="' . $task->type_id . '">' . $task->subject . '</option>';
             }
         }
-
-        // if ($start) {
-        //     $html .= '</optgroup>';
-        // }
-
         
         return response()->json($html);
     }
