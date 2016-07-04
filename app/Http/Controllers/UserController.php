@@ -15,6 +15,7 @@ use App\Timesheet;
 use Carbon\Carbon;
 use App\UserSetting;
 use App\Http\Requests;
+use App\TimesheetTask;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Controllers\GeneralController;
@@ -186,6 +187,12 @@ class UserController extends Controller
         // Retrive the user with param $id
         $user = User::find($id);
         $data['user'] = $user;
+
+        $timesheets = Timesheet::select('id')->where('user_id', $id)->get();
+
+        // Retrive all the tasks done
+        $tasks = TimesheetTask::whereIn('timesheet_id', $timesheets->toArray())->get();
+        $data['tasks'] = $tasks;
 
         // Return the dashboard view.
         return view('user.profile')->with('data', $data);

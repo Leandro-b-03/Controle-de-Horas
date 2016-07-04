@@ -141,6 +141,7 @@
                 <td>{!! $workday->nightly_end !!}</td>
                 <td>{!! GeneralHelper::getHoursTotal($workday->hours, $workday->nightly_hours) !!}</td>
                 <td>
+                  <a id="{!! $workday->id !!}" class="btn btn-primary edit-tasks-row">{!! Lang::get('users .edit-tasks') !!}</a>
                   <a id="{!! $workday->id !!}" class="btn btn-primary pull-right edit-row">{!! Lang::get('general.edit') !!}</a>
                   <a id="{!! $workday->id !!}" class="btn btn-success pull-right save-row hide">{!! Lang::get('general.save') !!}</a>
                 </td>

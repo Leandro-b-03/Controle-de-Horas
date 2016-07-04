@@ -55,6 +55,7 @@ return [
     'info'                          => 'Informa&ccedil;ão',
     'total'                         => 'Total',
     'hours'                         => 'Horas',
+    'alert'                         => 'Alerta',
 
     // Menu & Controller
     'nav-menu'                      => 'Menu de navega&ccedil;&atilde;o',
