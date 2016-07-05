@@ -17,6 +17,8 @@ use File;
 use App\User;
 use App\Team;
 use App\Task;
+use App\Member;
+use App\Project;
 use App\Proposal;
 use PusherManager;
 use App\Timesheet;
@@ -28,6 +30,7 @@ use App\ProposalType;
 use App\Http\Requests;
 use App\TimesheetTask;
 use App\TaskPermission;
+use App\UserOpenProject;
 use App\ProposalVersion;
 use App\UserLocalization;
 use App\UserNotification;
@@ -324,9 +327,9 @@ class GeneralController extends Controller {
      */
     public function getTasks(Request $request)
     {
-        $project_id = $request->all();
+        $inputs = $request->all();
 
-        $tasks = DB::connection('openproject')->select(DB::raw('select distinct *, node.id, node.description, node.type_id, node.status_id, node.subject, group_concat(parent.subject order by parent.lft separator \'/ \' ) as path, (count(parent.lft) - 1) AS depth, (select from_id from relations where node.id = from_id and relation_type = \'precedes\') as from_id, (select to_id from relations where node.id = to_id and relation_type = \'precedes\') as to_id from work_packages as node inner join work_packages as parent on node.lft between parent.lft and parent.rgt and parent.project_id = :project_id where not exists (select 1 from `work_packages` as `wp2` where wp2.parent_id = node.id) and node.project_id = :project_id_2 and node.type_id != 2 and node.status_id != 11 group by node.lft, node.subject order by node.lft, node.start_date, from_id, to_id'), array('project_id' => $project_id['id'], 'project_id_2' => $project_id['id']));
+        $tasks = DB::connection('openproject')->select(DB::raw('select distinct *, node.id, node.description, node.type_id, node.status_id, node.subject, group_concat(parent.subject order by parent.lft separator \'/ \' ) as path, (count(parent.lft) - 1) AS depth, (select from_id from relations where node.id = from_id and relation_type = \'precedes\') as from_id, (select to_id from relations where node.id = to_id and relation_type = \'precedes\') as to_id from work_packages as node inner join work_packages as parent on node.lft between parent.lft and parent.rgt and parent.project_id = :project_id where not exists (select 1 from `work_packages` as `wp2` where wp2.parent_id = node.id) and node.project_id = :project_id_2 and node.type_id != 2 and node.status_id != 11 group by node.lft, node.subject order by node.lft, node.start_date, from_id, to_id'), array('project_id' => $inputs['id'], 'project_id_2' => $inputs['id']));
 
         $order_tasks = array();
 
@@ -336,6 +339,16 @@ class GeneralController extends Controller {
         foreach ($tasks as $task) {
             $task_permission = TaskPermission::where('work_package_id', $task->id)->first();   
             
+            $selected = '';
+
+            if (isset($inputs['select'])) {
+                if ($inputs['select'] == $task->subject)
+                    $selected = 'selected="selected"';
+
+                Log::debug($inputs['select']);
+                Log::debug($task->subject);
+            }
+
             if ($task_permission) {
                 Log::debug($task_permission->enumeration_id != 0);
                 if ($task_permission->enumeration_id != 0) {
@@ -350,11 +363,11 @@ class GeneralController extends Controller {
 
                         if ($number_parent > 1) {
                             $html .= '<optgroup label="' . $parent . '">';
-                            $html .= '<option value="' . $task->id . '" data-type="' . $task->type_id . '" data-activity="' . $task_permission->enumeration_id . '">' . $task->subject . '</option>';
+                            $html .= '<option value="' . $task->id . '" data-type="' . $task->type_id . '" data-activity="' . $task_permission->enumeration_id . '"' . $selected . '>' . $task->subject . '</option>';
                             $parent_id[$task->parent_id] = array($task->parent_id, true);
                         }
                     } else {
-                        $html .= '<option value="' . $task->id . '" data-type="' . $task->type_id . '" data-type="' . $task->type_id . '" data-activity="' . $task_permission->enumeration_id . '">' . $task->subject . '</option>';
+                        $html .= '<option value="' . $task->id . '" data-type="' . $task->type_id . '" data-type="' . $task->type_id . '" data-activity="' . $task_permission->enumeration_id . '"' . $selected . '>' . $task->subject . '</option>';
                     }
                 }
             }
@@ -412,6 +425,40 @@ class GeneralController extends Controller {
         $data['tasks'] = $tasks;
 
         return view('general.timeline')->with('data', $data);
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  int  $request
+     * @
+     */
+    public function getTasksEditDay(Request $request)
+    {
+        // Get all the inputs
+        $inputs = $request->all();
+
+        // Get all the task on that day or the day
+        $workday = Timesheet::find($inputs['id']);
+        $data['workday'] = $workday;
+
+        // Get all the task on that day or the day
+        $tasks = TimesheetTask::where('timesheet_id', $inputs['id'])->orderBy('id', 'DESC')->get();
+        $data['tasks'] = $tasks;
+
+        $user = User::find($workday->user_id);
+
+        // Get the Openproject's user id
+        $user_id = UserOpenProject::where('login', 'LIKE', $user->username . '@%')->orWhere('mail', 'LIKE', $user->username . '@%')->get()->first()->id;
+
+        // Get all the Projects that the user is assigned off
+        $user_projects = Member::select('project_id')->where('user_id', $user_id)->get()->toArray();
+
+        // Get all the projects infos
+        $projects = Project::whereIn('status', [1, 7])->whereIn('id', $user_projects)->get();
+        $data['projects'] = $projects;
+
+        return view('general.timeline-edit')->with('data', $data);
     }
 
     /**

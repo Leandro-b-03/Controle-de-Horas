@@ -509,6 +509,7 @@
         } else {
           $('#tasks').prop( "disabled", true ).val($("#target option:first").val());
           $('#tasks').find('option[value!=""]').remove();
+          $('#tasks').find('optgroup').remove();
         }
 
         $('#tasks').on('change', function() {

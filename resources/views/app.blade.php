@@ -500,6 +500,11 @@
       });
 
       var user = $.parseJSON('{!! Auth::user()->getEloquent() !!}');
+
+      $('.tab-content').css('height', ($(window).height() - 108) + 'px');
+      $('.tab-content').slimScroll({
+        height: ($(window).height() - 108) + 'px'
+      });
     </script>
     <!-- Custom PusherChatWidget.js -->
     {!! Html::script("library/adminLTE/custom/CustomPusherChatWidget.js") !!}
