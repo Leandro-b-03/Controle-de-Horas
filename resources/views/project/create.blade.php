@@ -59,6 +59,13 @@
             {!! Form::open(array('route' => [ 'projects.update', $data['project']->id ], 'method' => 'PUT', 'name' => 'project-form', 'id' => 'edit')) !!}
             @endif
               <div class="box-body">
+                @if (!isset($data['tasks_permissions'][0]))
+                  <div class="alert alert-danger alert-dismissible">
+                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                    <h4><i class="icon fa fa-ban"></i> {!! Lang::get('general.alert') !!}!</h4>
+                    Você precisa ter ao menos uma ativadade cadastrada!
+                  </div>
+                @endif
                 <div class="col-md-3">
                   <div class="col-md-12">
                     <div id="tasks" class="box box-primary">
@@ -67,9 +74,11 @@
                       </div><!-- /.box-header -->
                       <div class="box-body">
                         <ul id="0" class="sortable-list">
+                        @if (isset($data['tasks_permissions'][0]))
                         @foreach ($data['tasks_permissions'][0] as $task)
                           <li class="badge bg-green" id="{!! $task->id !!}">{!! $task->subject !!}</li>
                         @endforeach
+                        @endif
                           <hr class="clear">
                         </ul>
                       </div><!-- /.box-body -->
@@ -99,7 +108,6 @@
                 </div>
               </div><!-- /.box-body -->
               <div class="box-footer">
-                <button type="submit" class="btn btn-primary">{!! Lang::get('general.save') !!}</button>
                 <a href="{!! URL::to('projects') !!}" class="btn btn-danger">{!! Lang::get('general.back') !!}</a>
               </div>
             {!! Form::close() !!}

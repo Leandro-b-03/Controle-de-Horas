@@ -24,4 +24,13 @@ class Task extends Model
      * @var array
      */
     protected $fillable = ['type_id', 'project_id', 'subject', 'description', 'status_id', 'assigned_to_id', 'parent_id', 'root_id', 'lft', 'rgt', 'position'];
+
+
+    /**
+     * Get the project record associated with the project.
+     */
+    public function project()
+    {
+        return $this->belongsTo('App\Project', 'project_id');
+    }
 }
