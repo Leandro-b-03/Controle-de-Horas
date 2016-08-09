@@ -144,7 +144,7 @@ class GeneralController extends Controller {
         // Get the data receive from ajax.
         $inputs = $request->all();
 
-        // Get user by e-mail
+        // Get user by cpf
         $user = User::where('cpf', $inputs['cpf'])->get();
 
         // Let only numbers in the cpf
@@ -969,7 +969,7 @@ class GeneralController extends Controller {
         // Get all the inputs
         $inputs = $request->all();
 
-        $rfid = UserRFID::where('rfid_code',$inputs['rfid'])->get()->first();
+        $rfid = UserRFID::where('rfid_code', $inputs['rfid'])->get()->first();
 
         $receive = array();
 
@@ -980,8 +980,6 @@ class GeneralController extends Controller {
 
             // Get the workday
             $workday = Timesheet::where('user_id', $user->id)->where('workday', $today->toDateString())->orderBy('workday', 'desc')->get()->first();
-
-            $seconds = "00";
 
             try {
                 DB::beginTransaction();
@@ -1005,6 +1003,19 @@ class GeneralController extends Controller {
                         "user" => $user->first_name,
                         "entrance" => $workday->start);
                 } else {
+                    $seconds = "00";
+
+                    $diffTime = $today->diffInMinutes(new Carbon($workday->updated_at));
+
+                    if ($diffTime < 1) {
+                        $receive = array("status" => "200",
+                            "rfid" => $inputs['rfid'],
+                            "diffTime" => $diffTime,
+                            "message" => "Already checked");
+                        
+                        return response()->json($receive);
+                    }
+
                     if ($workday->lunch_start == "00:00:00") {
                         $workday->lunch_start = $today->toTimeString();
                     } else if ($workday->lunch_end == "00:00:00") {
@@ -1060,7 +1071,8 @@ class GeneralController extends Controller {
             }
         } else {
             $receive = array("status" => "500",
-                "rfid" => $inputs['rfid']);
+                "rfid" => $inputs['rfid'],
+                "message" => "RFID not found");
         }
 
         return response()->json($receive);

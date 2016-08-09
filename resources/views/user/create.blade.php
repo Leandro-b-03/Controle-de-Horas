@@ -143,6 +143,10 @@
                 <div class="form-group col-xs-6">
                   <hr />
                 </div>
+                <div class="form-group col-xs-6">
+                  <label for="rfid_code">{!! Lang::get('users.label-rfid_code') !!}</label>
+                  <input type="text" class="form-control" name="rfid_code" id="rfid_code"  value="{!! (isset($data['user']) ? $data['user']->rfid_code : (Request::old('rfid_code') ? Request::old('rfid_code') : '')) !!}" placeholder="{!! Lang::get('users.ph-rfid_code') !!}" data-validation="length number" data-validation-length="10" data-validation-error-msg="{!! Lang::get('users.error-rfid_code') !!}" required>
+                </div>
               </div><!-- /.box-body -->
               <div class="box-footer">
                 <button type="submit" class="btn btn-primary">{!! Lang::get('general.save') !!}</button>
@@ -296,6 +300,10 @@
           $('input[name="password_confirmation"]').displayPasswordStrength(optionalConfig);
         }
       });
+
+      if (e.keyCode == 13) {
+        e.preventDefault();
+      }
 
       $('form').submit(function(e) {
         if ($(this).find('.has-error').length > 0) {
