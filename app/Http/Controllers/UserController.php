@@ -71,12 +71,12 @@ class UserController extends Controller
 
         $role = null;
 
+        $role_id = null;
+
         if (!isset($inputs['role'])) {
-            $role = Role::where('name', 'Colaborador');
+            $role_exists = Role::where('name', 'Colaborador')->get()->first();
 
-            $role_id = null;
-
-            if (!$role) {
+            if (!$role_exists) {
                 $role = new Role();
                 $role->name         = 'Colaborador';
                 $role->display_name = 'Colaborador'; // optional
@@ -86,7 +86,7 @@ class UserController extends Controller
 
                 $role_id = $role->id;
             } else {
-                $role_id = $role->id;
+                $role_id = $role_exists->id;
             }
         } else {
             $role_id = $inputs['role'];
@@ -144,16 +144,18 @@ class UserController extends Controller
                         'message' => Lang::get('users.welcome'),
                     );
 
-                    $rfid_code = array("user_id" => $user->id, "rfid_code" => $inputs['rfid_code']);
+                    if (isset($inputs['rfid_code'])) {
+                        $rfid_code = array("user_id" => $user->id, "rfid_code" => $inputs['rfid_code']);
 
-                    $rfid_code = UserRFID::create($rfid_code);
+                        $rfid_code = UserRFID::create($rfid_code);
 
-                    if (!$rfid_code) {
-                        DB::rollback();
-                        if ($request->is('register')) {
-                            return redirect('register')->withInput()->with('return', GeneralController::createMessage('failed', Lang::get('general.' . $this->controller_name), 'create'));
-                        } else {
-                            return redirect('users/create')->withInput()->with('return', GeneralController::createMessage('failed', Lang::get('general.' . $this->controller_name), 'create'));
+                        if (!$rfid_code) {
+                            DB::rollback();
+                            if ($request->is('register')) {
+                                return redirect('register')->withInput()->with('return', GeneralController::createMessage('failed', Lang::get('general.' . $this->controller_name), 'create'));
+                            } else {
+                                return redirect('users/create')->withInput()->with('return', GeneralController::createMessage('failed', Lang::get('general.' . $this->controller_name), 'create'));
+                            }
                         }
                     }
 
