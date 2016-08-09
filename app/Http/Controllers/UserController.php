@@ -274,7 +274,8 @@ class UserController extends Controller
         // Retrive the rfid code
         $user_rfid_code = UserRFID::where('user_id', $id)->get()->first();
 
-        $user->rfid_code = $user_rfid_code->rfid_code;
+        if ($user_rfid_code)
+            $user->rfid_code = $user_rfid_code->rfid_code;
         $data['user'] = $user;
 
         // Return the dashboard view.
