@@ -11,6 +11,7 @@ use App\User;
 use App\Role;
 use App\Holiday;
 use App\Overtime;
+use App\UserRFID;
 use App\Timesheet;
 use Carbon\Carbon;
 use App\UserSetting;
@@ -141,6 +142,19 @@ class UserController extends Controller
                         'message' => Lang::get('users.welcome'),
                     );
 
+                    $rfid_code = array("user_id" => $user->id, "rfid_code" => $inputs['rfid_code']);
+
+                    $rfid_code = UserRFID::create($rfid_code);
+
+                    if (!$rfid_code) {
+                        DB::rollback();
+                        if ($request->is('register')) {
+                            return redirect('register')->withInput()->with('return', GeneralController::createMessage('failed', Lang::get('general.' . $this->controller_name), 'create'));
+                        } else {
+                            return redirect('users/create')->withInput()->with('return', GeneralController::createMessage('failed', Lang::get('general.' . $this->controller_name), 'create'));
+                        }
+                    }
+
                     GeneralController::createNotification($user->id, $notification);
 
                     // GeneralController::mail($user, 'signup');                        
@@ -257,6 +271,10 @@ class UserController extends Controller
 
         // Retrive the user with param $id
         $user = User::find($id);
+        // Retrive the rfid code
+        $user_rfid_code = UserRFID::where('user_id', $id)->get()->first();
+
+        $user->rfid_code = $user_rfid_code->rfid_code;
         $data['user'] = $user;
 
         // Return the dashboard view.
@@ -286,7 +304,7 @@ class UserController extends Controller
 
             foreach($inputs as $input => $value) {
                 if ($user->{$input} || in_array($input, $fillable))
-                    if ($inputs != 'password')
+                    if ($input != 'password' && $input != "rfid_code")
                         $user->{$input} = $value;
             }
 
@@ -296,6 +314,26 @@ class UserController extends Controller
             $user->detachRole($user->roles()->first());
             
             $user->attachRole($role);
+
+            $rfid_code = UserRFID::where('rfid_code', $inputs['rfid_code'])->get()->first();
+            $user_rfid_code = UserRFID::where('user_id', $id)->get()->first();
+
+            if (!$rfid_code and !$user_rfid_code) {
+                $rfid_code = array("user_id" => $user->id, "rfid_code" => $inputs['rfid_code']);
+                $rfid_code = UserRFID::create($rfid_code);
+            } else if ($rfid_code and !$user_rfid_code) {
+                $rfid_code->rfid_code = $inputs['rfid_code'];
+                $rfid_code->save();
+            }
+
+            if (!$rfid_code) {
+                DB::rollback();
+                if ($request->is('register')) {
+                    return redirect('register')->withInput()->with('return', GeneralController::createMessage('failed', Lang::get('general.' . $this->controller_name), 'create'));
+                } else {
+                    return redirect('users/create')->withInput()->with('return', GeneralController::createMessage('failed', Lang::get('general.' . $this->controller_name), 'create'));
+                }
+            }
 
             if ($user->saveOrFail()) {
                 DB::commit();

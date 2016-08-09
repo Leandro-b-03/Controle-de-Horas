@@ -463,8 +463,7 @@
     <!-- jQuery 2.1.4 -->
     {!! Html::script("library/adminLTE/plugins/jQuery/jQuery-2.1.4.min.js") !!}
     <!-- Pusher -->
-    {!! Html::script("//js.pusher.com/3.0/pusher.min.js") !!}
-
+    {!! Html::script("//js.pusher.com/3.2/pusher.min.js") !!}
     <!-- Bootstrap 3.3.2 JS -->
     {!! Html::script("library/adminLTE/bootstrap/js/bootstrap.min.js") !!}
     <!-- PACE -->
