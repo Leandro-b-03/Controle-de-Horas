@@ -74,6 +74,8 @@ class UserController extends Controller
         if (!isset($inputs['role'])) {
             $role = Role::where('name', 'Colaborador');
 
+            $role_id = null;
+
             if (!$role) {
                 $role = new Role();
                 $role->name         = 'Colaborador';
