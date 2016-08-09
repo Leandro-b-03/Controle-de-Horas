@@ -617,3 +617,11 @@ table thead tr th.start, table thead tr th.end {
 	padding: 0px;
 	margin: 0px;
 }
+
+.control-sidebar {
+	overflow: hidden !important;
+}
+
+.tab-content {
+	padding: 15px;
+}

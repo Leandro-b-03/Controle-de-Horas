@@ -42,7 +42,11 @@ class DashboardController extends Controller
         $data['new_users'] = $new_users;
 
         // New Projects
-        $new_projects = Project::where('status', 1)->orderBy('created_on', 'desc')->take(8)->get();
+        $new_projects = Project::orderBy('created_on', 'desc')->whereNotExists(function ($query) {
+            $query->select(DB::raw(1))
+                  ->from('projects AS projects2')
+                  ->whereRaw('projects2.parent_id = projects.id');
+            })->orderBy('created_on', 'desc')->take(8)->get();
         $data['new_projects'] = $new_projects;
 
         $today = new Carbon();

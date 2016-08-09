@@ -118,7 +118,7 @@
                 <th rowspan="2">{!! Lang::get('timesheets.title-end') !!}</th>
                 <th colspan="2">{!! Lang::get('timesheets.title-nightly') !!}</th>
                 <th rowspan="2">{!! Lang::get('general.total') !!}</th>
-                <th rowspan="2"><a id="add-row" class="btn btn-warning pull-right">{!! Lang::get('timesheets.add-row') !!}</a></th>
+                <th rowspan="2">{!! Lang::get('general.edit') !!}<a id="add-row" class="btn btn-warning pull-right">{!! Lang::get('timesheets.add-row') !!}</a></th>
               </tr>
               <tr>
                 <th>{!! Lang::get('timesheets.title-start') !!}</th>
@@ -141,9 +141,9 @@
                 <td>{!! $workday->nightly_end !!}</td>
                 <td>{!! GeneralHelper::getHoursTotal($workday->hours, $workday->nightly_hours) !!}</td>
                 <td>
-                  <a id="{!! $workday->id !!}" class="btn btn-primary edit-tasks-row">{!! Lang::get('users .edit-tasks') !!}</a>
-                  <a id="{!! $workday->id !!}" class="btn btn-primary pull-right edit-row">{!! Lang::get('general.edit') !!}</a>
-                  <a id="{!! $workday->id !!}" class="btn btn-success pull-right save-row hide">{!! Lang::get('general.save') !!}</a>
+                  <a data-id="{!! $workday->id !!}" class="btn btn-primary edit-tasks-row" data-toggle="modal" data-target="#md-timeline">{!! Lang::get('users .edit-tasks') !!}</a>
+                  <a data-id="{!! $workday->id !!}" class="btn btn-primary pull-right edit-row">{!! Lang::get('general.edit') !!}</a>
+                  <a data-id="{!! $workday->id !!}" class="btn btn-success pull-right save-row hide">{!! Lang::get('general.save') !!}</a>
                 </td>
               </tr>
               @endforeach
@@ -155,6 +155,26 @@
       <a class="btn btn-danger" href="{!! URL::to('users') !!}">{!! Lang::get('general.back') !!}</a>
       </div><!-- /.box-footer-->
     </div><!-- /.box -->
+
+    <!-- Modal -->
+    <div class="modal fade" id="md-timeline" tabindex="-1" role="dialog" aria-labelledby="Timeline">
+      <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="{!! Lang::get('general.back') !!}"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title" id="Timeline">{!! Lang::get('timesheets.task') !!}</h4>
+          </div>
+          <div class="modal-body fixed">
+            <div id="timeline">
+                <!-- The timeline -->
+              </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-danger" data-dismiss="modal">{!! Lang::get('general.back') !!}</button>
+          </div>
+        </div>
+      </div>
+    </div>
 
     <!-- Modal -->
     <div class="modal fade" id="md-timeline" tabindex="-1" role="dialog" aria-labelledby="Timeline">
@@ -189,6 +209,8 @@
     {!! Html::script("library/adminLTE/plugins/datepicker/bootstrap-datepicker.js") !!}
     <!-- Wickedpicker -->
     {!! Html::script("library/adminLTE/plugins/ericjgagnon-wickedpicker/src/wickedpicker.js") !!}
+    <!-- Jasny-bootstrap -->
+    {!! Html::script("library/adminLTE/plugins/jasny-bootstrap/js/jasny-bootstrap.min.js") !!}
 
     <script type="text/javascript" charset="utf-8" async defer>
       $('.time').wickedpicker({twentyFour: true});
@@ -200,6 +222,22 @@
 
         $.ajax({
           url: '/general/getTasksDay',
+          data: data,
+          type: "GET",
+          success: function(data) {
+            $('#timeline').html('');
+            $('#timeline').html($(data));
+          }
+        });
+      });
+
+      $('.edit-tasks-row').click(function() {
+        var data = {};
+        data.id = $(this).data('id');
+        $('#timeline').html('');
+
+        $.ajax({
+          url: '/general/getTasksEditDay',
           data: data,
           type: "GET",
           success: function(data) {
@@ -228,7 +266,7 @@
         start.html('<input class="form-control time" type="text" id="start_new" value="08:00"/>');
         lunch_start.html('<input class="form-control time" type="text" id="lunch_start_new" value="12:00"/>');
         lunch_end.html('<input class="form-control time" type="text" id="lunch_end_new" value="13:00"/>');
-        end.html('<input class="form-control time" type="text" id="send_new" value="17:00"/>');
+        end.html('<input class="form-control time" type="text" id="end_new" value="17:00"/>');
         nightly_start.html('<input class="form-control time" type="text" id="nightly_start_new" value="00:00"/>');
         nightly_end.html('<input class="form-control time" type="text" id="nightly_end_new" value="00:00"/>');
         edit.html('<a id="new" class="btn btn-success pull-right save-row">' + "{!! Lang::get('general.save') !!}" + '</a>');
@@ -247,7 +285,7 @@
         row.append(edit);
 
         date.find('#date_new').datepicker({ format: 'dd/mm/yyyy' });
-        row.find('.time').wickedpicker({twentyFour: true});
+        // row.find('.time').wickedpicker({twentyFour: true});
 
         $('#month-table').append(row);
       });
@@ -261,14 +299,14 @@
         var nightly_start = par.children("td:nth-child(7)");
         var nightly_end = par.children("td:nth-child(8)");
 
-        start.html('<input class="form-control time" type="text" id="start_' + $(this).attr('id') + '" value="' + start.html() + '"/>');
-        lunch_start.html('<input class="form-control time" type="text" id="lunch_start_' + $(this).attr('id') + '" value="' + lunch_start.html() + '"/>');
-        lunch_end.html('<input class="form-control time" type="text" id="lunch_end_' + $(this).attr('id') + '" value="' + lunch_end.html() + '"/>');
-        end.html('<input class="form-control time" type="text" id="send_' + $(this).attr('id') + '" value="' + end.html() + '"/>');
-        nightly_start.html('<input class="form-control time" type="text" id="nightly_start_' + $(this).attr('id') + '" value="' + nightly_start.html() + '"/>');
-        nightly_end.html('<input class="form-control time" type="text" id="nightly_end_' + $(this).attr('id') + '" value="' + nightly_end.html() + '"/>');
+        start.html('<input class="form-control time" type="text" id="start_' + $(this).data('id') + '" value="' + start.html() + '"/>');
+        lunch_start.html('<input class="form-control time" type="text" id="lunch_start_' + $(this).data('id') + '" value="' + lunch_start.html() + '"/>');
+        lunch_end.html('<input class="form-control time" type="text" id="lunch_end_' + $(this).data('id') + '" value="' + lunch_end.html() + '"/>');
+        end.html('<input class="form-control time" type="text" id="end_' + $(this).data('id') + '" value="' + end.html() + '"/>');
+        nightly_start.html('<input class="form-control time" type="text" id="nightly_start_' + $(this).data('id') + '" value="' + nightly_start.html() + '"/>');
+        nightly_end.html('<input class="form-control time" type="text" id="nightly_end_' + $(this).data('id') + '" value="' + nightly_end.html() + '"/>');
       
-        $('.time').wickedpicker({twentyFour: true});
+        // $('.time').wickedpicker({twentyFour: true});
 
         $('.edit-row').hide();
         $(this).parent().find('.save-row').removeClass('hide');
@@ -277,14 +315,14 @@
       $('table').on('click', '.save-row', function() {
         var data = {
           user_id: $('#user_id').val(),
-          id:  $(this).attr('id'),
-          date: $('#date_' + $(this).attr('id')).val(),
-          start: $('#start_' + $(this).attr('id')).val(),
-          lunch_start: $('#lunch_start_' + $(this).attr('id')).val(),
-          lunch_end: $('#lunch_end_' + $(this).attr('id')).val(),
-          end: $('#send_' + $(this).attr('id')).val(),
-          nightly_start: $('#nightly_start_' + $(this).attr('id')).val(),
-          nightly_end: $('#nightly_end_' + $(this).attr('id')).val(),
+          id:  $(this).data('id'),
+          date: $('#date_' + $(this).data('id')).val(),
+          start: $('#start_' + $(this).data('id')).val(),
+          lunch_start: $('#lunch_start_' + $(this).data('id')).val(),
+          lunch_end: $('#lunch_end_' + $(this).data('id')).val(),
+          end: $('#end_' + $(this).data('id')).val(),
+          nightly_start: $('#nightly_start_' + $(this).data('id')).val(),
+          nightly_end: $('#nightly_end_' + $(this).data('id')).val(),
         }
 
         $(this).hide();
