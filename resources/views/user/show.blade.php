@@ -209,6 +209,8 @@
     {!! Html::script("library/adminLTE/plugins/datepicker/bootstrap-datepicker.js") !!}
     <!-- Wickedpicker -->
     {!! Html::script("library/adminLTE/plugins/ericjgagnon-wickedpicker/src/wickedpicker.js") !!}
+    <!-- Jasny-bootstrap -->
+    {!! Html::script("library/adminLTE/plugins/jasny-bootstrap/js/jasny-bootstrap.min.js") !!}
 
     <script type="text/javascript" charset="utf-8" async defer>
       $('.time').wickedpicker({twentyFour: true});
@@ -283,7 +285,7 @@
         row.append(edit);
 
         date.find('#date_new').datepicker({ format: 'dd/mm/yyyy' });
-        row.find('.time').wickedpicker({twentyFour: true});
+        // row.find('.time').wickedpicker({twentyFour: true});
 
         $('#month-table').append(row);
       });
@@ -304,7 +306,7 @@
         nightly_start.html('<input class="form-control time" type="text" id="nightly_start_' + $(this).data('id') + '" value="' + nightly_start.html() + '"/>');
         nightly_end.html('<input class="form-control time" type="text" id="nightly_end_' + $(this).data('id') + '" value="' + nightly_end.html() + '"/>');
       
-        $('.time').wickedpicker({twentyFour: true});
+        // $('.time').wickedpicker({twentyFour: true});
 
         $('.edit-row').hide();
         $(this).parent().find('.save-row').removeClass('hide');

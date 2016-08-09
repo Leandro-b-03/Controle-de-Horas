@@ -19,7 +19,9 @@ use App\Team;
 use App\Task;
 use App\Member;
 use App\Project;
+use App\UseCase;
 use App\Proposal;
+use App\UserRFID;
 use PusherManager;
 use App\Timesheet;
 use Carbon\Carbon;
@@ -593,6 +595,236 @@ class GeneralController extends Controller {
         }
     }
 
+    /**
+     * Input the new task
+     *
+     * @return All time again
+     */
+    public function changeTaskDay(Request $request)
+    {
+        $inputs = $request->all();
+
+        die(Log::debug($inputs));
+
+        $start_explode = explode(':', str_replace(' ', '', $inputs['start']));
+        $end_explode = explode(':', str_replace(' ', '', $inputs['end']));
+
+        $start = Carbon::createFromTime($start_explode[0], $start_explode[1], (array_key_exists(2, $start_explode) ? $start_explode[2] : '00'));
+        $end = Carbon::createFromTime($lunch_start_explode[0], $lunch_start_explode[1], (array_key_exists(2, $end_explode) ? $lunch_start_explode[2] : '00'));
+
+        $seconds = '00';
+
+        $diffTime = $start->diffInMinutes($end);
+
+        $hours = floor($diffTime / 60);
+        $minutes = ($diffTime % 60);
+        $tminutes = (float)($minutes / 60);
+        $time = (($hours <= 9 ? "0" . $hours : $hours) . ":" . ($minutes <= 9 ? "0" . $minutes : $minutes)) . ":" . $seconds;
+
+        $user_open_project = UserOpenProject::where('login', 'LIKE', Auth::user()->getEloquent()->username . '@%')->orWhere('mail', 'LIKE', Auth::user()->getEloquent()->username . '@%')->get()->first();
+
+        $work_package = Task::find($timesheet_task->work_package_id);
+
+        try {
+            $time_entry = array(
+                'project_id' => $timesheet_task->project_id,
+                'user_id' => $user_open_project->id,
+                'work_package_id' => $timesheet_task->work_package_id,
+                'hours' => (float) $hours + $tminutes,
+                'comments' => 'Inserido pelo Timesheet',
+                'activity_id' => $inputs['activity'],
+                'spent_on' => $start->toDateString(),
+                'tyear' => $start->year,
+                'tmonth' => $start->month,
+                'tweek' => $start->weekOfYear,
+                'created_on' => Carbon::now(),
+                'update_on' => Carbon::now()
+            );
+
+            $time_entry = TimeEntry::create ($time_entry);
+
+            if ($timesheet_task->save()) {
+                DB::commit();
+                Log::info($timesheet_task);
+            } else {
+                DB::rollback();
+                Log::error($e);
+                Log::error($time_entry);
+                Log::error($work_package);
+                Log::error($timesheet_task);
+
+                return response()->json(array('error' => Lang::get('general.error')));
+            }
+
+            $timesheet_task->hours = $time;
+
+            if ($timesheet_task->save()) {
+                DB::commit();
+
+                if ($work_package->type_id == 1) {
+                    $status = 11;
+
+                    if (isset($inputs['pause']))
+                        $status = 14;
+
+                    if (isset($inputs['fail']))
+                        $status = 12;
+
+                    $work_package->status_id = $status;
+                } else {
+                    $custom_fields = CustomField::where('customized_id', $work_package->id)->where('custom_field_id', 39)->get();
+
+                    if (!$custom_fields) {
+                        $custom_fields = array(
+                            array (
+                                'customized_type' => 'WorkPackage',
+                                'customized_id' => $work_package->id,
+                                'custom_field_id' => 39,
+                                'value' => $user_open_project->lastname . ' ' . $user_open_project->lastname
+                            )
+                        );
+
+                        $custom_fields = CustomField::create( $custom_fields );
+
+                        if ($custom_fields) {
+                            DB::commit();
+                        } else {
+                            DB::rollback();
+                            Log::error($e);
+                            Log::error($custom_field);
+                            Log::error($work_package);
+                            Log::error($timesheet_task);
+
+                            return response()->json(array('error' => Lang::get('general.error')));
+                        }
+
+                        $custom_fields = CustomField::where('customized_id', $work_package->id)->whereIn('custom_field_id', [38, 40])->get();
+
+                        if ($custom_field->custom_field_id == 38) {
+                            $custom_field->value = str_replace($user_open_project->lastname . ' ' . $user_open_project->lastname, '', str_replace(', ' . $user_open_project->lastname . ' ' . $user_open_project->lastname, '', ($custom_field->value)));
+                        } else if ($custom_field->custom_field_id == 40) {
+                            $working_worked = json_decode($custom_field->value);
+
+                            $key = array_search($custom_field->id, $working_worked['worked']);
+                            unset($working_worked['working'][$key]);
+
+                            $working_worked['worked'][] = $custom_field->id;
+
+                            $custom_field->values = json_encode($working_worked);
+                        }
+
+                        if ($custom_field->save()) {
+                            DB::commit();
+                        } else {
+                            DB::rollback();
+                            Log::error($e);
+                            Log::error($custom_field);
+                            Log::error($work_package);
+                            Log::error($timesheet_task);
+
+                            return response()->json(array('error' => Lang::get('general.error')));
+                        }
+                    } else {
+                        $custom_fields = CustomField::where('customized_id', $work_package->id)->whereIn('custom_field_id', [38, 39, 40])->get();
+
+                        foreach ($custom_fields as $custom_field) {
+                            if ($custom_field->custom_field_id == 38) {
+                                $custom_field->value = str_replace($user_open_project->lastname . ' ' . $user_open_project->lastname, '', str_replace(', ' . $user_open_project->lastname . ' ' . $user_open_project->lastname, '', ($custom_field->value)));
+                            } else if ($custom_field->custom_field_id == 39) {
+                                $custom_field->value = $custom_field->value . ', ' . $user_open_project->lastname . ' ' . $user_open_project->lastname;
+                            } else if ($custom_field->custom_field_id == 40) {
+                                $working_worked = json_decode($custom_field->value);
+
+                                $key = array_search($custom_field->id, $working_worked['worked']);
+                                unset($working_worked['working'][$key]);
+
+                                $working_worked['worked'][] = $custom_field->id;
+
+                                $custom_field->values = json_encode($working_worked);
+                            }
+
+                            if ($custom_field->save()) {
+                                DB::commit();
+                            } else {
+                                DB::rollback();
+                                Log::error($e);
+                                Log::error($custom_field);
+                                Log::error($work_package);
+                                Log::error($timesheet_task);
+
+                                return response()->json(array('error' => Lang::get('general.error')));
+                            }
+                        }
+                    }
+
+                    $use_cases = array(
+                        'timesheet_task_id' => $timesheet_task->id,
+                        'ok' => $inputs['ok'],
+                        'nok' => $inputs['nok'],
+                        'impacted' => $inputs['impacted'],
+                        'cancelled' => $inputs['cancelled']
+                    );
+
+                    $use_cases = UseCase::create ($use_cases);
+
+                    if ($use_cases) {
+                        DB::commit();
+                    } else {
+                        DB::rollback();
+                        Log::error($e);
+                        Log::error($use_cases);
+                        Log::error($work_package);
+                        Log::error($timesheet_task);
+
+                        return response()->json(array('error' => Lang::get('general.error')));
+                    }
+                }
+
+                if ($work_package->save()) {
+                    DB::commit();
+                    $this->journal($timesheet_task->work_package_id, 'WorkPackage', 'work_packages');
+
+                    $this->notify($inputs, $timesheet_task->project_id);
+
+                    return response()->json($this->line($timesheet_task, $work_package->type_id));
+                } else {
+                    DB::rollback();
+                    Log::error($e);
+                    Log::error($work_package);
+                    Log::error($timesheet_task);
+
+                    return response()->json(array('error' => Lang::get('general.error')));
+                }
+            } else {
+                DB::rollback();
+                Log::error($e);
+                Log::error($work_package);
+                Log::error($timesheet_task);
+
+                return response()->json(array('error' => Lang::get('general.error')));
+            }
+        } catch (Exception $e) {
+            
+        }
+    }
+
+    /**
+     * Get all OK, NOK, Impacted and Cancelled tasks
+     *
+     * @return All time again
+     */
+    public function getUseCase(Request $request)
+    {
+        $inputs = $request->all();
+
+        $use_cases = UseCase::where('timesheet_task_id', $inputs['id'])->get()->first();
+
+        if ($use_cases)
+            return $use_cases;
+        else
+            return null;
+    }
+
 
     /**
      * Save the user settings
@@ -724,6 +956,114 @@ class GeneralController extends Controller {
                 'message' => Lang::get('general.cpf-wrong')
             );
         }
+    }
+
+
+    /**
+     * Get user by rfid
+     *
+     * @return string with an rfid
+     */
+    public function rfidLogin(Request $request)
+    {
+        // Get all the inputs
+        $inputs = $request->all();
+
+        $rfid = UserRFID::where('rfid_code',$inputs['rfid'])->get()->first();
+
+        $receive = array();
+
+        if ($rfid) {
+            $user = User::find($rfid->user_id);
+
+            $today = new Carbon();
+
+            // Get the workday
+            $workday = Timesheet::where('user_id', $user->id)->where('workday', $today->toDateString())->orderBy('workday', 'desc')->get()->first();
+
+            $seconds = "00";
+
+            try {
+                DB::beginTransaction();
+
+                if (!$workday) {
+                    $workday = array(
+                        'user_id' => $user->id,
+                        'workday' => $today->toDateString(),
+                        'hours' => '00:00:00',
+                        'start' => $today->toTimeString()
+                    );
+
+                    $workday = Timesheet::create($workday);
+
+                    if ($workday) {
+                        DB::commit();
+                    }
+
+                    $receive = array("status" => "200",
+                        "rfid" => $inputs['rfid'],
+                        "user" => $user->first_name,
+                        "entrance" => $workday->start);
+                } else {
+                    if ($workday->lunch_start == "00:00:00") {
+                        $workday->lunch_start = $today->toTimeString();
+                    } else if ($workday->lunch_end == "00:00:00") {
+                        $workday->lunch_end = $today->toTimeString();
+
+                        $lunch_start = new Carbon($workday->lunch_start);
+                        $diffTime = $lunch_start->diffInMinutes(new Carbon($workday->lunch_end));
+
+                        $lunch_in_minute = $diffTime;
+
+                        $hours = floor($diffTime / 60);
+                        $minutes = ($diffTime % 60);
+                        $tminutes = (float)($minutes / 60);
+                        $lunch_time = (($hours <= 9 ? "0" . $hours : $hours) . ":" . ($minutes <= 9 ? "0" . $minutes : $minutes)) . ":" . $seconds;
+                        $workday->lunch_hours = $lunch_time;
+                    } else if ($workday->end == "00:00:00") {
+                        $workday->end = $today->toTimeString();
+                        
+                        $lunch_in_minute = 0;
+                        list($hour, $minute) = explode(':', $workday->lunch_hours);
+                        $lunch_in_minute += $hour * 60;
+                        $lunch_in_minute += $minute;
+
+                        $start = new Carbon($workday->start);
+                        $diffTime = $start->diffInMinutes(new Carbon($workday->end));
+                        $diffTime -= $lunch_in_minute;
+
+                        $hours = floor($diffTime / 60);
+                        $minutes = ($diffTime % 60);
+                        $tminutes = (float)($minutes / 60);
+                        $day_time = (($hours <= 9 ? "0" . $hours : $hours) . ":" . ($minutes <= 9 ? "0" . $minutes : $minutes)) . ":" . $seconds;
+                        $workday->hours = $day_time;
+                    }
+
+                    if ($workday->save()) {
+                        DB::commit();
+                    }
+
+                    $receive = array("status" => "200",
+                        "rfid" => $inputs['rfid'],
+                        "user" => $user->first_name,
+                        "entrance" => $workday->start,
+                        "lunch_start" => $workday->lunch_start,
+                        "lunch_end" => $workday->lunch_end,
+                        "exit" => $workday->end);
+                }
+            } catch (Exception $e) {
+                DB::rollback();
+                $data['error'] =  Lang::get('general.error-day');
+
+                $receive = array("status" => "500",
+                    "rfid" => $inputs['rfid']);
+            }
+        } else {
+            $receive = array("status" => "500",
+                "rfid" => $inputs['rfid']);
+        }
+
+        return response()->json($receive);
     }
 
     /* Statics Functions */

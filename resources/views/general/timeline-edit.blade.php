@@ -68,7 +68,9 @@
     row.append($('<td>'));
     row.append(edit);
 
-    row.find('.time').wickedpicker({twentyFour: true});
+    row.find('.time').inputmask({
+      mask: '99:99:99'
+    });
 
     $('#task-table').append(row);
   });
@@ -80,11 +82,13 @@
     var start = par.children("td:nth-child(3)");
     var end = par.children("td:nth-child(4)");
 
+    var task_id = $(this).data('id');
+
     var id = 0;
 
     var task_name = task.html();
 
-    project_s =  '<select id="project_' + $(this).attr('id') + '" name="projects" class="form-control projects" data-validation="required" required>';
+    project_s =  '<select id="project_' + $(this).data('id') + '" name="projects" class="form-control projects" data-validation="required" required>';
     project_s += '<option value="">' + '{!! Lang::get('general.select') !!}' + '</option>';
     @foreach ($data['projects'] as $project)
     var select = '';
@@ -97,14 +101,14 @@
     @endforeach
     project_s += '</select>';
 
-    task_s =  '<select id="task_' + $(this).attr('id') + '" name="tasks" class="form-control tasks" data-validation="required" required>';
+    task_s =  '<select id="task_' + $(this).data('id') + '" name="tasks" class="form-control tasks" data-validation="required" required>';
     task_s += '<option value="">' + '{!! Lang::get('general.select') !!}' + '</option>';
     task_s += '</select>';
 
     project.html(project_s);
     task.html(task_s);
-    start.html('<input class="form-control time" type="text" id="start_' + $(this).data('id') + '" value="' + start.html() + '"/>');
-    end.html('<input class="form-control time" type="text" id="end_' + $(this).data('id') + '" value="' + end.html() + '"/>');
+    start.html('<input class="form-control time" type="text" id="start_' + $(this).data('id') + '" value="' + start.html() + '" data-mask="99:99:99"/>');
+    end.html('<input class="form-control time" type="text" id="end_' + $(this).data('id') + '" value="' + end.html() + '" data-mask="99:99:99"/>');
 
 
     project.find('select').select2();
@@ -113,8 +117,54 @@
       getCycle(id, task_name);
     }
 
+    setTimeout(function(){
+      var type = $('.tasks').select2().find(":selected").data('type');
+
+      if (type !== undefined) {
+        if (type == 3) {
+          var data = {id: task_id};
+          console.log(data);
+          $.ajax({
+            url: '/general/getUseCase',
+            data: data,
+            type: "GET",
+            success: function(data) {
+              stats = "";
+              stats += '<div id="tasks-quantity">';
+              stats += '  <div id="messages">';
+              stats += '  </div>';
+              stats += '  <!-- The form -->';
+              stats += '  <div class="form-group col-xs-2">';
+              stats += '    <label for="name">{!! Lang::get('timesheets.ok') !!}</label>';
+              stats += '    <input type="number" class="form-control" name="ok" id="ok" value="' + data.ok + '" data-mask="999" data-validation="length" data-validation-length="1-40" data-validation-regexp="^\[1-9]{2}\" data-validation-error-msg="{!! Lang::get('timesheets.error-ok') !!}" required>';
+              stats += '  </div>';
+              stats += '  <div class="form-group col-xs-2">';
+              stats += '    <label for="name">{!! Lang::get('timesheets.nok') !!}</label>';
+              stats += '    <input type="number" class="form-control" name="nok" id="nok" value="' + data.nok + '" data-mask="999" data-validation="length" data-validation-length="1-40" data-validation-regexp="^\\[1-9]{2}\\" data-validation-error-msg="{!! Lang::get('timesheets.error-nok') !!}" required>';
+              stats += '  </div>';
+              stats += '  <div class="form-group col-xs-2">';
+              stats += '    <label for="name">{!! Lang::get('timesheets.impacted') !!}</label>';
+              stats += '    <input type="number" class="form-control" name="impacted" id="impacted" value="' + data.impacted + '" data-mask="999" data-validation="length" data-validation-length="1-40" data-validation-regexp="^\[1-9]{2}\" data-validation-error-msg="{!! Lang::get('timesheets.error-impacted') !!}" required>';
+              stats += '  </div>';
+              stats += '  <div class="form-group col-xs-2">';
+              stats += '    <label for="name">{!! Lang::get('timesheets.cancelled') !!}</label>';
+              stats += '    <input type="number" class="form-control" name="cancelled" id="cancelled" value="' + data.cancelled + '" data-mask="999" data-validation="length" data-validation-length="1-40" data-validation-regexp="^\[1-9]{2}\" data-validation-error-msg="{!! Lang::get('timesheets.error-cancelled') !!}" required>';
+              stats += '  </div>';
+              stats += '</div>';
+
+              new_line = $('<tr>');
+              new_field = $('<td>');
+              par.after(new_line.html(new_field.html(stats).attr('colspan', 6)));
+            }
+          });
+        }
+      }
+    }, 2000);
+
     task.find('select').select2();
-    $('.time').wickedpicker({twentyFour: true});
+    $('.time').inputmask({
+      mask: '99:99:99'
+    });
 
     $(this).hide();
     $(this).parent().find('.save-task-row').removeClass('hide');
@@ -130,7 +180,7 @@
       end: $('#end_' + $(this).data('id')).val(),
     }
 
-    $(this).hide();
+    // $(this).hide();
 
     console.log(data);
 
@@ -165,6 +215,42 @@
       $('.tasks').prop( "disabled", true ).val($("#target option:first").val());
       $('.tasks').find('optgroup').remove();
       $('.tasks').find('option[value!=""]').remove();
+    }
+  });
+
+  $('table').on('change', '.tasks', function() {
+    var id = $(this).val();
+    var type = $(this).select2().find(":selected").data('type');
+
+    if (type !== undefined) {
+      if (type == 3) {
+        stats = "";
+        stats += '<div id="tasks-quantity">';
+        stats += '  <div id="messages">';
+        stats += '  </div>';
+        stats += '  <!-- The form -->';
+        stats += '  <div class="form-group col-xs-2">';
+        stats += '    <label for="name">{!! Lang::get('timesheets.ok') !!}</label>';
+        stats += '    <input type="number" class="form-control" name="ok" id="ok" value="' + data.ok + '" data-mask="999" data-validation="length" data-validation-length="1-40" data-validation-regexp="^\[1-9]{2}\" data-validation-error-msg="{!! Lang::get('timesheets.error-ok') !!}" required>';
+        stats += '  </div>';
+        stats += '  <div class="form-group col-xs-2">';
+        stats += '    <label for="name">{!! Lang::get('timesheets.nok') !!}</label>';
+        stats += '    <input type="number" class="form-control" name="nok" id="nok" value="' + data.nok + '" data-mask="999" data-validation="length" data-validation-length="1-40" data-validation-regexp="^\\[1-9]{2}\\" data-validation-error-msg="{!! Lang::get('timesheets.error-nok') !!}" required>';
+        stats += '  </div>';
+        stats += '  <div class="form-group col-xs-2">';
+        stats += '    <label for="name">{!! Lang::get('timesheets.impacted') !!}</label>';
+        stats += '    <input type="number" class="form-control" name="impacted" id="impacted" value="' + data.impacted + '" data-mask="999" data-validation="length" data-validation-length="1-40" data-validation-regexp="^\[1-9]{2}\" data-validation-error-msg="{!! Lang::get('timesheets.error-impacted') !!}" required>';
+        stats += '  </div>';
+        stats += '  <div class="form-group col-xs-2">';
+        stats += '    <label for="name">{!! Lang::get('timesheets.cancelled') !!}</label>';
+        stats += '    <input type="number" class="form-control" name="cancelled" id="cancelled" value="' + data.cancelled + '" data-mask="999" data-validation="length" data-validation-length="1-40" data-validation-regexp="^\[1-9]{2}\" data-validation-error-msg="{!! Lang::get('timesheets.error-cancelled') !!}" required>';
+        stats += '  </div>';
+        stats += '</div>';
+
+        new_line = $('<tr>');
+        new_field = $('<td>');
+        $(this).parent().parent().after(new_line.html(new_field.html(stats).attr('colspan', 6)));
+      }
     }
   });
 

@@ -21,6 +21,9 @@ Route::controllers([
 
 Route::get('email/confirm', 'GeneralController@confirm');
 
+// Route::post('user/rfid_login', 'GeneralController@rfidLogin');
+Route::get('user/rfid_login', 'GeneralController@rfidLogin');
+
 /*
  * Access
  */
@@ -54,11 +57,15 @@ Route::group(['middleware' => 'auth'], function () {
 
         Route::get('general/changeDay', 'GeneralController@changeDay');
 
+        Route::get('general/changeTaskDay', 'GeneralController@changeTaskDay');
+
         Route::get('general/saveLocalization', 'GeneralController@saveLocalization');
             
         Route::get('general/getTasks', 'GeneralController@getTasks');
 
         Route::get('general/getTasksDay', 'GeneralController@getTasksDay');
+
+        Route::get('general/getUseCase', 'GeneralController@getUseCase');
 
         Route::get('general/getTasksEditDay', 'GeneralController@getTasksEditDay');
 
@@ -150,6 +157,7 @@ Route::group(['middleware' => 'auth'], function () {
     //Entrust::routeNeedsPermission('users/create', 'UserController@create');
     //Entrust::routeNeedsPermission('users/*/edit', 'UserController@edit');
     //Entrust::routeNeedsPermission('users/delete', 'UserController@delete');
+    Entrust::routeNeedsPermission('users/{id}/timesheet', 'UserController@edit');
 });
 
 Route::group(['middleware' => 'guest'], function () {
