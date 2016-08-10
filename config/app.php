@@ -180,6 +180,7 @@ return [
         Dsdevbe\LdapConnector\LdapConnectorServiceProvider::class,
         Maatwebsite\Excel\ExcelServiceProvider::class,
         Arcanedev\Settings\SettingsServiceProvider::class,
+        GoogleMaps\ServiceProvider\GoogleMapsServiceProvider::class,
 
         /*
          * Personalization Services Providers...
@@ -259,7 +260,8 @@ return [
         'role'          => Zizaco\Entrust\Middleware\EntrustRole::class,
         'permission'    => Zizaco\Entrust\Middleware\EntrustPermission::class,
         'ability'       => Zizaco\Entrust\Middleware\EntrustAbility::class,
-        'Setting' => Arcanedev\Settings\Facades\Setting::class,
+        'Setting'       => Arcanedev\Settings\Facades\Setting::class,
+        'GoogleMaps'    => GoogleMaps\Facade\GoogleMapsFacade::class,
 
     ],
 

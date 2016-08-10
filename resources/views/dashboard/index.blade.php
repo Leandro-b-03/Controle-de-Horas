@@ -32,6 +32,22 @@
 
         <!-- Main content -->
         <section class="content">
+          <div id="messages">
+            @if (Session::get('return'))
+            <div class="alert alert-{!! Session::get('return')['class'] !!} alert-dismissable">
+              <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+              <h4>    <i class="icon fa fa-{!! Session::get('return')['faicon'] !!}"></i> {!! Session::get('return')['status'] !!}!</h4>
+              {!! Session::get('return')['message'] !!}
+            </div>
+            @endif
+            @if (isset($data['message-op']))
+            <div class="alert alert-danger alert-dismissable">
+              <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+              <h4>    <i class="icon fa fa-danger"></i> {{ Lang::get('general.atention') }}!</h4>
+              {!! Lang::get('general.op-message') !!}
+            </div>
+            @endif
+          </div>
           <!-- Main row -->
           <div class="row">
             <!-- Left col -->
@@ -237,9 +253,21 @@
         var geoSuccess = function(position) {
           startPos = position;
 
-          coord = 'https://www.google.com/maps/embed/v1/place?q=' + startPos.coords.latitude + ',' + startPos.coords.longitude + '&key=AIzaSyAMjB9eA7xTNXxROIy_4IS4HbuijRQ84YA';
+          var use_local = "{{ $data['location']['use'] }}";
 
-          savePosition(startPos.coords.latitude, startPos.coords.longitude);
+          console.log(use_local);
+
+          coord = null;
+
+          if (use_local == 1) {
+            coord = 'https://www.google.com/maps/embed/v1/place?q=' + "{{ $data['location']['lat'] }}" + ',' + "{{ $data['location']['lon'] }}" + '&key=AIzaSyAMjB9eA7xTNXxROIy_4IS4HbuijRQ84YA';
+
+            savePosition("{{ $data['location']['lat'] }}", "{{ $data['location']['lon'] }}");
+          } else {
+            coord = 'https://www.google.com/maps/embed/v1/place?q=' + startPos.coords.latitude + ',' + startPos.coords.longitude + '&key=AIzaSyAMjB9eA7xTNXxROIy_4IS4HbuijRQ84YA';
+
+            savePosition(startPos.coords.latitude, startPos.coords.longitude);
+          }
 
           $('#map').attr('src', coord);
         };

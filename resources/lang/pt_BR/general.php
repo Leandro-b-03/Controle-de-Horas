@@ -56,6 +56,7 @@ return [
     'total'                         => 'Total',
     'hours'                         => 'Horas',
     'alert'                         => 'Alerta',
+    'atention'                      => 'Atenção',
 
     // Menu & Controller
     'nav-menu'                      => 'Menu de navega&ccedil;&atilde;o',
@@ -136,6 +137,7 @@ return [
     'failed-fields'                 => 'Campos com valores errados e/ou inv&aacute;lidos',
     'failed-notification'           => 'Usu&aacute;rio n&atilde;o recebeu a notifica&ccedil;&atilde;o',
     'error'                         => 'Houve um erro ao processar a requisi&ccedil;ão',
+    'op-message'                    => 'Você não possui cadastro no <a target="_blank" href="https://epm.svlabs.com.br/">EPM SVLabs</a>, por favor, se cadastre no EPM e volte para as atividades',
 
     // Sentences with variable :string
     'member-since'                  => 'Membro desde :month-year',
