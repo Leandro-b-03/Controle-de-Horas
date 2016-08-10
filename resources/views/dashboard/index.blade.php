@@ -93,7 +93,7 @@
                     <div class="box-header with-border">
                       <h3 class="box-title">{!! Lang::get('dashboard.title-users') !!}</h3>
                       <div class="box-tools pull-right">
-                        <span class="label label-danger">{!! Lang::get('dashboard.new_users', ['count' => $data['new_users']->count()]) !!}</span>
+                        <span class="label label-danger">{!! Lang::get('dashboard.new_users', ['count' => $data['new_users']->count]) !!}</span>
                         <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
                         <button class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
                       </div>
