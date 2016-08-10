@@ -27,6 +27,9 @@ return [
     'label-photo'                   => 'Foto',
     'label-gender'                  => 'Sexo',
     'label-rfid_code'               => 'RFID',
+    'label-education'               => 'Educação',
+    'label-skills'                  => 'Skills',
+    'label-description'             => 'Descrição',
     'ph-username'                   => 'Nome do Colaborador',
     'ph-first_name'                 => 'Primeiro nome do colaborador',
     'ph-last_name'                  => '&Uacute;ltimo nome do colaborador',
@@ -40,6 +43,9 @@ return [
     'ph-gender_female'              => 'Feminino',
     'ph-gender_male'                => 'Masculino',
     'ph-rfid_code'                  => 'RFID',
+    'ph-education'                  => 'Onde estudou?',
+    'ph-skills'                     => 'Suas habilidades?',
+    'ph-description'                => 'Descreva-se, fala um pouco (ou muito) sobre você!',
     'h3-change_photo'               => 'Trocar foto',
     'a-open_filemanager'            => 'Abrir gerenciador',
     'error-username'                => 'O nome de usu&aacute;rio precisa ser alfanum&eacute;rico e deve conter de 3 a 12 caract&eacute;res)',
@@ -86,4 +92,10 @@ return [
 
     // Buttons
     'edit-tasks'                    => 'Editar Tarefas',
+
+    // Profile
+    'profile-education'             => 'Educação',
+    'profile-location'              => 'Ultima Localização',
+    'profile-skills'                => 'Skills',
+    'profile-description'           => 'Descrição:',
 ];

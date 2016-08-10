@@ -13,6 +13,8 @@
     {!! Html::style("library/adminLTE/plugins/jQuery-Form-Validator/form-validator/theme-default.min.css") !!}
     <!-- Cropper -->
     {!! Html::style("library/adminLTE/plugins/cropper/dist/cropper.min.css") !!}
+    <!-- Bootstrap Tags Input -->
+    {!! Html::style("library/adminLTE/plugins/bootstrap-tagsinput/src/bootstrap-tagsinput.css") !!}
 @stop
 
 @section('content')
@@ -63,31 +65,37 @@
                   <h3 class="box-title">Sobre Mim</h3>
                 </div><!-- /.box-header -->
                 <div class="box-body">
-                  <strong><i class="fa fa-book margin-r-5"></i>  Education</strong>
+                  <strong><i class="fa fa-book margin-r-5"></i>  {{ Lang::get('users.profile-education') }}</strong>
                   <p class="text-muted">
-                    B.S. in Computer Science from the University of Tennessee at Knoxville
+                    {{ $data['profile']->education or '---' }}
                   </p>
 
                   <hr>
 
-                  <strong><i class="fa fa-map-marker margin-r-5"></i> Location</strong>
-                  <p class="text-muted">Malibu, California</p>
+                  <strong><i class="fa fa-map-marker margin-r-5"></i> {{ Lang::get('users.profile-location') }}</strong>
+                  <p class="text-muted">{{ $data['location'] or '---' }}</p>
 
                   <hr>
 
-                  <strong><i class="fa fa-pencil margin-r-5"></i> Skills</strong>
+                  <strong><i class="fa fa-pencil margin-r-5"></i> {{ Lang::get('users.profile-skills') }}</strong>
                   <p>
-                    <span class="label label-danger">UI Design</span>
-                    <span class="label label-success">Coding</span>
+                  @if (isset($data['skills']))
+                  @foreach ($data['skills'] as $skill)
+                    <span class="label label-{{ $skill[0] }}">{{ $skill[1] }}</span>
+                    {{-- <span class="label label-success">Coding</span>
                     <span class="label label-info">Javascript</span>
                     <span class="label label-warning">PHP</span>
-                    <span class="label label-primary">Node.js</span>
+                    <span class="label label-primary">Node.js</span> --}}
+                  @endforeach
+                  @else
+                    <span>---</span>
+                  @endif
                   </p>
 
                   <hr>
 
-                  <strong><i class="fa fa-file-text-o margin-r-5"></i> Notes</strong>
-                  <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam fermentum enim neque.</p>
+                  <strong><i class="fa fa-file-text-o margin-r-5"></i> {{ Lang::get('users.profile-description') }}</strong>
+                    {{ $data['profile']->description or '---' }}
                 </div><!-- /.box-body -->
               </div><!-- /.box -->
             </div><!-- /.col -->
@@ -225,18 +233,18 @@
                         </div>
                         <div class="form-group col-xs-6">
                           <label for="education">{!! Lang::get('users.label-education') !!}</label>
-                          <textarea class="form-control" name="education" id="education"  value="{!! (isset($data['user']) ? $data['user']->education : (Request::old('education') ? Request::old('education') : '')) !!}" placeholder="{!! Lang::get('users.ph-education') !!}" data-validation-error-msg="{!! Lang::get('users.error-education') !!}" required></textarea>
+                          <textarea class="form-control" name="education" id="education" placeholder="{!! Lang::get('users.ph-education') !!}" data-validation-error-msg="{!! Lang::get('users.error-education') !!}" data-validation="length" data-validation-length="10-1000">{!! (isset($data['profile']) ? $data['profile']->education : (Request::old('education') ? Request::old('education') : '')) !!}</textarea>
                         </div>
                         <div class="form-group col-xs-6">
                           <label for="skills">{!! Lang::get('users.label-skills') !!}</label>
-                          <input type="text" class="form-control" name="skills" id="skills"  value="{!! (isset($data['user']) ? $data['user']->skills : (Request::old('skills') ? Request::old('skills') : '')) !!}" placeholder="{!! Lang::get('users.ph-skills') !!}" data-validation-error-msg="{!! Lang::get('users.error-skills') !!}" required>
+                          <input type="text" class="form-control" name="skills" id="skills"  value="{!! (isset($data['profile']) ? $data['profile']->skills : (Request::old('skills') ? Request::old('skills') : '')) !!}" placeholder="{!! Lang::get('users.ph-skills') !!}" data-validation-error-msg="{!! Lang::get('users.error-skills') !!}" data-validation="length" data-validation-length="10-1000" data-role="tagsinput">
                         </div>
                         <div class="form-group col-xs-12">
                           <hr />
                         </div>
                         <div class="form-group col-xs-12">
                           <label for="description">{!! Lang::get('users.label-description') !!}</label>
-                          <textarea class="form-control" name="description" id="description"  value="{!! (isset($data['user']) ? $data['user']->description : (Request::old('description') ? Request::old('description') : '')) !!}" placeholder="{!! Lang::get('users.ph-description') !!}" data-validation="length" data-validation-length="10-1000" data-validation-error-msg="{!! Lang::get('users.error-description') !!}" required></textarea>
+                          <textarea class="form-control" name="description" id="description" data-validation="length" data-validation-length="10-1000" data-validation-error-msg="{!! Lang::get('users.error-description') !!}" placeholder="{!! Lang::get('users.ph-description') !!}">{!! (isset($data['profile']) ? $data['profile']->description : (Request::old('description') ? Request::old('description') : '')) !!}</textarea>
                         </div>
                       </div><!-- /.box-body -->
                       <div class="box-footer">
@@ -378,6 +386,8 @@
     {!! Html::script("library/adminLTE/plugins/cropper/dist/cropper.min.js") !!}
     <!-- Cropper custom class to events -->
     {!! Html::script("library/adminLTE/custom/custom-cropper.js") !!}
+    <!-- Bootstrap Tags Input -->
+    {!! Html::script("library/adminLTE/plugins/bootstrap-tagsinput/src/bootstrap-tagsinput.js") !!}
 
     <script>
       $.validate({
@@ -416,6 +426,12 @@
           } else {
             return;
           }
+        }
+      });
+
+      $('.bootstrap-tagsinput input').keypress(function(e) {
+        if(e.which==46) {
+          $(this).val($(this).val().replace(',', ''));
         }
       });
 

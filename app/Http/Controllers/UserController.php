@@ -10,6 +10,7 @@ use Lang;
 use Auth;
 use App\User;
 use App\Role;
+use GoogleMaps;
 use App\Holiday;
 use App\Overtime;
 use App\UserRFID;
@@ -19,6 +20,7 @@ use App\UserProfile;
 use App\UserSetting;
 use App\Http\Requests;
 use App\TimesheetTask;
+use App\UserLocalization;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Controllers\GeneralController;
@@ -235,6 +237,59 @@ class UserController extends Controller
         $data['roles'] = $roles;
         $data['user'] = $user;
 
+        $profile = UserProfile::where('user_id', $id)->get()->first();
+        $data['profile'] = $profile;
+
+        $skills_refined = explode(',', $profile->skills);
+        $skills = array();
+        foreach ($skills_refined as $key => $value) {
+            $number = rand(1,5);
+
+            $color = '';
+            switch ($number) {
+                case 1:
+                    $color = "primary";
+                    break;
+                case 2:
+                    $color = "danger";
+                    break;
+                case 3:
+                    $color = "success";
+                    break;
+                case 4:
+                    $color = "warning";
+                    break;
+                case 5:
+                    $color = "info";
+                    break;
+                
+                default:
+                    $color = "primary";
+                    break;
+            }
+
+            $skills[] = array($color, $value);
+        }
+
+        // die(d($skills));
+
+        $data['skills'] = $skills;
+
+        $location = UserLocalization::where('user_id', $id)->get()->last();
+
+        $url  = "http://maps.googleapis.com/maps/api/geocode/json?latlng=".
+        $location->latitude.",".$location->longitude."&sensor=false";
+        $json = @file_get_contents($url);
+        $return = json_decode($json);
+        $status = $return->status;
+        $location = '';
+
+        if($status == "OK"){
+            $location = $return->results[0]->formatted_address;
+        }
+
+        $data['location'] = $location;
+
         // Return the dashboard view.
         return view('user.profile')->with('data', $data);
     }
@@ -365,16 +420,24 @@ class UserController extends Controller
                 }
             }
 
-            if ($request->is('profile/' . $id)) {
-                $profile = array('user_id' => $id,
-                    'education' => $inputs['education'],
-                    'skills' => $inputs['skills'],
-                    'description' => $inputs['description']
-                    );
+            if (isset($inputs['education'])) {
+                $profile = UserProfile::where('user_id', $id)->get()->first();
 
-                $profile = UserProfile::create($profile);
+                if (!$profile) {
+                    $profile = array('user_id' => $id,
+                        'education' => $inputs['education'],
+                        'skills' => $inputs['skills'],
+                        'description' => $inputs['description']
+                        );
 
-                die($profile);
+                    $profile = UserProfile::create($profile);
+                } else {
+                    $profile->education = $inputs['education'];
+                    $profile->skills = $inputs['skills'];
+                    $profile->description = $inputs['description'];
+
+                    $profile->save();
+                }
 
                 if (!$profile) {
                     return redirect('profile/' . $id)->withInput()->with('return', GeneralController::createMessage('failed', Lang::get('general.' . $this->controller_name), 'update'));
