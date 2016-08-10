@@ -27,14 +27,18 @@ class DashboardController extends Controller
      *
      * @return Response
      */
-    public function index()
+    public function index(Request $request)
     {
         if (Auth::user()->getEloquent() == null) {
             return redirect()->to('register');
         }
 
         // GeoIP
-        $location = GeoIP::getLocation();
+        $location = GeoIP::getLocation($request->ip());
+
+        if ($location['ip'] == $request->ip())
+            $location['use'] = true;
+        
         $data['location'] = $location;
 
         // New Users
@@ -76,8 +80,31 @@ class DashboardController extends Controller
             $data['error'] =  Lang::get('general.error-day');
         }
 
-        // Get the Openproject's user id
-        $user_id = UserOpenProject::where('login', 'LIKE', Auth::user()->getEloquent()->username . '@%')->orWhere('mail', 'LIKE', Auth::user()->getEloquent()->username . '@%')->get()->first()->id;
+        try {
+            // Get the Openproject's user id
+            $user = UserOpenProject::where('login', 'LIKE', Auth::user()->getEloquent()->username . '@%')->orWhere('mail', 'LIKE', Auth::user()->getEloquent()->username . '@%')->get()->first();
+
+            $user_id = null;
+            if ($user) {
+                $user_id = $user->id;
+            } else {
+                $data['message-op'] = true;
+            }
+
+            // Get all the Projects that the user is assigned off
+            $user_projects = Member::select('project_id')->where('user_id', $user_id)->get()->toArray();
+
+            // Get all task
+            $tasks = DB::connection('openproject')->table('work_packages AS wp1')->whereNotExists(function ($query) {
+                $query->select(DB::raw(1))
+                      ->from('work_packages AS wp2')
+                      ->whereRaw('wp2.parent_id = wp1.id');
+            })->whereIn('project_id', $user_projects)->take(15)->get();
+            $data['tasks'] = $tasks;
+        } catch (Exception $e) {
+            $data['tasks'] = array();
+            $data['message-op'] = true;
+        }
 
         // Get all the Projects that the user is assigned off
         $user_projects = Member::select('project_id')->where('user_id', $user_id)->get()->toArray();

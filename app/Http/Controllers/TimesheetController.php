@@ -90,23 +90,38 @@ class TimesheetController extends Controller
             $data['activity'] = TaskPermission::where('work_package_id', $timesheet_task->work_package_id)->get()->first()->enumeration_id;
         }
 
-        // Get the Openproject's user id
-        $user_id = UserOpenProject::where('login', 'LIKE', Auth::user()->getEloquent()->username . '@%')->orWhere('mail', 'LIKE', Auth::user()->getEloquent()->username . '@%')->get()->first()->id;
+        try {
+            // Get the Openproject's user id
+            $user = UserOpenProject::where('login', 'LIKE', Auth::user()->getEloquent()->username . '@%')->orWhere('mail', 'LIKE', Auth::user()->getEloquent()->username . '@%')->get()->first();
 
-        // Get all the Projects that the user is assigned off
-        $user_projects = Member::select('project_id')->where('user_id', $user_id)->get()->toArray();
+            $user_id = null;
+            if ($user) {
+                $user_id = $user->id;
+            } else {
+                $data['message-op'] = true;
+            }
 
-        // Get all the projects infos
-        $projects = Project::whereIn('status', [1, 7])->whereIn('id', $user_projects)->get();
-        $data['projects'] = $projects;
+            // Get all the Projects that the user is assigned off
+            $user_projects = Member::select('project_id')->where('user_id', $user_id)->get()->toArray();
 
-        // Get all the tasks do today;
-        $tasks = TimesheetTask::where('timesheet_id', $workday->id)->orderBy('id', 'DESC')->paginate(20);
-        $data['tasks'] = $tasks;
+            // Get all the projects infos
+            $projects = Project::whereIn('status', [1, 7])->whereIn('id', $user_projects)->get();
+            $data['projects'] = $projects;
 
-        // Get the info if the day is off
-        $info = GeneralController::getInfo($workday);
-        $data['info'] = $info;
+            // Get all the tasks do today;
+            $tasks = TimesheetTask::where('timesheet_id', $workday->id)->orderBy('id', 'DESC')->paginate(20);
+            $data['tasks'] = $tasks;
+
+            // Get the info if the day is off
+            $info = GeneralController::getInfo($workday);
+            $data['info'] = $info;
+        } catch (Exception $e) {
+            $data['projects'] = null;
+            $data['tasks'] = null;
+            $data['info'] = null;
+
+            $data['message-op'] = true;
+        }
 
         // Return the timesheets view.
         return view('timesheet.index')->with('data', $data);

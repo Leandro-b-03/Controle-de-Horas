@@ -43,6 +43,11 @@
     @show
     <!-- Custom style -->
     {!! Html::style("library/adminLTE/custom/custom.css") !!}
+    <script>
+      var logged = "{{ Auth::check() }}";
+      if (!logged)
+        window.location = "{{ Url::to('/') }}";
+    </script>
   </head>
   @if(Auth::user())
   @if(Auth::user()->getEloquent()->settings()->getResults())
