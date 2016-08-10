@@ -43,6 +43,7 @@ class DashboardController extends Controller
 
         // New Users
         $new_users = User::orderBy('created_at', 'desc')->take(8)->get();
+        $new_users->count = User::where('created_at', '>=', Carbon::now()->startOfMonth())->get()->count();
         $data['new_users'] = $new_users;
 
         // New Projects

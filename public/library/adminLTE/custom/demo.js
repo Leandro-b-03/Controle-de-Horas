@@ -225,7 +225,7 @@
     if (cls == "layout-boxed")
       AdminLTE.controlSidebar._fix($(".control-sidebar-bg"));
     if ($('body').hasClass('fixed') && cls == 'fixed') {
-      AdminLTE.pushMenu.expandOnHover();
+      // AdminLTE.pushMenu.expandOnHover();
       AdminLTE.layout.activate();
     }
     AdminLTE.controlSidebar._fix($(".control-sidebar-bg"));
