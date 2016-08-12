@@ -116,6 +116,7 @@
                 <th rowspan="2">{!! Lang::get('timesheets.title-end') !!}</th>
                 <th colspan="2">{!! Lang::get('timesheets.title-nightly') !!}</th>
                 <th rowspan="2">{!! Lang::get('general.total') !!}</th>
+                <th rowspan="2" width="90px">{!! Lang::get('general.action') !!}</th>
               </tr>
               <tr>
                 <th>{!! Lang::get('timesheets.title-start') !!}</th>
@@ -137,6 +138,7 @@
                 <td>{!! $workday->nightly_start !!}</td>
                 <td>{!! $workday->nightly_end !!}</td>
                 <td>{!! GeneralHelper::getHoursTotal($workday->hours, $workday->nightly_hours) !!}</td>
+                <td><a class="btn btn-warning request" data-id="{{ $workday->id }}" data-toggle="modal" data-target="#md-request">{{ Lang::get('timesheets.btn-request') }}</a></td>
               </tr>
               @endforeach
               @endif
@@ -167,9 +169,54 @@
         </div>
       </div>
     </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="md-request" tabindex="-1" role="dialog" aria-labelledby="Timeline">
+      <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="{!! Lang::get('general.back') !!}"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title" id="Timeline">{!! Lang::get('timesheets.task') !!}</h4>
+          </div>
+          <div class="modal-body fixed">
+            <div id="request">
+                <!-- The request -->
+                <div id="messages-request">
+                  <div class="alert alert-warning">
+                      <p>{{ Lang::get('timesheets.message-request') }}</p>
+                  </div>
+                </div>
+                <div class="form-group col-xs-2">
+                  <label for="start">{!! Lang::get('timesheets.label-start') !!}</label>
+                  <input type="start" class="form-control input-mask" data-mask="99:99:99" name="start" id="start" value="" data-validation="custom" data-validation-error-msg="{!! Lang::get('timesheets.error-start') !!}" required>
+                </div>
+                <div class="form-group col-xs-2">
+                  <label for="lunch_start">{!! Lang::get('timesheets.label-lunch_start') !!}</label>
+                  <input type="lunch_start" class="form-control input-mask" data-mask="99:99:99" name="lunch_start" id="lunch_start" value="" data-validation="custom" data-validation-error-msg="{!! Lang::get('timesheets.error-lunch_start') !!}" required>
+                </div>
+                <div class="form-group col-xs-2">
+                  <label for="lunch_end">{!! Lang::get('timesheets.label-lunch_end') !!}</label>
+                  <input type="lunch_end" class="form-control input-mask" data-mask="99:99:99" name="lunch_end" id="lunch_end" value="" data-validation="custom" data-validation-error-msg="{!! Lang::get('timesheets.error-lunch_end') !!}" required>
+                </div>
+                <div class="form-group col-xs-2">
+                  <label for="end">{!! Lang::get('timesheets.label-end') !!}</label>
+                  <input type="end" class="form-control input-mask" data-mask="99:99:99" name="end" id="end" value="" data-validation="custom" data-validation-error-msg="{!! Lang::get('timesheets.error-end') !!}" required>
+                </div>
+              </div>
+          </div>
+          <div class="modal-footer">
+            <input id="workday-request" type="hidden" name="" value="">
+            <a id="send-request" class="btn btn-success">{!! Lang::get('general.send') !!}</a>
+            <button type="button" class="btn btn-danger" data-dismiss="modal">{!! Lang::get('general.back') !!}</button>
+          </div>
+        </div>
+      </div>
+    </div>
 @endsection
 
 @section('scripts')
+    <!-- Jasny-bootstrap -->
+    {!! Html::script("library/adminLTE/plugins/jasny-bootstrap/js/jasny-bootstrap.min.js") !!}
     <!-- SlimScroll -->
     {!! Html::script("library/adminLTE/plugins/slimScroll/jquery.slimscroll.min.js") !!}
     <!-- FastClick -->
@@ -178,6 +225,31 @@
     {!! Html::script("library/adminLTE/plugins/jquery-stopwatch/jquery.stopwatch.js") !!}
 
     <script type="text/javascript" charset="utf-8" async defer>
+      $('.request').click(function() {
+        $('#workday-request').val($(this).data('id'));
+      });
+
+      $('#send-request').click(function() {
+        data = {};
+        data.workday_id = $('#workday-request').val();
+        data.start = $('#start').val();
+        data.lunch_start = $('#lunch_start').val();
+        data.lunch_end = $('#lunch_end').val();
+        data.end = $('#end').val();
+
+        $.ajax({
+          url: '/general/RequestChangeDay',
+          data: data,
+          type: "POST",
+          success: function(data) {
+            if (data.error) {
+              var data = {class:'danger', faicon:'ban', status:"{!! Lang::get('general.failed') !!}", message:"{!! html_entity_decode(Lang::get('general.failed-fields')) !!}"};
+              $('#messages-request').html(throwMessage(data));
+            }
+          }
+        });
+      });
+
       $('.tasks-day').click(function() {
         var data = {};
         data.id = $(this).data('id');
@@ -221,5 +293,15 @@
 
         window.location.href = '?month=' + month + '&year=' + year;
       });
+
+      function throwMessage(data) {
+          html = '<div class="alert alert-' + data.class + ' alert-dismissable">';
+          html += '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>';
+          html += '<h4>    <i class="icon fa fa-' + data.faicon + '"></i> ' + data.status + '</h4>';
+          html += data.message;
+          html += '</div>';
+
+          return html;
+      }
     </script>
 @endsection

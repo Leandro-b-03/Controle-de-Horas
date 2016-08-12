@@ -34,7 +34,7 @@ return [
     'fail'                          => 'Falha',
     'failed'                        => 'Falhou',
     'online'                        => 'Online',
-    'offline'                       => 'Offiline',
+    'offline'                       => 'Offline',
     'away'                          => 'Ausente',
     'busy'                          => 'Ocupado',
     'page'                          => 'P&aacute;gina',
@@ -57,6 +57,7 @@ return [
     'hours'                         => 'Horas',
     'alert'                         => 'Alerta',
     'atention'                      => 'Atenção',
+    'send'                          => 'Enviar',
 
     // Menu & Controller
     'nav-menu'                      => 'Menu de navega&ccedil;&atilde;o',
@@ -123,6 +124,7 @@ return [
     'create'                        => 'Criar',
     'edit'                          => 'Editar',
     'delete'                        => 'Deletar',
+    'edit-user'                     => 'Editar Usuário',
     ''                              => '',
 
     // Messages
@@ -153,21 +155,27 @@ return [
     'chat-send'                     => 'Enviar',
     'chat-type'                     => 'Digite algo ...',
     'chat-contacts'                 => 'Contatos',
-    ''                              => '',
-    ''                              => '',
-    ''                              => '',
-    ''                              => '',
-    ''                              => '',
-    ''                              => '',
-    ''                              => '',
-    ''                              => '',
-    ''                              => '',
-    ''                              => '',
-    ''                              => '',
-    ''                              => '',
+    'chat-'                         => '',
+    'chat-'                         => '',
+    'chat-'                         => '',
+    'chat-'                         => '',
+    'chat-'                         => '',
+    'chat-'                         => '',
+    'chat-'                         => '',
+    'chat-'                         => '',
+    'chat-'                         => '',
+    'chat-'                         => '',
+    'chat-'                         => '',
+    'chat-'                         => '',
 
     // Date
     'date-today'                    => 'Hoje',
     'date-yesterday'                => 'Ontem',
+
+    // Notification
+    'notification-request_success'  => 'Requisição enviada com sucesso.',
+    'notification-error'            => 'Erro ao tentar executar a requisição.',
+    'notification-'         => '',
+    'notification-'         => '',
 
 ];

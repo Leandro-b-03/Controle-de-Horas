@@ -17,6 +17,7 @@ use File;
 use App\User;
 use App\Team;
 use App\Task;
+use App\Role;
 use App\Member;
 use App\Journal;
 use App\Project;
@@ -27,6 +28,7 @@ use App\TaskTeam;
 use App\UserRFID;
 use App\UserTeam;
 use App\Overtime;
+use App\RoleUser;
 use PusherManager;
 use App\Timesheet;
 use Carbon\Carbon;
@@ -837,6 +839,66 @@ class GeneralController extends Controller {
             return null;
     }
 
+    /**
+     * Send request to all managers in the base
+     *
+     * @return All time again
+     */
+    public function RequestChangeDay(Request $request)
+    {
+        try {
+            $inputs = $request->all();
+
+            $managers_ids = RoleUser::where('role_id', Role::where('name', 'Gerente')->get()->first()->id)->get();
+
+            $workday = Timesheet::find($inputs['workday_id']);
+
+            foreach ($managers_ids as $manager_id) {
+                $notification = array(
+                    'user_id' => $manager_id->user_id,
+                    'message' => htmlentities(Lang::get('timesheets.message-send_request', array('name' => Auth::user()->first_name, 'start' => $inputs['start'], 'lunch_start' => $inputs['lunch_start'], 'lunch_end' => $inputs['lunch_end'], 'end' => $inputs['end']))),
+                    'faicon' => 'clock-o'
+                    );
+                $this->createNotification($manager_id->user_id, $notification);
+            }
+
+            $data['name'] = Auth::user()->first_name . ' ' . Auth::user()->last_name;
+            $data['email'] = Auth::user()->getEloquent()->email;
+            $data['start'] = ($inputs['start'] != "" ? $inputs['start'] : '---');
+            $data['lunch_start'] = ($inputs['lunch_start'] != "" ? $inputs['lunch_start'] : '---');
+            $data['lunch_end'] = ($inputs['lunch_end'] != "" ? $inputs['lunch_end'] : '---');
+            $data['end'] = ($inputs['end'] != "" ? $inputs['end'] : '---');
+            $day = explode('-', $workday->workday);
+            $data['day'] = $day[2] . '/' . $day[1] . '/' . $day[0];
+
+            foreach ($managers_ids as $manager_id) {
+                $manager = User::find($manager_id->user_id);
+
+                $data['mail_send'] = $manager->email;
+                $data['mail_name'] = $manager->first_name . ' ' . $manager_id->last_name;
+                $this->mail($data, 'request');
+            }
+
+            $notification = array(
+                'user_id' => Auth::user()->id,
+                'message' => Lang::get('general.notification-success'),
+                'faicon' => 'check-circle-o'
+                );
+            $this->createNotification(Auth::user()->id, $notification);
+
+            return response()->json(array('success' => Lang::get('general.request_success')));
+        } catch (Exception $e) {
+            $notification = array(
+                'user_id' => Auth::user()->id,
+                'message' => Lang::get('general.notification-error'),
+                'faicon' => 'times-circle-o'
+                );
+            $this->createNotification(Auth::user()->id, $notification);
+
+            return response()->json(array('error' => Lang::get('general.error')));
+        }
+    }
+
 
     /**
      * Save the user settings
@@ -1267,12 +1329,12 @@ class GeneralController extends Controller {
                             if (!$overtime) {
                                 DB::rollback();
                                 $import->status = 0;
-                                $import->error = GeneralController::createMessage('failed', Lang::get('general.' . $this->controller_name), 'create-failed');
+                                $import->error = $this->createMessage('failed', Lang::get('general.' . $this->controller_name), 'create-failed');
                                 
                                 if ($import->save())
                                     DB::commit();
                                 
-                                $receive = array('return', GeneralController::createMessage('failed', Lang::get('general.' . $this->controller_name), 'create-failed'));
+                                $receive = array('return', $this->createMessage('failed', Lang::get('general.' . $this->controller_name), 'create-failed'));
                             }
                         }
                         
@@ -1303,12 +1365,12 @@ class GeneralController extends Controller {
                         if (!$overtime->save()) {
                             DB::rollback();
                             $import->status = 0;
-                            $import->error = GeneralController::createMessage('failed', Lang::get('general.' . $this->controller_name), 'create-failed');
+                            $import->error = $this->createMessage('failed', Lang::get('general.' . $this->controller_name), 'create-failed');
                             
                             if ($import->save())
                                 DB::commit();
 
-                            $receive = array('return', GeneralController::createMessage('failed', Lang::get('general.' . $this->controller_name), 'create-failed'));
+                            $receive = array('return', $this->createMessage('failed', Lang::get('general.' . $this->controller_name), 'create-failed'));
                         }
 
                         $workday->status = "P";
@@ -1341,6 +1403,19 @@ class GeneralController extends Controller {
         }
 
         return response()->json($receive);
+    }
+
+    /**
+    * Test mail
+    *
+    * @return Message OK/NOK
+    */
+    public function testMail(Request $request) {
+        $inputs = $request->all();
+
+        $data['email'] = $inputs['email'];
+
+        d($this->mail($data, 'test'));
     }
 
     /* Statics Functions */
@@ -1457,7 +1532,7 @@ class GeneralController extends Controller {
         if (!UserNotification::create($notification)) {
             $notification_fail['message'] = Lang::get('general.failed-notification');
             $notification_fail['faicon'] = 'times';
-            PusherManager::trigger('presence-user-' . Auth::user()->id, 'new_notification', $notification);
+            PusherManager::trigger('presence-user-' . Auth::user()->id, 'new_notification', $notification_fail);
         }
     }
 
@@ -1473,18 +1548,52 @@ class GeneralController extends Controller {
             case 'signup':
                 $send = [];
 
-                $send['company']    = 'SVLabs';
-                $send['email']      = $data->email;
-                $send['year']       = Carbon::now()->format('Y');
-                $send['name']       = $data->first_name;
-                $send['url']        = URL::to('auth/confirm?ce=' . $data->confirmation_code);
+                $send['company']     = 'SVLabs';
+                $send['email']       = $data->email;
+                $send['year']        = Carbon::now()->format('Y');
+                $send['name']        = $data->first_name;
+                $send['url']         = URL::to('auth/confirm?ce=' . $data->confirmation_code);
                 Mail::send('emails.signup', ['data' => $send], function ($message) use ($send) {
-                        $message->from('leandro.b.03@gmail.com', 'Leandro');
+                        $message->from('postmaster@svlabs.com.br', 'SVLabs | No Reply');
                         $message->to($send['email'], $send['name'])->subject(Lang::get('emails.signup-title'));
                     });
                 break;
             case 'update':
+                break;
             case 'delete':
+                break;
+            case 'notification':
+                break;
+            case 'request':
+                $send = [];
+
+                $send['company']     = 'SVLabs';
+                $send['email']       = $data['email'];
+                $send['year']        = Carbon::now()->format('Y');
+                $send['name']        = $data['name'];
+                $send['start']       = $data['start'];
+                $send['lunch_start'] = $data['lunch_start'];
+                $send['lunch_end']   = $data['lunch_end'];
+                $send['end']         = $data['end'];
+                $send['day']         = $data['day'];
+                $send['mail_send']   = $data['mail_send'];
+                $send['mail_name']   = $data['mail_name'];
+                $send['user_id']     = Auth::user()->id;
+                $send['subject']     = Lang::get('emails.request-title');
+                Mail::send('emails.request', ['data' => $send], function ($message) use ($send) {
+                        $message->from('postmaster@svlabs.com.br', 'SVLabs | No Reply');
+                        $message->to($send['mail_send'], $send['mail_name'])->subject($send['subject']);
+                    });
+                break;
+            case 'test':
+                $send = [];
+
+                $send['email'] = $data['email'];
+                d(Mail::send('emails.teste', ['data' => $send], function ($message) use ($send) {
+                        $message->from('postmaster@svlabs.com.br', 'Teste');
+                        $message->to($send['email'], "Teste")->subject(Lang::get('emails.signup-title'));
+                    }));
+                break;
             default:
                 # code...
                 break;

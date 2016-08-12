@@ -238,42 +238,45 @@ class UserController extends Controller
         $data['user'] = $user;
 
         $profile = UserProfile::where('user_id', $id)->get()->first();
-        $data['profile'] = $profile;
 
-        $skills_refined = explode(',', $profile->skills);
-        $skills = array();
-        foreach ($skills_refined as $key => $value) {
-            $number = rand(1,5);
+        if ($profile) {
+            $data['profile'] = $profile;
 
-            $color = '';
-            switch ($number) {
-                case 1:
-                    $color = "primary";
-                    break;
-                case 2:
-                    $color = "danger";
-                    break;
-                case 3:
-                    $color = "success";
-                    break;
-                case 4:
-                    $color = "warning";
-                    break;
-                case 5:
-                    $color = "info";
-                    break;
-                
-                default:
-                    $color = "primary";
-                    break;
+            $skills_refined = explode(',', $profile->skills);
+            $skills = array();
+            foreach ($skills_refined as $key => $value) {
+                $number = rand(1,5);
+
+                $color = '';
+                switch ($number) {
+                    case 1:
+                        $color = "primary";
+                        break;
+                    case 2:
+                        $color = "danger";
+                        break;
+                    case 3:
+                        $color = "success";
+                        break;
+                    case 4:
+                        $color = "warning";
+                        break;
+                    case 5:
+                        $color = "info";
+                        break;
+                    
+                    default:
+                        $color = "primary";
+                        break;
+                }
+
+                $skills[] = array($color, $value);
             }
 
-            $skills[] = array($color, $value);
+            // die(d($skills));
+
+            $data['skills'] = $skills;
         }
-
-        // die(d($skills));
-
-        $data['skills'] = $skills;
 
         $location = UserLocalization::where('user_id', $id)->get()->last();
 
@@ -395,28 +398,38 @@ class UserController extends Controller
                     if ($input != 'password' && $input != "rfid_code")
                         $user->{$input} = $value;
             }
-            if ($request->is('users/' . $id . '/edit')) {
+
+            if (isset($inputs['role'])) {
                 // Attach role to the user
                 $role = Role::find($inputs['role']);
+
+                d($inputs['role']);
                 
                 $user->detachRole($user->roles()->first());
                 
                 $user->attachRole($role);
+            }
 
-                $rfid_code = UserRFID::where('rfid_code', $inputs['rfid,0_code'])->get()->first();
+            if (isset($inputs['rfid_code'])) {
+                $rfid_code = UserRFID::where('rfid_code', $inputs['rfid_code'])->get()->first();
                 $user_rfid_code = UserRFID::where('user_id', $id)->get()->first();
 
-                if (!$rfid_code and !$user_rfid_code) {
-                    $rfid_code = array("user_id" => $user->id, "rfid_code" => $inputs['rfid_code']);
-                    $rfid_code = UserRFID::create($rfid_code);
-                } else if ($rfid_code and !$user_rfid_code) {
-                    $rfid_code->rfid_code = $inputs['rfid_code'];
-                    $rfid_code->save();
-                }
+                d($rfid_code);
+                d($user_rfid_code);
 
-                if (!$rfid_code) {
-                    DB::rollback();
-                    return redirect('users/' . $id . '/edit')->withInput()->with('return', GeneralController::createMessage('failed', Lang::get('general.' . $this->controller_name), 'update'));
+                if ($rfid_code != $user_rfid_code) {
+                    if (!$rfid_code and !$user_rfid_code) {
+                        $user_rfid_code = array("user_id" => $user->id, "rfid_code" => $inputs['rfid_code']);
+                        $user_rfid_code = UserRFID::create($rfid_code);
+                    } else if (!$rfid_code and $user_rfid_code) {
+                        $user_rfid_code->rfid_code = $inputs['rfid_code'];
+                        $user_rfid_code->save();
+                    }
+
+                    if (!$user_rfid_code) {
+                        DB::rollback();
+                        return redirect('users/' . $id . '/edit')->withInput()->with('return', GeneralController::createMessage('failed', Lang::get('general.' . $this->controller_name), 'update'));
+                    }
                 }
             }
 

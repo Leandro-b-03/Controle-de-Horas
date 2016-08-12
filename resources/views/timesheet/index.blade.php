@@ -181,7 +181,7 @@
         </table>
     </div><!-- /.box-body -->
     <div class="box-footer">
-      <a class="btn btn-default pull-left"  href="{!! URL::to('timesheets/' . Auth::user()->id . '/') !!}">{!! Lang::get('timesheets.monthly') !!}</a>
+      <a class="btn btn-default"  href="{!! URL::to('timesheets/' . Auth::user()->id . '/') !!}">{!! Lang::get('timesheets.monthly') !!}</a>
       {!! $data['tasks']->render() !!}
   </div><!-- /.box-footer-->
   <!-- Modal -->

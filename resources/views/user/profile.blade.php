@@ -249,7 +249,6 @@
                       </div><!-- /.box-body -->
                       <div class="box-footer">
                         <button type="submit" class="btn btn-primary">{!! Lang::get('general.save') !!}</button>
-                        <input type="hidden" name="role" value="{{ $data['user']->roles()->first()->id }}">
                         <a href="{!! URL::to('users') !!}" class="btn btn-danger">{!! Lang::get('general.back') !!}</a>
                       </div>
                     {!! Form::close() !!}
