@@ -80,8 +80,39 @@ return [
     'hours_debit'                   => 'Débito de horas',
     'add-row'                       => 'Adicionar linha',
 
+    // Labels
+    'label-start'                   => 'Entrada',
+    'label-lunch_start'             => 'Almo&ccedil;o ida',
+    'label-lunch_end'               => 'Almo&ccedil;o volta',
+    'label-end'                     => 'Sa&iacute;da',
+
     // Tasks
     'tasks-start'                   => 'O colaborador :name começou uma nova atividade.',
     'tasks-done_1'                  => 'O colaborador :name terminou uma nova atividade.',
     'tasks-done_2'                  => 'O colaborador :name terminou uma nova atividade com :ok OK, :nok NOK, :impacted Impactados e :cancelled Cancelados.',
+
+    // Messages
+    'message-request'               => 'Por favor somente indique o campo que deseja a atera&ccedil;&atilde;o (Exemplo: deseja alterar a sa&iacute;da apenas coloque a hora desjada naquele campo).',
+    'message-send_request'          => 'O(A) :name, solicitou a troca do hor&aacute;rio.<br />
+                                        <table class="table table-responsive table-hover table-border table-striped table-bordered">
+                                            <thead>
+                                                <tr>
+                                                    <td>Entrada</td>
+                                                    <td>Almo&ccedil;o ida</td>
+                                                    <td>Almo&ccedil;o volta</td>
+                                                    <td>Sa&iacute;da</td>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td>:start</td>
+                                                    <td>:lunch_start</td>
+                                                    <td>:lunch_end</td>
+                                                    <td>:end</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>',
+
+    // Buttons
+    'btn-request'                   => 'Requisitar'
 ];

@@ -25,4 +25,7 @@ return [
                                         <br />
                                         <strong>Nosso endere&ccedil;o de e-mail:</strong><br />
                                         cadastro@svlabs.com.br<br /><br />',
+
+
+    'request-title'                 => 'Requisição de ajuste de Hora',
 ];

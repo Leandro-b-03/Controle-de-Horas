@@ -15,8 +15,8 @@ return [
     */
 
     'mailgun' => [
-        'domain' => '',
-        'secret' => '',
+        'domain' => env('MAILGUN_DOMAIN'),
+        'secret' => env('MAILGUN_SECRET'),
     ],
 
     'mandrill' => [
@@ -24,8 +24,8 @@ return [
     ],
 
     'ses' => [
-        'key' => 'AKIAIETXGEOQ6Y26M6SQ',
-        'secret' => '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',
+        'key' => '',
+        'secret' => '',
         'region' => 'us-west-2',
         'ssl' => false,
     ],

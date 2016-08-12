@@ -1,4 +1,4 @@
-var pusher = new Pusher('4ffd1f22ab6aa5abb189');
+var pusher = new Pusher('682ff0901a6765cc1e50');
 
 PNotify.prototype.options.styling = "fontawesome";
 
@@ -217,26 +217,26 @@ function cropStart(image) {
 }
 
 //subscribe to our private channel
-// var PresenceChannel = pusher.subscribe("presence-user-" + user.id);
+var PresenceChannel = pusher.subscribe("presence-user-" + user.id);
 
 //do something with our new information
-// PresenceChannel.bind ('new_notification', function(notification) {
-//   // assign the notification's message to a <div></div>notification
-//   $('li.notifications-menu .dropdown-menu .menu').prepend(createNotification(notification));
+PresenceChannel.bind ('new_notification', function(notification) {
+  // assign the notification's message to a <div></div>notification
+  $('li.notifications-menu .dropdown-menu .menu').prepend(createNotification(notification));
 
-//   titleCounter(true);
-// });
+  titleCounter(true);
+});
 
 //subscribe to our notifications channel
-// var notificationsChannel = pusher.subscribe('notifications');
+var notificationsChannel = pusher.subscribe('notifications');
 
 //do something with our new information
-// notificationsChannel.bind ('new_notification', function(notification) {
-//   // assign the notification's message to a <div></div>notification
-//   $('li.notifications-menu .dropdown-menu .menu').prepend(createNotification(notification));
+notificationsChannel.bind ('new_notification', function(notification) {
+  // assign the notification's message to a <div></div>notification
+  $('li.notifications-menu .dropdown-menu .menu').prepend(createNotification(notification));
 
-//   titleCounter(true);
-// });
+  titleCounter(true);
+});
 
 function createNotification(notification) {
   var count = $('.notification-count').html();

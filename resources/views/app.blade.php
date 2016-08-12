@@ -46,7 +46,7 @@
     <script>
       var logged = "{{ Auth::check() }}";
       if (!logged)
-        window.location = "{{ Url::to('/') }}";
+        window.location = "{{ url() }}";
     </script>
   </head>
   @if(Auth::user())

@@ -15,7 +15,7 @@ return [
     |
     */
 
-    'driver' => env('MAIL_DRIVER', 'ses'),
+    'driver' => env('MAIL_DRIVER', 'mailgun'),
 
     /*
     |--------------------------------------------------------------------------
@@ -54,7 +54,7 @@ return [
     |
     */
 
-    'from' => ['address' => 'leandro.b.03@gmail.com', 'name' => 'Leandro'],
+    'from' => ['address' => 'noreply@svlabs.com.br', 'name' => 'Leandro'],
 
     /*
     |--------------------------------------------------------------------------
