@@ -278,8 +278,7 @@ class UserController extends Controller
 
         $location = UserLocalization::where('user_id', $id)->get()->last();
 
-        $url  = "http://maps.googleapis.com/maps/api/geocode/json?latlng=".
-        $location->latitude.",".$location->longitude."&sensor=false";
+        $url  = "http://maps.googleapis.com/maps/api/geocode/json?latlng=" . (isset($location->latitude) ? $location->latitude : '-23.497') . "," . (isset($location->longitude) ? $location->longitude : '-46.8479835')."&sensor=false";
         $json = @file_get_contents($url);
         $return = json_decode($json);
         $status = $return->status;
