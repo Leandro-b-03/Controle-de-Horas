@@ -29,15 +29,28 @@ class ProjectController extends Controller
      *
      * @return Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        // Get all the projects
-        $projects = Project::orderBy('created_on', 'desc')->whereNotExists(function ($query) {
-            $query->select(DB::raw(1))
-                  ->from('projects AS projects2')
-                  ->whereRaw('projects2.parent_id = projects.id');
-            })->paginate(15);
-        $data['projects'] = $projects;
+        // Get all requests
+        $inputs = $request->all();
+
+        if (isset($inputs['search'])) {
+            $projects = Project::where('name', 'like', '%' . $inputs['search'] . '%')
+                ->orWhere('description', 'like', '%' . $inputs['search'] . '%')->whereNotExists(function ($query) {
+                $query->select(DB::raw(1))
+                      ->from('projects AS projects2')
+                      ->whereRaw('projects2.parent_id = projects.id');
+                })->paginate(15);
+            $data['projects'] = $projects;
+        } else {
+            // Get all the projects
+            $projects = Project::orderBy('created_on', 'desc')->whereNotExists(function ($query) {
+                $query->select(DB::raw(1))
+                      ->from('projects AS projects2')
+                      ->whereRaw('projects2.parent_id = projects.id');
+                })->paginate(15);
+            $data['projects'] = $projects;
+        }
 
         // d($projects->first()->proposal()->getResults()->client()->getResults()->name);
 

@@ -10,38 +10,46 @@
 @stop
 
 @section('content')
-        <h1>
-            {!! Lang::get('general.projects') !!}
-            <small>{!! Lang::get('projects.list') !!}</small>
-        </h1>
-        <!-- <ol class="breadcrumb">
-            <li><a href="#"><i class="fa fa-dashboard"></i> Dashboard</a></li>
-            <li><a href="#">Examples</a></li>
-            <li class="active">Blank page</li>
-        </ol> -->
-    </section>
+    <h1>
+        {!! Lang::get('general.projects') !!}
+        <small>{!! Lang::get('projects.list') !!}</small>
+    </h1>
+    <!-- <ol class="breadcrumb">
+        <li><a href="#"><i class="fa fa-dashboard"></i> Dashboard</a></li>
+        <li><a href="#">Examples</a></li>
+        <li class="active">Blank page</li>
+    </ol> -->
+</section>
 
-    <!-- Main content -->
-    <section class="content">
-      <div id="messages">
+<!-- Main content -->
+<section class="content">
+    <div id="messages">
         @if (Session::get('return'))
         <div class="alert alert-{!! Session::get('return')['class'] !!} alert-dismissable">
-          <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-          <h4>    <i class="icon fa fa-{!! Session::get('return')['faicon'] !!}"></i> {!! Session::get('return')['status'] !!}!</h4>
-          {!! Session::get('return')['message'] !!}
+            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+            <h4>    <i class="icon fa fa-{!! Session::get('return')['faicon'] !!}"></i> {!! Session::get('return')['status'] !!}!</h4>
+            {!! Session::get('return')['message'] !!}
         </div>
         @endif
-      </div>
-      <!-- Default box -->
-      <div class="box">
-        <div class="box-header with-border">
-          <h3 class="box-title">{!! Lang::get('general.projects') !!}</h3>
-          <div class="box-tools pull-right">
+    </div>
+  <!-- Default box -->
+<div class="box">
+    <div class="box-header with-border">
+        <h3 class="box-title">{!! Lang::get('general.projects') !!}</h3>
+        <div class="box-tools pull-right">
             <button class="btn btn-box-tool" data-widget="collapse" data-toggle="tooltip" title="Collapse"><i class="fa fa-minus"></i></button>
             <button class="btn btn-box-tool" data-widget="remove" data-toggle="tooltip" title="Remove"><i class="fa fa-times"></i></button>
         </div>
     </div>
     <div class="box-body">
+        {!! Form::open(['method' => 'GET', 'url' => 'projects', 'id' => 'search-form', 'class' => 'navbar-form navbar-left pull-right col-xs-12', 'role' => 'search'])  !!}
+            <div class="input-group input-group-sm">
+                <input id="search" type="text" class="form-control" name="search" placeholder="{{ Lang::get('general.search') }}">
+                <span class="input-group-btn">
+                    <button type="submit" class="btn btn-info btn-flat"><i class="fa fa-search"></i></button>
+                </span>
+            </div>
+        {!! Form::close() !!}
         <table id="client-list" class="table table-responsive table-hover table-border table-striped table-bordered">
             <thead>
                 <tr>
@@ -52,8 +60,8 @@
                     <th class="action-tr">{!! Lang::get('general.action') !!}</th>
                 </tr>
             </thead>
-            @if($data['projects']->count())
             <tbody>
+                @if($data['projects']->count())
                 @foreach($data['projects'] as $project)
                 <tr>
                     <td>{!! $project->name . $project->name_complement !!}</td>
@@ -69,8 +77,12 @@
                     <td><a href="{!! URL::to('projects/' . $project->id . '/edit') !!}" class="btn btn-primary">{!! Lang::get('general.edit') !!}</a></td>
                 </tr>
                 @endforeach
+                @else
+                <tr>
+                    <td rowspan="5">Nenhum projeto foi encontrado</td>
+                </tr>
+                @endif
             </tbody>
-            @endif
         </table>
     </div><!-- /.box-body -->
     <div class="box-footer">
@@ -93,6 +105,13 @@
     <script type="text/javascript">
       $(document).ready(function() {
         $('.progress .progress-bar').progressbar({display_text: 'fill'});
+      });
+
+      $('#search').on('focus', function() {
+        $('#search-form').addClass('animate-search');
+      });
+      $('table, .box-header').on('click', function() {
+        $('#search-form').removeClass('animate-search');
       });
     </script>
 @endsection
