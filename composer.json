@@ -33,7 +33,8 @@
         "darkaonline/l5-swagger": "2.1.3",
         "arcanedev/settings": "^1.1",
         "guzzlehttp/guzzle": "^6.2",
-        "alexpechkarev/google-maps": "^1.0"
+        "alexpechkarev/google-maps": "^1.0",
+        "mmanos/laravel-search": "^1.0"
     },
     "require-dev": {
         "fzaninotto/faker": "~1.4",

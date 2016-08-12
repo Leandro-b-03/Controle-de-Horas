@@ -673,7 +673,7 @@
                         
                         <td class="mcnTextContent" style="padding-top: 0;padding-right: 18px;padding-bottom: 9px;padding-left: 18px;mso-table-lspace: 0pt;mso-table-rspace: 0pt;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;color: #606060;font-family: Helvetica;font-size: 15px;line-height: 150%;text-align: left;" valign="top">
                         
-                            Acesse <a href="https://timesheet.svlabs.com.br/users/:user/timesheet" target="_blank" style="word-wrap: break-word;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;color: #6DC6DD;font-weight: normal;text-decoration: underline;">https://timesheet.svlabs.com.br/users/{{ $data['user_id'] }}/timesheet</a> para alterar a hora requisitada.
+                            Acesse <a href="{{ url() }}/users/{{ $data['user_id'] }}/timesheet" target="_blank" style="word-wrap: break-word;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;color: #6DC6DD;font-weight: normal;text-decoration: underline;">{{ url() }}/users/{{ $data['user_id'] }}/timesheet</a> para alterar a hora requisitada.
                         </td>
                     </tr>
                 </tbody></table>
