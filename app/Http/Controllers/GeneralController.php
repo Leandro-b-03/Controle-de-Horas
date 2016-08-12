@@ -136,11 +136,11 @@ class GeneralController extends Controller {
             $response = array(
                 'valid' => false,
                 'message' => Lang::get('general.email-used')
-            );
+                );
         } else {
             $response = array(
                 'valid' => true
-            );
+                );
         }
 
         return response()->json($response);
@@ -169,35 +169,35 @@ class GeneralController extends Controller {
             $response = array(
                 'valid' => false,
                 'message' => Lang::get('general.cpf-wrong')
-            );
+                );
         } else if ($cpf == '00000000000' || $cpf == '11111111111' || $cpf == '22222222222' ||
-                   $cpf == '33333333333' || $cpf == '44444444444' || $cpf == '55555555555' ||
-                   $cpf == '66666666666' || $cpf == '77777777777' || $cpf == '88888888888' ||
-                   $cpf == '99999999999') {
+         $cpf == '33333333333' || $cpf == '44444444444' || $cpf == '55555555555' ||
+         $cpf == '66666666666' || $cpf == '77777777777' || $cpf == '88888888888' ||
+         $cpf == '99999999999') {
             $response = array(
                 'valid' => false,
                 'message' => Lang::get('general.cpf-wrong')
-            );
+                );
         } else {
             $digitos = substr($cpf, 0, 9);
             $new_cpf = $this->calcCPF($digitos);
-        
+
             $new_cpf = $this->calcCPF($new_cpf, 11);
             
             if ( $new_cpf !== $cpf ) {
                 $response = array(
                     'valid' => false,
                     'message' => Lang::get('general.cpf-wrong')
-                );
+                    );
             } else if ($user->count() > 0) {
                 $response = array(
                     'valid' => false,
                     'message' => Lang::get('general.cpf-used')
-                );
+                    );
             } else {
                 $response = array(
                     'valid' => true
-                );
+                    );
             }
         }
 
@@ -220,7 +220,7 @@ class GeneralController extends Controller {
         }
 
         $sum_digits = $sum_digits % 11;
- 
+
         if ( $sum_digits < 2 ) {
             $sum_digits = 0;
         } else {
@@ -652,7 +652,7 @@ class GeneralController extends Controller {
                 'tweek' => $start->weekOfYear,
                 'created_on' => Carbon::now(),
                 'update_on' => Carbon::now()
-            );
+                );
 
             $time_entry = TimeEntry::create ($time_entry);
 
@@ -694,8 +694,8 @@ class GeneralController extends Controller {
                                 'customized_id' => $work_package->id,
                                 'custom_field_id' => 39,
                                 'value' => $user_open_project->lastname . ' ' . $user_open_project->lastname
-                            )
-                        );
+                                )
+                            );
 
                         $custom_fields = CustomField::create( $custom_fields );
 
@@ -776,7 +776,7 @@ class GeneralController extends Controller {
                         'nok' => $inputs['nok'],
                         'impacted' => $inputs['impacted'],
                         'cancelled' => $inputs['cancelled']
-                    );
+                        );
 
                     $use_cases = UseCase::create ($use_cases);
 
@@ -1028,7 +1028,7 @@ class GeneralController extends Controller {
             return array(
                 'valid' => false,
                 'message' => Lang::get('general.cpf-wrong')
-            );
+                );
         }
     }
 
@@ -1064,7 +1064,7 @@ class GeneralController extends Controller {
                         'workday' => $today->toDateString(),
                         'hours' => '00:00:00',
                         'start' => $today->toTimeString()
-                    );
+                        );
 
                     $workday = Timesheet::create($workday);
 
@@ -1091,20 +1091,8 @@ class GeneralController extends Controller {
                     }
 
                     if ($workday->lunch_start == "00:00:00") {
-                        if ($today->hour >= 11 && $today->hour <= 14) {
+                        if (($today->hour >= 10 && $today->minute >= 30) && $today->hour <= 15) {
                             $workday->lunch_start = $today->toTimeString();
-
-                            $lunch_start = new Carbon($workday->lunch_start);
-                            $diffTime = $lunch_start->diffInMinutes(new Carbon($workday->lunch_end));
-
-                            $lunch_in_minute = $diffTime;
-
-                            $hours = floor($diffTime / 60);
-                            $minutes = ($diffTime % 60);
-                            $tminutes = (float)($minutes / 60);
-                            $lunch_time = (($hours <= 9 ? "0" . $hours : $hours) . ":" . ($minutes <= 9 ? "0" . $minutes : $minutes)) . ":" . $seconds;
-                            
-                            $workday->lunch_hours = $lunch_time;
 
                             $timesheet_task = TimesheetTask::where('timesheet_id', $workday->id)->where('end', '00:00:00')->get()->first();
 
@@ -1139,7 +1127,7 @@ class GeneralController extends Controller {
                                     'tweek' => $start->weekOfYear,
                                     'created_on' => Carbon::now(),
                                     'update_on' => Carbon::now()
-                                );
+                                    );
 
                                 $time_entry = TimeEntry::create ($time_entry);
 
@@ -1175,8 +1163,8 @@ class GeneralController extends Controller {
                                                     'customized_id' => $work_package->id,
                                                     'custom_field_id' => 39,
                                                     'value' => $user_open_project->lastname . ' ' . $user_open_project->lastname
-                                                )
-                                            );
+                                                    )
+                                                );
 
                                             $custom_fields = CustomField::create( $custom_fields );
 
@@ -1257,7 +1245,7 @@ class GeneralController extends Controller {
                                             'nok' => 0,
                                             'impacted' => 0,
                                             'cancelled' => 0
-                                        );
+                                            );
 
                                         $use_cases = UseCase::create ($use_cases);
 
@@ -1301,91 +1289,128 @@ class GeneralController extends Controller {
                                 $receive = array("status" => "200",
                                     "rfid" => $inputs['rfid'],
                                     "diffTime" => $diffTime,
+                                    "lunch_time" => 'lunch_start',
                                     "message" => "Already checked");
                                 
                                 return response()->json($receive);
                             }
                         }
                     } else if ($workday->lunch_end == "00:00:00") {
-                        $workday->lunch_end = $today->toTimeString();
+                        if (($today->hour >= 10 && $today->minute >= 30) && $today->hour <= 15) {
+                            $workday->lunch_end = $today->toTimeString();
+
+                            $lunch_start = new Carbon($workday->lunch_start);
+                            $diffTime = $lunch_start->diffInMinutes(new Carbon($workday->lunch_end));
+
+                            $lunch_in_minute = $diffTime;
+
+                            $hours = floor($diffTime / 60);
+                            $minutes = ($diffTime % 60);
+                            $tminutes = (float)($minutes / 60);
+                            $lunch_time = (($hours <= 9 ? "0" . $hours : $hours) . ":" . ($minutes <= 9 ? "0" . $minutes : $minutes)) . ":" . $seconds;
+                            
+                            $workday->lunch_hours = $lunch_time;
+                        } else {
+                            if ($diffTime < 1) {
+                                $receive = array("status" => "200",
+                                    "rfid" => $inputs['rfid'],
+                                    "diffTime" => $diffTime,
+                                    "lunch_time" => 'lunch_end',
+                                    "message" => "Already checked");
+                                
+                                return response()->json($receive);
+                            }
+                        }
                     } else if ($workday->end == "00:00:00") {
-                        $workday->end = $today->toTimeString();
-                        
-                        $lunch_in_minute = 0;
-                        list($hour, $minute) = explode(':', $workday->lunch_hours);
-                        $lunch_in_minute += $hour * 60;
-                        $lunch_in_minute += $minute;
+                        if (($today->hour >= 16 && $today->minute >= 30) && $today->hour <= 19) {
+                            $workday->end = $today->toTimeString();
+                            
+                            $lunch_in_minute = 0;
+                            list($hour, $minute) = explode(':', $workday->lunch_hours);
+                            $lunch_in_minute += $hour * 60;
+                            $lunch_in_minute += $minute;
 
-                        $start = new Carbon($workday->start);
-                        $diffTime = $start->diffInMinutes(new Carbon($workday->end));
-                        $diffTime -= $lunch_in_minute;
+                            $start = new Carbon($workday->start);
+                            $diffTime = $start->diffInMinutes(new Carbon($workday->end));
+                            $diffTime -= $lunch_in_minute;
 
-                        $hours = floor($diffTime / 60);
-                        $minutes = ($diffTime % 60);
-                        $tminutes = (float)($minutes / 60);
-                        $day_time = (($hours <= 9 ? "0" . $hours : $hours) . ":" . ($minutes <= 9 ? "0" . $minutes : $minutes)) . ":" . $seconds;
-                        $workday->hours = $day_time;
+                            $hours = floor($diffTime / 60);
+                            $minutes = ($diffTime % 60);
+                            $tminutes = (float)($minutes / 60);
+                            $day_time = (($hours <= 9 ? "0" . $hours : $hours) . ":" . ($minutes <= 9 ? "0" . $minutes : $minutes)) . ":" . $seconds;
+                            $workday->hours = $day_time;
 
-                        $overtime = Overtime::where('user_id', $user->id)->get()->first();
-
-                        if (!$overtime) {
-                            $overtime = array (
-                                'user_id' => $this->user_id,
-                                'hours'   => '00:00:00'
-                            );
-
-
-                            $overtime = Overtime::create ($overtime);
+                            $overtime = Overtime::where('user_id', $user->id)->get()->first();
 
                             if (!$overtime) {
+                                $overtime = array (
+                                    'user_id' => $this->user_id,
+                                    'hours'   => '00:00:00'
+                                    );
+
+
+                                $overtime = Overtime::create ($overtime);
+
+                                if (!$overtime) {
+                                    DB::rollback();
+                                    $import->status = 0;
+                                    $import->error = $this->createMessage('failed', Lang::get('general.' . $this->controller_name), 'create-failed');
+                                    
+                                    if ($import->save())
+                                        DB::commit();
+                                    
+                                    $receive = array('return', $this->createMessage('failed', Lang::get('general.' . $this->controller_name), 'create-failed'));
+                                }
+                            }
+                            
+                            $overtime_in_minute = 0;
+
+                            list($hour, $minute) = explode(':', $overtime->hours);
+                            $overtime_in_minute += $hour * 60;
+                            $overtime_in_minute += $minute;
+
+                            $date = new Carbon($workday['workday']);
+                            $day_of_the_week = $date->dayOfWeek;
+
+                            $is_holiday = Holiday::where('day',$date->day)->where('month',$date->month)->get()->first();
+
+                            $bussiness_day = 0;
+
+                            if ($day_of_the_week != 0 && $day_of_the_week != 6 && !$is_holiday)
+                                $bussiness_day = 480;
+
+                            $total_time = $overtime_in_minute + $nightly_in_minute + ($day_in_minute - $bussiness_day);
+
+                            $hours = floor($total_time / 60);
+                            $minutes = ($total_time % 60);
+                            $time = (($hours <= 9 ? "0" . $hours : $hours) . ":" . ($minutes <= 9 ? "0" . $minutes : $minutes)) . ":" . $seconds;
+
+                            $overtime->hours = $time;
+
+                            if (!$overtime->save()) {
                                 DB::rollback();
                                 $import->status = 0;
                                 $import->error = $this->createMessage('failed', Lang::get('general.' . $this->controller_name), 'create-failed');
                                 
                                 if ($import->save())
                                     DB::commit();
-                                
+
                                 $receive = array('return', $this->createMessage('failed', Lang::get('general.' . $this->controller_name), 'create-failed'));
                             }
+
+                            $workday->status = "P";
+                        } else {
+                            if ($diffTime < 1) {
+                                $receive = array("status" => "200",
+                                    "rfid" => $inputs['rfid'],
+                                    "diffTime" => $diffTime,
+                                    "message" => "Already checked");
+
+                                return response()->json($receive);
+                            }
                         }
-                        
-                        $overtime_in_minute = 0;
-
-                        list($hour, $minute) = explode(':', $overtime->hours);
-                        $overtime_in_minute += $hour * 60;
-                        $overtime_in_minute += $minute;
-
-                        $date = new Carbon($workday['workday']);
-                        $day_of_the_week = $date->dayOfWeek;
-
-                        $is_holiday = Holiday::where('day',$date->day)->where('month',$date->month)->get()->first();
-
-                        $bussiness_day = 0;
-
-                        if ($day_of_the_week != 0 && $day_of_the_week != 6 && !$is_holiday)
-                            $bussiness_day = 480;
-
-                        $total_time = $overtime_in_minute + $nightly_in_minute + ($day_in_minute - $bussiness_day);
-
-                        $hours = floor($total_time / 60);
-                        $minutes = ($total_time % 60);
-                        $time = (($hours <= 9 ? "0" . $hours : $hours) . ":" . ($minutes <= 9 ? "0" . $minutes : $minutes)) . ":" . $seconds;
-
-                        $overtime->hours = $time;
-
-                        if (!$overtime->save()) {
-                            DB::rollback();
-                            $import->status = 0;
-                            $import->error = $this->createMessage('failed', Lang::get('general.' . $this->controller_name), 'create-failed');
-                            
-                            if ($import->save())
-                                DB::commit();
-
-                            $receive = array('return', $this->createMessage('failed', Lang::get('general.' . $this->controller_name), 'create-failed'));
-                        }
-
-                        $workday->status = "P";
                     }
+
 
                     if ($workday->save()) {
                         DB::commit();
@@ -1446,84 +1471,84 @@ class GeneralController extends Controller {
             // Verify what kind is the message
             switch ($kind) {
                 case 'create':
-                    $message = array(
-                        'status' => Lang::get('general.success'),
-                        'class' => 'success',
-                        'faicon' => 'check',
-                        'message' =>  Lang::get('general.success-create', ['name' => $name])
+                $message = array(
+                    'status' => Lang::get('general.success'),
+                    'class' => 'success',
+                    'faicon' => 'check',
+                    'message' =>  Lang::get('general.success-create', ['name' => $name])
                     );
-                    break;
+                break;
                 case 'update':
-                    $message = array(
-                        'status' => Lang::get('general.success'),
-                        'class' => 'success',
-                        'faicon' => 'check',
-                        'message' => Lang::get('general.success-update', ['name' => $name])
+                $message = array(
+                    'status' => Lang::get('general.success'),
+                    'class' => 'success',
+                    'faicon' => 'check',
+                    'message' => Lang::get('general.success-update', ['name' => $name])
                     );
-                    break;
+                break;
                 case 'delete':
-                    $message = array(
-                        'status' => Lang::get('general.success'),
-                        'class' => 'success',
-                        'faicon' => 'check',
-                        'message' => Lang::get('general.success-delete', ['name' => $name])
+                $message = array(
+                    'status' => Lang::get('general.success'),
+                    'class' => 'success',
+                    'faicon' => 'check',
+                    'message' => Lang::get('general.success-delete', ['name' => $name])
                     );
                 default:
                     # code...
-                    break;
+                break;
             }
         } else {
             // Verify what kind is the message
             switch ($kind) {
                 case 'create':
-                    $message = array(
-                        'status' => Lang::get('general.failed'),
-                        'class' => 'danger',
-                        'faicon' => 'ban',
-                        'message' => Lang::get('general.failed-create', ['name' => strtolower($name)])
+                $message = array(
+                    'status' => Lang::get('general.failed'),
+                    'class' => 'danger',
+                    'faicon' => 'ban',
+                    'message' => Lang::get('general.failed-create', ['name' => strtolower($name)])
                     );
-                    break;
+                break;
                 case 'update':
-                    $message = array(
-                        'status' => Lang::get('general.failed'),
-                        'class' => 'danger',
-                        'faicon' => 'ban',
-                        'message' => Lang::get('general.failed-update', ['name' => strtolower($name)])
+                $message = array(
+                    'status' => Lang::get('general.failed'),
+                    'class' => 'danger',
+                    'faicon' => 'ban',
+                    'message' => Lang::get('general.failed-update', ['name' => strtolower($name)])
                     );
-                    break;
+                break;
                 case 'create-failed':
-                    $message = array(
-                        'status' => Lang::get('general.failed'),
-                        'class' => 'danger',
-                        'faicon' => 'ban',
-                        'message' => Lang::get('general.failed-create-failed', ['name' => strtolower($name)])
+                $message = array(
+                    'status' => Lang::get('general.failed'),
+                    'class' => 'danger',
+                    'faicon' => 'ban',
+                    'message' => Lang::get('general.failed-create-failed', ['name' => strtolower($name)])
                     );
-                    break;
+                break;
                 case 'delete':
-                    $message = array(
-                        'status' => Lang::get('general.failed'),
-                        'class' => 'danger',
-                        'faicon' => 'ban',
-                        'message' => Lang::get('general.failed-delete', ['name' => strtolower($name)])
+                $message = array(
+                    'status' => Lang::get('general.failed'),
+                    'class' => 'danger',
+                    'faicon' => 'ban',
+                    'message' => Lang::get('general.failed-delete', ['name' => strtolower($name)])
                     );
-                    break;
+                break;
                 case 'password':
-                    $message = array(
-                        'status' => Lang::get('general.failed'),
-                        'class' => 'danger',
-                        'faicon' => 'ban',
-                        'message' => Lang::get('general.failed-password')
+                $message = array(
+                    'status' => Lang::get('general.failed'),
+                    'class' => 'danger',
+                    'faicon' => 'ban',
+                    'message' => Lang::get('general.failed-password')
                     );
-                    break;
+                break;
                 default:
-                    $message = array(
-                        'status' => Lang::get('general.failed'),
-                        'class' => 'danger',
-                        'faicon' => 'ban',
-                        'message' => $custonMessage
+                $message = array(
+                    'status' => Lang::get('general.failed'),
+                    'class' => 'danger',
+                    'faicon' => 'ban',
+                    'message' => $custonMessage
                     );
-                    break;
-                }
+                break;
+            }
         }
 
         return $message;
@@ -1557,57 +1582,57 @@ class GeneralController extends Controller {
         // Verify what kind is the email
         switch ($type) {
             case 'signup':
-                $send = [];
+            $send = [];
 
-                $send['company']     = 'SVLabs';
-                $send['email']       = $data->email;
-                $send['year']        = Carbon::now()->format('Y');
-                $send['name']        = $data->first_name;
-                $send['url']         = URL::to('auth/confirm?ce=' . $data->confirmation_code);
-                Mail::send('emails.signup', ['data' => $send], function ($message) use ($send) {
-                        $message->from('postmaster@svlabs.com.br', 'SVLabs | No Reply');
-                        $message->to($send['email'], $send['name'])->subject(Lang::get('emails.signup-title'));
-                    });
-                break;
+            $send['company']     = 'SVLabs';
+            $send['email']       = $data->email;
+            $send['year']        = Carbon::now()->format('Y');
+            $send['name']        = $data->first_name;
+            $send['url']         = URL::to('auth/confirm?ce=' . $data->confirmation_code);
+            Mail::send('emails.signup', ['data' => $send], function ($message) use ($send) {
+                $message->from('postmaster@svlabs.com.br', 'SVLabs | No Reply');
+                $message->to($send['email'], $send['name'])->subject(Lang::get('emails.signup-title'));
+            });
+            break;
             case 'update':
-                break;
+            break;
             case 'delete':
-                break;
+            break;
             case 'notification':
-                break;
+            break;
             case 'request':
-                $send = [];
+            $send = [];
 
-                $send['company']     = 'SVLabs';
-                $send['email']       = $data['email'];
-                $send['year']        = Carbon::now()->format('Y');
-                $send['name']        = $data['name'];
-                $send['start']       = $data['start'];
-                $send['lunch_start'] = $data['lunch_start'];
-                $send['lunch_end']   = $data['lunch_end'];
-                $send['end']         = $data['end'];
-                $send['day']         = $data['day'];
-                $send['mail_send']   = $data['mail_send'];
-                $send['mail_name']   = $data['mail_name'];
-                $send['user_id']     = Auth::user()->id;
-                $send['subject']     = Lang::get('emails.request-title');
-                Mail::send('emails.request', ['data' => $send], function ($message) use ($send) {
-                        $message->from('postmaster@svlabs.com.br', 'SVLabs | No Reply');
-                        $message->to($send['mail_send'], $send['mail_name'])->subject($send['subject']);
-                    });
-                break;
+            $send['company']     = 'SVLabs';
+            $send['email']       = $data['email'];
+            $send['year']        = Carbon::now()->format('Y');
+            $send['name']        = $data['name'];
+            $send['start']       = $data['start'];
+            $send['lunch_start'] = $data['lunch_start'];
+            $send['lunch_end']   = $data['lunch_end'];
+            $send['end']         = $data['end'];
+            $send['day']         = $data['day'];
+            $send['mail_send']   = $data['mail_send'];
+            $send['mail_name']   = $data['mail_name'];
+            $send['user_id']     = Auth::user()->id;
+            $send['subject']     = Lang::get('emails.request-title');
+            Mail::send('emails.request', ['data' => $send], function ($message) use ($send) {
+                $message->from('postmaster@svlabs.com.br', 'SVLabs | No Reply');
+                $message->to($send['mail_send'], $send['mail_name'])->subject($send['subject']);
+            });
+            break;
             case 'test':
-                $send = [];
+            $send = [];
 
-                $send['email'] = $data['email'];
-                d(Mail::send('emails.teste', ['data' => $send], function ($message) use ($send) {
-                        $message->from('postmaster@svlabs.com.br', 'Teste');
-                        $message->to($send['email'], "Teste")->subject(Lang::get('emails.signup-title'));
-                    }));
-                break;
+            $send['email'] = $data['email'];
+            d(Mail::send('emails.teste', ['data' => $send], function ($message) use ($send) {
+                $message->from('postmaster@svlabs.com.br', 'Teste');
+                $message->to($send['email'], "Teste")->subject(Lang::get('emails.signup-title'));
+            }));
+            break;
             default:
                 # code...
-                break;
+            break;
         }
 
         return true;
@@ -1712,8 +1737,8 @@ class GeneralController extends Controller {
         $day_in_minutes += $minute;
 
         if ($hours_day > $day_in_minutes)
-           $day_in_minutes = $hours_day - $day_in_minutes;
-        else
+         $day_in_minutes = $hours_day - $day_in_minutes;
+         else
             $day_in_minutes -= $hours_day;
 
         $seconds = '00';
