@@ -7,16 +7,20 @@ use Illuminate\Http\Request;
 use DB;
 use Log;
 use Lang;
+use Auth;
 use App\User;
 use App\Role;
+use GoogleMaps;
 use App\Holiday;
 use App\Overtime;
 use App\UserRFID;
 use App\Timesheet;
 use Carbon\Carbon;
+use App\UserProfile;
 use App\UserSetting;
 use App\Http\Requests;
 use App\TimesheetTask;
+use App\UserLocalization;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Controllers\GeneralController;
@@ -36,8 +40,13 @@ class UserController extends Controller
         $users = User::paginate(20);
         $data['users'] = $users;
 
-        // Return the users view.
-        return view('user.index')->with('data', $data);
+        if (Auth::user()->hasRole('Colaborador')) {
+            // Return the users view.
+            return redirect('/');
+        } else {
+            // Return the users view.
+            return view('user.index')->with('data', $data);
+        }
     }
 
     /**
@@ -54,8 +63,15 @@ class UserController extends Controller
         $roles = Role::all();
         $data['roles'] = $roles;
 
-        // Return the user view.
-        return view('user.create')->with('data', $data);
+        
+
+        if (Auth::user()->hasRole('Colaborador')) {
+            // Return the users view.
+            return redirect('/');
+        } else {
+            // Return the user view.
+            return view('user.create')->with('data', $data);
+        }
     }
 
     /**
@@ -71,10 +87,12 @@ class UserController extends Controller
 
         $role = null;
 
-        if (!isset($inputs['role'])) {
-            $role_id = Role::where('name', 'Colaborador');
+        $role_id = null;
 
-            if (!$role) {
+        if (!isset($inputs['role'])) {
+            $role_exists = Role::where('name', 'Colaborador')->get()->first();
+
+            if (!$role_exists) {
                 $role = new Role();
                 $role->name         = 'Colaborador';
                 $role->display_name = 'Colaborador'; // optional
@@ -84,7 +102,7 @@ class UserController extends Controller
 
                 $role_id = $role->id;
             } else {
-                $role_id = $role->id;
+                $role_id = $role_exists->id;
             }
         } else {
             $role_id = $inputs['role'];
@@ -142,16 +160,18 @@ class UserController extends Controller
                         'message' => Lang::get('users.welcome'),
                     );
 
-                    $rfid_code = array("user_id" => $user->id, "rfid_code" => $inputs['rfid_code']);
+                    if (isset($inputs['rfid_code'])) {
+                        $rfid_code = array("user_id" => $user->id, "rfid_code" => $inputs['rfid_code']);
 
-                    $rfid_code = UserRFID::create($rfid_code);
+                        $rfid_code = UserRFID::create($rfid_code);
 
-                    if (!$rfid_code) {
-                        DB::rollback();
-                        if ($request->is('register')) {
-                            return redirect('register')->withInput()->with('return', GeneralController::createMessage('failed', Lang::get('general.' . $this->controller_name), 'create'));
-                        } else {
-                            return redirect('users/create')->withInput()->with('return', GeneralController::createMessage('failed', Lang::get('general.' . $this->controller_name), 'create'));
+                        if (!$rfid_code) {
+                            DB::rollback();
+                            if ($request->is('register')) {
+                                return redirect('register')->withInput()->with('return', GeneralController::createMessage('failed', Lang::get('general.' . $this->controller_name), 'create'));
+                            } else {
+                                return redirect('users/create')->withInput()->with('return', GeneralController::createMessage('failed', Lang::get('general.' . $this->controller_name), 'create'));
+                            }
                         }
                     }
 
@@ -207,6 +227,71 @@ class UserController extends Controller
         // Retrive all the tasks done
         $tasks = TimesheetTask::whereIn('timesheet_id', $timesheets->toArray())->get();
         $data['tasks'] = $tasks;
+
+        // Create a data variable for view can consulting
+        $data = [];
+
+        // Get all Roles
+        $roles = Role::all();
+
+        $data['roles'] = $roles;
+        $data['user'] = $user;
+
+        $profile = UserProfile::where('user_id', $id)->get()->first();
+
+        if ($profile) {
+            $data['profile'] = $profile;
+
+            $skills_refined = explode(',', $profile->skills);
+            $skills = array();
+            foreach ($skills_refined as $key => $value) {
+                $number = rand(1,5);
+
+                $color = '';
+                switch ($number) {
+                    case 1:
+                        $color = "primary";
+                        break;
+                    case 2:
+                        $color = "danger";
+                        break;
+                    case 3:
+                        $color = "success";
+                        break;
+                    case 4:
+                        $color = "warning";
+                        break;
+                    case 5:
+                        $color = "info";
+                        break;
+                    
+                    default:
+                        $color = "primary";
+                        break;
+                }
+
+                $skills[] = array($color, $value);
+            }
+
+            // die(d($skills));
+
+            $data['skills'] = $skills;
+        }
+
+        $location = UserLocalization::where('user_id', $id)->get()->last();
+
+        $url  = "http://maps.googleapis.com/maps/api/geocode/json?latlng=".
+        $location->latitude.",".$location->longitude."&sensor=false";
+        $json = @file_get_contents($url);
+        $return = json_decode($json);
+        $status = $return->status;
+        $location = '';
+
+        if($status == "OK"){
+            $location = $return->results[0]->formatted_address;
+        }
+
+        $data['location'] = $location;
 
         // Return the dashboard view.
         return view('user.profile')->with('data', $data);
@@ -274,11 +359,17 @@ class UserController extends Controller
         // Retrive the rfid code
         $user_rfid_code = UserRFID::where('user_id', $id)->get()->first();
 
-        $user->rfid_code = $user_rfid_code->rfid_code;
+        if ($user_rfid_code)
+            $user->rfid_code = $user_rfid_code->rfid_code;
         $data['user'] = $user;
 
-        // Return the dashboard view.
-        return view('user.create')->with('data', $data);
+        if (Auth::user()->hasRole('Colaborador')) {
+            // Return the users view.
+            return redirect('/');
+        } else {
+            // Return the users view.
+            return view('user.create')->with('data', $data);
+        }
     }
 
     /**
@@ -308,47 +399,90 @@ class UserController extends Controller
                         $user->{$input} = $value;
             }
 
-            // Attach role to the user
-            $role = Role::find($inputs['role']);
-            
-            $user->detachRole($user->roles()->first());
-            
-            $user->attachRole($role);
+            if (isset($inputs['role'])) {
+                // Attach role to the user
+                $role = Role::find($inputs['role']);
 
-            $rfid_code = UserRFID::where('rfid_code', $inputs['rfid_code'])->get()->first();
-            $user_rfid_code = UserRFID::where('user_id', $id)->get()->first();
-
-            if (!$rfid_code and !$user_rfid_code) {
-                $rfid_code = array("user_id" => $user->id, "rfid_code" => $inputs['rfid_code']);
-                $rfid_code = UserRFID::create($rfid_code);
-            } else if ($rfid_code and !$user_rfid_code) {
-                $rfid_code->rfid_code = $inputs['rfid_code'];
-                $rfid_code->save();
+                d($inputs['role']);
+                
+                $user->detachRole($user->roles()->first());
+                
+                $user->attachRole($role);
             }
 
-            if (!$rfid_code) {
-                DB::rollback();
-                if ($request->is('register')) {
-                    return redirect('register')->withInput()->with('return', GeneralController::createMessage('failed', Lang::get('general.' . $this->controller_name), 'create'));
+            if (isset($inputs['rfid_code'])) {
+                $rfid_code = UserRFID::where('rfid_code', $inputs['rfid_code'])->get()->first();
+                $user_rfid_code = UserRFID::where('user_id', $id)->get()->first();
+
+                d($rfid_code);
+                d($user_rfid_code);
+
+                if ($rfid_code != $user_rfid_code) {
+                    if (!$rfid_code and !$user_rfid_code) {
+                        $user_rfid_code = array("user_id" => $user->id, "rfid_code" => $inputs['rfid_code']);
+                        $user_rfid_code = UserRFID::create($rfid_code);
+                    } else if (!$rfid_code and $user_rfid_code) {
+                        $user_rfid_code->rfid_code = $inputs['rfid_code'];
+                        $user_rfid_code->save();
+                    }
+
+                    if (!$user_rfid_code) {
+                        DB::rollback();
+                        return redirect('users/' . $id . '/edit')->withInput()->with('return', GeneralController::createMessage('failed', Lang::get('general.' . $this->controller_name), 'update'));
+                    }
+                }
+            }
+
+            if (isset($inputs['education'])) {
+                $profile = UserProfile::where('user_id', $id)->get()->first();
+
+                if (!$profile) {
+                    $profile = array('user_id' => $id,
+                        'education' => $inputs['education'],
+                        'skills' => $inputs['skills'],
+                        'description' => $inputs['description']
+                        );
+
+                    $profile = UserProfile::create($profile);
                 } else {
-                    return redirect('users/create')->withInput()->with('return', GeneralController::createMessage('failed', Lang::get('general.' . $this->controller_name), 'create'));
+                    $profile->education = $inputs['education'];
+                    $profile->skills = $inputs['skills'];
+                    $profile->description = $inputs['description'];
+
+                    $profile->save();
+                }
+
+                if (!$profile) {
+                    return redirect('profile/' . $id)->withInput()->with('return', GeneralController::createMessage('failed', Lang::get('general.' . $this->controller_name), 'update'));
                 }
             }
 
             if ($user->saveOrFail()) {
                 DB::commit();
-                return redirect('users')->with('return', GeneralController::createMessage('success', Lang::get('general.' . $this->controller_name), 'update'));
+                if ($request->is('users/' . $id . '/edit')) {
+                    return redirect('users')->with('return', GeneralController::createMessage('success', Lang::get('general.' . $this->controller_name), 'update'));
+                } else {
+                    return redirect('profile/' . $id)->with('return', GeneralController::createMessage('success', Lang::get('general.' . $this->controller_name), 'update'));
+                }
             } else {
                 Log::error($user);
 
                 DB::rollback();
-                return redirect('users/' . $id . '/edit')->withInput()->with('return', GeneralController::createMessage('failed', Lang::get('general.' . $this->controller_name), 'update'));
+                if ($request->is('users/' . $id . '/edit')) {
+                    return redirect('users/' . $id . '/edit')->withInput()->with('return', GeneralController::createMessage('failed', Lang::get('general.' . $this->controller_name), 'update'));
+                } else {
+                    return redirect('profile/' . $id)->withInput()->with('return', GeneralController::createMessage('failed', Lang::get('general.' . $this->controller_name), 'update'));
+                }
             }
         } catch (Exception $e) {
             Log::error($e);
 
             DB::rollback();
-            return redirect('users/' . $id . '/edit')->withInput()->with('return', GeneralController::createMessage('failed', Lang::get('general.' . $this->controller_name), 'update'));
+            if ($request->is('users/' . $id . '/edit')) {
+                return redirect('users/' . $id . '/edit')->withInput()->with('return', GeneralController::createMessage('failed', Lang::get('general.' . $this->controller_name), 'update'));
+            } else {
+                return redirect('profile/' . $id)->withInput()->with('return', GeneralController::createMessage('failed', Lang::get('general.' . $this->controller_name), 'update'));
+            }
         }
     }
 

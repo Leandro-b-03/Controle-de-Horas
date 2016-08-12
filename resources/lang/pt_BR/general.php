@@ -34,7 +34,7 @@ return [
     'fail'                          => 'Falha',
     'failed'                        => 'Falhou',
     'online'                        => 'Online',
-    'offline'                       => 'Offiline',
+    'offline'                       => 'Offline',
     'away'                          => 'Ausente',
     'busy'                          => 'Ocupado',
     'page'                          => 'P&aacute;gina',
@@ -56,6 +56,8 @@ return [
     'total'                         => 'Total',
     'hours'                         => 'Horas',
     'alert'                         => 'Alerta',
+    'atention'                      => 'Atenção',
+    'send'                          => 'Enviar',
 
     // Menu & Controller
     'nav-menu'                      => 'Menu de navega&ccedil;&atilde;o',
@@ -122,6 +124,7 @@ return [
     'create'                        => 'Criar',
     'edit'                          => 'Editar',
     'delete'                        => 'Deletar',
+    'edit-user'                     => 'Editar Usuário',
     ''                              => '',
 
     // Messages
@@ -136,6 +139,7 @@ return [
     'failed-fields'                 => 'Campos com valores errados e/ou inv&aacute;lidos',
     'failed-notification'           => 'Usu&aacute;rio n&atilde;o recebeu a notifica&ccedil;&atilde;o',
     'error'                         => 'Houve um erro ao processar a requisi&ccedil;ão',
+    'op-message'                    => 'Você não possui cadastro no <a target="_blank" href="https://epm.svlabs.com.br/">EPM SVLabs</a>, por favor, se cadastre no EPM e volte para as atividades',
 
     // Sentences with variable :string
     'member-since'                  => 'Membro desde :month-year',
@@ -151,21 +155,27 @@ return [
     'chat-send'                     => 'Enviar',
     'chat-type'                     => 'Digite algo ...',
     'chat-contacts'                 => 'Contatos',
-    ''                              => '',
-    ''                              => '',
-    ''                              => '',
-    ''                              => '',
-    ''                              => '',
-    ''                              => '',
-    ''                              => '',
-    ''                              => '',
-    ''                              => '',
-    ''                              => '',
-    ''                              => '',
-    ''                              => '',
+    'chat-'                         => '',
+    'chat-'                         => '',
+    'chat-'                         => '',
+    'chat-'                         => '',
+    'chat-'                         => '',
+    'chat-'                         => '',
+    'chat-'                         => '',
+    'chat-'                         => '',
+    'chat-'                         => '',
+    'chat-'                         => '',
+    'chat-'                         => '',
+    'chat-'                         => '',
 
     // Date
     'date-today'                    => 'Hoje',
     'date-yesterday'                => 'Ontem',
+
+    // Notification
+    'notification-request_success'  => 'Requisição enviada com sucesso.',
+    'notification-error'            => 'Erro ao tentar executar a requisição.',
+    'notification-'         => '',
+    'notification-'         => '',
 
 ];

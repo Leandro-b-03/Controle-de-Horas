@@ -44,7 +44,7 @@
     <div class="box-body">
         <div class="pull-right">
             <a href="{!! URL::to('users/create') !!}" class="btn btn-primary">{!! Lang::get('users.new') !!}</a>
-            <a id="delete" data-name="Cliente" class="btn btn-danger">{!! Lang::get('users.delete') !!}</a>
+            {{-- <a id="delete" data-name="Cliente" class="btn btn-danger">{!! Lang::get('users.delete') !!}</a> --}}
         </div>
         <hr class="clearfix" />
         @if($data['users']->count())
@@ -64,7 +64,7 @@
               <ul class="nav nav-stacked">
                 <li><a>{!! Lang::get('general.hours') !!} <span class="pull-right badge bg-blue">{!! html_entity_decode(GeneralHelper::getOvertime($user->id)) !!}</span></a></li>
                 <li><a href="{!! URL::to('users/' . $user->id . '/timesheet') !!}">{!! Lang::get('general.timesheets') !!} <span class="pull-right badge bg-aqua">{!! Lang::get('general.edit') !!}</span></a></li>
-                <li><a href="{!! URL::to('users/' . $user->id . '/edit') !!}" class="btn">{!! Lang::get('general.edit') !!}</a></li>
+                <li><a href="{!! URL::to('users/' . $user->id . '/edit') !!}" class="btn edit">{!! Lang::get('general.edit-user') !!}</a></li>
               </ul>
             </div>
           </div><!-- /.widget-user -->

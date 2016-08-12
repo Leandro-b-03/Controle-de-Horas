@@ -21,6 +21,8 @@ Route::controllers([
 
 Route::get('email/confirm', 'GeneralController@confirm');
 
+Route::get('email/test', 'GeneralController@testMail');
+
 // Route::post('user/rfid_login', 'GeneralController@rfidLogin');
 Route::get('user/rfid_login', 'GeneralController@rfidLogin');
 
@@ -80,6 +82,8 @@ Route::group(['middleware' => 'auth'], function () {
         Route::post('general/verifyCPFJSON', 'GeneralController@verifyCPFJSON');
         
         Route::post('general/saveImages', 'GeneralController@saveImages');
+        
+        Route::post('general/RequestChangeDay', 'GeneralController@RequestChangeDay');
         
         Route::get('register', function() {
             if (\Auth::user()->getEloquent() == null)

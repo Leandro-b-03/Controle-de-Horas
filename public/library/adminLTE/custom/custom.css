@@ -625,3 +625,21 @@ table thead tr th.start, table thead tr th.end {
 .tab-content {
 	padding: 15px;
 }
+
+.bootstrap-tagsinput {
+	width: 100%;
+	border-radius: 0;
+}
+
+.main-header .navbar .nav > li > a > .label {
+	border: 0.5px solid #dedede;
+}
+
+.box-widget .box-footer {
+	border: solid thin #f39c12 !important;
+}
+
+.box-widget .box-footer li a.edit {
+	background: #f39c12 !important;
+	color: #fff;
+}

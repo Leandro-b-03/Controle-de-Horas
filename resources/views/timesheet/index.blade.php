@@ -31,6 +31,13 @@
           {!! Session::get('return')['message'] !!}
         </div>
         @endif
+        @if (isset($data['message-op']))
+        <div class="alert alert-danger alert-dismissable">
+          <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+          <h4>    <i class="icon fa fa-danger"></i> {{ Lang::get('general.atention') }}!</h4>
+          {!! Lang::get('general.op-message') !!}
+        </div>
+        @endif
       </div>
       <div class="box box-solid box-primary">
         <div class="box-header with-border">
@@ -174,7 +181,7 @@
         </table>
     </div><!-- /.box-body -->
     <div class="box-footer">
-      <a class="btn btn-default pull-left"  href="{!! URL::to('timesheets/' . Auth::user()->id . '/') !!}">{!! Lang::get('timesheets.monthly') !!}</a>
+      <a class="btn btn-default"  href="{!! URL::to('timesheets/' . Auth::user()->id . '/') !!}">{!! Lang::get('timesheets.monthly') !!}</a>
       {!! $data['tasks']->render() !!}
   </div><!-- /.box-footer-->
   <!-- Modal -->
