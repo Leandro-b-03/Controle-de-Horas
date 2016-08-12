@@ -881,12 +881,12 @@ class GeneralController extends Controller {
 
             $notification = array(
                 'user_id' => Auth::user()->id,
-                'message' => Lang::get('general.notification-success'),
+                'message' => Lang::get('general.notification-request_success'),
                 'faicon' => 'check-circle-o'
                 );
             $this->createNotification(Auth::user()->id, $notification);
 
-            return response()->json(array('success' => Lang::get('general.request_success')));
+            return response()->json(array('success' => Lang::get('general.success')));
         } catch (Exception $e) {
             $notification = array(
                 'user_id' => Auth::user()->id,

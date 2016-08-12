@@ -243,8 +243,10 @@
           type: "POST",
           success: function(data) {
             if (data.error) {
-              var data = {class:'danger', faicon:'ban', status:"{!! Lang::get('general.failed') !!}", message:"{!! html_entity_decode(Lang::get('general.failed-fields')) !!}"};
+              var data = {class:'danger', faicon:'ban', status:"{!! Lang::get('general.failed') !!}", message:"{!! html_entity_decode(Lang::get('general.notification-error')) !!}"};
               $('#messages-request').html(throwMessage(data));
+            } else {
+              $('#md-request').modal('hide');
             }
           }
         });
