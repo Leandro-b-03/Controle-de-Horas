@@ -103,7 +103,9 @@
               <div class="nav-tabs-custom">
                 <ul class="nav nav-tabs">
                   <li class="active"><a href="#timeline" data-toggle="tab">Timeline</a></li>
+                  @if ($data['user']->id == Auth::user()->id)
                   <li><a href="#settings" data-toggle="tab">Configurações</a></li>
+                  @endif
                 </ul>
                 <div class="tab-content">
                   <div class="active tab-pane" id="timeline">
@@ -154,13 +156,13 @@
                       @endif
                     </ul>
                   </div><!-- /.tab-pane -->
-
+                  @if ($data['user']->id == Auth::user()->id)
                   <div class="tab-pane" id="settings">
                     {!! Form::open(array('route' => [ 'users.update', $data['user']->id ], 'method' => 'PUT', 'name' => 'user-form', 'id' => 'edit')) !!}
                       <div class="box-body">
                         <div class="form-group col-xs-12">
                           <label for="username">{!! Lang::get('users.label-username') !!}</label>
-                          <input type="text" class="form-control" name="username" id="username"  value="{!! (isset($data['user']) ? $data['user']->username : (Request::old('username') ? Request::old('username') : '')) !!}" placeholder="{!! Lang::get('users.ph-username') !!}" data-validation="length alphanumeric" data-validation-length="3-12" data-validation-allowing="-_ " data-validation-error-msg="{!! Lang::get('users.error-username') !!}" required>
+                          <input type="text" class="form-control" name="username" id="username"  value="{!! (isset($data['user']) ? $data['user']->username : (Request::old('username') ? Request::old('username') : '')) !!}" placeholder="{!! Lang::get('users.ph-username') !!}" data-validation="length alphanumeric" data-validation-length="3-12" data-validation-allowing="-_ " data-validation-error-msg="{!! Lang::get('users.error-username') !!}" disabled>
                         </div>
                         <div class="form-group col-xs-5">
                           <label for="first_name">{!! Lang::get('users.label-first_name') !!}</label>
@@ -253,6 +255,7 @@
                       </div>
                     {!! Form::close() !!}
                   </div><!-- /.tab-pane -->
+                  @endif
                 </div><!-- /.tab-content -->
               </div><!-- /.nav-tabs-custom -->
             </div><!-- /.col -->
