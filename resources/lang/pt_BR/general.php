@@ -58,6 +58,7 @@ return [
     'alert'                         => 'Alerta',
     'atention'                      => 'Atenção',
     'send'                          => 'Enviar',
+    'search'                        => 'Pesquisar',
 
     // Menu & Controller
     'nav-menu'                      => 'Menu de navega&ccedil;&atilde;o',
