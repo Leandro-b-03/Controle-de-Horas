@@ -1254,10 +1254,10 @@ class GeneralController extends Controller {
 
                                     $use_cases = array(
                                         'timesheet_task_id' => $timesheet_task->id,
-                                        'ok' => $inputs['ok'],
-                                        'nok' => $inputs['nok'],
-                                        'impacted' => $inputs['impacted'],
-                                        'cancelled' => $inputs['cancelled']
+                                        'ok' => 0,
+                                        'nok' => 0,
+                                        'impacted' => 0,
+                                        'cancelled' => 0
                                     );
 
                                     $use_cases = UseCase::create ($use_cases);
@@ -1277,9 +1277,9 @@ class GeneralController extends Controller {
 
                                 if ($work_package->save()) {
                                     DB::commit();
-                                    $this->journal($timesheet_task->work_package_id, 'WorkPackage', 'work_packages');
+                                    //$this->journal($timesheet_task->work_package_id, 'WorkPackage', 'work_packages');
 
-                                    $this->notify($inputs, $timesheet_task->project_id);
+                                    // $this->notify($inputs, $timesheet_task->project_id);
                                 } else {
                                     DB::rollback();
                                     Log::error($e);
