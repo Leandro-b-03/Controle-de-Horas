@@ -273,8 +273,6 @@ class UserController extends Controller
                 $skills[] = array($color, $value);
             }
 
-            // die(d($skills));
-
             $data['skills'] = $skills;
         }
 
@@ -403,8 +401,6 @@ class UserController extends Controller
                 // Attach role to the user
                 $role = Role::find($inputs['role']);
 
-                d($inputs['role']);
-                
                 $user->detachRole($user->roles()->first());
                 
                 $user->attachRole($role);
@@ -413,9 +409,6 @@ class UserController extends Controller
             if (isset($inputs['rfid_code'])) {
                 $rfid_code = UserRFID::where('rfid_code', $inputs['rfid_code'])->get()->first();
                 $user_rfid_code = UserRFID::where('user_id', $id)->get()->first();
-
-                d($rfid_code);
-                d($user_rfid_code);
 
                 if ($rfid_code != $user_rfid_code) {
                     if (!$rfid_code and !$user_rfid_code) {
@@ -459,7 +452,7 @@ class UserController extends Controller
 
             if ($user->saveOrFail()) {
                 DB::commit();
-                if ($request->is('users/' . $id . '/edit')) {
+                if (isset($inputs['rfid_code'])) {
                     return redirect('users')->with('return', GeneralController::createMessage('success', Lang::get('general.' . $this->controller_name), 'update'));
                 } else {
                     return redirect('profile/' . $id)->with('return', GeneralController::createMessage('success', Lang::get('general.' . $this->controller_name), 'update'));
