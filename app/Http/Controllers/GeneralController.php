@@ -1091,7 +1091,7 @@ class GeneralController extends Controller {
                     }
 
                     if ($workday->lunch_start == "00:00:00") {
-                        if (($today->hour >= 11 && $today->minute >= 30) && $today->hour <= 15) {
+                        if (($today->hour >= 11) && $today->hour <= 15) {
                             $workday->lunch_start = $today->toTimeString();
 
                             $timesheet_task = TimesheetTask::where('timesheet_id', $workday->id)->where('end', '00:00:00')->get()->first();
@@ -1296,7 +1296,7 @@ class GeneralController extends Controller {
                             }
                         }
                     } else if ($workday->lunch_end == "00:00:00") {
-                        if (($today->hour >= 11 && $today->minute >= 30) && $today->hour <= 15) {
+                        if (($today->hour >= 11) && $today->hour <= 15) {
                             $workday->lunch_end = $today->toTimeString();
 
                             $lunch_start = new Carbon($workday->lunch_start);
@@ -1322,7 +1322,7 @@ class GeneralController extends Controller {
                             }
                         }
                     } else if ($workday->end == "00:00:00") {
-                        if (($today->hour >= 16 && $today->minute >= 30) && $today->hour <= 19) {
+                        if (($today->hour >= 15) && $today->hour <= 19) {
                             $workday->end = $today->toTimeString();
                             
                             $lunch_in_minute = 0;
@@ -1334,6 +1334,8 @@ class GeneralController extends Controller {
                             $diffTime = $start->diffInMinutes(new Carbon($workday->end));
                             $diffTime -= $lunch_in_minute;
 
+                            $day_time_in_minutes = $diffTime;
+
                             $hours = floor($diffTime / 60);
                             $minutes = ($diffTime % 60);
                             $tminutes = (float)($minutes / 60);
@@ -1344,7 +1346,7 @@ class GeneralController extends Controller {
 
                             if (!$overtime) {
                                 $overtime = array (
-                                    'user_id' => $this->user_id,
+                                    'user_id' => $user->id,
                                     'hours'   => '00:00:00'
                                     );
 
@@ -1365,37 +1367,45 @@ class GeneralController extends Controller {
                             
                             $overtime_in_minute = 0;
 
-                            list($hour, $minute) = explode(':', $overtime->hours);
-                            $overtime_in_minute += $hour * 60;
-                            $overtime_in_minute += $minute;
+                            if ($overtime->hours != "00:00:00") {
+                                list($hour, $minute) = explode(':', $overtime->hours);
+                                $overtime_in_minute += $hour * 60;
+                                $overtime_in_minute += $minute;
+                            }
 
-                            $date = new Carbon($workday['workday']);
-                            $day_of_the_week = $date->dayOfWeek;
+                            $day_of_the_week = $today->dayOfWeek;
 
-                            $is_holiday = Holiday::where('day',$date->day)->where('month',$date->month)->get()->first();
+                            $is_holiday = Holiday::where('day',$today->day)->where('month',$today->month)->get()->first();
 
                             $bussiness_day = 0;
 
                             if ($day_of_the_week != 0 && $day_of_the_week != 6 && !$is_holiday)
                                 $bussiness_day = 480;
 
-                            $total_time = $overtime_in_minute + $nightly_in_minute + ($day_in_minute - $bussiness_day);
+                            $nightly_in_minute = 0;
+                            list($hour, $minute) = explode(':', $workday->nightly_hours);
+                            $nightly_in_minute += $hour * 60;
+                            $nightly_in_minute += $minute;
 
-                            $hours = floor($total_time / 60);
-                            $minutes = ($total_time % 60);
-                            $time = (($hours <= 9 ? "0" . $hours : $hours) . ":" . ($minutes <= 9 ? "0" . $minutes : $minutes)) . ":" . $seconds;
+                            $total_time = $overtime_in_minute + $nightly_in_minute + ($day_time_in_minutes - $bussiness_day);
 
-                            $overtime->hours = $time;
+                            if ($total_time > 0) {
+                                $hours = floor($total_time / 60);
+                                $minutes = ($total_time % 60);
+                                $time = (($hours <= 9 ? "0" . $hours : $hours) . ":" . ($minutes <= 9 ? "0" . $minutes : $minutes)) . ":" . $seconds;
 
-                            if (!$overtime->save()) {
-                                DB::rollback();
-                                $import->status = 0;
-                                $import->error = $this->createMessage('failed', Lang::get('general.' . $this->controller_name), 'create-failed');
-                                
-                                if ($import->save())
-                                    DB::commit();
+                                $overtime->hours = $time;
 
-                                $receive = array('return', $this->createMessage('failed', Lang::get('general.' . $this->controller_name), 'create-failed'));
+                                if (!$overtime->save()) {
+                                    DB::rollback();
+                                    $import->status = 0;
+                                    $import->error = $this->createMessage('failed', Lang::get('general.' . $this->controller_name), 'create-failed');
+                                    
+                                    if ($import->save())
+                                        DB::commit();
+
+                                    $receive = array('return', $this->createMessage('failed', Lang::get('general.' . $this->controller_name), 'create-failed'));
+                                }
                             }
 
                             $workday->status = "P";
