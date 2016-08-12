@@ -1091,7 +1091,7 @@ class GeneralController extends Controller {
                     }
 
                     if ($workday->lunch_start == "00:00:00") {
-                        if (($today->hour >= 10 && $today->minute >= 30) && $today->hour <= 15) {
+                        if (($today->hour >= 11 && $today->minute >= 30) && $today->hour <= 15) {
                             $workday->lunch_start = $today->toTimeString();
 
                             $timesheet_task = TimesheetTask::where('timesheet_id', $workday->id)->where('end', '00:00:00')->get()->first();
@@ -1296,7 +1296,7 @@ class GeneralController extends Controller {
                             }
                         }
                     } else if ($workday->lunch_end == "00:00:00") {
-                        if (($today->hour >= 10 && $today->minute >= 30) && $today->hour <= 15) {
+                        if (($today->hour >= 11 && $today->minute >= 30) && $today->hour <= 15) {
                             $workday->lunch_end = $today->toTimeString();
 
                             $lunch_start = new Carbon($workday->lunch_start);
