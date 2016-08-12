@@ -1091,142 +1091,111 @@ class GeneralController extends Controller {
                     }
 
                     if ($workday->lunch_start == "00:00:00") {
-                        $workday->lunch_start = $today->toTimeString();
-                    } else if ($workday->lunch_end == "00:00:00") {
-                        $workday->lunch_end = $today->toTimeString();
+                        if ($today->hour >= 11 && $today->hour <= 14) {
+                            $workday->lunch_start = $today->toTimeString();
 
-                        $lunch_start = new Carbon($workday->lunch_start);
-                        $diffTime = $lunch_start->diffInMinutes(new Carbon($workday->lunch_end));
+                            $lunch_start = new Carbon($workday->lunch_start);
+                            $diffTime = $lunch_start->diffInMinutes(new Carbon($workday->lunch_end));
 
-                        $lunch_in_minute = $diffTime;
-
-                        $hours = floor($diffTime / 60);
-                        $minutes = ($diffTime % 60);
-                        $tminutes = (float)($minutes / 60);
-                        $lunch_time = (($hours <= 9 ? "0" . $hours : $hours) . ":" . ($minutes <= 9 ? "0" . $minutes : $minutes)) . ":" . $seconds;
-                        
-                        $workday->lunch_hours = $lunch_time;
-
-                        $timesheet_task = TimesheetTask::where('timesheet_id', $workday->id)->where('end', '00:00:00')->get()->first();
-
-                        if ($timesheet_task) {
-                            $timesheet_task->end = $today->toTimeString();
-
-                            $seconds = '00';
-
-                            $start = new Carbon($timesheet_task->start);
-
-                            $diffTime = $start->diffInMinutes(new Carbon($timesheet_task->end));
+                            $lunch_in_minute = $diffTime;
 
                             $hours = floor($diffTime / 60);
                             $minutes = ($diffTime % 60);
                             $tminutes = (float)($minutes / 60);
-                            $time = (($hours <= 9 ? "0" . $hours : $hours) . ":" . ($minutes <= 9 ? "0" . $minutes : $minutes)) . ":" . $seconds;
+                            $lunch_time = (($hours <= 9 ? "0" . $hours : $hours) . ":" . ($minutes <= 9 ? "0" . $minutes : $minutes)) . ":" . $seconds;
+                            
+                            $workday->lunch_hours = $lunch_time;
 
-                            $user_open_project = UserOpenProject::where('login', 'LIKE', $user->username . '@%')->orWhere('mail', 'LIKE', $user->username . '@%')->get()->first();
+                            $timesheet_task = TimesheetTask::where('timesheet_id', $workday->id)->where('end', '00:00:00')->get()->first();
 
-                            $work_package = Task::find($timesheet_task->work_package_id);
+                            if ($timesheet_task) {
+                                $timesheet_task->end = $today->toTimeString();
 
-                            $time_entry = array(
-                                'project_id' => $timesheet_task->project_id,
-                                'user_id' => $user_open_project->id,
-                                'work_package_id' => $timesheet_task->work_package_id,
-                                'hours' => (float) $hours + $tminutes,
-                                'comments' => 'Inserido pelo Timesheet',
-                                'activity_id' => TaskPermission::where('work_package_id', $timesheet_task->work_package_id)->get()->first()->enumeration_id,
-                                'spent_on' => $start->toDateString(),
-                                'tyear' => $start->year,
-                                'tmonth' => $start->month,
-                                'tweek' => $start->weekOfYear,
-                                'created_on' => Carbon::now(),
-                                'update_on' => Carbon::now()
-                            );
+                                $seconds = '00';
 
-                            $time_entry = TimeEntry::create ($time_entry);
+                                $start = new Carbon($timesheet_task->start);
 
-                            if ($timesheet_task->save()) {
-                                DB::commit();
-                                Log::info($timesheet_task);
-                            } else {
-                                DB::rollback();
-                                Log::error($e);
-                                Log::error($time_entry);
-                                Log::error($work_package);
-                                Log::error($timesheet_task);
+                                $diffTime = $start->diffInMinutes(new Carbon($timesheet_task->end));
 
-                                $receive = array('error' => Lang::get('general.error'));
-                            }
+                                $hours = floor($diffTime / 60);
+                                $minutes = ($diffTime % 60);
+                                $tminutes = (float)($minutes / 60);
+                                $time = (($hours <= 9 ? "0" . $hours : $hours) . ":" . ($minutes <= 9 ? "0" . $minutes : $minutes)) . ":" . $seconds;
 
-                            $timesheet_task->hours = $time;
+                                $user_open_project = UserOpenProject::where('login', 'LIKE', $user->username . '@%')->orWhere('mail', 'LIKE', $user->username . '@%')->get()->first();
 
-                            if ($timesheet_task->save()) {
-                                DB::commit();
+                                $work_package = Task::find($timesheet_task->work_package_id);
 
-                                if ($work_package->type_id == 1) {
-                                    $status = 14;
+                                $time_entry = array(
+                                    'project_id' => $timesheet_task->project_id,
+                                    'user_id' => $user_open_project->id,
+                                    'work_package_id' => $timesheet_task->work_package_id,
+                                    'hours' => (float) $hours + $tminutes,
+                                    'comments' => 'Inserido pelo Timesheet',
+                                    'activity_id' => TaskPermission::where('work_package_id', $timesheet_task->work_package_id)->get()->first()->enumeration_id,
+                                    'spent_on' => $start->toDateString(),
+                                    'tyear' => $start->year,
+                                    'tmonth' => $start->month,
+                                    'tweek' => $start->weekOfYear,
+                                    'created_on' => Carbon::now(),
+                                    'update_on' => Carbon::now()
+                                );
 
-                                    $work_package->status_id = $status;
+                                $time_entry = TimeEntry::create ($time_entry);
+
+                                if ($timesheet_task->save()) {
+                                    DB::commit();
+                                    Log::info($timesheet_task);
                                 } else {
-                                    $custom_fields = CustomField::where('customized_id', $work_package->id)->where('custom_field_id', 39)->get();
+                                    DB::rollback();
+                                    Log::error($e);
+                                    Log::error($time_entry);
+                                    Log::error($work_package);
+                                    Log::error($timesheet_task);
 
-                                    if (!$custom_fields) {
-                                        $custom_fields = array(
-                                            array (
-                                                'customized_type' => 'WorkPackage',
-                                                'customized_id' => $work_package->id,
-                                                'custom_field_id' => 39,
-                                                'value' => $user_open_project->lastname . ' ' . $user_open_project->lastname
-                                            )
-                                        );
+                                    $receive = array('error' => Lang::get('general.error'));
+                                }
 
-                                        $custom_fields = CustomField::create( $custom_fields );
+                                $timesheet_task->hours = $time;
 
-                                        if ($custom_fields) {
-                                            DB::commit();
-                                        } else {
-                                            DB::rollback();
-                                            Log::error($e);
-                                            Log::error($custom_field);
-                                            Log::error($work_package);
-                                            Log::error($timesheet_task);
+                                if ($timesheet_task->save()) {
+                                    DB::commit();
 
-                                            $receive = array('error' => Lang::get('general.error'));
-                                        }
+                                    if ($work_package->type_id == 1) {
+                                        $status = 14;
 
-                                        $custom_fields = CustomField::where('customized_id', $work_package->id)->whereIn('custom_field_id', [38, 40])->get();
-
-                                        if ($custom_field->custom_field_id == 38) {
-                                            $custom_field->value = str_replace($user_open_project->lastname . ' ' . $user_open_project->lastname, '', str_replace(', ' . $user_open_project->lastname . ' ' . $user_open_project->lastname, '', ($custom_field->value)));
-                                        } else if ($custom_field->custom_field_id == 40) {
-                                            $working_worked = json_decode($custom_field->value);
-
-                                            $key = array_search($custom_field->id, $working_worked['worked']);
-                                            unset($working_worked['working'][$key]);
-
-                                            $working_worked['worked'][] = $custom_field->id;
-
-                                            $custom_field->values = json_encode($working_worked);
-                                        }
-
-                                        if ($custom_field->save()) {
-                                            DB::commit();
-                                        } else {
-                                            DB::rollback();
-                                            Log::error($e);
-                                            Log::error($custom_field);
-                                            Log::error($work_package);
-                                            Log::error($timesheet_task);
-
-                                            $receive = array('error' => Lang::get('general.error'));
-                                        }
+                                        $work_package->status_id = $status;
                                     } else {
-                                        $custom_fields = CustomField::where('customized_id', $work_package->id)->whereIn('custom_field_id', [38, 39, 40])->get();
+                                        $custom_fields = CustomField::where('customized_id', $work_package->id)->where('custom_field_id', 39)->get();
 
-                                        foreach ($custom_fields as $custom_field) {
+                                        if (!$custom_fields) {
+                                            $custom_fields = array(
+                                                array (
+                                                    'customized_type' => 'WorkPackage',
+                                                    'customized_id' => $work_package->id,
+                                                    'custom_field_id' => 39,
+                                                    'value' => $user_open_project->lastname . ' ' . $user_open_project->lastname
+                                                )
+                                            );
+
+                                            $custom_fields = CustomField::create( $custom_fields );
+
+                                            if ($custom_fields) {
+                                                DB::commit();
+                                            } else {
+                                                DB::rollback();
+                                                Log::error($e);
+                                                Log::error($custom_field);
+                                                Log::error($work_package);
+                                                Log::error($timesheet_task);
+
+                                                $receive = array('error' => Lang::get('general.error'));
+                                            }
+
+                                            $custom_fields = CustomField::where('customized_id', $work_package->id)->whereIn('custom_field_id', [38, 40])->get();
+
                                             if ($custom_field->custom_field_id == 38) {
                                                 $custom_field->value = str_replace($user_open_project->lastname . ' ' . $user_open_project->lastname, '', str_replace(', ' . $user_open_project->lastname . ' ' . $user_open_project->lastname, '', ($custom_field->value)));
-                                            } else if ($custom_field->custom_field_id == 39) {
-                                                $custom_field->value = $custom_field->value . ', ' . $user_open_project->lastname . ' ' . $user_open_project->lastname;
                                             } else if ($custom_field->custom_field_id == 40) {
                                                 $working_worked = json_decode($custom_field->value);
 
@@ -1249,37 +1218,75 @@ class GeneralController extends Controller {
 
                                                 $receive = array('error' => Lang::get('general.error'));
                                             }
+                                        } else {
+                                            $custom_fields = CustomField::where('customized_id', $work_package->id)->whereIn('custom_field_id', [38, 39, 40])->get();
+
+                                            foreach ($custom_fields as $custom_field) {
+                                                if ($custom_field->custom_field_id == 38) {
+                                                    $custom_field->value = str_replace($user_open_project->lastname . ' ' . $user_open_project->lastname, '', str_replace(', ' . $user_open_project->lastname . ' ' . $user_open_project->lastname, '', ($custom_field->value)));
+                                                } else if ($custom_field->custom_field_id == 39) {
+                                                    $custom_field->value = $custom_field->value . ', ' . $user_open_project->lastname . ' ' . $user_open_project->lastname;
+                                                } else if ($custom_field->custom_field_id == 40) {
+                                                    $working_worked = json_decode($custom_field->value);
+
+                                                    $key = array_search($custom_field->id, $working_worked['worked']);
+                                                    unset($working_worked['working'][$key]);
+
+                                                    $working_worked['worked'][] = $custom_field->id;
+
+                                                    $custom_field->values = json_encode($working_worked);
+                                                }
+
+                                                if ($custom_field->save()) {
+                                                    DB::commit();
+                                                } else {
+                                                    DB::rollback();
+                                                    Log::error($e);
+                                                    Log::error($custom_field);
+                                                    Log::error($work_package);
+                                                    Log::error($timesheet_task);
+
+                                                    $receive = array('error' => Lang::get('general.error'));
+                                                }
+                                            }
+                                        }
+
+                                        $use_cases = array(
+                                            'timesheet_task_id' => $timesheet_task->id,
+                                            'ok' => 0,
+                                            'nok' => 0,
+                                            'impacted' => 0,
+                                            'cancelled' => 0
+                                        );
+
+                                        $use_cases = UseCase::create ($use_cases);
+
+                                        if ($use_cases) {
+                                            DB::commit();
+                                        } else {
+                                            DB::rollback();
+                                            Log::error($e);
+                                            Log::error($use_cases);
+                                            Log::error($work_package);
+                                            Log::error($timesheet_task);
+
+                                            $receive = array('error' => Lang::get('general.error'));
                                         }
                                     }
 
-                                    $use_cases = array(
-                                        'timesheet_task_id' => $timesheet_task->id,
-                                        'ok' => 0,
-                                        'nok' => 0,
-                                        'impacted' => 0,
-                                        'cancelled' => 0
-                                    );
-
-                                    $use_cases = UseCase::create ($use_cases);
-
-                                    if ($use_cases) {
+                                    if ($work_package->save()) {
                                         DB::commit();
+                                        //$this->journal($timesheet_task->work_package_id, 'WorkPackage', 'work_packages');
+
+                                        // $this->notify($inputs, $timesheet_task->project_id);
                                     } else {
                                         DB::rollback();
                                         Log::error($e);
-                                        Log::error($use_cases);
                                         Log::error($work_package);
                                         Log::error($timesheet_task);
 
                                         $receive = array('error' => Lang::get('general.error'));
                                     }
-                                }
-
-                                if ($work_package->save()) {
-                                    DB::commit();
-                                    //$this->journal($timesheet_task->work_package_id, 'WorkPackage', 'work_packages');
-
-                                    // $this->notify($inputs, $timesheet_task->project_id);
                                 } else {
                                     DB::rollback();
                                     Log::error($e);
@@ -1288,15 +1295,19 @@ class GeneralController extends Controller {
 
                                     $receive = array('error' => Lang::get('general.error'));
                                 }
-                            } else {
-                                DB::rollback();
-                                Log::error($e);
-                                Log::error($work_package);
-                                Log::error($timesheet_task);
-
-                                $receive = array('error' => Lang::get('general.error'));
+                            }
+                        } else {
+                            if ($diffTime < 1) {
+                                $receive = array("status" => "200",
+                                    "rfid" => $inputs['rfid'],
+                                    "diffTime" => $diffTime,
+                                    "message" => "Already checked");
+                                
+                                return response()->json($receive);
                             }
                         }
+                    } else if ($workday->lunch_end == "00:00:00") {
+                        $workday->lunch_end = $today->toTimeString();
                     } else if ($workday->end == "00:00:00") {
                         $workday->end = $today->toTimeString();
                         
