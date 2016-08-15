@@ -47,6 +47,15 @@
             {{-- <a id="delete" data-name="Cliente" class="btn btn-danger">{!! Lang::get('users.delete') !!}</a> --}}
         </div>
         <hr class="clearfix" />
+        {!! Form::open(['method' => 'GET', 'url' => 'users', 'id' => 'search-form', 'class' => 'navbar-form navbar-left pull-right col-xs-12', 'role' => 'search'])  !!}
+            <div class="input-group input-group-sm">
+                <input id="search" type="text" class="form-control" name="search" placeholder="{{ Lang::get('general.search') }}">
+                <span class="input-group-btn">
+                    <button type="submit" class="btn btn-info btn-flat"><i class="fa fa-search"></i></button>
+                </span>
+            </div>
+        {!! Form::close() !!}
+        <hr class="clearfix" />
         @if($data['users']->count())
         @foreach($data['users'] as $user)
         <div class="col-md-4">

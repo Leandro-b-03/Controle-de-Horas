@@ -34,11 +34,22 @@ class UserController extends Controller
      *
      * @return Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        // Get all the users
-        $users = User::paginate(20);
-        $data['users'] = $users;
+        $inputs = $request->all();
+
+        if (isset($inputs['search'])) {
+            // Get the search users
+            $users = User::where(DB::raw("concat(first_name, ' ', last_name)"), 'like', '%' . $inputs['search'] . '%')
+                ->orwhere(DB::raw("concat(last_name, ' ', first_name)"), 'like', '%' . $inputs['search'] . '%')
+                ->orWhere('username', 'like', '%' . $inputs['search'] . '%')->paginate(20);
+
+            $data['users'] = $users;
+        } else {
+            // Get all the users
+            $users = User::paginate(20);
+            $data['users'] = $users;
+        }
 
         if (Auth::user()->hasRole('Colaborador')) {
             // Return the users view.
@@ -328,6 +339,10 @@ class UserController extends Controller
 
         $data['actual_month'] = (isset($inputs['month'])) ? $inputs['month'] : Carbon::now()->month;
         $data['year'] = (isset($inputs['year'])) ? $inputs['year'] : Carbon::now()->year;
+
+        // Get user info
+        $user = User::find($id);
+        $data['user'] = $user;
 
         $data['user_id'] = $id;
 

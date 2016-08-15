@@ -23,11 +23,21 @@ class GroupPermissionController extends Controller
      *
      * @return Response
      */
-    public function index()
+    public function  index(Request $request)
     {
-        // Get all the groups
-        $groups = Role::All();
-        $data['groups'] = $groups;
+        $inputs = $request->all();
+
+        if (isset($inputs['search'])) {
+            // Get the search groups
+            $groups = Role::where('name', 'like', '%' . $inputs['search'] . '%')
+                ->orWhere('display_name', 'like', '%' . $inputs['search'] . '%')
+                ->orWhere('description', 'like', '%' . $inputs['search'] . '%')->paginate(20);
+            $data['groups'] = $groups;
+        } else {
+            // Get all the groups
+            $groups = Role::All();
+            $data['groups'] = $groups;
+        }
 
         // Return the groups view.
         return view('group-permission.index')->with('data', $data);
