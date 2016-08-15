@@ -17,7 +17,6 @@ use App\Proposal;
 use PusherManager;
 use App\Timesheet;
 use Carbon\Carbon;
-use App\ClientGroup;
 use App\ProjectTime;
 use App\UserSetting;
 use App\ProposalType;
@@ -101,7 +100,34 @@ class SettingsController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        DB::beginTransaction();
+
+        // Get settings with param $id
+        $settings = Settings::find($id);
+
+        // Get all the input from update.
+        $inputs = $request->all();
+
+        try {
+            if (!isset($inputs['maintenance']))
+                $inputs['maintenance'] = 0;
+
+            foreach($inputs as $input => $value) {
+                if($settings->{$input})
+                    $settings->{$input} = $value;
+            }
+
+            if ($settings->save()) {
+                DB::commit();
+                return redirect('settings')->with('return', GeneralController::createMessage('success', Lang::get('general.' . $this->controller_name), 'update'));
+            } else {
+                DB::rollback();
+                return redirect('settings/' . $id . '/edit')->withInput()->with('return', GeneralController::createMessage('failed', Lang::get('general.' . $this->controller_name), 'update'));
+            }
+        } catch (Exception $e) {
+            DB::rollback();
+            return redirect('settings/' . $id . '/edit')->withInput()->with('return', GeneralController::createMessage('failed', Lang::get('general.' . $this->controller_name), 'update'));
+        }
     }
 
     /**

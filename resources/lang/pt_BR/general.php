@@ -176,7 +176,7 @@ return [
     // Notification
     'notification-request_success'  => 'Requisição enviada com sucesso.',
     'notification-error'            => 'Erro ao tentar executar a requisição.',
-    'notification-'         => '',
+    'notification-request_aproved'  => 'Requisição aprovada',
     'notification-'         => '',
 
 ];

@@ -19,7 +19,7 @@ class CreateTableSettings extends Migration
             $table->string('api_key');
             $table->string('locktime')->default('10');
             $table->string('default_theme')->default('skin-yellow');
-            $table->enum('maintenance', ['Y', 'N'])->default('N');
+            $table->boolean('maintenance')->default('0');
             $table->string('maintenance_message')->default('Estamos em manutenção aguarde um momento!');
             $table->string('from_address')->default('noreply@timesheet.com.br');
             $table->string('from_name')->default('Timesheet no reply');

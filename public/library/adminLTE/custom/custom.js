@@ -48,6 +48,13 @@ $(function () {
 
     return html;
   }
+  
+  $('#search').on('focus', function() {
+    $('#search-form').addClass('animate-search');
+  });
+  $('table, .box-header').on('click', function() {
+    $('#search-form').removeClass('animate-search');
+  });
 
   /*if ($.fn.DataTable) {
     if ($(".table").length > 0) {

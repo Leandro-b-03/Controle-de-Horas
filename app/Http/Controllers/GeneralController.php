@@ -457,6 +457,8 @@ class GeneralController extends Controller {
         $workday = Timesheet::find($inputs['id']);
         $data['workday'] = $workday;
 
+        $data['workday_id'] = $inputs['id'];
+
         // Get all the task on that day or the day
         $tasks = TimesheetTask::where('timesheet_id', $inputs['id'])->orderBy('id', 'DESC')->get();
         $data['tasks'] = $tasks;
@@ -544,6 +546,8 @@ class GeneralController extends Controller {
         $tminutes = (float)($minutes / 60);
         $day_time = (($hours <= 9 ? "0" . $hours : $hours) . ":" . ($minutes <= 9 ? "0" . $minutes : $minutes)) . ":" . $seconds;
 
+        $status = false;
+
         try {
             DB::beginTransaction();
 
@@ -569,14 +573,14 @@ class GeneralController extends Controller {
 
                     if ($workday) {
                         DB::commit();
-                        return 'true';
+                        $status = 'true';
                     } else {
                         Log::error('$workday->save(): Error trying to save the workday');
                         DB::rollback();
-                        return 'false';
+                        $status = 'false';
                     }
                 } else {
-                    return 'false';
+                    $status = 'false';
                 }
             } else {
                 $workday = Timesheet::find($inputs['id']);
@@ -594,16 +598,44 @@ class GeneralController extends Controller {
 
                 if ($workday->save()) {
                     DB::commit();
-                    return 'true';
+                    $status = 'true';
                 } else {
                     Log::error('$workday->save(): Error trying to save the workday');
                     DB::rollback();
-                    return 'false';
+                    $status = 'false';
                 }
             }
         } catch (Exception $e) {
             Log::error($e);
             DB::rollback();
+            $status = 'false';
+        }
+
+        if ($status) {
+            $user = User::find($inputs['user_id']);
+
+            $data['name'] = Auth::user()->first_name . ' ' . Auth::user()->last_name;
+            $data['email'] = Auth::user()->getEloquent()->email;
+            $data['start'] = $workday->start;
+            $data['lunch_start'] = $workday->lunch_start;
+            $data['lunch_end'] = $workday->lunch_end;
+            $data['end'] = $workday->end;
+            $day = explode('-', $workday->workday);
+            $data['day'] = $day[2] . '/' . $day[1] . '/' . $day[0];
+
+            $data['mail_send'] = $user->email;
+            $data['mail_name'] = $user->first_name . ' ' . $user->last_name;
+            $this->mail($data, 'request_aproved');
+
+            $notification = array(
+                'user_id' => $user->id,
+                'message' => Lang::get('general.notification-request_aproved'),
+                'faicon' => 'check-circle-o'
+                );
+            $this->createNotification($user->id, $notification);
+
+            return 'true';
+        } else {
             return 'false';
         }
     }
@@ -617,13 +649,13 @@ class GeneralController extends Controller {
     {
         $inputs = $request->all();
 
-        die(Log::debug($inputs));
+        $timesheet_task = null;
 
         $start_explode = explode(':', str_replace(' ', '', $inputs['start']));
         $end_explode = explode(':', str_replace(' ', '', $inputs['end']));
 
         $start = Carbon::createFromTime($start_explode[0], $start_explode[1], (array_key_exists(2, $start_explode) ? $start_explode[2] : '00'));
-        $end = Carbon::createFromTime($lunch_start_explode[0], $lunch_start_explode[1], (array_key_exists(2, $end_explode) ? $lunch_start_explode[2] : '00'));
+        $end = Carbon::createFromTime($end_explode[0], $end_explode[1], (array_key_exists(2, $end_explode) ? $end_explode[2] : '00'));
 
         $seconds = '00';
 
@@ -633,6 +665,21 @@ class GeneralController extends Controller {
         $minutes = ($diffTime % 60);
         $tminutes = (float)($minutes / 60);
         $time = (($hours <= 9 ? "0" . $hours : $hours) . ":" . ($minutes <= 9 ? "0" . $minutes : $minutes)) . ":" . $seconds;
+
+        if ($inputs['id'] == 'new') {
+            $timesheet_task = array(
+                'timesheet_id' => $inputs['workday_id'],
+                'project_id' => $inputs['project_id'],
+                'work_package_id' => $inputs['task_id'],
+                'start' =>  $inputs['start'],
+                'end' => $inputs['end'],
+                'hours' => $time
+            );
+
+            $timesheet_task = TimesheetTask::create( $timesheet_task );
+        } else {
+            $timesheet_task = TimesheetTask::find($inputs['id']);
+        }
 
         $user_open_project = UserOpenProject::where('login', 'LIKE', Auth::user()->getEloquent()->username . '@%')->orWhere('mail', 'LIKE', Auth::user()->getEloquent()->username . '@%')->get()->first();
 
@@ -645,7 +692,7 @@ class GeneralController extends Controller {
                 'work_package_id' => $timesheet_task->work_package_id,
                 'hours' => (float) $hours + $tminutes,
                 'comments' => 'Inserido pelo Timesheet',
-                'activity_id' => $inputs['activity'],
+                'activity_id' => TaskPermission::where('work_package_id', $timesheet_task->work_package_id)->get()->first()->enumeration_id,
                 'spent_on' => $start->toDateString(),
                 'tyear' => $start->year,
                 'tmonth' => $start->month,
@@ -666,7 +713,7 @@ class GeneralController extends Controller {
                 Log::error($work_package);
                 Log::error($timesheet_task);
 
-                return response()->json(array('error' => Lang::get('general.error')));
+                return 'false';
             }
 
             $timesheet_task->hours = $time;
@@ -675,13 +722,7 @@ class GeneralController extends Controller {
                 DB::commit();
 
                 if ($work_package->type_id == 1) {
-                    $status = 11;
-
-                    if (isset($inputs['pause']))
-                        $status = 14;
-
-                    if (isset($inputs['fail']))
-                        $status = 12;
+                    $status = 14;
 
                     $work_package->status_id = $status;
                 } else {
@@ -693,7 +734,7 @@ class GeneralController extends Controller {
                                 'customized_type' => 'WorkPackage',
                                 'customized_id' => $work_package->id,
                                 'custom_field_id' => 39,
-                                'value' => $user_open_project->lastname . ' ' . $user_open_project->lastname
+                                'value' => $user_open_project->firstname . ' ' . $user_open_project->lastname
                                 )
                             );
 
@@ -708,13 +749,13 @@ class GeneralController extends Controller {
                             Log::error($work_package);
                             Log::error($timesheet_task);
 
-                            return response()->json(array('error' => Lang::get('general.error')));
+                            return 'false';
                         }
 
                         $custom_fields = CustomField::where('customized_id', $work_package->id)->whereIn('custom_field_id', [38, 40])->get();
 
                         if ($custom_field->custom_field_id == 38) {
-                            $custom_field->value = str_replace($user_open_project->lastname . ' ' . $user_open_project->lastname, '', str_replace(', ' . $user_open_project->lastname . ' ' . $user_open_project->lastname, '', ($custom_field->value)));
+                            $custom_field->value = str_replace($user_open_project->firstname . ' ' . $user_open_project->lastname, '', str_replace(', ' . $user_open_project->firstname . ' ' . $user_open_project->lastname, '', ($custom_field->value)));
                         } else if ($custom_field->custom_field_id == 40) {
                             $working_worked = json_decode($custom_field->value);
 
@@ -735,16 +776,16 @@ class GeneralController extends Controller {
                             Log::error($work_package);
                             Log::error($timesheet_task);
 
-                            return response()->json(array('error' => Lang::get('general.error')));
+                            return 'false';
                         }
                     } else {
                         $custom_fields = CustomField::where('customized_id', $work_package->id)->whereIn('custom_field_id', [38, 39, 40])->get();
 
                         foreach ($custom_fields as $custom_field) {
                             if ($custom_field->custom_field_id == 38) {
-                                $custom_field->value = str_replace($user_open_project->lastname . ' ' . $user_open_project->lastname, '', str_replace(', ' . $user_open_project->lastname . ' ' . $user_open_project->lastname, '', ($custom_field->value)));
+                                $custom_field->value = str_replace($user_open_project->firstname . ' ' . $user_open_project->lastname, '', str_replace(', ' . $user_open_project->firstname . ' ' . $user_open_project->lastname, '', ($custom_field->value)));
                             } else if ($custom_field->custom_field_id == 39) {
-                                $custom_field->value = $custom_field->value . ', ' . $user_open_project->lastname . ' ' . $user_open_project->lastname;
+                                $custom_field->value = $custom_field->value . ', ' . $user_open_project->firstname . ' ' . $user_open_project->lastname;
                             } else if ($custom_field->custom_field_id == 40) {
                                 $working_worked = json_decode($custom_field->value);
 
@@ -765,7 +806,7 @@ class GeneralController extends Controller {
                                 Log::error($work_package);
                                 Log::error($timesheet_task);
 
-                                return response()->json(array('error' => Lang::get('general.error')));
+                                return 'false';
                             }
                         }
                     }
@@ -789,24 +830,24 @@ class GeneralController extends Controller {
                         Log::error($work_package);
                         Log::error($timesheet_task);
 
-                        return response()->json(array('error' => Lang::get('general.error')));
+                        return 'false';
                     }
                 }
 
                 if ($work_package->save()) {
                     DB::commit();
-                    $this->journal($timesheet_task->work_package_id, 'WorkPackage', 'work_packages');
+                    // $this->journal($timesheet_task->work_package_id, 'WorkPackage', 'work_packages');
 
-                    $this->notify($inputs, $timesheet_task->project_id);
+                    // $this->notify($inputs, $timesheet_task->project_id);
 
-                    return response()->json($this->line($timesheet_task, $work_package->type_id));
+                    return 'true';
                 } else {
                     DB::rollback();
                     Log::error($e);
                     Log::error($work_package);
                     Log::error($timesheet_task);
 
-                    return response()->json(array('error' => Lang::get('general.error')));
+                    return 'false';
                 }
             } else {
                 DB::rollback();
@@ -814,7 +855,7 @@ class GeneralController extends Controller {
                 Log::error($work_package);
                 Log::error($timesheet_task);
 
-                return response()->json(array('error' => Lang::get('general.error')));
+                return 'false';
             }
         } catch (Exception $e) {
             Log::error($e);
@@ -996,7 +1037,7 @@ class GeneralController extends Controller {
         $data = base64_decode($img);
         $filename = date('ymdhis') . '_croppedImage' . ".png";
 
-        $returnData = 'images/avatar/upload/normal/' . $filename;
+        $statusData = 'images/avatar/upload/normal/' . $filename;
         $file = $destinationPath . 'normal/' . $filename;
 
         if (!is_dir($destinationPath)) {
@@ -1011,7 +1052,7 @@ class GeneralController extends Controller {
         // Save photo normal
         $success = file_put_contents($file, $data);
 
-        $image = Image::make($returnData);
+        $image = Image::make($statusData);
 
         // Save photo 500x500
         $image500x500 = $image->resize(500, 500)->save($destinationPath . '500x500/' . $filename);
@@ -1023,7 +1064,7 @@ class GeneralController extends Controller {
         $image100x100 = $image->resize(100, 100)->save($destinationPath . '100x100/' . $filename);
 
         if ($image500x500)
-            return '../../' . str_replace('normal', '500x500', $returnData);
+            return '../../' . str_replace('normal', '500x500', $statusData);
         else {
             return array(
                 'valid' => false,
@@ -1162,7 +1203,7 @@ class GeneralController extends Controller {
                                                     'customized_type' => 'WorkPackage',
                                                     'customized_id' => $work_package->id,
                                                     'custom_field_id' => 39,
-                                                    'value' => $user_open_project->lastname . ' ' . $user_open_project->lastname
+                                                    'value' => $user_open_project->firstname . ' ' . $user_open_project->lastname
                                                     )
                                                 );
 
@@ -1183,7 +1224,7 @@ class GeneralController extends Controller {
                                             $custom_fields = CustomField::where('customized_id', $work_package->id)->whereIn('custom_field_id', [38, 40])->get();
 
                                             if ($custom_field->custom_field_id == 38) {
-                                                $custom_field->value = str_replace($user_open_project->lastname . ' ' . $user_open_project->lastname, '', str_replace(', ' . $user_open_project->lastname . ' ' . $user_open_project->lastname, '', ($custom_field->value)));
+                                                $custom_field->value = str_replace($user_open_project->firstname . ' ' . $user_open_project->lastname, '', str_replace(', ' . $user_open_project->firstname . ' ' . $user_open_project->lastname, '', ($custom_field->value)));
                                             } else if ($custom_field->custom_field_id == 40) {
                                                 $working_worked = json_decode($custom_field->value);
 
@@ -1211,9 +1252,9 @@ class GeneralController extends Controller {
 
                                             foreach ($custom_fields as $custom_field) {
                                                 if ($custom_field->custom_field_id == 38) {
-                                                    $custom_field->value = str_replace($user_open_project->lastname . ' ' . $user_open_project->lastname, '', str_replace(', ' . $user_open_project->lastname . ' ' . $user_open_project->lastname, '', ($custom_field->value)));
+                                                    $custom_field->value = str_replace($user_open_project->firstname . ' ' . $user_open_project->lastname, '', str_replace(', ' . $user_open_project->firstname . ' ' . $user_open_project->lastname, '', ($custom_field->value)));
                                                 } else if ($custom_field->custom_field_id == 39) {
-                                                    $custom_field->value = $custom_field->value . ', ' . $user_open_project->lastname . ' ' . $user_open_project->lastname;
+                                                    $custom_field->value = $custom_field->value . ', ' . $user_open_project->firstname . ' ' . $user_open_project->lastname;
                                                 } else if ($custom_field->custom_field_id == 40) {
                                                     $working_worked = json_decode($custom_field->value);
 
@@ -1592,57 +1633,81 @@ class GeneralController extends Controller {
         // Verify what kind is the email
         switch ($type) {
             case 'signup':
-            $send = [];
+                $send = [];
 
-            $send['company']     = 'SVLabs';
-            $send['email']       = $data->email;
-            $send['year']        = Carbon::now()->format('Y');
-            $send['name']        = $data->first_name;
-            $send['url']         = URL::to('auth/confirm?ce=' . $data->confirmation_code);
-            Mail::send('emails.signup', ['data' => $send], function ($message) use ($send) {
-                $message->from('postmaster@svlabs.com.br', 'SVLabs | No Reply');
-                $message->to($send['email'], $send['name'])->subject(Lang::get('emails.signup-title'));
-            });
-            break;
+                $send['company']     = 'SVLabs';
+                $send['email']       = $data->email;
+                $send['year']        = Carbon::now()->format('Y');
+                $send['name']        = $data->first_name;
+                $send['url']         = URL::to('auth/confirm?ce=' . $data->confirmation_code);
+                Mail::send('emails.signup', ['data' => $send], function ($message) use ($send) {
+                    $message->from('postmaster@svlabs.com.br', 'No reply SVLabs');
+                    $message->to($send['email'], $send['name'])->subject(Lang::get('emails.signup-title'));
+                });
+
+                break;
             case 'update':
-            break;
+                break;
             case 'delete':
-            break;
+                break;
             case 'notification':
-            break;
+                break;
             case 'request':
-            $send = [];
+                $send = [];
 
-            $send['company']     = 'SVLabs';
-            $send['email']       = $data['email'];
-            $send['year']        = Carbon::now()->format('Y');
-            $send['name']        = $data['name'];
-            $send['start']       = $data['start'];
-            $send['lunch_start'] = $data['lunch_start'];
-            $send['lunch_end']   = $data['lunch_end'];
-            $send['end']         = $data['end'];
-            $send['day']         = $data['day'];
-            $send['mail_send']   = $data['mail_send'];
-            $send['mail_name']   = $data['mail_name'];
-            $send['user_id']     = Auth::user()->id;
-            $send['subject']     = Lang::get('emails.request-title');
-            Mail::send('emails.request', ['data' => $send], function ($message) use ($send) {
-                $message->from('postmaster@svlabs.com.br', 'SVLabs | No Reply');
-                $message->to($send['mail_send'], $send['mail_name'])->subject($send['subject']);
-            });
-            break;
+                $send['company']     = 'SVLabs';
+                $send['email']       = $data['email'];
+                $send['year']        = Carbon::now()->format('Y');
+                $send['name']        = $data['name'];
+                $send['start']       = $data['start'];
+                $send['lunch_start'] = $data['lunch_start'];
+                $send['lunch_end']   = $data['lunch_end'];
+                $send['end']         = $data['end'];
+                $send['day']         = $data['day'];
+                $send['mail_send']   = $data['mail_send'];
+                $send['mail_name']   = $data['mail_name'];
+                $send['user_id']     = Auth::user()->id;
+                $send['subject']     = Lang::get('emails.request-title');
+                Mail::send('emails.request', ['data' => $send], function ($message) use ($send) {
+                    $message->from('postmaster@svlabs.com.br', 'No reply SVLabs');
+                    $message->to($send['mail_send'], $send['mail_name'])->subject($send['subject']);
+                });
+                break;
+            case 'request_aproved':
+                $send = [];
+
+                $send['company']     = 'SVLabs';
+                $send['email']       = $data['email'];
+                $send['year']        = Carbon::now()->format('Y');
+                $send['name']        = $data['name'];
+                $send['start']       = $data['start'];
+                $send['lunch_start'] = $data['lunch_start'];
+                $send['lunch_end']   = $data['lunch_end'];
+                $send['end']         = $data['end'];
+                $send['day']         = $data['day'];
+                $send['mail_send']   = $data['mail_send'];
+                $send['mail_name']   = $data['mail_name'];
+                $send['user_id']     = Auth::user()->id;
+                $send['subject']     = Lang::get('emails.request_aproved-title');
+                Mail::send('emails.request_aproved', ['data' => $send], function ($message) use ($send) {
+                    $message->from('postmaster@svlabs.com.br', 'No reply SVLabs');
+                    $message->to($send['mail_send'], $send['mail_name'])->subject($send['subject']);
+                });
+                break;
             case 'test':
-            $send = [];
+                $send = [];
 
-            $send['email'] = $data['email'];
-            d(Mail::send('emails.teste', ['data' => $send], function ($message) use ($send) {
-                $message->from('postmaster@svlabs.com.br', 'Teste');
-                $message->to($send['email'], "Teste")->subject(Lang::get('emails.signup-title'));
-            }));
-            break;
+                d('aqui');
+
+                $send['email'] = $data['email'];
+                d(Mail::send('emails.teste', ['data' => $send], function ($message) use ($send) {
+                    $message->from('postmaster@svlabs.com.br', 'Teste');
+                    $message->to($send['email'], "Teste")->subject(Lang::get('emails.signup-title'));
+                }));
+                break;
             default:
                 # code...
-            break;
+                break;
         }
 
         return true;

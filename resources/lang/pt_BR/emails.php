@@ -28,4 +28,6 @@ return [
 
 
     'request-title'                 => 'Requisição de ajuste de Hora',
+
+    'request_aproved-title'         => 'Requisição de ajuste de Hora Aprovada',
 ];
