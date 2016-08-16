@@ -23,7 +23,7 @@
     <i class="fa fa-tasks bg-blue"></i>
 
     <div class="timeline-item">
-      <span class="time"><i class="fa fa-clock-o"></i> {!! GeneralHelper::withoutSeconds($task->start) . ' - ' . GeneralHelper::withoutSeconds($task->end) !!}</span>
+      <span class="time"><i class="fa fa-clock-o"></i> {!! GeneralHelper::withoutSeconds($task->start) . ' - ' . ($task->end != '00:00:00' && $task->hours != '00:00:00' ? GeneralHelper::withoutSeconds($task->end) : 'Atuando') !!}</span>
 
       <h3 class="timeline-header">{!! $task->getTask()->first()->subject !!}</h3>
 
