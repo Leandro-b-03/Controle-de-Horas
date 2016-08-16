@@ -70,7 +70,7 @@
                   <div class="col-md-12">
                     <div id="tasks" class="box box-primary">
                       <div class="box-header with-border">
-                        <h3 class="box-title">{!! Lang::get('timesheets.tasks') !!}</h3>
+                        <h3 class="box-title">{!! Lang::get('general.tasks') !!}</h3>
                       </div><!-- /.box-header -->
                       <div class="box-body">
                         <ul id="0" class="sortable-list">
