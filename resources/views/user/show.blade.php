@@ -108,17 +108,19 @@
               </tr>
             </tbody>
           </table>
+          <hr class="clearfix" />
+          <h2>{{ $data['user']->first_name }} {{ $data['user']->last_name }}</h2>
           <table id="month-table" class="table table-responsive table-hover table-border table-striped table-bordered">
             <thead>
               <tr>
-                <th rowspan="2">{!! Lang::get('timesheets.title-date') !!}</th>
+                <th rowspan="2" width="50px">{!! Lang::get('timesheets.title-date') !!}</th>
                 <th rowspan="2">{!! Lang::get('timesheets.title-day') !!}</th>
                 <th rowspan="2">{!! Lang::get('timesheets.title-start') !!}</th>
                 <th colspan="2">{!! Lang::get('timesheets.title-lunch') !!}</th>
                 <th rowspan="2">{!! Lang::get('timesheets.title-end') !!}</th>
                 <th colspan="2">{!! Lang::get('timesheets.title-nightly') !!}</th>
                 <th rowspan="2">{!! Lang::get('general.total') !!}</th>
-                <th rowspan="2">{!! Lang::get('general.edit') !!}<a id="add-row" class="btn btn-warning pull-right">{!! Lang::get('timesheets.add-row') !!}</a></th>
+                <th rowspan="2" width="200px">{!! Lang::get('general.edit') !!}<a id="add-row" class="btn btn-warning pull-right">{!! Lang::get('timesheets.add-row') !!}</a></th>
               </tr>
               <tr>
                 <th>{!! Lang::get('timesheets.title-start') !!}</th>
@@ -141,7 +143,7 @@
                 <td>{!! $workday->nightly_end !!}</td>
                 <td>{!! GeneralHelper::getHoursTotal($workday->hours, $workday->nightly_hours) !!}</td>
                 <td>
-                  <a data-id="{!! $workday->id !!}" class="btn btn-primary edit-tasks-row" data-toggle="modal" data-target="#md-timeline">{!! Lang::get('users .edit-tasks') !!}</a>
+                  <a data-id="{!! $workday->id !!}" class="btn btn-info edit-tasks-row" data-toggle="modal" data-target="#md-timeline">{!! Lang::get('users.edit-tasks') !!}</a>
                   <a data-id="{!! $workday->id !!}" class="btn btn-primary pull-right edit-row">{!! Lang::get('general.edit') !!}</a>
                   <a data-id="{!! $workday->id !!}" class="btn btn-success pull-right save-row hide">{!! Lang::get('general.save') !!}</a>
                 </td>
@@ -155,26 +157,6 @@
       <a class="btn btn-danger" href="{!! URL::to('users') !!}">{!! Lang::get('general.back') !!}</a>
       </div><!-- /.box-footer-->
     </div><!-- /.box -->
-
-    <!-- Modal -->
-    <div class="modal fade" id="md-timeline" tabindex="-1" role="dialog" aria-labelledby="Timeline">
-      <div class="modal-dialog modal-lg" role="document">
-        <div class="modal-content">
-          <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal" aria-label="{!! Lang::get('general.back') !!}"><span aria-hidden="true">&times;</span></button>
-            <h4 class="modal-title" id="Timeline">{!! Lang::get('timesheets.task') !!}</h4>
-          </div>
-          <div class="modal-body fixed">
-            <div id="timeline">
-                <!-- The timeline -->
-              </div>
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-danger" data-dismiss="modal">{!! Lang::get('general.back') !!}</button>
-          </div>
-        </div>
-      </div>
-    </div>
 
     <!-- Modal -->
     <div class="modal fade" id="md-timeline" tabindex="-1" role="dialog" aria-labelledby="Timeline">
@@ -269,7 +251,7 @@
         end.html('<input class="form-control time" type="text" id="end_new" value="17:00"/>');
         nightly_start.html('<input class="form-control time" type="text" id="nightly_start_new" value="00:00"/>');
         nightly_end.html('<input class="form-control time" type="text" id="nightly_end_new" value="00:00"/>');
-        edit.html('<a id="new" class="btn btn-success pull-right save-row">' + "{!! Lang::get('general.save') !!}" + '</a>');
+        edit.html('<a data-id="new" class="btn btn-success pull-right save-row">' + "{!! Lang::get('general.save') !!}" + '</a>');
 
         var row = $('<tr>');
 
@@ -313,6 +295,8 @@
       });
 
       $('table').on('click', '.save-row', function() {
+        console.log($('#user_id').val());
+        console.log($(this).data('id'));
         var data = {
           user_id: $('#user_id').val(),
           id:  $(this).data('id'),

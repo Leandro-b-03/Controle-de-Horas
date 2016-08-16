@@ -47,6 +47,14 @@
             <a id="delete" data-name="Cliente" class="btn btn-danger">{!! Lang::get('group-permissions.delete') !!}</a>
         </div>
         <hr class="clearfix" />
+        {!! Form::open(['method' => 'GET', 'url' => 'group-permissions', 'id' => 'search-form', 'class' => 'navbar-form navbar-left pull-right col-xs-12', 'role' => 'search'])  !!}
+            <div class="input-group input-group-sm">
+                <input id="search" type="text" class="form-control" name="search" placeholder="{{ Lang::get('general.search') }}">
+                <span class="input-group-btn">
+                    <button type="submit" class="btn btn-info btn-flat"><i class="fa fa-search"></i></button>
+                </span>
+            </div>
+        {!! Form::close() !!}
         <table id="group-list" class="table table-bordered table-striped">
             <thead>
                 <tr>

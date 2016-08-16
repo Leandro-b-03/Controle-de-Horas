@@ -1,3 +1,12 @@
+<div id="messages-task">
+  @if (Session::get('return'))
+  <div class="alert alert-{!! Session::get('return')['class'] !!} alert-dismissable">
+    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+    <h4>    <i class="icon fa fa-{!! Session::get('return')['faicon'] !!}"></i> {!! Session::get('return')['status'] !!}!</h4>
+    {!! Session::get('return')['message'] !!}
+  </div>
+  @endif
+</div>
 <h1>{!! utf8_encode(strftime('%d de %B de %Y', strtotime($data['workday']->workday))) !!} </h1>
 <table id="task-table" class="table table-responsive table-hover table-border table-striped table-bordered">
   <thead>
@@ -28,6 +37,7 @@
     @endif
   </tbody>
 </table>
+<input type="hidden" id="workday_id" value="{!! $data['workday_id'] !!}">
 <script>
   $('#add-task-row').click(function() {
     $(this).hide();
@@ -39,14 +49,14 @@
     var end = $('<td>');
     var edit = $('<td>');
 
-    project_s =  '<select id="project_' + $(this).attr('id') + '" name="projects" class="form-control projects" data-validation="required" required>';
+    project_s =  '<select id="project_new" name="projects" class="form-control projects" data-validation="required" required>';
     project_s += '<option value="">' + '{!! Lang::get('general.select') !!}' + '</option>';
     @foreach ($data['projects'] as $project)
     project_s += '<option value="{!! $project->id !!}">{!! $project->name !!}</option>';
     @endforeach
     project_s += '</select>';
 
-    task_s =  '<select id="task_' + $(this).attr('id') + '" name="tasks" class="form-control tasks" data-validation="required" required>';
+    task_s =  '<select id="task_new" name="tasks" class="form-control tasks" data-validation="required" required>';
     task_s += '<option value="">' + '{!! Lang::get('general.select') !!}' + '</option>';
     task_s += '</select>';
 
@@ -54,7 +64,7 @@
     task.html(task_s);
     start.html('<input class="form-control time" type="text" id="start_new" value="08:00"/>');
     end.html('<input class="form-control time" type="text" id="end_new" value="17:00"/>');
-    edit.html('<a id="new" class="btn btn-success pull-right save-task-row">' + "{!! Lang::get('general.save') !!}" + '</a>');
+    edit.html('<a data-id="new" class="btn btn-success pull-right save-task-row">' + "{!! Lang::get('general.save') !!}" + '</a>');
 
     var row = $('<tr>');
 
@@ -171,39 +181,54 @@
   });
 
   $('table').on('click', '.save-task-row', function() {
-    var data = {
-      user_id: $('#user_id').val(),
-      id:  $(this).data('id'),
-      project: $('#project_' + $(this).data('id')).val(),
-      task: $('#task_' + $(this).data('id')).val(),
-      start: $('#start_' + $(this).data('id')).val(),
-      end: $('#end_' + $(this).data('id')).val(),
-    }
+    var start = $('#start_' + $(this).data('id')).val().split(':');
+    var end = $('#end_' + $(this).data('id')).val().split(':');
 
-    // $(this).hide();
+    start = (parseInt(start[0]) * 60) + parseInt(start[1]);
+    end = (parseInt(end[0]) * 60) + parseInt(end[1]);
 
-    console.log(data);
+    if (start > end) {
+      var html = '';
 
-    $.ajax({
-      url: '/general/changeTaskDay',
-      data: data,
-      type: "GET",
-      success: function(data) {
-        if (data == 'true') {
-          location.reload();
-        } else {
-          var html = '';
+      html += '<div class="alert alert-danger alert-dismissable">';
+      html += '  <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>';
+      html += '  <h4>    <i class="icon fa fa-error"></i> ' + "{!! Lang::get('general.failed') !!}" + '!</h4>';
+      html += "A hora do fim não pode ser maior que a hora de inicio";
+      html += '</div>';
 
-          html += '<div class="alert alert-danger alert-dismissable">';
-          html += '  <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>';
-          html += '  <h4>    <i class="icon fa fa-error"></i> ' + "{!! Lang::get('general.failed') !!}" + '!</h4>';
-          html += "{!! Lang::get('general.error') !!}";
-          html += '</div>';
-
-          $('#message').append(html);
-        }
+      $('#messages-task').html(html);
+    } else {
+      var data = {
+        user_id: $('#user_id').val(),
+        id:  $(this).data('id'),
+        workday_id:  $('#workday_id').val(),
+        project_id: $('#project_' + $(this).data('id')).val(),
+        task_id: $('#task_' + $(this).data('id')).val(),
+        start: $('#start_' + $(this).data('id')).val(),
+        end: $('#end_' + $(this).data('id')).val(),
       }
-    });
+
+      $.ajax({
+        url: '/general/changeTaskDay',
+        data: data,
+        type: "GET",
+        success: function(data) {
+          if (data == 'true') {
+            location.reload();
+          } else {
+            var html = '';
+
+            html += '<div class="alert alert-danger alert-dismissable">';
+            html += '  <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>';
+            html += '  <h4><i class="icon fa fa-error"></i> ' + "{!! Lang::get('general.failed') !!}" + '!</h4>';
+            html += "{!! Lang::get('general.error') !!}";
+            html += '</div>';
+
+            $('#messages-task').append(html);
+          }
+        }
+      });
+    }
   });
   var _tasks = {};
 

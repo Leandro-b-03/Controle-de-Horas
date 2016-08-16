@@ -156,14 +156,14 @@ class TimesheetController extends Controller
 
         try {
             if (isset($inputs['start'])) {
-                $task = array(
+                $timesheet_task = array(
                     'timesheet_id' => $workday->id,
                     'project_id' => $inputs['project_id'],
                     'work_package_id' => $inputs['task_id'],
                     'start' =>  $today->toTimeString()
                 );
 
-                $timesheet_task = TimesheetTask::create( $task );
+                $timesheet_task = TimesheetTask::create( $timesheet_task );
 
                 if ($timesheet_task) {
                     DB::commit();
@@ -183,7 +183,7 @@ class TimesheetController extends Controller
                                     'customized_type' => 'WorkPackage',
                                     'customized_id' => $work_package->id,
                                     'custom_field_id' => 38,
-                                    'value' => $user_open_project->lastname . ' ' . $user_open_project->lastname
+                                    'value' => $user_open_project->firstname . ' ' . $user_open_project->lastname
                                 ),
                                 array (
                                     'customized_type' => 'WorkPackage',
@@ -211,7 +211,7 @@ class TimesheetController extends Controller
                         } else {
                             foreach ($custom_fields as $custom_field) {
                                 if ($custom_field->custom_field_id == 38) {
-                                    $custom_field->value = $custom_field->value . ', ' . $user_open_project->lastname . ' ' . $user_open_project->lastname;
+                                    $custom_field->value = $custom_field->value . ', ' . $user_open_project->firstname . ' ' . $user_open_project->lastname;
                                 } else if ($custom_field->custom_field_id == 39) {
                                     $custom_field->value = str_replace($user_open_project->lastname . ' ' . $user_open_project->lastname, '', str_replace(', ' . $user_open_project->lastname . ' ' . $user_open_project->lastname, '', ($custom_field->value)));
                                 } else if ($custom_field->custom_field_id == 40) {

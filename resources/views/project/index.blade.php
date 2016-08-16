@@ -106,12 +106,5 @@
       $(document).ready(function() {
         $('.progress .progress-bar').progressbar({display_text: 'fill'});
       });
-
-      $('#search').on('focus', function() {
-        $('#search-form').addClass('animate-search');
-      });
-      $('table, .box-header').on('click', function() {
-        $('#search-form').removeClass('animate-search');
-      });
     </script>
 @endsection
