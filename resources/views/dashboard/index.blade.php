@@ -50,7 +50,7 @@
           </div>
           <!-- Main row -->
           <div class="row">
-            @if (Auth::user()->hasRole('Godless-Admin'))
+            @if (Auth::user()->hasRole('Gerente'))
             <div class="col-xs-12">
               <div id="user-task" class="box">
                 <div class="box-header">
