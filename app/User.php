@@ -52,9 +52,25 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
     /**
      * Get the user settings...
      */
-	public function settings()
+    public function settings()
     {
         return $this->hasOne('App\UserSetting');
+    }
+
+    /**
+     * Get the user profile...
+     */
+    public function profile()
+    {
+        return $this->hasOne('App\UserProfile');
+    }
+
+    /**
+     * Get the user timesheets...
+     */
+    public function timesheets()
+    {
+        return $this->hasMany('App\Timesheet');
     }
 
     /**

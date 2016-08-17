@@ -16,7 +16,7 @@ class CreateTableUsersProfiles extends Migration
             $table->increments('id');
             $table->integer('user_id')->unsigned(); 
             $table->string('education');
-            $table->string('skils');
+            $table->string('skills');
             $table->string('description');
             $table->timestamps();
 

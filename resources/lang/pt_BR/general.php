@@ -59,6 +59,7 @@ return [
     'atention'                      => 'Atenção',
     'send'                          => 'Enviar',
     'search'                        => 'Pesquisar',
+    'user'                          => 'Colaborador',
 
     // Menu & Controller
     'nav-menu'                      => 'Menu de navega&ccedil;&atilde;o',
