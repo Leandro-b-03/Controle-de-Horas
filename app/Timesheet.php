@@ -19,6 +19,14 @@ class Timesheet extends Model
 	protected $fillable = ['user_id', 'workday', 'hours', 'start', 'end', 'lunch_hours', 'lunch_start', 'lunch_end', 'nightly_hours', 'nightly_start', 'nightly_end', 'status'];
 
     /**
+     * Get the user timesheet tasks...
+     */
+    public function timesheetTasks()
+    {
+        return $this->hasMany('App\TimesheetTask');
+    }
+
+    /**
      * Get the all workdays with the date...
      */
 	public function scopefindWorkday($query, $date)
