@@ -50,14 +50,14 @@
           </div>
           <!-- Main row -->
           <div class="row">
-            @if (Auth::user()->hasRole('Gerente'))
+            @if (Auth::user()->hasRole('Gerente')) {{-- || Auth::user()->hasRole('Godless-Admin')) --}}
             <div class="col-xs-12">
               <div id="user-task" class="box">
                 <div class="box-header">
                   <h3 class="box-title">Lista de tarefas</h3>
                   <div class="box-tools search">
                       <div class="input-group input-group-sm">
-                          <input id="search" type="text" class="form-control" name="search" placeholder="{{ Lang::get('general.search') }}">
+                          <input id="search-user-working" type="text" class="form-control" name="search" placeholder="{{ Lang::get('general.search') }}">
                           <span class="input-group-btn">
                               <button type="submit" class="btn btn-info btn-flat"><i class="fa fa-search"></i></button>
                           </span>
@@ -328,6 +328,41 @@
 
         $('#user-task .box-body').slimScroll();
         $('#user-task table').floatThead();
+
+        $('#search-user-working').on('keyup', function() {
+          var value = $(this).val();
+
+          value = value.split(';');
+
+          $('#user-task table tbody tr').each(function(index) {
+            $row = $(this);
+            console.log($row);
+            var id = $row.find("td:first").text().toLowerCase();
+            var status = $row.find("td:last").text().toLowerCase();
+
+            if (value.length == 1) {
+              console.log(id.indexOf(value[0].toLowerCase()));
+              if (id.indexOf(value[0].toLowerCase()) != 0) {
+                if (status.indexOf(value[0].toLowerCase()) != 0) {
+                  $(this).hide();
+                } else {
+                  $(this).show();
+                }
+              } else {
+                $(this).show();
+              }
+            } else {
+              console.log(id.indexOf(value[0].toLowerCase()));
+              console.log(status.indexOf(value[1].replace(' ', '').toLowerCase()));
+              console.log(id.indexOf(value[0].toLowerCase()) != 0 && status.indexOf(value[1].replace(' ', '').toLowerCase()) != 0);
+              if (id.indexOf(value[0].toLowerCase()) != 0 || status.indexOf(value[1].replace(' ', '').toLowerCase()) != 0) {
+                $(this).hide();
+              } else {
+                $(this).show();
+              }
+            }
+          });
+        });
 
         var geoError = function(error) {
           console.log('Error occurred. Error code: ' + error.code);
