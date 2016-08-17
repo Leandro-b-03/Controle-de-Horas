@@ -33,6 +33,8 @@ class DashboardController extends Controller
             return redirect()->to('register');
         }
 
+        $today = new Carbon();
+
         // GeoIP
         $location = GeoIP::getLocation($request->ip());
 
@@ -46,6 +48,44 @@ class DashboardController extends Controller
         $new_users->count = User::where('created_at', '>=', Carbon::now()->startOfMonth())->get()->count();
         $data['new_users'] = $new_users;
 
+        // See if users have started a task
+        $users_work = User::orderBy('first_name', 'desc')->orderBy('last_name', 'desc')->get();
+        $users = array();
+
+        foreach ($users_work as $user) {
+            $handled_user = array();
+            $handled_user['name'] = $user->first_name . ' ' . $user->last_name;
+            if ($user->timesheets()->getResults()->where('workday', $today->toDateString())->first()) {
+                if ($user->timesheets()->getResults()->where('workday', $today->toDateString())->first()->timesheetTasks()->first()) {
+                    $handled_user['project'] = $user->timesheets()->getResults()->where('workday', \Carbon\Carbon::now()->toDateString())->first()->timesheetTasks()->getResults()->first()->getProject()->getResults()->first()->name;
+                    $handled_user['task'] = $user->timesheets()->getResults()->where('workday', \Carbon\Carbon::now()->toDateString())->first()->timesheetTasks()->getResults()->first()->getTask()->getResults()->first()->subject;
+                    $handled_user['status'] = 'Trabalhando';
+                    $handled_user['start'] = $user->timesheets()->getResults()->where('workday', \Carbon\Carbon::now()->toDateString())->first()->timesheetTasks()->getResults()->first()->start;
+                    if ($handled_user['end'] = $user->timesheets()->getResults()->where('workday', \Carbon\Carbon::now()->toDateString())->first()->timesheetTasks()->getResults()->first()->end != '00:00:00') {
+                        $handled_user['end'] = $user->timesheets()->getResults()->where('workday', \Carbon\Carbon::now()->toDateString())->first()->timesheetTasks()->getResults()->first()->end;
+                    } else {
+                        $handled_user['end'] = 'Atuando';
+                    }
+                } else {
+                    $handled_user['project'] = '----';
+                    $handled_user['task'] = '----';
+                    $handled_user['status'] = 'Ocioso';
+                    $handled_user['start'] = '----';
+                    $handled_user['end'] = '----';
+                }
+            } else {
+                $handled_user['project'] = '----';
+                $handled_user['task'] = '----';
+                $handled_user['status'] = 'Ocioso';
+                $handled_user['start'] = '----';
+                $handled_user['end'] = '----';
+            }
+
+            $users[] = $handled_user;
+        }
+
+        $data['users'] = $users;
+
         // New Projects
         $new_projects = Project::orderBy('created_on', 'desc')->whereNotExists(function ($query) {
             $query->select(DB::raw(1))
@@ -53,8 +93,6 @@ class DashboardController extends Controller
                   ->whereRaw('projects2.parent_id = projects.id');
             })->orderBy('created_on', 'desc')->take(8)->get();
         $data['new_projects'] = $new_projects;
-
-        $today = new Carbon();
 
         // Get the workday
         $workday = Timesheet::where('user_id', Auth::user()->getEloquent()->id)->where('workday', $today->toDateString())->orderBy('workday', 'desc')->get()->first();

@@ -750,3 +750,15 @@ table thead tr th.start, table thead tr th.end {
     -o-transition: width 1s ease-in-out;
     transition: width 1s ease-in-out;
 }
+
+.box-tools.search {
+	width: 50%;
+}
+
+#user-task .box-body {
+	max-height: 350px;
+}
+
+#user-task .box-body thead {
+	background: #fff;
+}

@@ -50,6 +50,60 @@
           </div>
           <!-- Main row -->
           <div class="row">
+            @if (Auth::user()->hasRole('Gerente'))
+            <div class="col-xs-12">
+              <div id="user-task" class="box">
+                <div class="box-header">
+                  <h3 class="box-title">Lista de tarefas</h3>
+                  <div class="box-tools search">
+                      <div class="input-group input-group-sm">
+                          <input id="search" type="text" class="form-control" name="search" placeholder="{{ Lang::get('general.search') }}">
+                          <span class="input-group-btn">
+                              <button type="submit" class="btn btn-info btn-flat"><i class="fa fa-search"></i></button>
+                          </span>
+                      </div>
+                  </div>
+                </div>
+                <!-- /.box-header -->
+                <div class="box-body table-responsive no-padding">
+                  <table class="table table-hover">
+                    <tbody>
+                      <thead>
+                        <tr class="fixed">
+                          <th>{{ Lang::get('general.user') }}</th>
+                          <th>{{ Lang::get('timesheets.title-project') }}</th>
+                          <th>{{ Lang::get('timesheets.title-task') }}</th>
+                          <th>{{ Lang::get('timesheets.title-start') }}</th>
+                          <th>{{ Lang::get('timesheets.title-end') }}</th>
+                          <th>{{ Lang::get('general.status') }}</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        @if (isset($data['users']))
+                        @foreach ($data['users'] as $user)
+                        <tr>
+                          <td>{{ $user['name'] }}</td>
+                          <td>{{ $user['project'] }}</td>
+                          <td>{{ $user['task'] }}</td>
+                          <td>{{ $user['start'] }}</td>
+                          <td>{{ $user['end'] }}</td>
+                          <td><span class="label label-{{ ($user['status'] == "Ocioso" ? "danger" : "success") }}">{{ $user['status'] }}</span></td>
+                        </tr>
+                        @endforeach
+                        @else
+                        <tr>
+                          <td colspan="4">{{ Lang::get('dashboard.no_results') }}</td>
+                        </tr>
+                      </tbody>
+                      @endif
+                    </tbody>
+                  </table>
+                </div>
+                <!-- /.box-body -->
+              </div>
+              <!-- /.box -->
+            </div>
+            @endif
             <!-- Left col -->
             <div class="col-md-8">
               <!-- MAP & BOX PANE -->
@@ -241,6 +295,8 @@
     <!-- {!! Html::script("library/adminLTE/dist/js/pages/dashboard2.js") !!} -->
     <!-- Custom PusherChatWidget.js -->
     {!! Html::script("library/adminLTE/custom/CustomPusherChatWidgetDashboard.js") !!}
+    <!-- Fixed-table-header -->
+    {!! Html::script("library/adminLTE/plugins/mkoryak-floatThead/dist/jquery.floatThead.min.js") !!}
 
     <script>
       window.onload = function() {
@@ -254,8 +310,6 @@
           startPos = position;
 
           var use_local = "{{ $data['location']['use'] }}";
-
-          console.log(use_local);
 
           coord = null;
 
@@ -271,6 +325,9 @@
 
           $('#map').attr('src', coord);
         };
+
+        $('#user-task .box-body').slimScroll();
+        $('#user-task table').floatThead();
 
         var geoError = function(error) {
           console.log('Error occurred. Error code: ' + error.code);
