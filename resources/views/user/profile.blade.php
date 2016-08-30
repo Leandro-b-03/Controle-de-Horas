@@ -113,7 +113,6 @@
                     <ul class="timeline timeline-inverse">
                       {{--*/ $project_id = null /*--}}
                       {{--*/ $change = 1 /*--}}
-                      @if (isset($data['task']))
                       @foreach ($data['tasks'] as $task)
                       @if ($project_id != $task->project_id)
                       {{--*/ $project_id = $task->project_id /*--}}
@@ -135,7 +134,7 @@
                         <i class="fa fa-tasks bg-blue"></i>
 
                         <div class="timeline-item">
-                          <span class="time"><i class="fa fa-clock-o"></i> {!! GeneralHelper::withoutSeconds($task->start) . ' - ' . GeneralHelper::withoutSeconds($task->end) !!}</span>
+                          <span class="time"><i class="fa fa-clock-o"></i> {!! GeneralHelper::withoutSeconds($task->start) . ' - ' . ($task->end != '00:00:00' && $task->hours != '00:00:00' ? GeneralHelper::withoutSeconds($task->end) : 'Atuando') !!}</span>
 
                           <h3 class="timeline-header">{!! $task->getTask()->first()->subject !!}</h3>
 
@@ -153,7 +152,6 @@
                       <li>
                         <i class="fa fa-clock-o bg-gray"></i>
                       </li>
-                      @endif
                     </ul>
                   </div><!-- /.tab-pane -->
                   @if ($data['user']->id == Auth::user()->id)

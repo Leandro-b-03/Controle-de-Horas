@@ -613,7 +613,7 @@
 
 <h3 style="margin: 0;padding: 0;display: block;font-family: Helvetica;font-size: 18px;font-style: normal;font-weight: bold;line-height: 125%;letter-spacing: -.5px;text-align: left;color: #606060 !important;">Sua requisição foi efetuada</h3>
 
-<p style="margin: 1em 0;padding: 0;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;color: #606060;font-family: Helvetica;font-size: 15px;line-height: 150%;text-align: left;">Voce requisitou mudança de horário em sua timesheet no dia {{ $data['day'] }}, os ajustes foram efetuados por {{ $data['name'] }}:</p>
+<p style="margin: 1em 0;padding: 0;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;color: #606060;font-family: Helvetica;font-size: 15px;line-height: 150%;text-align: left;">Voce requisitou mudança de horário em sua timesheet no dia <strong>{{ $data['day'] }}</strong>, os ajustes foram efetuados por {{ $data['name'] }}:</p>
 
                         </td>
                     </tr>
