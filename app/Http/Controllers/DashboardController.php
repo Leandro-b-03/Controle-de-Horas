@@ -142,23 +142,12 @@ class DashboardController extends Controller
                 $query->select(DB::raw(1))
                       ->from('work_packages AS wp2')
                       ->whereRaw('wp2.parent_id = wp1.id');
-            })->whereIn('project_id', $user_projects)->take(15)->get();
+            })->whereIn('project_id', $user_projects)->take(5)->get();
             $data['tasks'] = $tasks;
         } catch (Exception $e) {
             $data['tasks'] = array();
             $data['message-op'] = true;
         }
-
-        // Get all the Projects that the user is assigned off
-        $user_projects = Member::select('project_id')->where('user_id', $user_id)->get()->toArray();
-
-        // Get all task
-        $tasks = DB::connection('openproject')->table('work_packages AS wp1')->whereNotExists(function ($query) {
-            $query->select(DB::raw(1))
-                  ->from('work_packages AS wp2')
-                  ->whereRaw('wp2.parent_id = wp1.id');
-        })->whereIn('project_id', $user_projects)->take(15)->get();
-        $data['tasks'] = $tasks;
 
         // Return the dashboard view.
         return view('dashboard.index')->with('data', $data);

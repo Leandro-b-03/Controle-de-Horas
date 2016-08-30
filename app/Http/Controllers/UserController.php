@@ -229,6 +229,9 @@ class UserController extends Controller
      */
     public function show($id)
     {
+        // Create a data variable for view can consulting
+        $data = [];
+
         // Retrive the user with param $id
         $user = User::find($id);
         $data['user'] = $user;
@@ -238,9 +241,6 @@ class UserController extends Controller
         // Retrive all the tasks done
         $tasks = TimesheetTask::whereIn('timesheet_id', $timesheets->toArray())->get();
         $data['tasks'] = $tasks;
-
-        // Create a data variable for view can consulting
-        $data = [];
 
         // Get all Roles
         $roles = Role::all();

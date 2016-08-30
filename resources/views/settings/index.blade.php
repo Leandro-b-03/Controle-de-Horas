@@ -73,7 +73,21 @@
                 </div>
                 <div class="form-group col-xs-5">
                   <label for="default_theme">{!! Lang::get('settings.label-default_theme') !!}</label>
-                  <input type="text" class="form-control" name="default_theme" id="default_theme"  value="{!! (isset($data['settings']) ? $data['settings']->default_theme : (Request::old('default_theme') ? Request::old('default_theme') : '')) !!}" placeholder="{!! Lang::get('settings.ph-default_theme') !!}" data-validation="length" data-validation-length="3-40" data-validation-error-msg="{!! Lang::get('settings.error-default_theme') !!}" required>
+                  <select type="text" class="form-control" name="default_theme" id="default_theme"  value="{!! (isset($data['settings']) ? $data['settings']->default_theme : (Request::old('default_theme') ? Request::old('default_theme') : '')) !!}" data-validation-error-msg="{!! Lang::get('settings.error-default_theme') !!}" required>
+                    <option value="">{{ Lang::get('general.select') }}</option>
+                    <option value="skin-blue">Blue</option>
+                    <option value="skin-black">Black</option>
+                    <option value="skin-purple">Purple</option>
+                    <option value="skin-green">Green</option>
+                    <option value="skin-red">Red</option>
+                    <option value="skin-yellow">Yellow</option>
+                    <option value="skin-blue-light">Blue Light</option>
+                    <option value="skin-black-light">Black Light</option>
+                    <option value="skin-purple-light">Purple Light</option>
+                    <option value="skin-green-light">Green Light</option>
+                    <option value="skin-red-light">Red Light</option>
+                    <option value="skin-yellow-light">Yellow Light</option>
+                  </select>
                 </div>
                 <div class="form-group col-xs-2">
                   <label for="maintenance">{!! Lang::get('settings.label-maintenance') !!}</label>

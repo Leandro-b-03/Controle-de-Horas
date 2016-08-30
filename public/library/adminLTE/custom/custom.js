@@ -248,8 +248,10 @@ notificationsChannel.bind ('new_notification', function(notification) {
 function createNotification(notification) {
   var count = $('.notification-count').html();
   if (count == '') {
+    $('#counter').html(1);
     $('.notification-count').html(1);
   } else {
+    $('#counter').html(parseInt($('#counter').html()) + 1);
     $('.notification-count').html(parseInt($('.notification-count').html()) + 1);
   }
 
@@ -257,7 +259,7 @@ function createNotification(notification) {
 
   new_message += '<li>';
   new_message += '    <a href="' + notification.href + '">';
-  new_message += '        <i class="fa fa-' + notification.faicon + ' text-aqua"></i> ' + notification.message;
+  new_message += '        <i class="fa fa-' + notification.faicon + ' text-aqua"></i> ' + notification.message.substring(0, 40);;
   new_message += '    </a>';
   new_message += '</li>';
 

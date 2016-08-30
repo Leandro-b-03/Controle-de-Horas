@@ -613,7 +613,7 @@
 
 <h3 style="margin: 0;padding: 0;display: block;font-family: Helvetica;font-size: 18px;font-style: normal;font-weight: bold;line-height: 125%;letter-spacing: -.5px;text-align: left;color: #606060 !important;">Você gestor recebeu uma solicitação de ajuste de hora</h3>
 
-<p style="margin: 1em 0;padding: 0;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;color: #606060;font-family: Helvetica;font-size: 15px;line-height: 150%;text-align: left;">O(A) colaborador(a) {{ $data['name'] }}, requisitou o ajuste de hora do dia {{ $data['day'] }} com os seguintes ajustes:</p>
+<p style="margin: 1em 0;padding: 0;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;color: #606060;font-family: Helvetica;font-size: 15px;line-height: 150%;text-align: left;">O(A) colaborador(a) {{ $data['name'] }}, requisitou o ajuste de hora do dia <strong>{{ $data['day'] }}</strong> com os seguintes ajustes:</p>
 
                         </td>
                     </tr>

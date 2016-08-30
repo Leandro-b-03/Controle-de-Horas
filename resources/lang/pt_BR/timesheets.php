@@ -54,6 +54,7 @@ return [
 
     // Words-Compost Words
     'day'                           => 'Dia',
+    'months'                        => 'meses',
     'lunch_start'                   => 'Almo&ccedil;o',
     'lunch_end'                     => 'Almo&ccedil;o',
     'start'                         => 'Iniciar',
@@ -93,7 +94,7 @@ return [
 
     // Messages
     'message-request'               => 'Por favor somente indique o campo que deseja a atera&ccedil;&atilde;o (Exemplo: deseja alterar a sa&iacute;da apenas coloque a hora desjada naquele campo).',
-    'message-send_request'          => 'O(A) :name, solicitou a troca do hor&aacute;rio.<br />
+    'message-send_request'          => 'O(A) :name, solicitou a troca do hor&aacute;rio do dia <strong>:day</strong><br />
                                         <table class="table table-responsive table-hover table-border table-striped table-bordered">
                                             <thead>
                                                 <tr>

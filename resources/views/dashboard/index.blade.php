@@ -336,29 +336,24 @@
 
           $('#user-task table tbody tr').each(function(index) {
             $row = $(this);
-            console.log($row);
             var id = $row.find("td:first").text().toLowerCase();
             var status = $row.find("td:last").text().toLowerCase();
 
             if (value.length == 1) {
-              console.log(id.indexOf(value[0].toLowerCase()));
-              if (id.indexOf(value[0].toLowerCase()) != 0) {
-                if (status.indexOf(value[0].toLowerCase()) != 0) {
-                  $(this).hide();
+              if (!id.includes(value[0].toLowerCase())) {
+                if (!status.includes(value[0].toLowerCase())) {
+                  $(this).hide(1000);
                 } else {
-                  $(this).show();
+                  $(this).show(1000);
                 }
               } else {
-                $(this).show();
+                $(this).show(1000);
               }
             } else {
-              console.log(id.indexOf(value[0].toLowerCase()));
-              console.log(status.indexOf(value[1].replace(' ', '').toLowerCase()));
-              console.log(id.indexOf(value[0].toLowerCase()) != 0 && status.indexOf(value[1].replace(' ', '').toLowerCase()) != 0);
-              if (id.indexOf(value[0].toLowerCase()) != 0 || status.indexOf(value[1].replace(' ', '').toLowerCase()) != 0) {
-                $(this).hide();
+              if (!id.includes(value[0].toLowerCase()) || !status.includes(value[1].replace(' ', '').toLowerCase())) {
+                $(this).hide(1000);
               } else {
-                $(this).show();
+                $(this).show(1000);
               }
             }
           });

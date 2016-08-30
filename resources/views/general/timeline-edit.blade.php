@@ -29,13 +29,13 @@
       <td>{!! $task->end !!}</td>
       <td>{!! $task->hours !!}</td>
       <td>
-        <a data-id="{!! $data['workday']->id !!}" class="btn btn-primary pull-right edit-task-row">{!! Lang::get('general.edit') !!}</a>
-        <a data-id="{!! $data['workday']->id !!}" class="btn btn-success pull-right save-task-row hide">{!! Lang::get('general.save') !!}</a>
+        <a data-id="{!! $task->id !!}" class="btn btn-primary pull-right edit-task-row">{!! Lang::get('general.edit') !!}</a>
+        <a data-id="{!! $task->id !!}" class="btn btn-success pull-right save-task-row hide">{!! Lang::get('general.save') !!}</a>
       </td>
     </tr>
     @endforeach
-    @endif
   </tbody>
+    @endif
 </table>
 <input type="hidden" id="workday_id" value="{!! $data['workday_id'] !!}">
 <script>
@@ -207,6 +207,8 @@
         start: $('#start_' + $(this).data('id')).val(),
         end: $('#end_' + $(this).data('id')).val(),
       }
+
+      console.log(data);
 
       $.ajax({
         url: '/general/changeTaskDay',
