@@ -121,8 +121,8 @@
                       <div class="pad">
                         <!-- Map will be created here -->
                         {{-- <div id="world-map-markers" style="height: 325px;"></div> --}}
-                        <div id="map"></div>
-                        {{-- <iframe class="map" id="map" frameborder="0" style="border:0" src="" allowfullscreen></iframe>  --}}
+                        {{-- <div id="map"></div> --}}
+                        <iframe class="map" id="map" frameborder="0" style="border:0" src="" allowfullscreen></iframe> 
                       </div>
                     </div><!-- /.col -->
                   </div><!-- /.row -->
@@ -273,6 +273,8 @@
     {!! Html::script("library/adminLTE/plugins/jvectormap/jquery-jvectormap-world-mill-en.js") !!}
     <!-- jQuery Knob Chart -->
     {!! Html::script("library/adminLTE/plugins/knob/jquery.knob.js") !!}
+    <!-- Google Maps -->
+    {!! Html::script("https://maps.googleapis.com/maps/api/js") !!}
     <!-- daterangepicker -->
     {!! Html::script("https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.10.2/moment.min.js") !!}
     {!! Html::script("library/adminLTE/plugins/daterangepicker/daterangepicker.js") !!}
@@ -297,101 +299,77 @@
     {!! Html::script("library/adminLTE/plugins/mkoryak-floatThead/dist/jquery.floatThead.min.js") !!}
 
     <script>
-      // window.onload = function() {
-      //   var startPos;
-      //   var coord;
-      //   var geoOptions = {
-      //     enableHighAccuracy: true
-      //   }
-
-      //   var geoSuccess = function(position) {
-      //     startPos = position;
-
-      //     var use_local = "{{ $data['location']['use'] }}";
-
-      //     coord = null;
-
-      //     if (use_local == 1) {
-      //       coord = 'https://www.google.com/maps/embed/v1/place?q=' + "{{ $data['location']['lat'] }}" + ',' + "{{ $data['location']['lon'] }}" + '&key=AIzaSyAMjB9eA7xTNXxROIy_4IS4HbuijRQ84YA';
-
-      //       savePosition("{{ $data['location']['lat'] }}", "{{ $data['location']['lon'] }}");
-      //     } else {
-      //       coord = 'https://www.google.com/maps/embed/v1/place?q=' + startPos.coords.latitude + ',' + startPos.coords.longitude + '&key=AIzaSyAMjB9eA7xTNXxROIy_4IS4HbuijRQ84YA';
-
-      //       savePosition(startPos.coords.latitude, startPos.coords.longitude);
-      //     }
-
-      //     $('#map').attr('src', coord);
-      //   };
-
-      //   var geoError = function(error) {
-      //     console.log('Error occurred. Error code: ' + error.code);
-      //     // error.code can be:
-      //     //   0: unknown error
-      //     //   1: permission denied
-      //     //   2: position unavailable (error response from location provider)
-      //     //   3: timed out
-      //   };
-
-      //   navigator.geolocation.getCurrentPosition(geoSuccess, geoError, geoOptions);
-      // };
-
-      function initMap() {
-        var map = new google.maps.Map(document.getElementById('map'), {
-          zoom: 15,
-          center: {lat: -23.497, lng: -46.8479835}
-        });
-
-        setMarkers(map);
-      }
-
-      var users = {!! json_encode($data['locations']) !!};
-
-      function setMarkers(map) {
-        for (var i = 0; i < users.length; i++) {
-          var user = users[i];
-          var marker = new google.maps.Marker({
-            position: new google.maps.LatLng(parseInt(user[1]), parseInt(user[2])),
-            map: map,
-            title: user[0],
-            zIndex: user[3]
-          });
-          return;
+      window.onload = function() {
+        var startPos;
+        var coord;
+        var geoOptions = {
+          enableHighAccuracy: true
         }
-      }
 
-      $('#user-task .box-body').slimScroll();
-      $('#user-task table').floatThead();
+        var geoSuccess = function(position) {
+          startPos = position;
 
-      $('#search-user-working').on('keyup', function() {
-        var value = $(this).val();
+          var use_local = "{{ $data['location']['use'] }}";
 
-        value = value.split(';');
+          coord = null;
 
-        $('#user-task table tbody tr').each(function(index) {
-          $row = $(this);
-          var id = $row.find("td:first").text().toLowerCase();
-          var status = $row.find("td:last").text().toLowerCase();
+          if (use_local == 1) {
+            coord = 'https://www.google.com/maps/embed/v1/place?q=' + "{{ $data['location']['lat'] }}" + ',' + "{{ $data['location']['lon'] }}" + '&key=AIzaSyAMjB9eA7xTNXxROIy_4IS4HbuijRQ84YA';
 
-          if (value.length == 1) {
-            if (!id.includes(value[0].toLowerCase())) {
-              if (!status.includes(value[0].toLowerCase())) {
-                $(this).hide(1000);
+            savePosition("{{ $data['location']['lat'] }}", "{{ $data['location']['lon'] }}");
+          } else {
+            coord = 'https://www.google.com/maps/embed/v1/place?q=' + startPos.coords.latitude + ',' + startPos.coords.longitude + '&key=AIzaSyAMjB9eA7xTNXxROIy_4IS4HbuijRQ84YA';
+
+            savePosition(startPos.coords.latitude, startPos.coords.longitude);
+          }
+
+          $('#map').attr('src', coord);
+        };
+
+        $('#user-task .box-body').slimScroll();
+        $('#user-task table').floatThead();
+
+        $('#search-user-working').on('keyup', function() {
+          var value = $(this).val();
+
+          value = value.split(';');
+
+          $('#user-task table tbody tr').each(function(index) {
+            $row = $(this);
+            var id = $row.find("td:first").text().toLowerCase();
+            var status = $row.find("td:last").text().toLowerCase();
+
+            if (value.length == 1) {
+              if (!id.includes(value[0].toLowerCase())) {
+                if (!status.includes(value[0].toLowerCase())) {
+                  $(this).hide(1000);
+                } else {
+                  $(this).show(1000);
+                }
               } else {
                 $(this).show(1000);
               }
             } else {
-              $(this).show(1000);
+              if (!id.includes(value[0].toLowerCase()) || !status.includes(value[1].replace(' ', '').toLowerCase())) {
+                $(this).hide(1000);
+              } else {
+                $(this).show(1000);
+              }
             }
-          } else {
-            if (!id.includes(value[0].toLowerCase()) || !status.includes(value[1].replace(' ', '').toLowerCase())) {
-              $(this).hide(1000);
-            } else {
-              $(this).show(1000);
-            }
-          }
+          });
         });
-      });
+
+        var geoError = function(error) {
+          console.log('Error occurred. Error code: ' + error.code);
+          // error.code can be:
+          //   0: unknown error
+          //   1: permission denied
+          //   2: position unavailable (error response from location provider)
+          //   3: timed out
+        };
+
+        navigator.geolocation.getCurrentPosition(geoSuccess, geoError, geoOptions);
+      };
 
       $(function() {
         var chatWidget = new PusherChatWidgetDashboard(pusher, {
@@ -401,6 +379,4 @@
         });
       });
     </script>
-    <!-- Google Maps -->
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAMjB9eA7xTNXxROIy_4IS4HbuijRQ84YA&signed_in=true&callback=initMap" async defer></script>
 @endsection

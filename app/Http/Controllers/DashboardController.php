@@ -18,6 +18,7 @@ use PusherManager;
 use App\TimesheetTask;
 use App\Http\Requests;
 use App\UserOpenProject;
+use App\UserLocalization;
 use App\Http\Controllers\Controller;
 
 class DashboardController extends Controller
@@ -144,9 +145,29 @@ class DashboardController extends Controller
                       ->whereRaw('wp2.parent_id = wp1.id');
             })->whereIn('project_id', $user_projects)->take(5)->get();
             $data['tasks'] = $tasks;
+
+            //   $locations = UserLocalization::groupBy('user_id', 'desc')->get();
+
+            $sub = UserLocalization::orderBy('created_at','desc');
+
+            $locations_db = DB::table(DB::raw("({$sub->toSql()}) as sub"))->groupBy('user_id')->get();
+
+            $locations = array();
+
+            $count = 0;
+            foreach ($locations_db as $location) {
+              $user = User::find($location->user_id);
+              $locations[] = array($user->first_name . ' ' . $user->last_name, $location->latitude, $location->longitude, $count);
+              $count++;
+            }
+
+            $data['locations'] = $locations;
+
+            // die(d($locations));
         } catch (Exception $e) {
             $data['tasks'] = array();
             $data['message-op'] = true;
+            $data['locations'] = array();
         }
 
         // Return the dashboard view.
