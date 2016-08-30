@@ -109,7 +109,11 @@
             </tbody>
           </table>
           <hr class="clearfix" />
-          <h2>{{ $data['user']->first_name }} {{ $data['user']->last_name }}</h2>
+          <div class="photo-timesheet"><img src="{{ (Auth::user()->getEloquent() ? URL::to(Auth::user()->getEloquent()->photo) : '') }}"></div>
+          <div class="photo-name">
+            <h2>{{ $data['user']->first_name }} {{ $data['user']->last_name }}</h2>
+            <h4>{{ $data['user']->roles()->first()->display_name }}</h4>
+          </div>
           <table id="month-table" class="table table-responsive table-hover table-border table-striped table-bordered">
             <thead>
               <tr>
@@ -245,12 +249,12 @@
         var edit = $('<td>');
 
         date.html('<input id="date_new" class="form-control" type="text" id="date_new" value="' + $('.tasks-day:last').html() + '"/>');
-        start.html('<input class="form-control time" type="text" id="start_new" value="08:00"/>');
-        lunch_start.html('<input class="form-control time" type="text" id="lunch_start_new" value="12:00"/>');
-        lunch_end.html('<input class="form-control time" type="text" id="lunch_end_new" value="13:00"/>');
-        end.html('<input class="form-control time" type="text" id="end_new" value="17:00"/>');
-        nightly_start.html('<input class="form-control time" type="text" id="nightly_start_new" value="00:00"/>');
-        nightly_end.html('<input class="form-control time" type="text" id="nightly_end_new" value="00:00"/>');
+        start.html('<input class="form-control time" type="text" id="start_new" value="08:00:00" data-mask="99:99:99"/>');
+        lunch_start.html('<input class="form-control time" type="text" id="lunch_start_new" value="12:00:00" data-mask="99:99:99"/>');
+        lunch_end.html('<input class="form-control time" type="text" id="lunch_end_new" value="13:00:00" data-mask="99:99:99"/>');
+        end.html('<input class="form-control time" type="text" id="end_new" value="17:00:00" data-mask="99:99:99"/>');
+        nightly_start.html('<input class="form-control time" type="text" id="nightly_start_new" value="00:00:00" data-mask="99:99:99"/>');
+        nightly_end.html('<input class="form-control time" type="text" id="nightly_end_new" value="00:00:00" data-mask="99:99:99"/>');
         edit.html('<a data-id="new" class="btn btn-success pull-right save-row">' + "{!! Lang::get('general.save') !!}" + '</a>');
 
         var row = $('<tr>');
@@ -281,12 +285,12 @@
         var nightly_start = par.children("td:nth-child(7)");
         var nightly_end = par.children("td:nth-child(8)");
 
-        start.html('<input class="form-control time" type="text" id="start_' + $(this).data('id') + '" value="' + start.html() + '"/>');
-        lunch_start.html('<input class="form-control time" type="text" id="lunch_start_' + $(this).data('id') + '" value="' + lunch_start.html() + '"/>');
-        lunch_end.html('<input class="form-control time" type="text" id="lunch_end_' + $(this).data('id') + '" value="' + lunch_end.html() + '"/>');
-        end.html('<input class="form-control time" type="text" id="end_' + $(this).data('id') + '" value="' + end.html() + '"/>');
-        nightly_start.html('<input class="form-control time" type="text" id="nightly_start_' + $(this).data('id') + '" value="' + nightly_start.html() + '"/>');
-        nightly_end.html('<input class="form-control time" type="text" id="nightly_end_' + $(this).data('id') + '" value="' + nightly_end.html() + '"/>');
+        start.html('<input class="form-control time" type="text" id="start_' + $(this).data('id') + '" value="' + start.html() + '" data-mask="99:99:99"/>');
+        lunch_start.html('<input class="form-control time" type="text" id="lunch_start_' + $(this).data('id') + '" value="' + lunch_start.html() + '" data-mask="99:99:99"/>');
+        lunch_end.html('<input class="form-control time" type="text" id="lunch_end_' + $(this).data('id') + '" value="' + lunch_end.html() + '" data-mask="99:99:99"/>');
+        end.html('<input class="form-control time" type="text" id="end_' + $(this).data('id') + '" value="' + end.html() + '" data-mask="99:99:99"/>');
+        nightly_start.html('<input class="form-control time" type="text" id="nightly_start_' + $(this).data('id') + '" value="' + nightly_start.html() + '" data-mask="99:99:99"/>');
+        nightly_end.html('<input class="form-control time" type="text" id="nightly_end_' + $(this).data('id') + '" value="' + nightly_end.html() + '" data-mask="99:99:99"/>');
       
         // $('.time').wickedpicker({twentyFour: true});
 
@@ -295,8 +299,6 @@
       });
 
       $('table').on('click', '.save-row', function() {
-        console.log($('#user_id').val());
-        console.log($(this).data('id'));
         var data = {
           user_id: $('#user_id').val(),
           id:  $(this).data('id'),
@@ -311,8 +313,6 @@
 
         $(this).hide();
 
-        console.log(data);
-
         $.ajax({
           url: '/general/changeDay',
           data: data,
@@ -326,10 +326,18 @@
               html += '<div class="alert alert-danger alert-dismissable">';
               html += '  <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>';
               html += '  <h4>    <i class="icon fa fa-error"></i> ' + "{!! Lang::get('general.failed') !!}" + '!</h4>';
-              html += "{!! Lang::get('general.error') !!}";
+              if (data != 'false')
+                html += data;
+              else
+                html += "{!! Lang::get('general.error') !!}";
               html += '</div>';
 
-              $('#message').append(html);
+              $(this).show();
+              $('#messages').html(html);
+
+              $('html, body').animate({
+                scrollTop: $("#messages").offset().top
+              }, 2000);
             }
           }
         });

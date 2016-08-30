@@ -546,7 +546,7 @@ class GeneralController extends Controller {
         $tminutes = (float)($minutes / 60);
         $day_time = (($hours <= 9 ? "0" . $hours : $hours) . ":" . ($minutes <= 9 ? "0" . $minutes : $minutes)) . ":" . $seconds;
 
-        $status = false;
+        $status = 'false';
 
         try {
             DB::beginTransaction();
@@ -580,7 +580,7 @@ class GeneralController extends Controller {
                         $status = 'false';
                     }
                 } else {
-                    $status = 'false';
+                    return 'Não pode adicionar uma data já existente, altere-a em sua linha.';
                 }
             } else {
                 $workday = Timesheet::find($inputs['id']);
@@ -677,9 +677,34 @@ class GeneralController extends Controller {
             );
 
             $timesheet_task = TimesheetTask::create( $timesheet_task );
+
+            if (!$timesheet_task) {
+                DB::rollback();
+                Log::error($e);
+                Log::error($time_entry);
+                Log::error($work_package);
+                Log::error($timesheet_task);
+
+                return 'false';
+            }
         } else {
             $timesheet_task = TimesheetTask::find($inputs['id']);
+
+            $timesheet_task->project_id = $inputs['project_id'];
+            $timesheet_task->work_package_id = $inputs['task_id'];
+            $timesheet_task->start =  $inputs['start'];
+            $timesheet_task->end = $inputs['end'];
+            $timesheet_task->hours = $time;
+
+            if (!$timesheet_task->save()) {
+                DB::rollback();
+                return 'false';
+            }
         }
+
+        Log::debug($inputs);
+        Log::debug($time);
+        Log::debug($timesheet_task);
 
         $user_open_project = UserOpenProject::where('login', 'LIKE', Auth::user()->getEloquent()->username . '@%')->orWhere('mail', 'LIKE', Auth::user()->getEloquent()->username . '@%')->get()->first();
 
@@ -894,15 +919,6 @@ class GeneralController extends Controller {
 
             $workday = Timesheet::find($inputs['workday_id']);
 
-            foreach ($managers_ids as $manager_id) {
-                $notification = array(
-                    'user_id' => $manager_id->user_id,
-                    'message' => htmlentities(Lang::get('timesheets.message-send_request', array('name' => Auth::user()->first_name, 'start' => $inputs['start'], 'lunch_start' => $inputs['lunch_start'], 'lunch_end' => $inputs['lunch_end'], 'end' => $inputs['end']))),
-                    'faicon' => 'clock-o'
-                    );
-                $this->createNotification($manager_id->user_id, $notification);
-            }
-
             $data['name'] = Auth::user()->first_name . ' ' . Auth::user()->last_name;
             $data['email'] = Auth::user()->getEloquent()->email;
             $data['start'] = ($inputs['start'] != "" ? $inputs['start'] : '---');
@@ -911,6 +927,15 @@ class GeneralController extends Controller {
             $data['end'] = ($inputs['end'] != "" ? $inputs['end'] : '---');
             $day = explode('-', $workday->workday);
             $data['day'] = $day[2] . '/' . $day[1] . '/' . $day[0];
+
+            foreach ($managers_ids as $manager_id) {
+                $notification = array(
+                    'user_id' => $manager_id->user_id,
+                    'message' => Lang::get('timesheets.message-send_request', array('name' => Auth::user()->first_name, 'day' => $data['day'], 'start' => $inputs['start'], 'lunch_start' => $inputs['lunch_start'], 'lunch_end' => $inputs['lunch_end'], 'end' => $inputs['end'])),
+                    'faicon' => 'clock-o'
+                    );
+                $this->createNotification($manager_id->user_id, $notification);
+            }
 
             foreach ($managers_ids as $manager_id) {
                 $manager = User::find($manager_id->user_id);
@@ -1811,17 +1836,21 @@ class GeneralController extends Controller {
         $day_in_minutes += $hour * 60;
         $day_in_minutes += $minute;
 
-        if ($hours_day > $day_in_minutes)
-         $day_in_minutes = $hours_day - $day_in_minutes;
-         else
+        $over = false;
+
+        if ($hours_day > $day_in_minutes) {
+            $day_in_minutes = $hours_day - $day_in_minutes;
+        } else {
             $day_in_minutes -= $hours_day;
+            $over = true;
+        }
 
         $seconds = '00';
         $hours = floor($day_in_minutes / 60);
         $minutes = ($day_in_minutes % 60);
         $time = (($hours <= 9 ? "0" . $hours : $hours) . ":" . ($minutes <= 9 ? "0" . $minutes : $minutes)) . ":" . $seconds;
 
-        if ($hours_day > $day_in_minutes){
+        if (!$over){
             $info['time_debit'] = '- ' . $time;
             $info['time_credit'] = '00:00:00';
         }

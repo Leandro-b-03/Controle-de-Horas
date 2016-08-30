@@ -122,7 +122,7 @@
                       @foreach (Auth::user()->getEloquent()->getNotifications()->orderBy('created_at', 'desc')->get() as $notification)
                       <li>
                         <a href="{!! $notification->href !!}">
-                          <i class="fa fa-{!! $notification->faicon !!} text-aqua"></i> {!! $notification->message !!}
+                          <i class="fa fa-{!! $notification->faicon !!} text-aqua"></i> {!! substr($notification->message, 0, 40) !!}
                         </a>
                       </li>
                       @endforeach

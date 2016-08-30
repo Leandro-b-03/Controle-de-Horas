@@ -146,7 +146,7 @@ return [
     // Sentences with variable :string
     'member-since'                  => 'Membro desde :month-year',
     'navbar-message'                => '{0}Voc&ecirc; não possui mensagens|{1}Voc&ecirc; tem :count mensagens|[2,Inf]Voc&ecirc; tem :count mensagens',
-    'navbar-notification'           => '{0}Voc&ecirc; não possui notifica&ccedil;&atilde;es|{1}Voc&ecirc; tem :count notifica&ccedil;&atilde;o|[2,Inf]Voc&ecirc; tem :count notifica&ccedil;&atilde;es',
+    'navbar-notification'           => '{0}Voc&ecirc; não possui notifica&ccedil;&atilde;es|{1}Voc&ecirc; tem <span id="counter">:count</span> notifica&ccedil;&atilde;o|[2,Inf]Voc&ecirc; tem <span id="counter">:count</span> notifica&ccedil;&atilde;es',
     'navbar-tasks'                  => '{0}Voc&ecirc; não possui tarefas|{1}Voc&ecirc; tem :count notifica&ccedil;&atilde;o|[2,Inf]Voc&ecirc; tem :count tarefas',
     'all-messages'                  => 'Ver todas as mensagens',
     'all-notifications'             => 'Ver todas notifica&ccedil;&atilde;es',

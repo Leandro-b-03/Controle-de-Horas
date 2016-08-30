@@ -73,7 +73,21 @@
                 </div>
                 <div class="form-group col-xs-5">
                   <label for="default_theme">{!! Lang::get('settings.label-default_theme') !!}</label>
-                  <input type="text" class="form-control" name="default_theme" id="default_theme"  value="{!! (isset($data['settings']) ? $data['settings']->default_theme : (Request::old('default_theme') ? Request::old('default_theme') : '')) !!}" placeholder="{!! Lang::get('settings.ph-default_theme') !!}" data-validation="length" data-validation-length="3-40" data-validation-error-msg="{!! Lang::get('settings.error-default_theme') !!}" required>
+                  <select type="text" class="form-control" name="default_theme" id="default_theme"  value="{!! (isset($data['settings']) ? $data['settings']->default_theme : (Request::old('default_theme') ? Request::old('default_theme') : '')) !!}" data-validation-error-msg="{!! Lang::get('settings.error-default_theme') !!}" required>
+                    <option value="">{{ Lang::get('general.select') }}</option>
+                    <option value="skin-blue" {{ ($data['settings']->default_theme == 'skin-blue' ? 'selected' : '') }}>Blue</option>
+                    <option value="skin-black" {{ ($data['settings']->default_theme == 'skin-black' ? 'selected' : '') }}>Black</option>
+                    <option value="skin-purple" {{ ($data['settings']->default_theme == 'skin-purple' ? 'selected' : '') }}>Purple</option>
+                    <option value="skin-green" {{ ($data['settings']->default_theme == 'skin-green' ? 'selected' : '') }}>Green</option>
+                    <option value="skin-red" {{ ($data['settings']->default_theme == 'skin-red' ? 'selected' : '') }}>Red</option>
+                    <option value="skin-yellow" {{ ($data['settings']->default_theme == 'skin-yellow' ? 'selected' : '') }}>Yellow</option>
+                    <option value="skin-blue-light" {{ ($data['settings']->default_theme == 'skin-blue-light' ? 'selected' : '') }}>Blue Light</option>
+                    <option value="skin-black-light" {{ ($data['settings']->default_theme == 'skin-black-light' ? 'selected' : '') }}>Black Light</option>
+                    <option value="skin-purple-light" {{ ($data['settings']->default_theme == 'skin-purple-light' ? 'selected' : '') }}>Purple Light</option>
+                    <option value="skin-green-light" {{ ($data['settings']->default_theme == 'skin-green-light' ? 'selected' : '') }}>Green Light</option>
+                    <option value="skin-red-light" {{ ($data['settings']->default_theme == 'skin-red-light' ? 'selected' : '') }}>Red Light</option>
+                    <option value="skin-yellow-light" {{ ($data['settings']->default_theme == 'skin-yellow-light' ? 'selected' : '') }}>Yellow Light</option>
+                  </select>
                 </div>
                 <div class="form-group col-xs-2">
                   <label for="maintenance">{!! Lang::get('settings.label-maintenance') !!}</label>

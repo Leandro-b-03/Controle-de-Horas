@@ -3,8 +3,8 @@
     <ul class="notification notification-inverse">
       @foreach ($data['notifications'] as $notification)
       <li>
-        <a class="notification-select" href="#" data-object='{!! $notification !!}'>
-          <i class="fa fa-{!! $notification->faicon !!} text-aqua"></i> {!! $notification->message !!}
+        <a class="notification-select" href="#" data-message='{!! str_replace('\r\n','', str_replace('\/','', str_replace('\>','', $notification->message))) !!}'>
+          <i class="fa fa-{!! $notification->faicon !!} text-aqua"></i> {!! substr($notification->message, 0, 40) !!}
         </a>
       </li>
       @endforeach
@@ -19,8 +19,9 @@
   $('.notification-select').each(function() {
     $(this).click(function() {
       var html = '';
+      console.log($(this).data('message'));
       html += '<h4>Sistema Informa</h4>';
-      html += '<p>' + $(this).data('object').message + '</p>';
+      html += '<p>' + $(this).data('message') + '</p>';
 
       $('.notification-view').html('');
       $('.notification-view').html(html);
