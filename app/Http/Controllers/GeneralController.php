@@ -1188,17 +1188,6 @@ class GeneralController extends Controller {
                 } else {
                     $seconds = "00";
 
-                    $diffTime = $today->diffInMinutes(new Carbon($workday->updated_at));
-
-                    if ($diffTime < 1) {
-                        $receive = array("status" => "200",
-                            "cpf" => $inputs['cpf'],
-                            "diffTime" => $diffTime,
-                            "message" => "Already checked");
-                        
-                        return response()->json($receive);
-                    }
-
                     if ($inputs['shift'] == "lunch_start") {
                         if (($today->hour >= 11) && $today->hour <= 15) {
                             $workday->lunch_start = $today->toTimeString();
@@ -1897,7 +1886,7 @@ class GeneralController extends Controller {
 
         if (!UserNotification::create($notification)) {
             $notification_fail['message'] = Lang::get('general.failed-notification');
-            $notification_fail['faicon'] = 'times';
+            $notification_fail['faicon'] = 'fa-times-circle-o';
             PusherManager::trigger('presence-user-' . Auth::user()->id, 'new_notification', $notification_fail);
         }
     }
