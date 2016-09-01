@@ -11,7 +11,11 @@ use Illuminate\Support\Facades\URL;
 
 class GeneralHelper {
 
-    public static function getHoursTotal ($total, $nightly) {
+    /*
+     * Get the total the hour of a employee
+     */
+    public static function getHoursTotal ($total, $nightly)
+    {
         if ($total) {
             $total = new Carbon($total);
             
@@ -36,7 +40,8 @@ class GeneralHelper {
         }
     }
 
-    public static function getWeekDay ($workday) {
+    public static function getWeekDay ($workday)
+    {
         $date = strftime('%A', strtotime($workday));
 
         $date = ucwords(strtolower($date));
@@ -50,11 +55,13 @@ class GeneralHelper {
         return utf8_encode($date);
     }
 
-    public static function withoutSeconds ($time) {
+    public static function withoutSeconds ($time)
+    {
         return date('g:ia', strtotime($time));
     }
 
-    public static function getBgStatus ($status) {
+    public static function getBgStatus ($status)
+    {
         switch ($status) {
             case 1:
                 return 'bg-blue';
@@ -69,7 +76,8 @@ class GeneralHelper {
         }
     }
 
-    public static function getOvertime ($user_id) {
+    public static function getOvertime ($user_id)
+    {
         // Get the overtime
         $overtime = Overtime::where('user_id', $user_id)->get()->first();
 

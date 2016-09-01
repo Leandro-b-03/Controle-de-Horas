@@ -71,7 +71,7 @@
                   <label for="locktime">{!! Lang::get('settings.label-locktime') !!}</label>
                   <input type="number" class="form-control" name="locktime" id="locktime"  value="{!! (isset($data['settings']) ? $data['settings']->locktime : (Request::old('locktime') ? Request::old('locktime') : '')) !!}" placeholder="{!! Lang::get('settings.ph-locktime') !!}" data-validation="number length" data-validation-length="1-5" data-validation-error-msg="{!! Lang::get('settings.error-locktime') !!}" required>
                 </div>
-                <div class="form-group col-xs-5">
+                <div class="form-group col-xs-3">
                   <label for="default_theme">{!! Lang::get('settings.label-default_theme') !!}</label>
                   <select type="text" class="form-control" name="default_theme" id="default_theme"  value="{!! (isset($data['settings']) ? $data['settings']->default_theme : (Request::old('default_theme') ? Request::old('default_theme') : '')) !!}" data-validation-error-msg="{!! Lang::get('settings.error-default_theme') !!}" required>
                     <option value="">{{ Lang::get('general.select') }}</option>
@@ -88,6 +88,10 @@
                     <option value="skin-red-light" {{ ($data['settings']->default_theme == 'skin-red-light' ? 'selected' : '') }}>Red Light</option>
                     <option value="skin-yellow-light" {{ ($data['settings']->default_theme == 'skin-yellow-light' ? 'selected' : '') }}>Yellow Light</option>
                   </select>
+                </div>
+                <div class="form-group col-xs-3">
+                  <label for="idle_time">{!! Lang::get('settings.label-idle_time') !!}</label>
+                  <input type="number" class="form-control" name="idle_time" id="idle_time"  value="{!! (isset($data['settings']) ? $data['settings']->idle_time : (Request::old('idle_time') ? Request::old('idle_time') : '')) !!}" placeholder="{!! Lang::get('settings.ph-idle_time') !!}" data-validation="number length" data-validation-length="1-5" data-validation-error-msg="{!! Lang::get('settings.error-idle_time') !!}" required>
                 </div>
                 <div class="form-group col-xs-2">
                   <label for="maintenance">{!! Lang::get('settings.label-maintenance') !!}</label>

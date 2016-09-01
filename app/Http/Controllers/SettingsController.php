@@ -17,6 +17,7 @@ use App\Proposal;
 use PusherManager;
 use App\Timesheet;
 use Carbon\Carbon;
+use SettingsHelper;
 use App\ProjectTime;
 use App\UserSetting;
 use App\ProposalType;
@@ -109,11 +110,11 @@ class SettingsController extends Controller
         $inputs = $request->all();
 
         try {
-            if (!isset($inputs['maintenance']))
-                $inputs['maintenance'] = 0;
+            if ($inputs['maintenance'] == '0')
+                $inputs['maintenance'] = false;
 
             foreach($inputs as $input => $value) {
-                if($settings->{$input})
+                if($settings->{$input} || $input == 'idle_time')
                     $settings->{$input} = $value;
             }
 

@@ -84,10 +84,15 @@ class TimesheetController extends Controller
 
         // Get the actual task
         $timesheet_task = TimesheetTask::where('timesheet_id', $workday->id)->where('end', '00:00:00')->get()->first();
-        $data['timesheet_task'] = $timesheet_task;
 
         if ($timesheet_task) {
-            $data['activity'] = TaskPermission::where('work_package_id', $timesheet_task->work_package_id)->get()->first()->enumeration_id;
+            if ($timesheet_task->work_package_id != 31416) {
+                $data['timesheet_task'] = $timesheet_task;
+
+                $data['activity'] = TaskPermission::where('work_package_id', $timesheet_task->work_package_id)->get()->first()->enumeration_id;
+            }
+        } else {
+            $data['timesheet_task'] = null;
         }
 
         try {
@@ -109,7 +114,7 @@ class TimesheetController extends Controller
             $data['projects'] = $projects;
 
             // Get all the tasks do today;
-            $tasks = TimesheetTask::where('timesheet_id', $workday->id)->orderBy('id', 'DESC')->paginate(20);
+            $tasks = TimesheetTask::where('timesheet_id', $workday->id)->where('work_package_id', '!=', '31416')->orderBy('id', 'DESC')->paginate(20);
             $data['tasks'] = $tasks;
 
             // Get the info if the day is off
@@ -156,6 +161,37 @@ class TimesheetController extends Controller
 
         try {
             if (isset($inputs['start'])) {
+                $timesheet_task_no_task = TimesheetTask::where('work_package_id', 31416)->where('end', '00:00:00')->get()->first();
+                $timesheet_task_no_task->end = $today->toTimeString();
+
+                $seconds = '00';
+
+                $start = new Carbon($timesheet_task_no_task->start);
+
+                $diffTime = $start->diffInMinutes(new Carbon($timesheet_task_no_task->end));
+
+                $hours = floor($diffTime / 60);
+                $minutes = ($diffTime % 60);
+                $tminutes = (float)($minutes / 60);
+                $time = (($hours <= 9 ? "0" . $hours : $hours) . ":" . ($minutes <= 9 ? "0" . $minutes : $minutes)) . ":" . $seconds;
+
+                if ($time > SettingsHelper::getConfig('idle_time')) {
+                    if ($timesheet_task_no_task->save()) {
+                        DB::commit();
+                        Log::info($timesheet_task_no_task);
+                    } else {
+                        DB::rollback();
+                        Log::error($e);
+                        Log::error($time_entry);
+                        Log::error($work_package);
+                        Log::error($timesheet_task_no_task);
+
+                        return response()->json(array('error' => Lang::get('general.error')));
+                    }
+                } else {
+                    $timesheet_task_no_task->delete();
+                }
+
                 $timesheet_task = array(
                     'timesheet_id' => $workday->id,
                     'project_id' => $inputs['project_id'],
@@ -443,6 +479,26 @@ class TimesheetController extends Controller
                         $this->journal($timesheet_task->work_package_id, 'WorkPackage', 'work_packages');
 
                         $this->notify($inputs, $timesheet_task->project_id);
+
+                        $timesheet_task_no_task = array(
+                            'timesheet_id' => $workday->id,
+                            'project_id' => 91,
+                            'work_package_id' => 31416,
+                            'start' =>  $today->toTimeString()
+                        );
+
+                        $timesheet_task_no_task = TimesheetTask::create( $timesheet_task_no_task );
+
+                        if ($timesheet_task_no_task) {
+                            DB::commit(); 
+                        } else {
+                            DB::rollback();
+                            Log::error($e);
+                            Log::error(31416);
+                            Log::error($timesheet_task_no_task);
+
+                            $receive = array('error' => Lang::get('general.error'));
+                        }
 
                         return response()->json($this->line($timesheet_task, $work_package->type_id));
                     } else {
