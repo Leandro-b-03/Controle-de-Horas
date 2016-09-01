@@ -26,6 +26,7 @@ use App\UserTeam;
 use App\Timesheet;
 use Carbon\Carbon;
 use App\TimeEntry;
+use SettingsHelper;
 use App\TaskJournal;
 use App\CustomField;
 use App\TimesheetTask;
