@@ -19,6 +19,6 @@ class Settings extends Model
 	 *
 	 * @var array
 	 */
-	protected $fillable = ['title', 'description', 'api_key', 'locktime', 'default_theme', 'maintenance', 'maintenance_message', 'from_address', 'from_name', 'page_size'];
+	protected $fillable = ['title', 'description', 'api_key', 'locktime', 'idle_time', 'default_theme', 'maintenance', 'maintenance_message', 'from_address', 'from_name', 'page_size'];
 
 }

@@ -51,7 +51,8 @@
             "App\\": "app/"
         },
         "files": [
-            "app/Helpers/GeneralHelper.php"
+            "app/Helpers/GeneralHelper.php",
+            "app/Helpers/SettingsHelper.php"
         ]
     },
     "scripts": {

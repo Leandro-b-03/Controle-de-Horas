@@ -118,6 +118,26 @@ class DashboardController extends Controller
                 if ($timesheet) {
                     DB::commit();
                 }
+
+                $timesheet_task = array(
+                    'timesheet_id' => $timesheet->id,
+                    'project_id' => 91,
+                    'work_package_id' => 31416,
+                    'start' =>  $today->toTimeString()
+                );
+
+                $timesheet_task = TimesheetTask::create( $timesheet_task );
+
+                if ($timesheet_task) {
+                    DB::commit(); 
+                } else {
+                    DB::rollback();
+                    Log::error($e);
+                    Log::error($work_package);
+                    Log::error($timesheet_task);
+
+                    $receive = array('error' => Lang::get('general.error'));
+                }
             }
         } catch (Exception $e) {
             DB::rollback();
