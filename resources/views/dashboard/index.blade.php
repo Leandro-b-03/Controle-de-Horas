@@ -350,13 +350,14 @@
       function setMarkers(map) {
         for (var i = 0; i < users.length; i++) {
           var user = users[i];
+          var latlng = { lat: parseFloat(user[1]), lng: parseFloat(user[2]) };
+          console.log(latlng);
           var marker = new google.maps.Marker({
-            position: new google.maps.LatLng(parseInt(user[1]), parseInt(user[2])),
+            position: latlng,
             map: map,
             title: user[0],
             zIndex: user[3]
           });
-          return;
         }
       }
 

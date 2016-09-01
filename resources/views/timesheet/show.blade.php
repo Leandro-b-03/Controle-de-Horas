@@ -81,28 +81,28 @@
             </thead>
             <tbody>
               <tr>
-                <th>{!! Lang::get('timesheets.title-total_hours') !!}</th>
-                <td>{!! $data['total_month_hours']['month_hours'] !!}</td>
+                {{-- <th>{!! Lang::get('timesheets.title-total_hours') !!}</th>
+                <td>{!! $data['total_month_hours']['month_hours'] !!}</td> --}}
               </tr>
               <tr>
                 <th>{!! Lang::get('timesheets.title-total_work_month') !!}</th>
                 <td>{!! $data['total_month_hours']['work_month_hours'] !!}</td>
               </tr>
               <tr>
-                <th>{!! Lang::get('timesheets.title-total_credit') !!}</th>
-                <td>{!! $data['total_month_hours']['time_credit'] !!}</td>
+                {{-- <th>{!! Lang::get('timesheets.title-total_credit') !!}</th>
+                <td>{!! $data['total_month_hours']['time_credit'] !!}</td> --}}
               </tr>
               <tr>
-                <th>{!! Lang::get('timesheets.title-total_debit') !!}</th>
-                <td>{!! $data['total_month_hours']['time_debit'] !!}</td>
+                {{-- <th>{!! Lang::get('timesheets.title-total_debit') !!}</th>
+                <td>{!! $data['total_month_hours']['time_debit'] !!}</td> --}}
               </tr>
               <tr>
                 <th>{!! Lang::get('timesheets.title-total_loitered') !!}</th>
                 <td>00:00:00</td>
               </tr>
               <tr>
-                <th>{!! Lang::get('timesheets.title-total_credit_debit') !!}</th>
-                <td>{!! $data['overtime']->hours or '00:00:00' !!}</td>
+                {{-- <th>{!! Lang::get('timesheets.title-total_credit_debit') !!}</th>
+                <td>{!! $data['overtime']->hours or '00:00:00' !!}</td> --}}
               </tr>
             </tbody>
           </table>

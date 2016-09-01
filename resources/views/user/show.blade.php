@@ -82,34 +82,34 @@
               </tr>
             </thead>
             <tbody>
-              <tr>
+              {{-- <tr>
                 <th>{!! Lang::get('timesheets.title-total_hours') !!}</th>
                 <td>{!! $data['total_month_hours']['month_hours'] !!}</td>
-              </tr>
+              </tr> --}}
               <tr>
                 <th>{!! Lang::get('timesheets.title-total_work_month') !!}</th>
                 <td>{!! $data['total_month_hours']['work_month_hours'] !!}</td>
               </tr>
-              <tr>
+              {{-- <tr>
                 <th>{!! Lang::get('timesheets.title-total_credit') !!}</th>
                 <td>{!! $data['total_month_hours']['time_credit'] !!}</td>
               </tr>
               <tr>
                 <th>{!! Lang::get('timesheets.title-total_debit') !!}</th>
                 <td>{!! $data['total_month_hours']['time_debit'] !!}</td>
-              </tr>
+              </tr> --}}
               <tr>
                 <th>{!! Lang::get('timesheets.title-total_loitered') !!}</th>
                 <td>00:00:00</td>
               </tr>
-              <tr>
+              {{-- <tr>
                 <th>{!! Lang::get('timesheets.title-total_credit_debit') !!}</th>
                 <td>{!! $data['overtime']->hours or '00:00:00' !!}</td>
-              </tr>
+              </tr> --}}
             </tbody>
           </table>
           <hr class="clearfix" />
-          <div class="photo-timesheet"><img src="{{ (Auth::user()->getEloquent() ? URL::to(Auth::user()->getEloquent()->photo) : '') }}"></div>
+          <div class="photo-timesheet"><img src="{{ $data['user']->photo }}"></div>
           <div class="photo-name">
             <h2>{{ $data['user']->first_name }} {{ $data['user']->last_name }}</h2>
             <h4>{{ $data['user']->roles()->first()->display_name }}</h4>
