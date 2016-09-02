@@ -344,7 +344,7 @@ class GeneralController extends Controller {
     {
         $inputs = $request->all();
 
-        $tasks = DB::connection('openproject')->select(DB::raw('select distinct *, node.id, node.description, node.type_id, node.status_id, node.subject, group_concat(parent.subject order by parent.lft separator \'/ \' ) as path, (count(parent.lft) - 1) AS depth, (select from_id from relations where node.id = from_id and relation_type = \'precedes\') as from_id, (select to_id from relations where node.id = to_id and relation_type = \'precedes\') as to_id from work_packages as node inner join work_packages as parent on node.lft between parent.lft and parent.rgt and parent.project_id = :project_id where not exists (select 1 from `work_packages` as `wp2` where wp2.parent_id = node.id) and node.project_id = :project_id_2 and node.type_id != 2 and node.status_id != 11 group by node.lft, node.subject order by node.lft, node.start_date, from_id, to_id'), array('project_id' => $inputs['id'], 'project_id_2' => $inputs['id']));
+        $tasks = DB::connection('openproject')->select(DB::raw('SELECT CONCAT(IF(ISNULL(wp3.subject), \'\', CONCAT(wp3.subject, \'/ \')), IF(ISNULL(wp2.subject), \'\', wp2.subject)) AS path, wp1.* FROM work_packages wp1 LEFT JOIN work_packages wp2 ON wp1.parent_id = wp2.id LEFT JOIN work_packages wp3 ON wp2.parent_id = wp3.id WHERE NOT EXISTS( SELECT 1 FROM `work_packages` AS `wp2` WHERE wp2.parent_id = wp1.id) AND wp1.type_id != 2 AND wp1.status_id != 11 AND wp1.project_id = :project_id ORDER BY wp1.lft , wp1.start_date'), array('project_id' => $inputs['id']));
 
         $order_tasks = array();
 
