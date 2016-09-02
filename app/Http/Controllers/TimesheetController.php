@@ -162,7 +162,7 @@ class TimesheetController extends Controller
 
         try {
             if (isset($inputs['start'])) {
-                $timesheet_task_no_task = TimesheetTask::where('work_package_id', 31416)->where('end', '00:00:00')->get()->first();
+                $timesheet_task_no_task = TimesheetTask::where('work_package_id', 31416)->where('timesheet_id', $workday->id)->where('end', '00:00:00')->get()->first();
                 $timesheet_task_no_task->end = $today->toTimeString();
 
                 $seconds = '00';
