@@ -2,20 +2,20 @@
   <li class="header">{!! Lang::get('general.nav-menu') !!}</li>
   <li {!! ((Request::is('dashboard/*') || Request::is('dashboard')) ? 'class="active"' : '') !!}>
     <a href="{!! URL::to('dashboard') !!}">
-      <i class="fa fa-dashboard"></i> <span>{!! Lang::get('general.dashboard') !!}</span></i>
+      <i class="fa fa-dashboard"></i> <span>{!! Lang::get('general.dashboard') !!}</span>
     </a>
   </li>
   @if(Entrust::can(['TimesheetController@index']))
   <li {!! ((Request::is('timesheets/*') || Request::is('timesheets')) ? 'class="active"' : '') !!}>
     <a href="{!! URL::to('timesheets') !!}">
-      <i class="fa fa-clock-o"></i> <span>{!! Lang::get('general.timesheets') !!}</span></i>
+      <i class="fa fa-clock-o"></i> <span>{!! Lang::get('general.timesheets') !!}</span>
     </a>
   </li>
   @endif
   @if(Entrust::can(['DataImportController@index']))
   <li {!! ((Request::is('import/*') || Request::is('import')) ? 'class="active"' : '') !!}>
     <a href="{!! URL::to('import') !!}">
-      <i class="fa fa-upload"></i> <span>{!! Lang::get('general.import') !!}</span></i>
+      <i class="fa fa-upload"></i> <span>{!! Lang::get('general.import') !!}</span>
     </a>
   </li>
   @endif
@@ -30,21 +30,21 @@
       <!-- @if(Entrust::can(['ProposalController@index']))
       <li {!! ((Request::is('proposals/*') || Request::is('proposals')) ? 'class="active"' : '') !!}>
         <a href="{!! URL::to('proposals') !!}">
-          <i class="fa fa-briefcase"></i> <span>{!! Lang::get('general.proposals') !!}</span></i>
+          <i class="fa fa-briefcase"></i> <span>{!! Lang::get('general.proposals') !!}</span>
         </a>
       </li>
       @endif -->
       @if(Entrust::can(['ProjectController@index']))
       <li {!! ((Request::is('projects/*') || Request::is('projects')) ? 'class="active"' : '') !!}>
         <a href="{!! URL::to('projects') !!}">
-          <i class="fa fa-wrench"></i> <span>{!! Lang::get('general.projects') !!}</span></i>
+          <i class="fa fa-wrench"></i> <span>{!! Lang::get('general.projects') !!}</span>
         </a>
       </li>
       @endif
       <!-- @if(Entrust::can(['TaskController@index']))
       <li {!! ((Request::is('tasks/*') || Request::is('tasks')) ? 'class="active"' : '') !!}>
         <a href="{!! URL::to('tasks') !!}">
-          <i class="fa fa-tasks"></i> <span>{!! Lang::get('general.tasks') !!}</span></i>
+          <i class="fa fa-tasks"></i> <span>{!! Lang::get('general.tasks') !!}</span>
         </a>
       </li>
       @endif -->

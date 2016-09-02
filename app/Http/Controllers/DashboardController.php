@@ -58,9 +58,12 @@ class DashboardController extends Controller
             $handled_user['name'] = $user->first_name . ' ' . $user->last_name;
             if ($user->timesheets()->getResults()->where('workday', $today->toDateString())->first()) {
                 if ($user->timesheets()->getResults()->where('workday', $today->toDateString())->first()->timesheetTasks()->first()) {
-                    $handled_user['project'] = $user->timesheets()->getResults()->where('workday', \Carbon\Carbon::now()->toDateString())->first()->timesheetTasks()->getResults()->first()->getProject()->getResults()->name;
+                  if (isset($handled_user['project'] = $user->timesheets()->getResults()->where('workday', \Carbon\Carbon::now()->toDateString())->first()->timesheetTasks()->getResults()->first()->getProject()->getResults()->name))
+                      $handled_user['project'] = $user->timesheets()->getResults()->where('workday', \Carbon\Carbon::now()->toDateString())->first()->timesheetTasks()->getResults()->first()->getProject()->getResults()->name;
+                    else
+                      $handled_user['project'] = 'Colaborador com erro de gravação';
                     $handled_user['task'] = $user->timesheets()->getResults()->where('workday', \Carbon\Carbon::now()->toDateString())->first()->timesheetTasks()->getResults()->first()->getTask()->getResults()->subject;
-                    if ($user->timesheets()->getResults()->where('workday', \Carbon\Carbon::now()->toDateString())->first()->timesheetTasks()->getResults()->first()->getProject()->getResults()->id != 90) {
+                    if ($user->timesheets()->getResults()->where('workday', \Carbon\Carbon::now()->toDateString())->first()->timesheetTasks()->getResults()->first()->getProject()->getResults()->id != 90 && $user->timesheets()->getResults()->where('workday', \Carbon\Carbon::now()->toDateString())->first()->timesheetTasks()->getResults()->first()->getProject()->getResults()->id != 91) {
                             $handled_user['status'] = 'Trabalhando';
                     } else {
                         $handled_user['status'] = 'Ocioso';

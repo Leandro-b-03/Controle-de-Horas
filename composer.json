@@ -34,7 +34,9 @@
         "arcanedev/settings": "^1.1",
         "guzzlehttp/guzzle": "^6.2",
         "alexpechkarev/google-maps": "^1.0",
-        "mmanos/laravel-search": "^1.0"
+        "mmanos/laravel-search": "^1.0",
+        "recca0120/laravel-tracy": "^1.7",
+        "graham-campbell/htmlmin": "^4.4"
     },
     "require-dev": {
         "fzaninotto/faker": "~1.4",

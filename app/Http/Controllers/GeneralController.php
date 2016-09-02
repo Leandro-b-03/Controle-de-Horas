@@ -836,15 +836,26 @@ class GeneralController extends Controller {
                         }
                     }
 
-                    $use_cases = array(
-                        'timesheet_task_id' => $timesheet_task->id,
-                        'ok' => $inputs['ok'],
-                        'nok' => $inputs['nok'],
-                        'impacted' => $inputs['impacted'],
-                        'cancelled' => $inputs['cancelled']
+                    $use_cases = UseCase::where('timesheet_task_id', $timesheet_task->id)->get()->last();
+
+                    if (!$use_cases) {
+                        $use_cases = array(
+                            'timesheet_task_id' => $timesheet_task->id,
+                            'ok' => (isset($inputs['ok']) ? $inputs['ok'] : 0),
+                            'nok' => (isset($inputs['nok']) ? $inputs['nok'] : 0),
+                            'impacted' => (isset($inputs['impacted']) ? $inputs['impacted'] : 0),
+                            'cancelled' => (isset($inputs['cancelled']) ? $inputs['cancelled'] : 0)
                         );
 
-                    $use_cases = UseCase::create ($use_cases);
+                        $use_cases = UseCase::create ($use_cases);
+                    } else {
+                        $use_cases->ok = (isset($inputs['ok']) ? $inputs['ok'] : 0);
+                        $use_cases->nok = (isset($inputs['nok']) ? $inputs['nok'] : 0);
+                        $use_cases->impacted = (isset($inputs['impacted']) ? $inputs['impacted'] : 0);
+                        $use_cases->cancelled = (isset($inputs['cancelled']) ? $inputs['cancelled'] : 0);
+
+                        $use_cases->save();
+                    }
 
                     if ($use_cases) {
                         DB::commit();
