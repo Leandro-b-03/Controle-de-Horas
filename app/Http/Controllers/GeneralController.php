@@ -717,7 +717,7 @@ class GeneralController extends Controller {
                 'work_package_id' => $timesheet_task->work_package_id,
                 'hours' => (float) $hours + $tminutes,
                 'comments' => 'Inserido pelo Timesheet',
-                'activity_id' => $timesheet_task->work_package_id != 31416 ? TaskPermission::where('work_package_id', $timesheet_task->work_package_id)->get()->first()->enumeration_id : 1),
+                'activity_id' => ($timesheet_task->work_package_id != 31416 ? TaskPermission::where('work_package_id', $timesheet_task->work_package_id)->get()->first()->enumeration_id : 1),
                 'spent_on' => $start->toDateString(),
                 'tyear' => $start->year,
                 'tmonth' => $start->month,
