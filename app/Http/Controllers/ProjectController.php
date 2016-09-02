@@ -40,7 +40,7 @@ class ProjectController extends Controller
                 $query->select(DB::raw(1))
                       ->from('projects AS projects2')
                       ->whereRaw('projects2.parent_id = projects.id');
-                })->paginate(15);
+                })->where('status', '!=', 9)->paginate(15);
             $data['projects'] = $projects;
         } else {
             // Get all the projects
@@ -48,7 +48,7 @@ class ProjectController extends Controller
                 $query->select(DB::raw(1))
                       ->from('projects AS projects2')
                       ->whereRaw('projects2.parent_id = projects.id');
-                })->paginate(15);
+                })->where('status', '!=', 9)->paginate(15);
             $data['projects'] = $projects;
         }
 

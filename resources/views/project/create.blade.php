@@ -22,6 +22,7 @@
             <small>{!! Lang::get('projects.edit') !!}</small>
             @endif
         </h1>
+        <h2>{{ $data['project']->name }}</h2>
         <!-- <ol class="breadcrumb">
             <li><a href="#"><i class="fa fa-dashboard"></i> Dashboard</a></li>
             <li><a href="#">Examples</a></li>
@@ -41,77 +42,63 @@
         @endif
       </div>
       <div class="row">
-        <!-- left column -->
-        <div class="col-md-12">
-          <!-- general form elements -->
-          <div class="box box-primary">
-            <div class="box-header">
-              @if (Request::is('projects/create'))
-              <h3 class="box-title">{!! Lang::get('general.create'); !!}</h3>
-              @else
-              <h3 class="box-title">{!! Lang::get('general.edit'); !!}</h3>
-              @endif
-            </div><!-- /.box-header -->
-            <!-- form start -->
-            @if (Request::is('projects/create'))
-            {!! Form::open(array('route' => 'projects.store', 'name' => 'project-form')) !!}
-            @else
-            {!! Form::open(array('route' => [ 'projects.update', $data['project']->id ], 'method' => 'PUT', 'name' => 'project-form', 'id' => 'edit')) !!}
-            @endif
-              <div class="box-body">
-                @if (!isset($data['tasks_permissions'][0]))
-                  <div class="alert alert-danger alert-dismissible">
-                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
-                    <h4><i class="icon fa fa-ban"></i> {!! Lang::get('general.alert') !!}!</h4>
-                    Você precisa ter ao menos uma ativadade cadastrada!
-                  </div>
-                @endif
-                <div class="col-md-3">
-                  <div class="col-md-12">
-                    <div id="tasks" class="box box-primary">
-                      <div class="box-header with-border">
-                        <h3 class="box-title">{!! Lang::get('general.tasks') !!}</h3>
-                      </div><!-- /.box-header -->
-                      <div class="box-body">
-                        <ul id="0" class="sortable-list">
-                        @if (isset($data['tasks_permissions'][0]))
-                        @foreach ($data['tasks_permissions'][0] as $task)
-                          <li class="badge bg-green" id="{!! $task->id !!}">{!! $task->subject !!}</li>
-                        @endforeach
-                        @endif
-                          <hr class="clear">
-                        </ul>
-                      </div><!-- /.box-body -->
-                    </div><!-- /.box -->
-                  </div>
-                </div>
-                <div class="col-md-9">
-                  @foreach($data['activities'] as $activity)
-                  <div class="col-md-6">
-                    <div class="box box-primary">
-                      <div class="box-header with-border">
-                        <h3 class="box-title">{!! $activity->name !!}</h3>
-                      </div><!-- /.box-header -->
-                      <div class="box-body">
-                        <ul class="sortable-list" id="{!! $activity->id !!}">
-                        @if (isset($data['tasks_permissions'][$activity->id]))
-                        @foreach ($data['tasks_permissions'][$activity->id] as $task)
-                          <li class="badge bg-green" id="{!! $task->id !!}">{!! $task->subject !!}</li>
-                        @endforeach
-                        @endif
-                          <hr class="clear">
-                        </ul>
-                      </div><!-- /.box-body -->
-                    </div><!-- /.box -->
-                  </div>
+        @if (!isset($data['tasks_permissions'][0]))
+          <div class="alert alert-danger alert-dismissible">
+            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+            <h4><i class="icon fa fa-ban"></i> {!! Lang::get('general.alert') !!}!</h4>
+            Você precisa ter ao menos uma ativadade cadastrada!
+          </div>
+        @endif
+        <!-- form start -->
+        @if (Request::is('projects/create'))
+        {!! Form::open(array('route' => 'projects.store', 'name' => 'project-form')) !!}
+        @else
+        {!! Form::open(array('route' => [ 'projects.update', $data['project']->id ], 'method' => 'PUT', 'name' => 'project-form', 'id' => 'edit')) !!}
+        @endif
+          <div class="col-md-3">
+            <div class="col-md-12">
+              <div id="tasks" class="box box-primary">
+                <div class="box-header with-border">
+                  <h3 class="box-title">{!! Lang::get('general.tasks') !!}</h3>
+                </div><!-- /.box-header -->
+                <div class="box-body">
+                  <ul id="0" class="sortable-list">
+                  @if (isset($data['tasks_permissions'][0]))
+                  @foreach ($data['tasks_permissions'][0] as $task)
+                    <li class="badge bg-green" id="{!! $task->id !!}">{!! $task->subject !!}</li>
                   @endforeach
+                  @endif
+                    <hr class="clear">
+                  </ul>
+                </div><!-- /.box-body -->
+                <div class="box-footer">
+                  <a href="{!! URL::to('projects') !!}" class="btn btn-danger">{!! Lang::get('general.back') !!}</a>
                 </div>
-              </div><!-- /.box-body -->
-              <div class="box-footer">
-                <a href="{!! URL::to('projects') !!}" class="btn btn-danger">{!! Lang::get('general.back') !!}</a>
-              </div>
-            {!! Form::close() !!}
-          </div><!-- /.box -->
+              </div><!-- /.box -->
+            </div>
+          </div>
+          <div class="col-md-9">
+            @foreach($data['activities'] as $activity)
+            <div class="col-md-6">
+              <div class="box box-primary">
+                <div class="box-header with-border">
+                  <h3 class="box-title">{!! $activity->name !!}</h3>
+                </div><!-- /.box-header -->
+                <div class="box-body">
+                  <ul class="sortable-list" id="{!! $activity->id !!}">
+                  @if (isset($data['tasks_permissions'][$activity->id]))
+                  @foreach ($data['tasks_permissions'][$activity->id] as $task)
+                    <li class="badge bg-green" id="{!! $task->id !!}">{!! $task->subject !!}</li>
+                  @endforeach
+                  @endif
+                    <hr class="clear">
+                  </ul>
+                </div><!-- /.box-body -->
+              </div><!-- /.box -->
+            </div>
+            @endforeach
+          </div>
+        {!! Form::close() !!}
         </div>
       </div>
     </section>

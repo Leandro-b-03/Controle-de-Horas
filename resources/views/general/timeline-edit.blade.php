@@ -206,6 +206,10 @@
         task_id: $('#task_' + $(this).data('id')).val(),
         start: $('#start_' + $(this).data('id')).val(),
         end: $('#end_' + $(this).data('id')).val(),
+        ok: $('#ok').val(),
+        nok: $('#nok').val(),
+        impacted: $('#impacted').val(),
+        cancelled: $('#cancelled').val(),
       }
 
       console.log(data);
