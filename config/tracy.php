@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'enabled'      => false,
+    'enabled'      => true,
     'showBar'      => true,
     'accepts'      => [
         'text/html',
