@@ -376,7 +376,7 @@ class GeneralController extends Controller {
 
                         $number_parent = count(explode('/', $_parent));
 
-                        if ($number_parent > 1) {
+                        if ($number_parent >= 1) {
                             $html .= '<optgroup label="' . $parent . '">';
                             $html .= '<option value="' . $task->id . '" data-type="' . $task->type_id . '" data-activity="' . $task_permission->enumeration_id . '"' . $selected . '>' . $task->subject . '</option>';
                             $parent_id[$task->parent_id] = array($task->parent_id, true);
