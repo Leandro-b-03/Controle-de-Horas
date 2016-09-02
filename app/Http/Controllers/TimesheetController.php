@@ -163,34 +163,36 @@ class TimesheetController extends Controller
         try {
             if (isset($inputs['start'])) {
                 $timesheet_task_no_task = TimesheetTask::where('work_package_id', 31416)->where('timesheet_id', $workday->id)->where('end', '00:00:00')->get()->first();
-                $timesheet_task_no_task->end = $today->toTimeString();
+                if ($timesheet_task_no_task) {
+                    $timesheet_task_no_task->end = $today->toTimeString();
 
-                $seconds = '00';
+                    $seconds = '00';
 
-                $start = new Carbon($timesheet_task_no_task->start);
+                    $start = new Carbon($timesheet_task_no_task->start);
 
-                $diffTime = $start->diffInMinutes(new Carbon($timesheet_task_no_task->end));
+                    $diffTime = $start->diffInMinutes(new Carbon($timesheet_task_no_task->end));
 
-                $hours = floor($diffTime / 60);
-                $minutes = ($diffTime % 60);
-                $tminutes = (float)($minutes / 60);
-                $time = (($hours <= 9 ? "0" . $hours : $hours) . ":" . ($minutes <= 9 ? "0" . $minutes : $minutes)) . ":" . $seconds;
+                    $hours = floor($diffTime / 60);
+                    $minutes = ($diffTime % 60);
+                    $tminutes = (float)($minutes / 60);
+                    $time = (($hours <= 9 ? "0" . $hours : $hours) . ":" . ($minutes <= 9 ? "0" . $minutes : $minutes)) . ":" . $seconds;
 
-                if ($time > SettingsHelper::getConfig('idle_time')) {
-                    if ($timesheet_task_no_task->save()) {
-                        DB::commit();
-                        Log::info($timesheet_task_no_task);
+                    if ($time > SettingsHelper::getConfig('idle_time')) {
+                        if ($timesheet_task_no_task->save()) {
+                            DB::commit();
+                            Log::info($timesheet_task_no_task);
+                        } else {
+                            DB::rollback();
+                            Log::error($e);
+                            Log::error($time_entry);
+                            Log::error($work_package);
+                            Log::error($timesheet_task_no_task);
+
+                            return response()->json(array('error' => Lang::get('general.error')));
+                        }
                     } else {
-                        DB::rollback();
-                        Log::error($e);
-                        Log::error($time_entry);
-                        Log::error($work_package);
-                        Log::error($timesheet_task_no_task);
-
-                        return response()->json(array('error' => Lang::get('general.error')));
+                        $timesheet_task_no_task->delete();
                     }
-                } else {
-                    $timesheet_task_no_task->delete();
                 }
 
                 $timesheet_task = array(
