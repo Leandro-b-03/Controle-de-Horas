@@ -109,7 +109,7 @@
             </tbody>
           </table>
           <hr class="clearfix" />
-          <div class="photo-timesheet"><img src="{{ $data['user']->photo }}"></div>
+          <div class="photo-timesheet"><img src="{{ url($data['user']->photo) }}"></div>
           <div class="photo-name">
             <h2>{{ $data['user']->first_name }} {{ $data['user']->last_name }}</h2>
             <h4>{{ $data['user']->roles()->first()->display_name }}</h4>

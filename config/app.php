@@ -181,6 +181,8 @@ return [
         Maatwebsite\Excel\ExcelServiceProvider::class,
         Arcanedev\Settings\SettingsServiceProvider::class,
         GoogleMaps\ServiceProvider\GoogleMapsServiceProvider::class,
+        Recca0120\LaravelTracy\ServiceProvider::class,
+        GrahamCampbell\HTMLMin\HTMLMinServiceProvider::class,
 
         /*
          * Personalization Services Providers...
@@ -264,6 +266,7 @@ return [
         'Setting'        => Arcanedev\Settings\Facades\Setting::class,
         'GoogleMaps'     => GoogleMaps\Facade\GoogleMapsFacade::class,
         'SettingsHelper' => App\Providers\SettingsHelperProvider::class,
+        'HTMLMin'        => GrahamCampbell\HTMLMin\Facades\HTMLMin::class,
 
     ],
 
