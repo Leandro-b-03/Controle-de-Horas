@@ -144,8 +144,12 @@
                   <hr />
                 </div>
                 <div class="form-group col-xs-6">
-                  <label for="rfid_code">{!! Lang::get('users.label-rfid_code') !!}</label>
-                  <input type="text" class="form-control" name="rfid_code" id="rfid_code"  value="{!! (isset($data['user']) ? $data['user']->rfid_code : (Request::old('rfid_code') ? Request::old('rfid_code') : '')) !!}" placeholder="{!! Lang::get('users.ph-rfid_code') !!}" data-validation="length number" data-validation-length="3-10" data-validation-error-msg="{!! Lang::get('users.error-rfid_code') !!}" required>
+                  <label for="status">{!! Lang::get('users.label-status') !!}</label>
+                  <div class="radio">
+                    <label><input name="status" id="status" value="A" type="radio" data-validation-qty="min1" data-validation-error-msg="{!! Lang::get('users.error-status_female') !!}" {!! (isset($data['user']) ? ($data['user']->status == 'A') ? 'checked="checked"' : ((Request::old('status')) ? ((Request::old('status') == 'A') ? 'checked="checked"' : '') : '') : '' ) !!} required> {!! Lang::get('users.ph-status_active') !!}</label>
+                    <label><input name="status" id="status" value="D" type="radio" {!! (isset($data['user']) ? ($data['user']->status == 'D') ? 'checked="checked"' : ((Request::old('status')) ? ((Request::old('status') == 'D') ? 'checked="checked"' : '') : '') : '' ) !!}> {!! Lang::get('users.ph-status_deactive') !!}</label>
+                    <label><input name="status" id="status" value="F" type="radio" {!! (isset($data['user']) ? ($data['user']->status == 'F') ? 'checked="checked"' : ((Request::old('status')) ? ((Request::old('status') == 'F') ? 'checked="checked"' : '') : '') : '' ) !!}> {!! Lang::get('users.ph-status_vacation') !!}</label>
+                  </div>
                 </div>
               </div><!-- /.box-body -->
               <div class="box-footer">

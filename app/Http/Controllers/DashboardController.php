@@ -50,7 +50,7 @@ class DashboardController extends Controller
         $data['new_users'] = $new_users;
 
         // See if users have started a task
-        $users_work = User::orderBy('first_name', 'desc')->orderBy('last_name', 'desc')->get();
+        $users_work = User::whereIn('status', array('A', 'N', 'F'))->orderBy('first_name', 'desc')->orderBy('last_name', 'desc')->get();
         $users = array();
 
         foreach ($users_work as $user) {
@@ -64,8 +64,14 @@ class DashboardController extends Controller
                       $handled_user['project'] = 'Colaborador com erro de gravação';
                     $handled_user['task'] = $user->timesheets()->getResults()->where('workday', \Carbon\Carbon::now()->toDateString())->first()->timesheetTasks()->getResults()->first()->getTask()->getResults()->subject;
                     if ($user->timesheets()->getResults()->where('workday', \Carbon\Carbon::now()->toDateString())->first()->timesheetTasks()->getResults()->first()->getProject()->getResults()->id != 90 && $user->timesheets()->getResults()->where('workday', \Carbon\Carbon::now()->toDateString())->first()->timesheetTasks()->getResults()->first()->getProject()->getResults()->id != 91) {
+                      if ($user->status == 'F')
+                            $handled_user['status'] = 'Trabalhando/Férias';
+                          else
                             $handled_user['status'] = 'Trabalhando';
                     } else {
+                      if ($user->status == 'F')
+                        $handled_user['status'] = 'Ocioso/Férias';
+                      else
                         $handled_user['status'] = 'Ocioso';
                     }
                     $handled_user['start'] = $user->timesheets()->getResults()->where('workday', \Carbon\Carbon::now()->toDateString())->first()->timesheetTasks()->getResults()->first()->start;
@@ -77,14 +83,14 @@ class DashboardController extends Controller
                 } else {
                     $handled_user['project'] = '----';
                     $handled_user['task'] = '----';
-                    $handled_user['status'] = 'Ocioso';
+                    $handled_user['status'] = 'Ausente';
                     $handled_user['start'] = '----';
                     $handled_user['end'] = '----';
                 }
             } else {
                 $handled_user['project'] = '----';
                 $handled_user['task'] = '----';
-                $handled_user['status'] = 'Ocioso';
+                $handled_user['status'] = 'Ausente';
                 $handled_user['start'] = '----';
                 $handled_user['end'] = '----';
             }

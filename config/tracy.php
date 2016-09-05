@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'enabled'      => true,
+    'enabled'      => env('APP_DEBUG', true),
     'showBar'      => true,
     'accepts'      => [
         'text/html',
