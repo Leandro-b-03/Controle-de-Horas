@@ -28,6 +28,9 @@
         @if ($errors->count() >= 1)
         <div class="callout callout-danger lead">Login inválido, tente novamente!</div>
         @endif
+        @if (Session::get('return'))
+        <div class="callout callout-danger lead">{!! Session::get('return')['message'] !!}</div>
+        @endif
       </div><!-- /.login-logo -->
       <div class="login-box-body">
         <p class="login-box-msg">Faça login para entrar no dashboard</p>

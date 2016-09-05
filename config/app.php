@@ -183,6 +183,7 @@ return [
         GoogleMaps\ServiceProvider\GoogleMapsServiceProvider::class,
         Recca0120\LaravelTracy\ServiceProvider::class,
         GrahamCampbell\HTMLMin\HTMLMinServiceProvider::class,
+        Recca0120\Terminal\ServiceProvider::class,
 
         /*
          * Personalization Services Providers...
