@@ -36,7 +36,9 @@
         "alexpechkarev/google-maps": "^1.0",
         "mmanos/laravel-search": "^1.0",
         "recca0120/laravel-tracy": "^1.7",
-        "graham-campbell/htmlmin": "^4.4"
+        "graham-campbell/htmlmin": "^4.4",
+        "recca0120/terminal": "^1.5",
+        "yajra/laravel-datatables-oracle": "^6.18"
     },
     "require-dev": {
         "fzaninotto/faker": "~1.4",

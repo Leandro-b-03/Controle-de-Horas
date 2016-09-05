@@ -50,7 +50,7 @@
           </div>
           <!-- Main row -->
           <div class="row">
-            @if (Auth::user()->hasRole('Gerente')) {{-- || Auth::user()->hasRole('Godless-Admin')) --}}
+            @if (Auth::user()->hasRole('Gerente') || Auth::user()->hasRole('Godless-Admin'))
             <div class="col-xs-12">
               <div id="user-task" class="box">
                 <div class="box-header">
@@ -87,7 +87,7 @@
                           <td>{{ $user['task'] }}</td>
                           <td>{{ $user['start'] }}</td>
                           <td>{{ $user['end'] }}</td>
-                          <td><span class="label label-{{ ($user['status'] == "Ocioso" ? "danger" : "success") }}">{{ $user['status'] }}</span></td>
+                          <td><span class="label label-{{ ($user['status'] == "Ocioso" ? "danger" : ($user['status'] == "Ausente" ? "warning" : "success")) }}">{{ $user['status'] }}</span></td>
                         </tr>
                         @endforeach
                         @else

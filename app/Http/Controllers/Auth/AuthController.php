@@ -1,6 +1,7 @@
 <?php namespace App\Http\Controllers\Auth;
 
 use Auth;
+use Session;
 use App\User;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -68,8 +69,28 @@ class AuthController extends Controller {
             $user = User::where('username', Auth::user()->getAuthIdentifier())->get()->first();
 
             if ($user) {
+                if ($user->status == 'D') {
+                    /**
+                     * This is to protect the entire app, except login form, 
+                     * to avoid loop
+                     */
+                    Session::flush();
+                    
+                    return redirect()->guest('auth/login')->with('return', array('message' => 'Seu login está desativado'));
+                }
+
                 return $this->handleUserWasAuthenticated($request, $throttles);
             } else {
+                if ($user->status == 'D') {
+                    /**
+                     * This is to protect the entire app, except login form, 
+                     * to avoid loop
+                     */
+                    Session::flush();
+                        
+                    return redirect()->guest('auth/login')->with('return', array('message' => 'Seu login está desativado'));
+                }
+
                 return redirect()->intended('register');
             }
         }
