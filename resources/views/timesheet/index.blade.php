@@ -331,6 +331,12 @@
                 data = { class: 'danger', faicon: 'ban', status: "{!! Lang::get('general.failed') !!}", message: data.error };
                 throwMessage(data);
               }
+            },
+            ajaxSuccess: function(event, request, settings) {
+              console.log(request)
+              if (request.getResponseHeader('REQUIRES_AUTH') === '1') {
+                window.location = '/';
+              }
             }
           });
         });
@@ -587,5 +593,11 @@
 
             return html;
         };
+        $(document).ajaxSuccess(function(event, request, settings) {
+          console.log(request)
+          if (request.getResponseHeader('REQUIRES_AUTH') === '1') {
+            window.location = '/';
+          }
+        });
     </script>
 @endsection

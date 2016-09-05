@@ -39,6 +39,8 @@ Route::group(['middleware' => 'auth'], function () {
 
         Route::get('dashboard', 'DashboardController@index');
 
+        Route::get('dashboard/getUsersTasks', 'DashboardController@getUsersTasks');
+
         Route::get('autocomplete/users', 'GeneralController@getUserAutocomplete');
 
         Route::get('autocomplete/team', 'GeneralController@getTeamAutocomplete');

@@ -53,7 +53,7 @@
   @if(Auth::user()->getEloquent()->settings()->getResults())
   <body class="hold-transition {!! Auth::user()->getEloquent()->settings()->getResults()->skin ? Auth::user()->getEloquent()->settings()->getResults()->skin : 'skin-yellow' !!} {!! Auth::user()->getEloquent()->settings()->getResults()->boxed ? Auth::user()->getEloquent()->settings()->getResults()->boxed : '' !!} {!! Auth::user()->getEloquent()->settings()->getResults()->sidebar_toggle ? Auth::user()->getEloquent()->settings()->getResults()->sidebar_toggle : '' !!} sidebar-mini">
   @else
-  <body class="hold-transition skin-yellow sidebar-mini">
+  <body class="hold-transition {{ SettingsHelper::getConfig('default_theme') }} sidebar-mini">
   @endif
   @else
   <body class="hold-transition skin-yellow sidebar-mini">
