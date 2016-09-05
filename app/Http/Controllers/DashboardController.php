@@ -56,14 +56,15 @@ class DashboardController extends Controller
         foreach ($users_work as $user) {
             $handled_user = array();
             $handled_user['name'] = $user->first_name . ' ' . $user->last_name;
+
             if ($user->timesheets()->getResults()->where('workday', $today->toDateString())->first()) {
-                if ($user->timesheets()->getResults()->where('workday', $today->toDateString())->first()->timesheetTasks()->first()) {
-                  if (isset($user->timesheets()->getResults()->where('workday', \Carbon\Carbon::now()->toDateString())->first()->timesheetTasks()->getResults()->first()->getProject()->getResults()->name))
-                      $handled_user['project'] = $user->timesheets()->getResults()->where('workday', \Carbon\Carbon::now()->toDateString())->first()->timesheetTasks()->getResults()->first()->getProject()->getResults()->name;
+                if ($user->timesheets()->getResults()->where('workday', $today->toDateString())->last()->timesheetTasks()->getResults()->last()) {
+                  if (isset($user->timesheets()->getResults()->where('workday', \Carbon\Carbon::now()->toDateString())->last()->timesheetTasks()->getResults()->last()->getProject()->getResults()->name))
+                      $handled_user['project'] = $user->timesheets()->getResults()->where('workday', \Carbon\Carbon::now()->toDateString())->last()->timesheetTasks()->getResults()->last()->getProject()->getResults()->name;
                     else
                       $handled_user['project'] = 'Colaborador com erro de gravação';
-                    $handled_user['task'] = $user->timesheets()->getResults()->where('workday', \Carbon\Carbon::now()->toDateString())->first()->timesheetTasks()->getResults()->first()->getTask()->getResults()->subject;
-                    if ($user->timesheets()->getResults()->where('workday', \Carbon\Carbon::now()->toDateString())->first()->timesheetTasks()->getResults()->first()->getProject()->getResults()->id != 90 && $user->timesheets()->getResults()->where('workday', \Carbon\Carbon::now()->toDateString())->first()->timesheetTasks()->getResults()->first()->getProject()->getResults()->id != 91) {
+                    $handled_user['task'] = $user->timesheets()->getResults()->where('workday', \Carbon\Carbon::now()->toDateString())->last()->timesheetTasks()->getResults()->last()->getTask()->getResults()->subject;
+                    if ($user->timesheets()->getResults()->where('workday', \Carbon\Carbon::now()->toDateString())->last()->timesheetTasks()->getResults()->last()->getProject()->getResults()->id != 90 && $user->timesheets()->getResults()->where('workday', \Carbon\Carbon::now()->toDateString())->last()->timesheetTasks()->getResults()->last()->getProject()->getResults()->id != 91) {
                       if ($user->status == 'F')
                             $handled_user['status'] = 'Trabalhando/Férias';
                           else
@@ -74,9 +75,9 @@ class DashboardController extends Controller
                       else
                         $handled_user['status'] = 'Ocioso';
                     }
-                    $handled_user['start'] = $user->timesheets()->getResults()->where('workday', \Carbon\Carbon::now()->toDateString())->first()->timesheetTasks()->getResults()->first()->start;
-                    if ($handled_user['end'] = $user->timesheets()->getResults()->where('workday', \Carbon\Carbon::now()->toDateString())->first()->timesheetTasks()->getResults()->first()->end != '00:00:00') {
-                        $handled_user['end'] = $user->timesheets()->getResults()->where('workday', \Carbon\Carbon::now()->toDateString())->first()->timesheetTasks()->getResults()->first()->end;
+                    $handled_user['start'] = $user->timesheets()->getResults()->where('workday', \Carbon\Carbon::now()->toDateString())->last()->timesheetTasks()->getResults()->last()->start;
+                    if ($handled_user['end'] = $user->timesheets()->getResults()->where('workday', \Carbon\Carbon::now()->toDateString())->last()->timesheetTasks()->getResults()->last()->end != '00:00:00') {
+                        $handled_user['end'] = $user->timesheets()->getResults()->where('workday', \Carbon\Carbon::now()->toDateString())->last()->timesheetTasks()->getResults()->last()->end;
                     } else {
                         $handled_user['end'] = 'Atuando';
                     }
