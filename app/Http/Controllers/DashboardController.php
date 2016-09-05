@@ -84,14 +84,20 @@ class DashboardController extends Controller
                 } else {
                     $handled_user['project'] = '----';
                     $handled_user['task'] = '----';
-                    $handled_user['status'] = 'Ausente';
+                    if ($user->status == 'F')
+                      $handled_user['status'] = 'Férias';
+                    else
+                      $handled_user['status'] = 'Ausente';
                     $handled_user['start'] = '----';
                     $handled_user['end'] = '----';
                 }
             } else {
                 $handled_user['project'] = '----';
                 $handled_user['task'] = '----';
-                $handled_user['status'] = 'Ausente';
+                if ($user->status == 'F')
+                  $handled_user['status'] = 'Férias';
+                else
+                  $handled_user['status'] = 'Ausente';
                 $handled_user['start'] = '----';
                 $handled_user['end'] = '----';
             }
