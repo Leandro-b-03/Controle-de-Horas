@@ -87,7 +87,7 @@
                           <td>{{ $user['task'] }}</td>
                           <td>{{ $user['start'] }}</td>
                           <td>{{ $user['end'] }}</td>
-                          <td><span class="label label-{{ ($user['status'] == "Ocioso" ? "danger" : ($user['status'] == "Ausente" ? "warning" : "success")) }}">{{ $user['status'] }}</span></td>
+                          <td><span class="label label-{{ ($user['status'] == "Ocioso" ? "danger" : ($user['status'] == "Ausente" ? "warning" : ($user['status'] == "Trabalhando" ? "success" : "primary"))) }}">{{ $user['status'] }}</span></td>
                         </tr>
                         @endforeach
                         @else
