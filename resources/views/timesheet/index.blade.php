@@ -482,8 +482,9 @@
             complete: function(xmlHttp) {
               // xmlHttp is a XMLHttpRquest object
               // alert(xmlHttp.status);
-              if (xmlHttp.code != 200) {
-                top.location.href = '/timesheet';
+              // alert(xmlHttp.code);
+              if (xmlHttp.status != 200) {
+                top.location.href = '/timesheets';
               }
             }
           });
