@@ -332,14 +332,14 @@
                 throwMessage(data);
               }
             },
-            ajaxSuccess: function(event, request, settings) {
-              console.log(request)
-              if (request.getResponseHeader('REQUIRES_AUTH') === '1') {
-                window.location = '/';
-              }
+            complete: function(xmlHttp) {
+              // xmlHttp is a XMLHttpRquest object
+              alert(xmlHttp.status);
             }
           });
         });
+
+
 
         $('#nightly').click(function() {
           var data = {};
@@ -478,6 +478,13 @@
                 data = { class: 'danger', faicon: 'ban', status: "{!! Lang::get('general.failed') !!}", message: data.error };
                 throwMessage(data);
               }
+            },
+            complete: function(xmlHttp) {
+              // xmlHttp is a XMLHttpRquest object
+              // alert(xmlHttp.status);
+              if (xmlHttp.code != 200) {
+                top.location.href = '/timesheet';
+              }
             }
           });
         }
@@ -593,11 +600,5 @@
 
             return html;
         };
-        $(document).ajaxSuccess(function(event, request, settings) {
-          console.log(request)
-          if (request.getResponseHeader('REQUIRES_AUTH') === '1') {
-            window.location = '/';
-          }
-        });
     </script>
 @endsection
