@@ -177,7 +177,7 @@ class TimesheetController extends Controller
                     $tminutes = (float)($minutes / 60);
                     $time = (($hours <= 9 ? "0" . $hours : $hours) . ":" . ($minutes <= 9 ? "0" . $minutes : $minutes)) . ":" . $seconds;
 
-                    if ($time > SettingsHelper::getConfig('idle_time')) {
+                    if ($time <= SettingsHelper::getConfig('idle_time')) {
                         if ($timesheet_task_no_task->save()) {
                             DB::commit();
                             Log::info($timesheet_task_no_task);
