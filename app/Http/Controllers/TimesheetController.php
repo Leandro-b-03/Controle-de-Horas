@@ -176,6 +176,7 @@ class TimesheetController extends Controller
                     $minutes = ($diffTime % 60);
                     $tminutes = (float)($minutes / 60);
                     $time = (($hours <= 9 ? "0" . $hours : $hours) . ":" . ($minutes <= 9 ? "0" . $minutes : $minutes)) . ":" . $seconds;
+                    $timesheet_task_no_task->hours = $time;
 
                     if ($time <= SettingsHelper::getConfig('idle_time')) {
                         if ($timesheet_task_no_task->save()) {
@@ -206,6 +207,7 @@ class TimesheetController extends Controller
 
                 if ($timesheet_task) {
                     DB::commit();
+                    Log::info($timesheet_task);
 
                     $work_package = Task::find($inputs['task_id']);
 
@@ -239,6 +241,8 @@ class TimesheetController extends Controller
 
                             if ($custom_fields) {
                                 DB::commit();
+
+                                Log::info($custom_fields);
                             } else {
                                 DB::rollback();
                                 Log::error($e);
@@ -266,6 +270,7 @@ class TimesheetController extends Controller
 
                                 if ($custom_field->save()) {
                                     DB::commit();
+                                    Log::info($custom_field);
                                 } else {
                                     DB::rollback();
                                     Log::error($e);
@@ -284,6 +289,7 @@ class TimesheetController extends Controller
                         $this->journal($inputs['task_id'], 'WorkPackage', 'work_packages');
 
                         $this->notify($inputs, $timesheet_task->project_id);
+                        Log::info($work_package);
                         
                         return response()->json($this->line($timesheet_task, $work_package->type_id));
                     } else {
@@ -357,6 +363,7 @@ class TimesheetController extends Controller
 
                 if ($timesheet_task->save()) {
                     DB::commit();
+                    Log::info($timesheet_task);
 
                     if ($work_package->type_id == 1) {
                         $status = 11;
