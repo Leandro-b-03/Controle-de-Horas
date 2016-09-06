@@ -331,9 +331,15 @@
                 data = { class: 'danger', faicon: 'ban', status: "{!! Lang::get('general.failed') !!}", message: data.error };
                 throwMessage(data);
               }
+            },
+            complete: function(xmlHttp) {
+              // xmlHttp is a XMLHttpRquest object
+              alert(xmlHttp.status);
             }
           });
         });
+
+
 
         $('#nightly').click(function() {
           var data = {};
@@ -471,6 +477,13 @@
               } else {
                 data = { class: 'danger', faicon: 'ban', status: "{!! Lang::get('general.failed') !!}", message: data.error };
                 throwMessage(data);
+              }
+            },
+            complete: function(xmlHttp) {
+              // xmlHttp is a XMLHttpRquest object
+              // alert(xmlHttp.status);
+              if (xmlHttp.code != 200) {
+                top.location.href = '/timesheet';
               }
             }
           });
