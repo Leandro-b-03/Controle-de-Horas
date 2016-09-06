@@ -50,53 +50,52 @@
           </div>
           <!-- Main row -->
           <div class="row">
-            @if (Auth::user()->hasRole('Gerente') || Auth::user()->hasRole('Godless-Admin'))
+            @if (Auth::user()->hasRole('Gerente')) {{-- || Auth::user()->hasRole('Godless-Admin')) --}}
             <div class="col-xs-12">
               <div id="user-task" class="box">
                 <div class="box-header">
                   <h3 class="box-title">Lista de tarefas</h3>
+                  <a id="user-task-refresh" class="btn btn-xs btn-primary"><i class="fa fa-refresh"></i></a>
                   <div class="box-tools search">
-                      <div class="input-group input-group-sm">
-                          <input id="search-user-working" type="text" class="form-control" name="search" placeholder="{{ Lang::get('general.search') }}">
-                          <span class="input-group-btn">
-                              <button type="submit" class="btn btn-info btn-flat"><i class="fa fa-search"></i></button>
-                          </span>
-                      </div>
+                    <div class="input-group input-group-sm">
+                      <input id="search-user-working" type="text" class="form-control" name="search" placeholder="{{ Lang::get('general.search') }}">
+                      <span class="input-group-btn">
+                        <button type="submit" class="btn btn-info btn-flat"><i class="fa fa-search"></i></button>
+                      </span>
+                    </div>
                   </div>
                 </div>
                 <!-- /.box-header -->
                 <div class="box-body table-responsive no-padding">
                   <table class="table table-hover">
+                    <thead>
+                      <tr class="fixed">
+                        <th>{{ Lang::get('general.user') }}</th>
+                        <th>{{ Lang::get('timesheets.title-project') }}</th>
+                        <th>{{ Lang::get('timesheets.title-task') }}</th>
+                        <th>{{ Lang::get('timesheets.title-start') }}</th>
+                        <th>{{ Lang::get('timesheets.title-end') }}</th>
+                        <th>{{ Lang::get('general.status') }}</th>
+                      </tr>
+                    </thead>
                     <tbody>
-                      <thead>
-                        <tr class="fixed">
-                          <th>{{ Lang::get('general.user') }}</th>
-                          <th>{{ Lang::get('timesheets.title-project') }}</th>
-                          <th>{{ Lang::get('timesheets.title-task') }}</th>
-                          <th>{{ Lang::get('timesheets.title-start') }}</th>
-                          <th>{{ Lang::get('timesheets.title-end') }}</th>
-                          <th>{{ Lang::get('general.status') }}</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        @if (isset($data['users']))
-                        @foreach ($data['users'] as $user)
-                        <tr>
-                          <td>{{ $user['name'] }}</td>
-                          <td>{{ $user['project'] }}</td>
-                          <td>{{ $user['task'] }}</td>
-                          <td>{{ $user['start'] }}</td>
-                          <td>{{ $user['end'] }}</td>
-                          <td><span class="label label-{{ ($user['status'] == "Ocioso" ? "danger" : ($user['status'] == "Ausente" ? "warning" : ($user['status'] == "Trabalhando" ? "success" : "primary"))) }}">{{ $user['status'] }}</span></td>
-                        </tr>
-                        @endforeach
-                        @else
-                        <tr>
-                          <td colspan="4">{{ Lang::get('dashboard.no_results') }}</td>
-                        </tr>
-                      </tbody>
-                      @endif
+                      @if (isset($data['users']))
+                      @foreach ($data['users'] as $user)
+                      <tr>
+                        <td>{{ $user['name'] }}</td>
+                        <td>{{ $user['project'] }}</td>
+                        <td>{{ $user['task'] }}</td>
+                        <td>{{ $user['start'] }}</td>
+                        <td>{{ $user['end'] }}</td>
+                        <td><span class="label label-{{ ($user['status'] == "Ocioso" ? "danger" : ($user['status'] == "Ausente" ? "warning" : ($user['status'] == "Trabalhando" ? "success" : "primary"))) }}">{{ $user['status'] }}</span></td>
+                      </tr>
+                      @endforeach
+                      @else
+                      <tr>
+                        <td colspan="4">{{ Lang::get('dashboard.no_results') }}</td>
+                      </tr>
                     </tbody>
+                    @endif
                   </table>
                 </div>
                 <!-- /.box-body -->
@@ -360,6 +359,39 @@
           });
         }
       }
+
+      $('#user-task-refresh').click(function() {
+        $.ajax({
+          url: '/dashboard/getUsersTasks',
+          type: "GET",
+          success: function(data) {
+            var users_tasks = data;
+
+            var rows = '';
+            // $('#user-task table tbody tr').remove();
+
+            console.log(users_tasks.length);
+
+            for (var i = 0; i < users_tasks.length; i++) {
+              rows += '<tr>';
+              rows += '  <td>' + users_tasks[i].name + '</td>';
+              rows += '  <td>' + users_tasks[i].project + '</td>';
+              rows += '  <td>' + users_tasks[i].task + '</td>';
+              rows += '  <td>' + users_tasks[i].start + '</td>';
+              rows += '  <td>' + users_tasks[i].end + '</td>';
+              rows += '  <td><span class="label label-' + (users_tasks[i].status == "Ocioso" ? "danger" : (users_tasks[i].status == "Ausente" ? "warning" : (users_tasks[i].status == "Trabalhando" ? "success" : "primary"))) + '">' + users_tasks[i].status + '</span></td>';
+              rows += '</tr>';
+              console.log(i);
+            }
+
+            console.log(rows);
+
+            // $('#user-task table tbody tr').remove();
+
+            $('#user-task table tbody').html(rows);
+          }
+        });
+      });
 
       $('#user-task .box-body').slimScroll();
       $('#user-task table').floatThead();

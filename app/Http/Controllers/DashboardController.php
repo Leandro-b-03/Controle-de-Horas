@@ -49,63 +49,7 @@ class DashboardController extends Controller
         $new_users->count = User::where('created_at', '>=', Carbon::now()->startOfMonth())->get()->count();
         $data['new_users'] = $new_users;
 
-        // See if users have started a task
-        $users_work = User::whereIn('status', array('A', 'N', 'F'))->orderBy('first_name', 'desc')->orderBy('last_name', 'desc')->get();
-        $users = array();
-
-        foreach ($users_work as $user) {
-            $handled_user = array();
-            $handled_user['name'] = $user->first_name . ' ' . $user->last_name;
-
-            if ($user->timesheets()->getResults()->where('workday', $today->toDateString())->first()) {
-                if ($user->timesheets()->getResults()->where('workday', $today->toDateString())->last()->timesheetTasks()->getResults()->last()) {
-                  if (isset($user->timesheets()->getResults()->where('workday', \Carbon\Carbon::now()->toDateString())->last()->timesheetTasks()->getResults()->last()->getProject()->getResults()->name))
-                      $handled_user['project'] = $user->timesheets()->getResults()->where('workday', \Carbon\Carbon::now()->toDateString())->last()->timesheetTasks()->getResults()->last()->getProject()->getResults()->name;
-                    else
-                      $handled_user['project'] = 'Colaborador com erro de gravação';
-                    $handled_user['task'] = $user->timesheets()->getResults()->where('workday', \Carbon\Carbon::now()->toDateString())->last()->timesheetTasks()->getResults()->last()->getTask()->getResults()->subject;
-                    if ($user->timesheets()->getResults()->where('workday', \Carbon\Carbon::now()->toDateString())->last()->timesheetTasks()->getResults()->last()->getProject()->getResults()->id != 90 && $user->timesheets()->getResults()->where('workday', \Carbon\Carbon::now()->toDateString())->last()->timesheetTasks()->getResults()->last()->getProject()->getResults()->id != 91) {
-                      if ($user->status == 'F')
-                            $handled_user['status'] = 'Trabalhando/Férias';
-                          else
-                            $handled_user['status'] = 'Trabalhando';
-                    } else {
-                      if ($user->status == 'F')
-                        $handled_user['status'] = 'Ocioso/Férias';
-                      else
-                        $handled_user['status'] = 'Ocioso';
-                    }
-                    $handled_user['start'] = $user->timesheets()->getResults()->where('workday', \Carbon\Carbon::now()->toDateString())->last()->timesheetTasks()->getResults()->last()->start;
-                    if ($handled_user['end'] = $user->timesheets()->getResults()->where('workday', \Carbon\Carbon::now()->toDateString())->last()->timesheetTasks()->getResults()->last()->end != '00:00:00') {
-                        $handled_user['end'] = $user->timesheets()->getResults()->where('workday', \Carbon\Carbon::now()->toDateString())->last()->timesheetTasks()->getResults()->last()->end;
-                    } else {
-                        $handled_user['end'] = 'Atuando';
-                    }
-                } else {
-                    $handled_user['project'] = '----';
-                    $handled_user['task'] = '----';
-                    if ($user->status == 'F')
-                      $handled_user['status'] = 'Férias';
-                    else
-                      $handled_user['status'] = 'Ausente';
-                    $handled_user['start'] = '----';
-                    $handled_user['end'] = '----';
-                }
-            } else {
-                $handled_user['project'] = '----';
-                $handled_user['task'] = '----';
-                if ($user->status == 'F')
-                  $handled_user['status'] = 'Férias';
-                else
-                  $handled_user['status'] = 'Ausente';
-                $handled_user['start'] = '----';
-                $handled_user['end'] = '----';
-            }
-
-            $users[] = $handled_user;
-        }
-
-        $data['users'] = $users;
+        $data['users'] = $this->getUsersTasks();
 
         // New Projects
         $new_projects = Project::orderBy('created_on', 'desc')->whereNotExists(function ($query) {
@@ -208,6 +152,73 @@ class DashboardController extends Controller
 
         // Return the dashboard view.
         return view('dashboard.index')->with('data', $data);
+    }
+
+    /**
+     * Get all ther tasks that users are doing at moment.
+     *
+     * @return Response
+     */
+    public function getUsersTasks() {
+      $today = new Carbon();
+      
+      // See if users have started a task
+      $users_work = User::whereIn('status', array('A', 'N', 'F'))->orderBy('first_name', 'desc')->orderBy('last_name', 'desc')->get();
+      $users = array();
+
+      foreach ($users_work as $user) {
+          $handled_user = array();
+          $handled_user['name'] = $user->first_name . ' ' . $user->last_name;
+
+          if ($user->timesheets()->getResults()->where('workday', $today->toDateString())->first()) {
+              if ($user->timesheets()->getResults()->where('workday', $today->toDateString())->last()->timesheetTasks()->getResults()->last()) {
+                if (isset($user->timesheets()->getResults()->where('workday', \Carbon\Carbon::now()->toDateString())->last()->timesheetTasks()->getResults()->last()->getProject()->getResults()->name))
+                    $handled_user['project'] = $user->timesheets()->getResults()->where('workday', \Carbon\Carbon::now()->toDateString())->last()->timesheetTasks()->getResults()->last()->getProject()->getResults()->name;
+                  else
+                    $handled_user['project'] = 'Colaborador com erro de gravação';
+                  $handled_user['task'] = $user->timesheets()->getResults()->where('workday', \Carbon\Carbon::now()->toDateString())->last()->timesheetTasks()->getResults()->last()->getTask()->getResults()->subject;
+                  if ($user->timesheets()->getResults()->where('workday', \Carbon\Carbon::now()->toDateString())->last()->timesheetTasks()->getResults()->last()->getProject()->getResults()->id != 90 && $user->timesheets()->getResults()->where('workday', \Carbon\Carbon::now()->toDateString())->last()->timesheetTasks()->getResults()->last()->getProject()->getResults()->id != 91) {
+                    if ($user->status == 'F')
+                          $handled_user['status'] = 'Trabalhando/Férias';
+                        else
+                          $handled_user['status'] = 'Trabalhando';
+                  } else {
+                    if ($user->status == 'F')
+                      $handled_user['status'] = 'Ocioso/Férias';
+                    else
+                      $handled_user['status'] = 'Ocioso';
+                  }
+                  $handled_user['start'] = $user->timesheets()->getResults()->where('workday', \Carbon\Carbon::now()->toDateString())->last()->timesheetTasks()->getResults()->last()->start;
+                  if ($handled_user['end'] = $user->timesheets()->getResults()->where('workday', \Carbon\Carbon::now()->toDateString())->last()->timesheetTasks()->getResults()->last()->end != '00:00:00') {
+                      $handled_user['end'] = $user->timesheets()->getResults()->where('workday', \Carbon\Carbon::now()->toDateString())->last()->timesheetTasks()->getResults()->last()->end;
+                  } else {
+                      $handled_user['end'] = 'Atuando';
+                  }
+              } else {
+                  $handled_user['project'] = '----';
+                  $handled_user['task'] = '----';
+                  if ($user->status == 'F')
+                    $handled_user['status'] = 'Férias';
+                  else
+                    $handled_user['status'] = 'Ausente';
+                  $handled_user['start'] = '----';
+                  $handled_user['end'] = '----';
+              }
+          } else {
+              $handled_user['project'] = '----';
+              $handled_user['task'] = '----';
+              if ($user->status == 'F')
+                $handled_user['status'] = 'Férias';
+              else
+                $handled_user['status'] = 'Ausente';
+              $handled_user['start'] = '----';
+              $handled_user['end'] = '----';
+          }
+
+          $users[] = $handled_user;
+      }
+
+      return $users;
     }
 
     /**
