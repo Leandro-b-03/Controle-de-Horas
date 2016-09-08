@@ -344,50 +344,58 @@ class GeneralController extends Controller {
     {
         $inputs = $request->all();
 
-        $tasks = DB::connection('openproject')->select(DB::raw('SELECT CONCAT(IF(ISNULL(wp3.subject), \'\', CONCAT(wp3.subject, \'/ \')), IF(ISNULL(wp2.subject), \'\', wp2.subject)) AS path, wp1.* FROM work_packages wp1 LEFT JOIN work_packages wp2 ON wp1.parent_id = wp2.id LEFT JOIN work_packages wp3 ON wp2.parent_id = wp3.id WHERE NOT EXISTS( SELECT 1 FROM `work_packages` AS `wp2` WHERE wp2.parent_id = wp1.id) AND wp1.type_id != 2 AND wp1.status_id != 11 AND wp1.project_id = :project_id ORDER BY wp1.lft , wp1.start_date'), array('project_id' => $inputs['id']));
+        if (isset($inputs['id'])) {
+            $tasks = DB::connection('openproject')->select(DB::raw('SELECT CONCAT(IF(ISNULL(wp3.subject), \'\', CONCAT(wp3.subject, \'/ \')), IF(ISNULL(wp2.subject), \'\', wp2.subject)) AS path, wp1.* FROM work_packages wp1 LEFT JOIN work_packages wp2 ON wp1.parent_id = wp2.id LEFT JOIN work_packages wp3 ON wp2.parent_id = wp3.id WHERE NOT EXISTS( SELECT 1 FROM `work_packages` AS `wp2` WHERE wp2.parent_id = wp1.id) AND wp1.type_id != 2 AND wp1.status_id != 11 AND wp1.project_id = :project_id ORDER BY wp1.lft , wp1.start_date'), array('project_id' => $inputs['id']));
 
-        $order_tasks = array();
+            $order_tasks = array();
 
-        $html = '';
-        $parent = '';
+            $html = '';
+            $parent = '';
 
-        foreach ($tasks as $task) {
-            $task_permission = TaskPermission::where('work_package_id', $task->id)->first();   
-            
-            $selected = '';
+            if ($tasks) {
+                foreach ($tasks as $task) {
+                    $task_permission = TaskPermission::where('work_package_id', $task->id)->first();   
+                    
+                    $selected = '';
 
-            if (isset($inputs['select'])) {
-                if ($inputs['select'] == $task->subject)
-                    $selected = 'selected="selected"';
+                    if (isset($inputs['select'])) {
+                        if ($inputs['select'] == $task->subject)
+                            $selected = 'selected="selected"';
 
-                Log::debug($inputs['select']);
-                Log::debug($task->subject);
-            }
+                        Log::debug($inputs['select']);
+                        Log::debug($task->subject);
+                    }
 
-            if ($task_permission) {
-                Log::debug($task_permission->enumeration_id != 0);
-                if ($task_permission->enumeration_id != 0) {
-                    $_parent = str_replace($task->subject, '', $task->path);
-                    if ($_parent != $parent) {
-                        $parent = $_parent;
+                    if ($task_permission) {
+                        Log::debug($task_permission->enumeration_id != 0);
+                        if ($task_permission->enumeration_id != 0) {
+                            $_parent = str_replace($task->subject, '', $task->path);
+                            if ($_parent != $parent) {
+                                $parent = $_parent;
 
-                        if ($parent == '')
-                            $html .= '</optgroup>';
+                                if ($parent == '')
+                                    $html .= '</optgroup>';
 
-                        $number_parent = count(explode('/', $_parent));
+                                $number_parent = count(explode('/', $_parent));
 
-                        if ($number_parent >= 1) {
-                            $html .= '<optgroup label="' . $parent . '">';
-                            $html .= '<option value="' . $task->id . '" data-type="' . $task->type_id . '" data-activity="' . $task_permission->enumeration_id . '"' . $selected . '>' . $task->subject . '</option>';
-                            $parent_id[$task->parent_id] = array($task->parent_id, true);
+                                if ($number_parent >= 1) {
+                                    $html .= '<optgroup label="' . $parent . '">';
+                                    $html .= '<option value="' . $task->id . '" data-type="' . $task->type_id . '" data-activity="' . $task_permission->enumeration_id . '"' . $selected . '>' . $task->subject . '</option>';
+                                    $parent_id[$task->parent_id] = array($task->parent_id, true);
+                                }
+                            } else {
+                                $html .= '<option value="' . $task->id . '" data-type="' . $task->type_id . '" data-type="' . $task->type_id . '" data-activity="' . $task_permission->enumeration_id . '"' . $selected . '>' . $task->subject . '</option>';
+                            }
                         }
-                    } else {
-                        $html .= '<option value="' . $task->id . '" data-type="' . $task->type_id . '" data-type="' . $task->type_id . '" data-activity="' . $task_permission->enumeration_id . '"' . $selected . '>' . $task->subject . '</option>';
                     }
                 }
             }
+        } else {
+            $html = null;
         }
-        
+
+        Log::info($html);
+            
         return response()->json($html);
     }
 
@@ -1125,13 +1133,19 @@ class GeneralController extends Controller {
         $receive = array();
 
         if ($user) {
+            $date_explode = explode('-', str_replace(' ', '', $inputs['date']));
             $time_explode = explode(':', str_replace(' ', '', $inputs['time']));
 
-            $today = Carbon::createFromTime($time_explode[0], $time_explode[1], (array_key_exists(2, $time_explode) ? $time_explode[2] : '00'));
-            // $today = new Carbon();
+            $today = null;
+
+            try {
+                $today = Carbon::create($date_explode[0], $date_explode[1], $date_explode[2], $time_explode[0], $time_explode[1], (array_key_exists(2, $time_explode) ? $time_explode[2] : '00'));
+            } catch(Exception $e) {
+                $today = new Carbon();
+            }
 
             // Get the workday
-            $workday = Timesheet::where('user_id', $user->id)->where('workday', $today->toDateString())->orderBy('workday', 'desc')->get()->first();
+            $workday = Timesheet::where('user_id', $user->id)->where('workday', $today->toDateString())->where('workday', $inputs['date'])->orderBy('workday', 'desc')->get()->first();
 
             try {
                 DB::beginTransaction();
@@ -1195,7 +1209,9 @@ class GeneralController extends Controller {
                     $receive = array("status" => "200",
                         "cpf" => $inputs['cpf'],
                         "user" => $user->first_name,
-                        "entrance" => $workday->start);
+                        "date" => $today->toDateTimeString(),
+                        "entrance" => $workday->start
+                    );
                 } else {
                     $seconds = "00";
 
@@ -1399,7 +1415,8 @@ class GeneralController extends Controller {
                                     "cpf" => $inputs['cpf'],
                                     "diffTime" => $diffTime,
                                     "lunch_time" => 'lunch_start',
-                                    "message" => "Already checked");
+                                    "message" => "Already checked"
+                                );
                                 
                                 return response()->json($receive);
                             }
@@ -1444,7 +1461,8 @@ class GeneralController extends Controller {
                                     "cpf" => $inputs['cpf'],
                                     "diffTime" => $diffTime,
                                     "lunch_time" => 'lunch_end',
-                                    "message" => "Already checked");
+                                    "message" => "Already checked"
+                                );
                                 
                                 return response()->json($receive);
                             }
@@ -1747,11 +1765,13 @@ class GeneralController extends Controller {
 
                     $receive = array("status" => "200",
                         "cpf" => $inputs['cpf'],
+                        "date" => $today->toDateTimeString(),
                         "user" => $user->first_name,
                         "entrance" => $workday->start,
                         "lunch_start" => $workday->lunch_start,
                         "lunch_end" => $workday->lunch_end,
-                        "exit" => $workday->end);
+                        "exit" => $workday->end
+                    );
                 }
             } catch (Exception $e) {
                 Log::error($e);
