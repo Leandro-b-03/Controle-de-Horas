@@ -1133,18 +1133,19 @@ class GeneralController extends Controller {
         $receive = array();
 
         if ($user) {
+            $date_explode = explode('-', str_replace(' ', '', $inputs['date']));
             $time_explode = explode(':', str_replace(' ', '', $inputs['time']));
 
             $today = null;
 
             try {
-                $today = Carbon::createFromTime($time_explode[0], $time_explode[1], (array_key_exists(2, $time_explode) ? $time_explode[2] : '00'));
+                $today = Carbon::create($date_explode[0], $date_explode[1], $date_explode[2], $time_explode[0], $time_explode[1], (array_key_exists(2, $time_explode) ? $time_explode[2] : '00'));
             } catch(Exception $e) {
                 $today = new Carbon();
             }
 
             // Get the workday
-            $workday = Timesheet::where('user_id', $user->id)->where('workday', $today->toDateString())->orderBy('workday', 'desc')->get()->first();
+            $workday = Timesheet::where('user_id', $user->id)->where('workday', $today->toDateString())->where('workday', $inputs['date'])->orderBy('workday', 'desc')->get()->first();
 
             try {
                 DB::beginTransaction();
@@ -1208,7 +1209,9 @@ class GeneralController extends Controller {
                     $receive = array("status" => "200",
                         "cpf" => $inputs['cpf'],
                         "user" => $user->first_name,
-                        "entrance" => $workday->start);
+                        "date" => $today->toDateTimeString(),
+                        "entrance" => $workday->start
+                    );
                 } else {
                     $seconds = "00";
 
@@ -1412,7 +1415,8 @@ class GeneralController extends Controller {
                                     "cpf" => $inputs['cpf'],
                                     "diffTime" => $diffTime,
                                     "lunch_time" => 'lunch_start',
-                                    "message" => "Already checked");
+                                    "message" => "Already checked"
+                                );
                                 
                                 return response()->json($receive);
                             }
@@ -1457,7 +1461,8 @@ class GeneralController extends Controller {
                                     "cpf" => $inputs['cpf'],
                                     "diffTime" => $diffTime,
                                     "lunch_time" => 'lunch_end',
-                                    "message" => "Already checked");
+                                    "message" => "Already checked"
+                                );
                                 
                                 return response()->json($receive);
                             }
@@ -1760,11 +1765,13 @@ class GeneralController extends Controller {
 
                     $receive = array("status" => "200",
                         "cpf" => $inputs['cpf'],
+                        "date" => $today->toDateTimeString(),
                         "user" => $user->first_name,
                         "entrance" => $workday->start,
                         "lunch_start" => $workday->lunch_start,
                         "lunch_end" => $workday->lunch_end,
-                        "exit" => $workday->end);
+                        "exit" => $workday->end
+                    );
                 }
             } catch (Exception $e) {
                 Log::error($e);
