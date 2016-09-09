@@ -1133,12 +1133,12 @@ class GeneralController extends Controller {
         $receive = array();
 
         if ($user) {
-            $date_explode = explode('-', str_replace(' ', '', $inputs['date']));
-            $time_explode = explode(':', str_replace(' ', '', $inputs['time']));
-
             $today = null;
 
             try {
+                $date_explode = explode('-', str_replace(' ', '', $inputs['date']));
+                $time_explode = explode(':', str_replace(' ', '', $inputs['time']));
+
                 $today = Carbon::create($date_explode[0], $date_explode[1], $date_explode[2], $time_explode[0], $time_explode[1], (array_key_exists(2, $time_explode) ? $time_explode[2] : '00'));
             } catch(Exception $e) {
                 $today = new Carbon();

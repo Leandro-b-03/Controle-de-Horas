@@ -81,14 +81,16 @@ class AuthController extends Controller {
 
                 return $this->handleUserWasAuthenticated($request, $throttles);
             } else {
-                if ($user->status == 'D') {
-                    /**
-                     * This is to protect the entire app, except login form, 
-                     * to avoid loop
-                     */
-                    Session::flush();
-                        
-                    return redirect()->guest('auth/login')->with('return', array('message' => 'Seu login está desativado'));
+                if (isset($user->status)) {
+                    if ($user->status == 'D') {
+                        /**
+                         * This is to protect the entire app, except login form, 
+                         * to avoid loop
+                         */
+                        Session::flush();
+                            
+                        return redirect()->guest('auth/login')->with('return', array('message' => 'Seu login está desativado'));
+                    }
                 }
 
                 return redirect()->intended('register');
