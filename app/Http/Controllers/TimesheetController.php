@@ -594,7 +594,7 @@ class TimesheetController extends Controller
                     $tminutes = (float)($minutes / 60);
                     $time = (($hours <= 9 ? "0" . $hours : $hours) . ":" . ($minutes <= 9 ? "0" . $minutes : $minutes)) . ":" . $seconds;
 
-                    $user_open_project = UserOpenProject::where('login', 'LIKE', Auth::user()->eloquent->username . '@%')->orWhere('mail', 'LIKE', Auth::user()->eloquent->username . '@%')->get()->first();
+                    $user_open_project = UserOpenProject::where('login', 'LIKE', Auth::user()->getEloquent()->username . '@%')->orWhere('mail', 'LIKE', Auth::user()->getEloquent()->username . '@%')->get()->first();
 
                     $work_package = Task::find($timesheet_task->work_package_id);
 
